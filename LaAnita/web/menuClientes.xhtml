@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:ui="http://java.sun.com/jsf/facelets">
+    <h:head>
+        <h:outputStylesheet library="css" name="main.css"/>
+        <title>Relación de Clientes</title>
+    </h:head>
+    <body>
+        <div id="wrapper" align="center">
+            <ui:include src="wrapper.xhtml" />
+            <div id="content" align="center"  >
+                <br></br>
+                <h:form >
+                    <div align="right">
+                        <h:commandButton value="PDF"  actionListener="#{mbBancosSat.PDF}"/> 
+                        <h:commandButton value="XLS">
+                            <p:dataExporter type="xls" target="Tabla" fileName="ReporteClientes"
+                                            postProcessor="#{mbBancosSat.XLS}"/>
+                        </h:commandButton>
+                        <p:commandLink styleClass="nueva" action="#{mbClientes.mantenimiento(0)}" value="Nueva" ajax="false"/>|
+                        <p:commandLink styleClass="nueva"  action="#{mbClientes.terminar()}" value="Salir" ajax="false" />|
+                    </div>
+                
+                    <p:panel header="Relacion de Clientes" styleClass="quitaCuadro">
+                        <h:outputText value="No hay CLIENTES que mostrar !!" rendered="#{empty mbClientes.listaClientes}" />
+
+                        <p:dataTable id="Tabla"  value="#{mbClientes.listaClientes}" var="t" emptyMessage="No hay elementos que desplegar" >
+                            <p:column 
+                                headerText="Cod" filterBy="#{t.clienteSEA.obtenCodigoString(t.clienteSEA.cod_cli)}" filterMatchMode="contains" style="width: 5px"  >
+                                <h:outputText id="codigoCliente"
+                                              value="#{t.clienteSEA.obtenCodigoString(t.clienteSEA.cod_cli)}"
+                                              style="width: 5px"/>
+                            </p:column>
+                            <p:column 
+                                headerText="Cliente" filterBy="#{t.nombre}" filterMatchMode="contains" >
+                                <h:outputText id="nombre"
+                                              value="#{t.nombre}"/>
+                            </p:column>
+
+                            <p:column headerText="Id Banco" filterBy="#{t.banco.nombreCorto}" filterMatchMode="contains">
+                                <h:outputText id="nombreCorto"
+                                              value="#{t.banco.nombreCorto}"/>
+                            </p:column>
+
+                            <p:column headerText="Numero de catalogo" filterBy="#{t.numCtaPago}" filterMatchMode="contains">
+                                <h:outputText id="NumeroCatalogo"
+                                              value="#{t.numCtaPago}"/>
+                            </p:column>
+
+                            <p:column headerText="Medio Pago" filterBy="#{t.medioPago}" filterMatchMode="contains">
+                                <h:outputText id="medioPago"
+                                              value="#{t.medioPago}"/>
+                            </p:column>
+
+                            <p:column headerText="Editar"  >
+                                <h:commandLink action="#{mbClientes.mantenimiento(t.idCliente)}">
+                                    <h:graphicImage library="images" name="build.png"/>
+                                </h:commandLink>
+                            </p:column>
+                        </p:dataTable>
+
+                    </p:panel>
+
+                </h:form>
+            </div>
+            <!-- FIN DE CONTENIDO -->
+            <ui:include src="footer.html" />
+        </div>
+    </body>
+</html>

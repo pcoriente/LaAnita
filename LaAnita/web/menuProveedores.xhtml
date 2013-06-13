@@ -1,0 +1,91 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:p="http://primefaces.org/ui">
+    <h:head>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"></meta>
+        <title>Relación de Proveedores</title>
+        <h:outputStylesheet library="css" name="main.css"/>
+        <h:outputStylesheet library="css" name="estilos.css"/>
+    </h:head>
+    <body>
+        <div id="wrapper" align="center">
+            <ui:include src="wrapper.xhtml" />
+            <div id="content" align="center"  >
+                <br></br>
+                <h:form >
+                    <div align="right">
+                        <p:commandLink styleClass="nueva" action="#{mbProveedores.mantenimiento(0)}" value="Nueva" ajax="false"/>|
+                        <p:commandLink styleClass="nueva"  action="#{mbProveedores.terminar()}" value="Salir" ajax="false" />|
+                    </div>
+                    <p:panel header="LISTA DE PROVEEDORES" styleClass="quitaCuadro">
+                        <h2>
+                            <h:outputText value="No hay proveedores que mostrar !!" rendered="#{empty mbProveedores.listaProveedores}" />
+                        </h2>
+                        <p:dataTable value="#{mbProveedores.listaProveedores}"
+                                     var="proveedor"
+                                     rendered="#{not empty mbProveedores.listaProveedores}"
+                                     style="border:solid 1px"
+                                     widgetVar="proveedorTable"
+                                     emptyMessage="No hay elementos que desplegar">
+                            <f:facet name="header">
+                                <p:outputPanel>
+                                    <h:outputText value="Filtrado de campos: " />
+                                    <h:inputText   id="globalFilter" onkeyup="proveedorTable.filter()"  />
+                                </p:outputPanel>
+                            </f:facet>
+                            <p:column filterBy="#{proveedor.proveedor}"  filterMatchMode="contains"   >
+                                <f:facet name="header">
+                                    <h:outputText value="Proveedor"/>
+                                </f:facet>
+                                <h:outputText value="#{proveedor.proveedor}"/>
+                            </p:column>
+                            <p:column filterBy="#{proveedor.limiteCredito}"  filterMatchMode="contains" style="width: 10px"  >
+                                <f:facet name="header">
+                                    <h:outputText value="L. Crédito"/>
+                                </f:facet>
+                                <h:outputText value="#{proveedor.limiteCredito}"/>
+                            </p:column>
+                            <p:column filterBy="#{proveedor.diasCredito}"  filterMatchMode="contains" style="width: 5px" >
+                                <f:facet name="header" >
+                                    <h:outputText value="Dias" />
+                                </f:facet>
+                                <h:outputText value="#{proveedor.diasCredito}" />
+                            </p:column>
+                            <p:column filterBy="#{proveedor.telefono}"  filterMatchMode="contains" style="width: 10px"  >
+                                <f:facet name="header">
+                                    <h:outputText value="Teléfono"/>
+                                </f:facet>
+                                <h:outputText value="#{proveedor.telefono}"/>
+                            </p:column>
+                            <p:column headerText="Más" colspan="">
+                                <p:rowToggler   />
+                            </p:column>
+                            <p:rowExpansion  >
+                                <h:outputText value="ID: #{proveedor.idProveedor}" /><br></br>
+                                <h:outputText value="CODIGO: #{proveedor.codigoProveedor}" /><br></br>
+                                <h:outputText value="CORREO: #{proveedor.correo}" /><br></br>
+                                <h:outputText value="RFC: #{proveedor.rfc}" /><br></br>
+                                <h:outputText  value="FAX: #{proveedor.fax}"  /><br></br>
+                                <h:outputText value="F. ALTA: #{proveedor.fechaAlta}" /><br></br>
+                                <h:outputText value="DIRECCION: " /><br></br>
+                                <p:inputTextarea id="direccion" readonly="true" value="#{proveedor.direccion.toString()}" rows="10" cols="50" />
+                            </p:rowExpansion>
+                            <p:column  headerText="Procesos"  style="width: 5px">
+                                <h:commandLink action="#{mbProveedores.mantenimiento(proveedor.idProveedor)}"  >
+                                    <h:graphicImage  library="images" name="build.png"  /> 
+                                </h:commandLink> 
+                            </p:column>
+                        </p:dataTable>
+                    </p:panel>
+                </h:form>
+            </div>
+            <!-- FIN DE CONTENIDO -->
+            <ui:include src="footer.html" />
+        </div>
+    </body>
+</html>
+

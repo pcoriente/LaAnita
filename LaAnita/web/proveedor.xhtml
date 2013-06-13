@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://java.sun.com/jsf/core">
+    <h:head>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"></meta>
+        <title>Actualización de Proveedor</title>
+        <h:outputStylesheet library="css" name="main.css"/>
+    </h:head>
+
+    <h:body>
+        <div id="wrapper" align="center">
+            <ui:include src="wrapper.xhtml" />
+            <div id="content" align="center"  >
+                <br></br>
+                <h:panelGroup styleClass="errores">
+                    <h:messages layout="table" />
+                </h:panelGroup>
+                <h:form >
+                    <div align="right" >
+                        |<p:commandLink styleClass="nueva" action="menuProveedores" value="Salir" ajax="false"/>
+                    </div>
+                    <p:panel header="MANTENIMIENTO DE PROVEEDORES" styleClass="quitaCuadro" >
+                        <p:messages id="msgs" showDetail="true" showSummary="false"  />
+                        <h:panelGrid id="panelCapturaProveedores"  columns="2" styleClass="quitaCuadro" >
+
+                            <h:outputLabel value="Código:"   styleClass="colorLetra" />
+                            <p:inputText id="codigo" readonly="#{mbProveedores.proveedor.idProveedor > 0}" value="#{mbProveedores.proveedor.codigoProveedor}" maxlength="6" size="8" />
+
+                            <h:outputLabel value="Proveedor:"  styleClass="colorLetra"/>
+                            <p:inputText id="proveedor"
+                                         value="#{mbProveedores.proveedor.proveedor}"
+                                         maxlength="100"
+                                         size="50" />
+
+                            <h:outputLabel value="RFC:"
+                                           styleClass="colorLetra"/>
+                            <p:inputText id="rfc" value="#{mbProveedores.proveedor.rfc}"
+                                         maxlength="13" size="13" required="true" requiredMessage="Se requiere el RFC" >
+                                <f:validator validatorId="RFCValidator" /> 
+                            </p:inputText>
+
+                            <h:outputLabel value="Teléfono:"   styleClass="colorLetra"/>
+                            <p:inputMask id="telefono"
+                                         value="#{mbProveedores.proveedor.telefono}"
+                                         maxlength="10"
+                                         mask="(999)9-99-99-99"
+                                         size="15"
+                                         required="true"
+                                         requiredMessage="Se requiere un numero telefonico"/>
+
+                            <h:outputLabel value="Fax:"   styleClass="colorLetra"/>
+                            <p:inputMask id="fax"
+                                         value="#{mbProveedores.proveedor.fax}"
+                                         maxlength="10"
+                                         mask="(999)9-99-99-99"
+                                         size="15"
+                                         required="true"
+                                         requiredMessage="Se requiere un numero telefonico"/>
+
+                            <h:outputLabel value="eMail:"  styleClass="colorLetra"/>
+                            <p:inputText id="correo"
+                                         value="#{mbProveedores.proveedor.correo}"
+                                         maxlength="100"
+                                         size="50"
+                                         required="true"
+                                         requiredMessage="Se requiere una direccion de correo">
+                                <f:validator validatorId="EmailValidator"/>
+                            </p:inputText>
+
+                            <h:outputLabel value="Dias Crédito"   styleClass="colorLetra"/>
+                            <p:inputText id="dias"
+                                         value="#{mbProveedores.proveedor.diasCredito}"
+                                         maxlength="10"
+                                         size="15" />
+
+                            <h:outputLabel value="Límite Crédito"  styleClass="colorLetra"/>
+                            <p:inputText id="limite"
+                                         value="#{mbProveedores.proveedor.limiteCredito}"
+                                         maxlength="10"
+                                         size="15" />
+
+                            <h:outputLabel value="Fecha Alta:"  rendered="#{mbProveedores.proveedor.idProveedor > 0}"  styleClass="colorLetra"/>
+                            <p:inputText id="alta" readonly="true"
+                                         rendered="#{mbProveedores.proveedor.idProveedor > 0}"
+                                         value="#{mbProveedores.proveedor.fechaAlta}"
+                                         maxlength="10"
+                                         size="15" />
+
+                            <h:outputLabel value="Dirección:"  styleClass="colorLetra" />
+                            <h:panelGroup>
+                                <p:inputTextarea id="txtAreaDirFisica" disabled="true" rows="5" cols="50" 
+                                                 value="#{mbProveedores.proveedor.direccion.toString()}" />
+                                <h:commandLink action="#{mbProveedores.mbDireccion.mttoDireccion(mbProveedores.proveedor.direccion, 'proveedor')}" value="Editar" />
+                            </h:panelGroup>
+
+                            <h:outputLabel />
+                            <h:panelGroup style="display: block; text-align: right" >
+                                <p:commandButton value="Grabar" actionListener="#{mbProveedores.grabar()}" update="msgs" />
+                                <p:commandButton value="Cancelar" ajax="false" action="#{mbProveedores.salir()}" />
+                            </h:panelGroup>
+                        </h:panelGrid>
+
+                    </p:panel>
+
+                </h:form>
+            </div>
+            <!-- FIN DE CONTENIDO -->
+            <ui:include src="footer.html" />
+        </div>
+    </h:body>
+</html>
