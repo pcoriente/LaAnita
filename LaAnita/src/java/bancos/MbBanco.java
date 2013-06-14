@@ -143,4 +143,10 @@ public class MbBanco {
         }
         return navegar;
     }
+    
+    public void metodoCreado(){
+        
+    }
+    
+    
 }
