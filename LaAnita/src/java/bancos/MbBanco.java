@@ -147,6 +147,4 @@ public class MbBanco {
     public void metodoCreado(){
         
     }
-    
-    
 }

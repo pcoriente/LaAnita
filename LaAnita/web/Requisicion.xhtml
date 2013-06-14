@@ -1,0 +1,39 @@
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:f="http://java.sun.com/jsf/core">
+    <h:head>
+        <h:outputStylesheet library="css" name="main.css"/>
+        <title>Actualización de Banco</title>
+    </h:head>
+
+    <body>
+        <div id="wrapper" align="center">
+            <ui:include src="wrapper.xhtml" />
+            <div id="content" align="center"  >
+                <br></br>
+                <h:form >
+                    <div align="right">
+                        <h:commandLink> 
+                            <p:graphicImage   style="width: 20px; alignment-adjust: middle"/> 
+                            <p:dataExporter type="pdf" target="clien" fileName="clientes"  />||  
+                        </h:commandLink>
+                        <h:commandLink >  
+                            <p:graphicImage   style="width: 20px; alignment-adjust: middle"/>
+                            <p:dataExporter type="xls" target="clien" fileName="clientes"  />||
+                        </h:commandLink>
+                        <p:commandLink styleClass="nueva"  action="menuBancos.xhtml" value="Salir" ajax="false" />|
+                    </div>
+                </h:form>
+            </div>
+            
+            
+            
+            
+            
+            <!-- FIN DE CONTENIDO -->
+            <ui:include src="footer.html" />
+        </div>
+    </body>
+</html>
