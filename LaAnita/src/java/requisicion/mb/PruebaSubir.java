@@ -10,4 +10,9 @@ package requisicion.mb;
  */
 public class PruebaSubir {
     
+    public void mensaje(){
+        
+        System.out.println("Holaaaa");
+    }
+    
 }
