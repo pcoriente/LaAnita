@@ -25,13 +25,32 @@
                         </h:commandLink>
                         <p:commandLink styleClass="nueva"  action="menuBancos.xhtml" value="Salir" ajax="false" />|
                     </div>
+                    <br/>
+
+                    <p:panel header="Requicición" style="width: 800px;">
+                        <br></br>
+                        <p:selectOneMenu style="width: 200px; float: left"></p:selectOneMenu>
+                        <p:calendar style="float: right"></p:calendar>
+                        <br></br>
+                        <br></br><br></br>
+                        <h:commandLink style="float: left">
+                            <h:graphicImage library="images" name="carrito.png"/>
+                        </h:commandLink>
+                        <p:dataTable style="">
+                            <p:column headerText="N°">
+                            </p:column>
+                            <p:column headerText="Cod.Producto">
+                            </p:column>
+                            <p:column headerText="Descripcion">
+                            </p:column>
+                            <p:column headerText="Cant.">
+                            </p:column>
+                        </p:dataTable>
+                    </p:panel>
                 </h:form>
             </div>
-            
-            
-            
-            
-            
+
+
             <!-- FIN DE CONTENIDO -->
             <ui:include src="footer.html" />
         </div>
