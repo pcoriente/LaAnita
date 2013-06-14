@@ -6,6 +6,7 @@
     <h:head>
         <h:outputStylesheet library="css" name="main.css"/>
         <title>Actualización de Banco</title>
+        <h:outputScript library="js" name="lenguaje.js" />
     </h:head>
 
     <body>
@@ -27,7 +28,7 @@
                     </div>
                     <br/>
 
-                    <p:panel header="Requicición" style="width: 800px;">
+                    <p:panel header="Requisición" style="width: 800px;">
                         <br></br>
                         <p:selectOneMenu style="width: 200px; float: left">
                             <f:selectItems value="#{mbrequisicion.listaDbs}" />
@@ -36,7 +37,7 @@
 
 
                         </p:selectOneMenu>
-                        <p:calendar  id="calendar" style="float: right" effect="slideDown" pattern="dd/mm/yyyy" ></p:calendar>
+                        <p:calendar  id="calendar" locale="es" style="float: right" effect="slideDown" pattern="dd/mm/yyyy" ></p:calendar>
                         <p:watermark for="calendar" value="dd/mm/yyyy" /> 
                         <br></br>
                         <br></br><br></br>
