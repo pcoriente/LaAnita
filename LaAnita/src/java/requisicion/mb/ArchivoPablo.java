@@ -19,4 +19,10 @@ public class ArchivoPablo {
         
     }
     
+    public void mensaje2(){
+      
+        System.out.println("otra vez hola");
+        
+    }
+    
 }
