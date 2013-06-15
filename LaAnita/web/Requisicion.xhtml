@@ -30,17 +30,12 @@
                     <p:panel header="Requicición" style="width: 800px;">
                         <br></br>
                         <p:selectOneMenu style="width: 200px; float: left"></p:selectOneMenu>
-                        <p:calendar style="float: right"></p:calendar>
+                        <p:calendar  id="calendar" style="float: right" effect="slideDown" pattern="dd/mm/yyyy" ></p:calendar>
+                        <p:watermark for="calendar" value="dd/mm/yyyy" /> 
                         <br></br>
                         <br></br><br></br>
-                        
-                        
-                        
-                        
-                        
-                        <h:commandLink style="float: left">
-                            <h:graphicImage library="images" name="carrito.png"/>
-                        </h:commandLink>
+                        <h:graphicImage style="float: left" onclick="dlg.show()" library="images" name="carrito.png">
+                        </h:graphicImage>
                         <p:dataTable style="">
                             <p:column headerText="N°">
                             </p:column>
@@ -54,10 +49,18 @@
                     </p:panel>
                 </h:form>
             </div>
-
-
             <!-- FIN DE CONTENIDO -->
             <ui:include src="footer.html" />
         </div>
+        <p:dialog header="Elija Sus Productos" widgetVar="dlg" resizable="false">  
+            <h:form style="width: 450px" id="form"> 
+                <div align="center">
+                    <p:pickList effect="slide"  value="#{mbrequisicion.cities}" var="city"
+                                  itemLabel="#{city}" itemValue="#{city}"/>
+                    <p:commandButton value="Listo"/>
+                    
+                </div>
+            </h:form>  
+        </p:dialog>  
     </body>
 </html>
