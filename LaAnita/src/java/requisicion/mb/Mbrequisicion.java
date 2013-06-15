@@ -60,10 +60,15 @@ public class Mbrequisicion implements Serializable {
     private List<SelectItem> obtenerEmpresas() {
         List<SelectItem> empresas = new ArrayList<SelectItem>();
         DominioEmpresas dEmpre = new DominioEmpresas();
+        DominioEmpresas d = new DominioEmpresas();
         dEmpre.setCodigoEmpresa(0);
         dEmpre.setNombreComercial("Seleccione Una Empresa");
+        d.setCodigoEmpresa(1);
+        d.setNombreComercial("pcOriente");
         SelectItem emp = new SelectItem(dEmpre, dEmpre.getNombreComercial());
+        SelectItem emp1 = new SelectItem(dEmpre, dEmpre.getNombreComercial());
         empresas.add(emp);
+        empresas.add(emp1);
         return empresas;
     }
 }
