@@ -30,12 +30,11 @@
 
                     <p:panel header="Requisición" style="width: 800px;">
                         <br></br>
-                        <p:selectOneMenu style="width: 200px; float: left">
+                        <p:selectOneMenu style="width: 200px; 
+                                         float: left"
+                                         value="#{mbrequisicion.empresas}">
                             <f:selectItems value="#{mbrequisicion.listaDbs}" />
-
-
-
-
+                            <f:converter id="empresas" converterId="converters.requsicion" />
                         </p:selectOneMenu>
                         <p:calendar  id="calendar" locale="es" style="float: right" effect="slideDown" pattern="dd/mm/yyyy" ></p:calendar>
                         <p:watermark for="calendar" value="dd/mm/yyyy" /> 
@@ -53,6 +52,9 @@
                             <p:column headerText="Cant.">
                             </p:column>
                         </p:dataTable>
+                        <p:commandButton value="dameValores"
+                                         action="#{mbrequisicion.damevalores()}"
+                                         ajax="false"/>
                     </p:panel>
                 </h:form>
             </div>

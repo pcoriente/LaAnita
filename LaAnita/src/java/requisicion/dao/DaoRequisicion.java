@@ -48,15 +48,32 @@ public class DaoRequisicion {
         Statement st = c.createStatement();
         ResultSet rs = st.executeQuery(sql);
         while (rs.next()) {
-        DominioEmpresas d = new DominioEmpresas();
-        d.setIdEmpresa(rs.getInt("idEmpresa"));
-        d.setCodigoEmpresa(rs.getInt("codigoEmpresa"));
-        d.setEmpresa(rs.getString("empresa"));
-        d.setNombreComercial(rs.getString("nombreComercial"));
-        d.setRfc(rs.getString("rfc"));
-        d.seteMail(rs.getString("eMail"));
-        domE.add(d);
+            DominioEmpresas d = new DominioEmpresas();
+            d.setIdEmpresa(rs.getInt("idEmpresa"));
+            d.setCodigoEmpresa(rs.getInt("codigoEmpresa"));
+            d.setEmpresa(rs.getString("empresa"));
+            d.setNombreComercial(rs.getString("nombreComercial"));
+            d.setRfc(rs.getString("rfc"));
+            d.seteMail(rs.getString("eMail"));
+            domE.add(d);
         }
         return domE;
+    }
+
+    public DominioEmpresas dameEmpresas(int id) throws SQLException {
+        DominioEmpresas d = new DominioEmpresas();
+        Connection c = ds.getConnection();
+        String sql = "SELECT * FROM empresasGrupo WHERE codigoEmpresa="+id;
+        Statement st = c.createStatement();
+        ResultSet rs = st.executeQuery(sql);
+        while (rs.next()) {
+            d.setIdEmpresa(rs.getInt("idEmpresa"));
+            d.setCodigoEmpresa(rs.getInt("codigoEmpresa"));
+            d.setEmpresa(rs.getString("empresa"));
+            d.setNombreComercial(rs.getString("nombreComercial"));
+            d.setRfc(rs.getString("rfc"));
+            d.seteMail(rs.getString("eMail"));
+        }
+        return d;
     }
 }

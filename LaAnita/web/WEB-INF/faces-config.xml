@@ -12,6 +12,11 @@
         <converter-class>dbs.converters.DbsConverter</converter-class>
     </converter>
     
+     <converter>
+        <converter-id>converters.requsicion</converter-id>
+        <converter-class>requisicion.Converter.RequsicionConverter</converter-class>
+    </converter>
+    
     <navigation-rule>
         <from-view-id>/login.xhtml</from-view-id>
         <navigation-case>

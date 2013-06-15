@@ -10,8 +10,10 @@ import java.io.Serializable;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+import javax.faces.bean.ManagedProperty;
 import javax.faces.model.SelectItem;
 import org.primefaces.model.DualListModel;
+import productosOld.MbBuscarOld;
 import requisicion.dao.DaoRequisicion;
 import requisicion.dominio.DominioEmpresas;
 
@@ -23,12 +25,21 @@ import requisicion.dominio.DominioEmpresas;
 @SessionScoped
 public class Mbrequisicion implements Serializable {
 
-    /**
-     * Creates a new instance of Mbrequisicion
-     */
+    private DominioEmpresas empresas = new DominioEmpresas();
+
+    public DominioEmpresas getEmpresas() {
+        return empresas;
+    }
+
+    public void setEmpresas(DominioEmpresas empresas) {
+        this.empresas = empresas;
+    }
     private DualListModel<String> cities;
     private List<SelectItem> listaDbs;
 
+    /**
+     * Creates a new instance of Mbrequisicion
+     */
     public List<SelectItem> getListaDbs() throws SQLException {
         listaDbs = obtenerEmpresas();
         return listaDbs;
@@ -72,5 +83,9 @@ public class Mbrequisicion implements Serializable {
             empresas.add(new SelectItem(e, e.getNombreComercial()));
         }
         return empresas;
+    }
+
+    public void damevalores() {
+        System.out.println(empresas.getEmpresa());
     }
 }

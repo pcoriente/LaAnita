@@ -74,7 +74,32 @@ public class DominioEmpresas implements Serializable {
     }
 
     @Override
+    public int hashCode() {
+        int hash = 5;
+        hash = 71 * hash + this.idEmpresa;
+        return hash;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final DominioEmpresas other = (DominioEmpresas) obj;
+        if (this.idEmpresa != other.idEmpresa) {
+            return false;
+        }
+        return true;
+    }
+
+    @Override
     public String toString() {
         return nombreComercial;
     }
+
+
+
 }
