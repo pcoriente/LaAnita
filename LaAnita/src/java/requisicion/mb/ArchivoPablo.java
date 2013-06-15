@@ -10,4 +10,7 @@ package requisicion.mb;
  */
 public class ArchivoPablo {
     
+    public void dameDatos(){
+        
+    }
 }
