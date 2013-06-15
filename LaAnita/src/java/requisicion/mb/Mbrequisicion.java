@@ -9,7 +9,9 @@ import javax.enterprise.context.SessionScoped;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
+import javax.faces.model.SelectItem;
 import org.primefaces.model.DualListModel;
+import requisicion.dominio.DominioEmpresas;
 
 /**
  *
@@ -23,6 +25,17 @@ public class Mbrequisicion implements Serializable {
      * Creates a new instance of Mbrequisicion
      */
     private DualListModel<String> cities;
+    private List<SelectItem> listaDbs;
+
+    public List<SelectItem> getListaDbs() {
+
+        listaDbs = obtenerEmpresas();
+        return listaDbs;
+    }
+
+    public void setListaDbs(List<SelectItem> listaDbs) {
+        this.listaDbs = listaDbs;
+    }
 
     public DualListModel<String> getCities() {
         return cities;
@@ -31,7 +44,6 @@ public class Mbrequisicion implements Serializable {
     public void setCities(DualListModel<String> cities) {
         this.cities = cities;
     }
-    
 
     public Mbrequisicion() {
         List<String> citiesSource = new ArrayList<String>();
@@ -43,5 +55,15 @@ public class Mbrequisicion implements Serializable {
         citiesSource.add("Bursa");
         cities = new DualListModel<String>(citiesSource, citiesTarget);
 
+    }
+
+    private List<SelectItem> obtenerEmpresas() {
+        List<SelectItem> empresas = new ArrayList<SelectItem>();
+        DominioEmpresas dEmpre = new DominioEmpresas();
+        dEmpre.setCodigoEmpresa(0);
+        dEmpre.setNombreComercial("Seleccione Una Empresa");
+        SelectItem emp = new SelectItem(dEmpre, dEmpre.getNombreComercial());
+        empresas.add(emp);
+        return empresas;
     }
 }

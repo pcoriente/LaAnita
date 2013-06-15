@@ -29,7 +29,13 @@
 
                     <p:panel header="Requicición" style="width: 800px;">
                         <br></br>
-                        <p:selectOneMenu style="width: 200px; float: left"></p:selectOneMenu>
+                        <p:selectOneMenu style="width: 200px; float: left">
+                            <f:selectItems value="#{mbrequisicion.listaDbs}" />
+
+
+
+
+                        </p:selectOneMenu>
                         <p:calendar  id="calendar" style="float: right" effect="slideDown" pattern="dd/mm/yyyy" ></p:calendar>
                         <p:watermark for="calendar" value="dd/mm/yyyy" /> 
                         <br></br>
@@ -56,9 +62,9 @@
             <h:form style="width: 450px" id="form"> 
                 <div align="center">
                     <p:pickList effect="slide"  value="#{mbrequisicion.cities}" var="city"
-                                  itemLabel="#{city}" itemValue="#{city}"/>
+                                itemLabel="#{city}" itemValue="#{city}"/>
                     <p:commandButton value="Listo"/>
-                    
+
                 </div>
             </h:form>  
         </p:dialog>  
