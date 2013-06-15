@@ -7,10 +7,12 @@ package requisicion.mb;
 import javax.inject.Named;
 import javax.enterprise.context.SessionScoped;
 import java.io.Serializable;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import javax.faces.model.SelectItem;
 import org.primefaces.model.DualListModel;
+import requisicion.dao.DaoRequisicion;
 import requisicion.dominio.DominioEmpresas;
 
 /**
@@ -27,8 +29,7 @@ public class Mbrequisicion implements Serializable {
     private DualListModel<String> cities;
     private List<SelectItem> listaDbs;
 
-    public List<SelectItem> getListaDbs() {
-
+    public List<SelectItem> getListaDbs() throws SQLException {
         listaDbs = obtenerEmpresas();
         return listaDbs;
     }
@@ -57,18 +58,19 @@ public class Mbrequisicion implements Serializable {
 
     }
 
-    private List<SelectItem> obtenerEmpresas() {
+    private List<SelectItem> obtenerEmpresas() throws SQLException {
         List<SelectItem> empresas = new ArrayList<SelectItem>();
         DominioEmpresas dEmpre = new DominioEmpresas();
-        DominioEmpresas d = new DominioEmpresas();
         dEmpre.setCodigoEmpresa(0);
         dEmpre.setNombreComercial("Seleccione Una Empresa");
-        d.setCodigoEmpresa(1);
-        d.setNombreComercial("pcOriente");
         SelectItem emp = new SelectItem(dEmpre, dEmpre.getNombreComercial());
-        SelectItem emp1 = new SelectItem(dEmpre, dEmpre.getNombreComercial());
         empresas.add(emp);
-        empresas.add(emp1);
+        ArrayList<DominioEmpresas> d = new ArrayList<DominioEmpresas>();
+        DaoRequisicion daoR = new DaoRequisicion();
+        d = daoR.dameEmpresas();
+        for (DominioEmpresas e : d) {
+            empresas.add(new SelectItem(e, e.getNombreComercial()));
+        }
         return empresas;
     }
 }
