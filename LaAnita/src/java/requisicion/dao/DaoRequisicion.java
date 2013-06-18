@@ -9,6 +9,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
+import java.util.List;
 import javax.faces.context.ExternalContext;
 import javax.faces.context.FacesContext;
 import javax.naming.Context;
@@ -17,6 +18,7 @@ import javax.naming.NamingException;
 import javax.servlet.http.HttpSession;
 import javax.sql.DataSource;
 import requisicion.dominio.DominioEmpresas;
+import requisicion.dominio.DominioPartes;
 import usuarios.UsuarioSesion;
 
 /**
@@ -63,7 +65,7 @@ public class DaoRequisicion {
     public DominioEmpresas dameEmpresas(int id) throws SQLException {
         DominioEmpresas d = new DominioEmpresas();
         Connection c = ds.getConnection();
-        String sql = "SELECT * FROM empresasGrupo WHERE codigoEmpresa="+id;
+        String sql = "SELECT * FROM empresasGrupo WHERE codigoEmpresa=" + id;
         Statement st = c.createStatement();
         ResultSet rs = st.executeQuery(sql);
         while (rs.next()) {
@@ -73,6 +75,35 @@ public class DaoRequisicion {
             d.setNombreComercial(rs.getString("nombreComercial"));
             d.setRfc(rs.getString("rfc"));
             d.seteMail(rs.getString("eMail"));
+        }
+        return d;
+    }
+
+    public List<DominioPartes> damePartes() throws SQLException {
+        ArrayList<DominioPartes> partes = new ArrayList<DominioPartes>();
+
+        String sql = "SELECT * from productosPartes";
+        Connection c = ds.getConnection();
+        Statement st = c.createStatement();
+        ResultSet rs = st.executeQuery(sql);
+        while (rs.next()) {
+            DominioPartes d = new DominioPartes();
+            d.setIdParte(rs.getInt("idParte"));
+            d.setParte(rs.getString("parte"));
+            partes.add(d);
+        }
+        return partes;
+    }
+
+    public DominioPartes damePartes(int id) throws SQLException {
+        String sql = "SELECT * from productosPartes WHERE idParte="+id;
+        Connection c = ds.getConnection();
+        Statement st = c.createStatement();
+        ResultSet rs = st.executeQuery(sql);
+        DominioPartes d = new DominioPartes();
+        while (rs.next()) {
+            d.setIdParte(rs.getInt("idParte"));
+            d.setParte(rs.getString("parte"));
         }
         return d;
     }

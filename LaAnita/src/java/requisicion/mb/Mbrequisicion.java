@@ -9,6 +9,7 @@ import javax.enterprise.context.SessionScoped;
 import java.io.Serializable;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import javax.faces.bean.ManagedProperty;
 import javax.faces.model.SelectItem;
@@ -16,6 +17,7 @@ import org.primefaces.model.DualListModel;
 import productosOld.MbBuscarOld;
 import requisicion.dao.DaoRequisicion;
 import requisicion.dominio.DominioEmpresas;
+import requisicion.dominio.DominioPartes;
 
 /**
  *
@@ -26,6 +28,33 @@ import requisicion.dominio.DominioEmpresas;
 public class Mbrequisicion implements Serializable {
 
     private DominioEmpresas empresas = new DominioEmpresas();
+    private DualListModel<DominioPartes> cities;
+    private List<SelectItem> listaDbs;
+    List<DominioPartes> partes = new ArrayList<DominioPartes>();
+    List<DominioPartes> citiesTarget = new ArrayList<DominioPartes>();
+
+    public Mbrequisicion() throws SQLException {
+
+        DaoRequisicion d = new DaoRequisicion();
+        partes = d.damePartes();
+        cities = new DualListModel<DominioPartes>(partes, citiesTarget);
+    }
+
+    public List<DominioPartes> getPartes() {
+        return partes;
+    }
+
+    public void setPartes(List<DominioPartes> partes) {
+        this.partes = partes;
+    }
+
+    public List<DominioPartes> getCitiesTarget() {
+        return citiesTarget;
+    }
+
+    public void setCitiesTarget(List<DominioPartes> citiesTarget) {
+        this.citiesTarget = citiesTarget;
+    }
 
     public DominioEmpresas getEmpresas() {
         return empresas;
@@ -34,12 +63,7 @@ public class Mbrequisicion implements Serializable {
     public void setEmpresas(DominioEmpresas empresas) {
         this.empresas = empresas;
     }
-    private DualListModel<String> cities;
-    private List<SelectItem> listaDbs;
 
-    /**
-     * Creates a new instance of Mbrequisicion
-     */
     public List<SelectItem> getListaDbs() throws SQLException {
         listaDbs = obtenerEmpresas();
         return listaDbs;
@@ -49,24 +73,12 @@ public class Mbrequisicion implements Serializable {
         this.listaDbs = listaDbs;
     }
 
-    public DualListModel<String> getCities() {
+    public DualListModel<DominioPartes> getCities() {
         return cities;
     }
 
-    public void setCities(DualListModel<String> cities) {
+    public void setCities(DualListModel<DominioPartes> cities) {
         this.cities = cities;
-    }
-
-    public Mbrequisicion() {
-        List<String> citiesSource = new ArrayList<String>();
-        List<String> citiesTarget = new ArrayList<String>();
-        citiesSource.add("Istanbul");
-        citiesSource.add("Ankara");
-        citiesSource.add("Izmir");
-        citiesSource.add("Antalya");
-        citiesSource.add("Bursa");
-        cities = new DualListModel<String>(citiesSource, citiesTarget);
-
     }
 
     private List<SelectItem> obtenerEmpresas() throws SQLException {
@@ -87,5 +99,18 @@ public class Mbrequisicion implements Serializable {
 
     public void damevalores() {
         System.out.println(empresas.getEmpresa());
+    }
+
+    public void longitud() {
+        citiesTarget = cities.getSource();
+        partes = cities.getTarget();
+        System.err.println(citiesTarget.size());
+        System.err.println(partes.size());
+        Iterator i = partes.iterator();
+        while (i.hasNext()) {
+            DominioPartes p = new DominioPartes();
+            p=(DominioPartes) i.next();
+            System.out.println(p.getParte());
+        }
     }
 }

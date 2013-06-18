@@ -65,9 +65,10 @@
             <h:form style="width: 450px" id="form"> 
                 <div align="center">
                     <p:pickList effect="slide"  value="#{mbrequisicion.cities}" var="city"
-                                itemLabel="#{city}" itemValue="#{city}"/>
-                    <p:commandButton value="Listo"/>
-
+                                itemLabel="#{city}" itemValue="#{mbrequisicion.partes}">
+                        <f:converter converterId="converters.pickList"></f:converter>
+                    </p:pickList>
+                    <p:commandButton value="Listo" action="#{mbrequisicion.longitud()}"/>
                 </div>
             </h:form>  
         </p:dialog>  
