@@ -66,7 +66,6 @@
                 <div align="center">
                     <p:pickList effect="slide"  value="#{mbrequisicion.cities}" var="city"
                                 itemLabel="#{city}" itemValue="#{mbrequisicion.partes}">
-                        <f:converter converterId="converters.pickList"></f:converter>
                     </p:pickList>
                     <p:commandButton value="Listo" action="#{mbrequisicion.longitud()}"/>
                 </div>
