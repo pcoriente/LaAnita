@@ -64,8 +64,15 @@
         <p:dialog header="Elija Sus Productos" widgetVar="dlg" resizable="false">  
             <h:form style="width: 450px" id="form"> 
                 <div align="center">
-                    <p:pickList effect="slide"  value="#{mbrequisicion.cities}" var="city"
-                                itemLabel="#{city}" itemValue="#{mbrequisicion.partes}">
+                    <p:pickList  id="pickList" 
+                                 effect="slide" 
+                                 value="#{mbrequisicion.cities}" 
+                                 var="city"
+                                 itemLabel="#{city}"
+                                 itemValue="#{city}"
+                                 immediate="true">
+                        <f:converter id="empresas" converterId="converters.pickList" />
+                        <p:ajax event="transfer"  listener="#{mbrequisicion.longitud(event)}"/>  
                     </p:pickList>
                     <p:commandButton value="Listo" action="#{mbrequisicion.longitud()}"/>
                 </div>

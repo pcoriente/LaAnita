@@ -13,6 +13,7 @@ import java.util.Iterator;
 import java.util.List;
 import javax.faces.bean.ManagedProperty;
 import javax.faces.model.SelectItem;
+import org.primefaces.event.TransferEvent;
 import org.primefaces.model.DualListModel;
 import productosOld.MbBuscarOld;
 import requisicion.dao.DaoRequisicion;
@@ -101,16 +102,26 @@ public class Mbrequisicion implements Serializable {
         System.out.println(empresas.getEmpresa());
     }
 
-    public void longitud() {
-        citiesTarget = cities.getSource();
-        partes = cities.getTarget();
-        System.err.println(citiesTarget.size());
-        System.err.println(partes.size());
-        Iterator i = partes.iterator();
-        while (i.hasNext()) {
-            DominioPartes p = new DominioPartes();
-            p=(DominioPartes) i.next();
-            System.out.println(p.getParte());
+    public void longitud(TransferEvent event) {
+        if (event.isAdd()) {
+            ArrayList<DominioPartes> p = (ArrayList<DominioPartes>) event.getItems();
+            p.size();
+            System.err.println("Se transfirio informacion");
         }
+//        DominioPartes p =null;
+//        p = (DominioPartes) event.getItems();
+//        p.getIdParte();
+//        p.getParte();
+//        -----------------------------------
+//        citiesTarget = cities.getSource();
+//        partes = cities.getTarget();
+//        System.err.println(citiesTarget.size());
+//        System.err.println(partes.size());
+//        Iterator i = partes.iterator();
+//        while (i.hasNext()) {
+//            DominioPartes p = new DominioPartes();
+//            p=(DominioPartes) i.next();
+//            System.out.println(p.getParte());
+//        }
     }
 }
