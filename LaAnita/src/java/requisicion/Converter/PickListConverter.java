@@ -35,6 +35,7 @@ public class PickListConverter implements Converter {
         PickList p = (PickList) component;
         DualListModel dl = (DualListModel) p.getValue();
         x = Integer.toString(dl.getSource().indexOf(value));
+        String c = "Cambio de pablo";
         return x;
     }
 }
