@@ -103,25 +103,7 @@ public class Mbrequisicion implements Serializable {
     }
 
     public void longitud(TransferEvent event) {
-        if (event.isAdd()) {
-            ArrayList<DominioPartes> p = (ArrayList<DominioPartes>) event.getItems();
-            p.size();
-            System.err.println("Se transfirio informacion");
-        }
-//        DominioPartes p =null;
-//        p = (DominioPartes) event.getItems();
-//        p.getIdParte();
-//        p.getParte();
-//        -----------------------------------
-//        citiesTarget = cities.getSource();
-//        partes = cities.getTarget();
-//        System.err.println(citiesTarget.size());
-//        System.err.println(partes.size());
-//        Iterator i = partes.iterator();
-//        while (i.hasNext()) {
-//            DominioPartes p = new DominioPartes();
-//            p=(DominioPartes) i.next();
-//            System.out.println(p.getParte());
-//        }
+      ArrayList<DominioPartes> partes =  (ArrayList<DominioPartes>) cities.getTarget();
+      partes = (ArrayList<DominioPartes>) cities.getSource();
     }
 }
