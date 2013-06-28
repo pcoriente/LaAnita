@@ -13,6 +13,10 @@ public class DominioPartes {
     private int idParte;
     private String parte;
 
+    public DominioPartes() {
+    }
+    
+
     @Override
     public String toString() {
         return parte;

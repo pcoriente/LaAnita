@@ -28,17 +28,37 @@ import requisicion.dominio.DominioPartes;
 @SessionScoped
 public class Mbrequisicion implements Serializable {
 
-    private DominioEmpresas empresas = new DominioEmpresas();
+    private DominioEmpresas empre = new DominioEmpresas();
     private DualListModel<DominioPartes> cities;
     private List<SelectItem> listaDbs;
     List<DominioPartes> partes = new ArrayList<DominioPartes>();
     List<DominioPartes> citiesTarget = new ArrayList<DominioPartes>();
+    ArrayList<DominioPartes> peticionPartes = new ArrayList<DominioPartes>();
+    ArrayList<DominioPartes> peticionPartesRespaldo = new ArrayList<DominioPartes>();
+
+    public ArrayList<DominioPartes> getPeticionPartesRespaldo() {
+        return peticionPartesRespaldo;
+    }
+
+    public void setPeticionPartesRespaldo(ArrayList<DominioPartes> peticionPartesRespaldo) {
+        this.peticionPartesRespaldo = peticionPartesRespaldo;
+    }
+    
+    
 
     public Mbrequisicion() throws SQLException {
 
         DaoRequisicion d = new DaoRequisicion();
         partes = d.damePartes();
         cities = new DualListModel<DominioPartes>(partes, citiesTarget);
+    }
+
+    public ArrayList<DominioPartes> getPeticionPartes() {
+        return peticionPartes;
+    }
+
+    public void setPeticionPartes(ArrayList<DominioPartes> peticionPartes) {
+        this.peticionPartes = peticionPartes;
     }
 
     public List<DominioPartes> getPartes() {
@@ -58,11 +78,11 @@ public class Mbrequisicion implements Serializable {
     }
 
     public DominioEmpresas getEmpresas() {
-        return empresas;
+        return empre;
     }
 
     public void setEmpresas(DominioEmpresas empresas) {
-        this.empresas = empresas;
+        this.empre = empresas;
     }
 
     public List<SelectItem> getListaDbs() throws SQLException {
@@ -99,11 +119,18 @@ public class Mbrequisicion implements Serializable {
     }
 
     public void damevalores() {
-        System.out.println(empresas.getEmpresa());
+        try{
+            peticionPartesRespaldo = (ArrayList<DominioPartes>) cities.getTarget();
+            System.err.println(peticionPartesRespaldo.size());
+        }
+        catch(Exception e){
+            
+        }
+        
     }
 
     public void longitud(TransferEvent event) {
-      ArrayList<DominioPartes> partes =  (ArrayList<DominioPartes>) cities.getTarget();
-      partes = (ArrayList<DominioPartes>) cities.getSource();
+        ArrayList<DominioPartes> p = (ArrayList<DominioPartes>) cities.getTarget();
+        p = (ArrayList<DominioPartes>) cities.getSource();
     }
 }

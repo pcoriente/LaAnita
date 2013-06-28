@@ -1,0 +1,77 @@
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:f="http://java.sun.com/jsf/core">
+    <h:head>
+        <h:outputStylesheet library="css" name="main.css"/>
+        <title>Actualización de Banco</title>
+        <h:outputScript library="js" name="lenguaje.js" />
+    </h:head>
+
+    <body>
+        <div id="wrapper" align="center">
+            <ui:include src="wrapper.xhtml" />
+            <div id="content" align="center"  >
+                <br></br>
+                <h:form >
+                    <div align="right">
+                        <h:commandLink> 
+                            <p:graphicImage   style="width: 20px; alignment-adjust: middle"/> 
+                            <p:dataExporter type="pdf" target="clien" fileName="clientes"  />||  
+                        </h:commandLink>
+                        <h:commandLink >  
+                            <p:graphicImage   style="width: 20px; alignment-adjust: middle"/>
+                            <p:dataExporter type="xls" target="clien" fileName="clientes"  />||
+                        </h:commandLink>
+                        <p:commandLink styleClass="nueva"  action="menuBancos.xhtml" value="Salir" ajax="false" />|
+                    </div>
+                    <br/>
+
+                    <p:panel header="Requisición" style="width: 800px;">
+                        <br></br>
+                        <p:selectOneMenu style="width: 200px; 
+                                         float: left"
+                                         value="#{mbrequisicion.empresas}">
+                            <f:selectItems value="#{mbrequisicion.listaDbs}" />
+                            <f:converter id="empresas" converterId="converters.requsicion" />
+                        </p:selectOneMenu>
+                        <p:calendar  id="calendar" locale="es" style="float: right" effect="slideDown" pattern="dd/mm/yyyy" ></p:calendar>
+                        <p:watermark for="calendar" value="dd/mm/yyyy" /> 
+                        <br></br>
+                        <br></br><br></br>
+                        <h:graphicImage style="float: left" onclick="dlg.show()" library="images" name="carrito.png">
+                        </h:graphicImage>
+                        <p:dataTable id="tablaRequisicion"
+                                     value="#{mbrequisicion.peticionPartesRespaldo}"
+                                     var="datos">
+                            <p:column headerText="N°">
+                                <h:outputText id="idLeyenda"
+                                              value="#{datos.parte}"/>
+                            </p:column>
+                        </p:dataTable>
+                    </p:panel>
+
+                    <p:dialog header="Elija sus Productos" widgetVar="dlg">
+                        <p:pickList  id="pickList" 
+                                     effect="slide" 
+                                     value="#{mbrequisicion.cities}" 
+                                     var="city"
+                                     itemLabel="#{city}"
+                                     itemValue="#{city}">
+                            <f:converter id="partes" converterId="converters.pickList"/>
+                        </p:pickList>
+                        <p:commandButton value="Agregar" 
+                                         action="#{mbrequisicion.damevalores()}"
+                                         icon="ui-icon-check"
+                                         update="tablaRequisicion"
+                                         oncomplete="dlg.hide();"/>
+                    </p:dialog>
+                </h:form>
+            </div>
+            <!-- FIN DE CONTENIDO -->
+            <ui:include src="footer.html" />
+        </div>
+
+    </body>
+</html>

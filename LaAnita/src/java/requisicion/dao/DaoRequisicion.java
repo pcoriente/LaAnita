@@ -59,6 +59,7 @@ public class DaoRequisicion {
             d.seteMail(rs.getString("eMail"));
             domE.add(d);
         }
+        c.close();
         return domE;
     }
 
@@ -76,6 +77,7 @@ public class DaoRequisicion {
             d.setRfc(rs.getString("rfc"));
             d.seteMail(rs.getString("eMail"));
         }
+        c.close();
         return d;
     }
 
@@ -92,6 +94,7 @@ public class DaoRequisicion {
             d.setParte(rs.getString("parte"));
             partes.add(d);
         }
+        c.close();
         return partes;
     }
 
@@ -105,6 +108,7 @@ public class DaoRequisicion {
             d.setIdParte(rs.getInt("idParte"));
             d.setParte(rs.getString("parte"));
         }
+        c.close();
         return d;
     }
 }
