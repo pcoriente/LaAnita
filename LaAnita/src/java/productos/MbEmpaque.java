@@ -3,15 +3,12 @@ package productos;
 import java.io.Serializable;
 import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.faces.application.FacesMessage;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ManagedProperty;
 import javax.faces.bean.SessionScoped;
 import javax.faces.context.FacesContext;
 import javax.faces.model.SelectItem;
-import javax.faces.validator.ValidatorException;
 import javax.naming.NamingException;
 import org.primefaces.context.RequestContext;
 import productos.dao.DAOEmpaques;
@@ -21,7 +18,6 @@ import productos.dominio.Empaque;
 import productos.dominio.Marca;
 import productos.dominio.Producto;
 import productos.dominio.SubEmpaque;
-import productos.dominio.Tipo;
 import productos.dominio.UnidadEmpaque;
 import productos.dominio.Upc;
 
@@ -38,14 +34,12 @@ public class MbEmpaque implements Serializable {
     private Empaque empaque;
     private Empaque selEpq;
     private ArrayList<Empaque> empaques;
-    //private ArrayList<Empaque> empaques;
     
-    @ManagedProperty(value = "{mbMarca}")
-    private MbMarca mbMarca;
+    
     @ManagedProperty(value = "#{mbUnidadEmpaque}")
     private MbUnidadEmpaque mbUnidadEmpaque;
+    
     private ArrayList<SelectItem> listaUpcs;
-    private ArrayList<SelectItem> listaMarcas;
     private ArrayList<SelectItem> listaUnidades;
     private ArrayList<SelectItem> listaSubEmpaques;
     //private boolean old;
@@ -55,7 +49,7 @@ public class MbEmpaque implements Serializable {
         //try {
         //this.mbProducto = new MbProducto();
         //this.mbBuscar = new MbBuscarProd();
-        this.mbMarca = new MbMarca();
+        //this.mbMarca = new MbMarca();
         this.mbUnidadEmpaque = new MbUnidadEmpaque();
         this.empaque = new Empaque(0);
         //this.old=false;
@@ -66,12 +60,17 @@ public class MbEmpaque implements Serializable {
         //    Logger.getLogger(DAOEmpaques.class.getName()).log(Level.SEVERE, null, ex);
         //}
     }
+    
+    public void nuevoEmpaque(Producto producto) {
+        this.empaque=new Empaque(0);
+        this.empaque.setProducto(producto);
+    }
 
     public String salir() {
         String destino = "productosOld.menu";
         this.empaque = new Empaque(0);
         //this.mbProducto = new MbProducto();
-        this.mbMarca = new MbMarca();
+        //this.mbMarca = new MbMarca();
         this.mbUnidadEmpaque = new MbUnidadEmpaque();
         return destino;
     }
@@ -100,29 +99,6 @@ public class MbEmpaque implements Serializable {
         } else {
             this.mbUnidadEmpaque.copia(this.empaque.getUnidadEmpaque());
         }
-    }
-    
-    public void eliminarMarca() {
-        if(this.mbMarca.eliminar()) {
-            this.empaque.setMarca(this.mbMarca.getMarca());
-            this.listaMarcas=null;
-        }
-    }
-    
-    public void grabarMarca() {
-        if(this.mbMarca.grabar()) {
-            this.empaque.setMarca(this.mbMarca.getMarca());
-            this.listaMarcas=null;
-        }
-    }
-    
-    public void mttoMarcas() {
-        if(this.empaque.getMarca().getIdMarca()==0) {
-            this.mbMarca.setMarca(new Marca(0, "", false));
-        } else {
-            this.mbMarca.copia(this.empaque.getMarca());
-        }
-        //this.mbMarca.setStrFabricante(Integer.toString(this.mbMarca.getMarca().getIdFabricante()));
     }
 
     public void cargaListaSubEmpaques() {
@@ -161,8 +137,8 @@ public class MbEmpaque implements Serializable {
             fMsg.setDetail("Se requiere una parte !!");
         } else if (this.empaque.getProducto() == null || this.empaque.getProducto().getIdProducto() == 0) {
             fMsg.setDetail("Se requiere un producto !!");
-        } else if (this.empaque.getMarca() == null || this.empaque.getMarca().getIdMarca() == 0) {
-            fMsg.setDetail("Se requiere una marca !!");
+        //} else if (this.empaque.getMarca() == null || this.empaque.getMarca().getIdMarca() == 0) {
+        //    fMsg.setDetail("Se requiere una marca !!");
         } else if (this.empaque.getUnidadEmpaque() == null || this.empaque.getUnidadEmpaque().getIdUnidad() == 0) {
             fMsg.setDetail("Se requiere la unidad de empaque !!");
         } else if (this.empaque.getPiezas() <= 0) {
@@ -171,7 +147,6 @@ public class MbEmpaque implements Serializable {
             try {
                 this.dao = new DAOEmpaques();
                 if (this.empaque.getIdEmpaque() == 0) {
-                    //this.empaque.setIdEmpaque(this.dao.agregar(this.empaque, this.old));
                     this.empaque.setIdEmpaque(this.dao.agregar(this.cod_emp, this.empaque));
                 } else {
                     this.dao.modificar(this.cod_emp, this.empaque);
@@ -252,32 +227,6 @@ public class MbEmpaque implements Serializable {
             FacesContext.getCurrentInstance().addMessage(null, fMsg);
         }
         context.addCallbackParam("okEmpaque", oki);
-    }
-    
-    public void cargaMarcas() {
-        boolean oki = false;
-        FacesMessage fMsg = new FacesMessage(FacesMessage.SEVERITY_WARN, "Aviso:", "");
-        
-        this.listaMarcas = new ArrayList<SelectItem>();
-        Marca mark = new Marca(0, "SELECCIONE UNA MARCA", true);
-        this.listaMarcas.add(new SelectItem(mark, mark.toString()));
-        try {
-            DAOMarcas daoMarcas = new DAOMarcas();
-            ArrayList<Marca> lstMarcas = daoMarcas.obtenerMarcas();
-            for (Marca m : lstMarcas) {
-                this.listaMarcas.add(new SelectItem(m, m.toString()));
-            }
-            oki=true;
-        } catch (NamingException ex) {
-            fMsg.setSeverity(FacesMessage.SEVERITY_ERROR);
-            fMsg.setDetail(ex.getMessage());
-        } catch (SQLException ex) {
-            fMsg.setSeverity(FacesMessage.SEVERITY_ERROR);
-            fMsg.setDetail(ex.getErrorCode() + " " + ex.getMessage());
-        }
-        if (!oki) {
-            FacesContext.getCurrentInstance().addMessage(null, fMsg);
-        }
     }
     
     public void cargaListaUpcs() {
@@ -406,25 +355,6 @@ public class MbEmpaque implements Serializable {
 
     public void setListaUpcs(ArrayList<SelectItem> listaUpcs) {
         this.listaUpcs = listaUpcs;
-    }
-
-    public ArrayList<SelectItem> getListaMarcas() {
-        if(this.listaMarcas==null) {
-            this.cargaMarcas();
-        }
-        return listaMarcas;
-    }
-
-    public void setListaMarcas(ArrayList<SelectItem> listaMarcas) {
-        this.listaMarcas = listaMarcas;
-    }
-
-    public MbMarca getMbMarca() {
-        return mbMarca;
-    }
-
-    public void setMbMarca(MbMarca mbMarca) {
-        this.mbMarca = mbMarca;
     }
 
     public MbUnidadEmpaque getMbUnidadEmpaque() {

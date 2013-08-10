@@ -5,15 +5,12 @@ import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
-import javax.faces.context.ExternalContext;
-import javax.faces.context.FacesContext;
 import javax.naming.Context;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
-import javax.servlet.http.HttpSession;
 import javax.sql.DataSource;
-import usuarios.UsuarioSesion;
 import usuarios.dominio.Usuario;
+import utilerias.Utilerias;
 
 public class DAODbs {
 
@@ -21,13 +18,8 @@ public class DAODbs {
 
     public DAODbs() throws NamingException {
         try {
-            FacesContext context = FacesContext.getCurrentInstance();
-            ExternalContext externalContext = context.getExternalContext();
-            HttpSession httpSession = (HttpSession) externalContext.getSession(false);
-            UsuarioSesion usuarioSesion = (UsuarioSesion) httpSession.getAttribute("usuarioSesion");
-
             Context cI = new InitialContext();
-            ds = (DataSource) cI.lookup("java:comp/env/"+usuarioSesion.getJndi());
+            ds = (DataSource) cI.lookup("java:comp/env/jdbc/__systemWeb");
         } catch (NamingException ex) {
             throw (ex);
         }
@@ -80,24 +72,27 @@ public class DAODbs {
         return dbs;
     }
     
-    public Usuario login(String login, String password, String jndi) throws NamingException, SQLException {
+    public Usuario login(String login, String password, String jndi, int idDbs) throws NamingException, SQLException, Exception {
         Usuario usuario=null;
-        Context cI = new InitialContext();
-        DataSource ds1=(DataSource) cI.lookup("java:comp/env/"+jndi);
-        Connection cn1=ds1.getConnection();
-        Statement st1 = cn1.createStatement();
+        Connection cn=ds.getConnection();
+        
+        Statement st = cn.createStatement();
         try {
-            ResultSet rs1=st1.executeQuery("SELECT * FROM usuarios WHERE login='"+login+"'");
-            if(rs1.next()) {
-                //if(rs1.getString("password").equals(password)) {
-                    usuario=this.construirUsuario(rs1);
-                //} else {
-                //    usuario=new Usuario();
-                //    usuario.setId(0);
-                //}
+            String strSQL="SELECT u.idUsuario, u.usuario, u.password, u.email, isnull(a.idPerfil, 0) as idPerfil "
+                    + "FROM usuarios u "
+                    + "LEFT JOIN (SELECT idUsuario, idPerfil FROM accesos WHERE idDbs="+idDbs+") a ON a.idUsuario=u.idUsuario "
+                    + "WHERE u.login='"+login+"'";
+            ResultSet rs=st.executeQuery(strSQL);
+            if(rs.next()) {
+                String clave=Utilerias.md5(password);
+                if(rs.getString("password").equals(clave)) {
+                    usuario=this.construirUsuario(rs);
+                } else {
+                    usuario=new Usuario();
+                }
             }
         } finally {
-            cn1.close();
+            cn.close();
         }
         return usuario;
     }
@@ -107,7 +102,7 @@ public class DAODbs {
         usuario.setId(rs.getInt("idUsuario"));
         usuario.setUsuario(rs.getString("usuario"));
         usuario.setCorreo(rs.getString("email"));
-        usuario.setIdRol(rs.getInt("rol"));
+        usuario.setIdPerfil(rs.getInt("idPerfil"));
         return usuario;
     }
 }

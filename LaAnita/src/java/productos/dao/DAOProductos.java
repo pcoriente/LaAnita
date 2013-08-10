@@ -55,7 +55,8 @@ public class DAOProductos {
             st.executeUpdate("UPDATE productos "
                     + "SET idParte="+p.getParte2().getIdParte()+", descripcion='"+p.getDescripcion()+"', "
                     + "idTipo="+p.getTipo().getIdTipo()+", idSubGrupo="+p.getSubGrupo().getIdSubGrupo()+", "
-                    + "idUnidad="+p.getUnidad().getIdUnidad()+", "
+                    + "idGrupo="+p.getGrupo().getIdGrupo() + ", "
+                    + "idUnidad="+p.getUnidad().getIdUnidad()+", idMarca=" + p.getMarca().getIdMarca() + ", "
                     + "contenido="+p.getContenido()+", idUnidadMedida="+p.getUnidadMedida().getIdUnidadMedida()+", idImpuesto= "+p.getImpuesto().getIdGrupo()+ " "
                     + "WHERE idProducto="+p.getIdProducto());
             for(Upc u: p.getUpcs()) {
@@ -75,26 +76,19 @@ public class DAOProductos {
     public int agregar(Producto p) throws SQLException, NamingException {
         int idProducto=0;
         String strSQL=""
-                + "INSERT INTO productos (idParte, descripcion, idTipo, idSubGrupo, idUnidad, contenido, idUnidadMedida, idImpuesto) "
-                + "VALUES ("+ p.getParte2().getIdParte() + ", '" + p.getDescripcion() + "',"
-                + " " + p.getTipo().getIdTipo() + ", " + p.getSubGrupo().getIdSubGrupo() + ","
-                + " " + p.getUnidad().getIdUnidad() + ", " + p.getContenido() + ", " + p.getUnidadMedida().getIdUnidadMedida() + ","
-                + " " + p.getImpuesto().getIdGrupo() + ")";
+                + "INSERT INTO productos (idParte, descripcion, idTipo, idGrupo, idSubGrupo, idMarca, idUnidad, contenido, idUnidadMedida, idImpuesto) "
+                + "VALUES ("+ p.getParte2().getIdParte() + ", '" + p.getDescripcion() + "', "
+                + p.getTipo().getIdTipo() + ", " + p.getGrupo().getIdGrupo() + ", " + p.getSubGrupo().getIdSubGrupo() + ", " + p.getMarca().getIdMarca() + ", "
+                + p.getUnidad().getIdUnidad() + ", " + p.getContenido() + ", " + p.getUnidadMedida().getIdUnidadMedida() + ","
+                + p.getImpuesto().getIdGrupo() + ")";
         Connection cn=this.ds.getConnection();
         Statement st=cn.createStatement();
         try {
-            //DAOUpcs daoUpcs=new DAOUpcs();
             st.executeUpdate("begin transaction");
             st.executeUpdate(strSQL);
             ResultSet rs=st.executeQuery("SELECT max(idProducto) AS idProducto FROM productos");
             if(rs.next()) {
                 idProducto=rs.getInt("idProducto");
-                /*
-                for(Upc u:p.getUpcs()) {
-                    u.setIdProducto(idProducto);
-                }
-                p.setUpcs(daoUpcs.agregarUpcs(p.getUpcs()));
-                * */
             }
             st.executeUpdate("commit transaction");
         } catch(SQLException ex) {
@@ -134,17 +128,20 @@ public class DAOProductos {
         ArrayList<Producto> productos=new ArrayList<Producto>();
         String strSQL=""
                 + "SELECT p.idProducto, pa.idParte, pa.parte, p.descripcion, t.idTipo, t.tipo,"
-                + "     sg.idSubGrupo, sg.subGrupo, g.idGrupo, g.codigoGrupo, g.grupo, "
+                + "     isnull(sg.idSubGrupo, 0) as idSubGrupo, isnull(sg.subGrupo, '') as subGrupo, "
+                + "     isnull(g.idGrupo, 0) as idGrupo, isnull(g.codigoGrupo, 0) as codigoGrupo, isnull(g.grupo, '') as grupo, "
+                + "     isnull(m.idMarca, 0) as idMarca, isnull(m.marca, '') as marca, "
                 + "     COALESCE(u.idUnidad, 0) AS idUnidad, COALESCE(u.unidad, '') AS UNIDAD, COALESCE(u.abreviatura, '') AS abreviatura, p.contenido,"
                 + "     COALESCE(um.idUnidadMedida, 0) AS idUnidadMedida, COALESCE(um.unidadMedida, '') as unidadMedida, COALESCE(um.abreviatura, '') as medAbrev, 0 as idTipoUnidadMedida,"
-                + "     i.idGrupo, i.grupo "
+                + "     i.idGrupo as idImpuestoGrupo, i.grupo as impuestoGrupo "
                 + "FROM productos p "
                 + "INNER JOIN productosPartes pa ON pa.idParte=p.idParte "
                 + "INNER JOIN productosTipos t ON t.idTipo=p.idTipo "
-                + "INNER JOIN productosSubGrupos sg ON sg.idSubGrupo=p.idSubGrupo "
-                + "INNER JOIN productosGrupos g ON g.idGrupo=sg.idGrupo "
+                + "LEFT JOIN productosSubGrupos sg ON sg.idSubGrupo=p.idSubGrupo "
+                + "LEFT JOIN productosGrupos g ON g.idGrupo=p.idGrupo "
                 + "LEFT JOIN productosUnidades u ON u.idUnidad=p.idUnidad "
                 + "LEFT JOIN unidadesMedida um ON um.idUnidadMedida=p.idUnidadMedida "
+                + "LEFT JOIN productosMarcas m on m.idMarca=p.idMarca "
                 + "INNER JOIN impuestosGrupos i ON i.idGrupo=p.idImpuesto "
                 + "WHERE p.idParte="+idParte;
         Connection cn=ds.getConnection();
@@ -168,17 +165,20 @@ public class DAOProductos {
         Producto producto=null;
         String strSQL=""
                 + "SELECT p.idProducto, pa.idParte, pa.parte, p.descripcion, t.idTipo, t.tipo,"
-                + "     sg.idSubGrupo, sg.subGrupo, g.idGrupo, g.codigoGrupo, g.grupo, "
+                + "     isnull(sg.idSubGrupo, 0) as idSubGrupo, isnull(sg.subGrupo, '') as subGrupo, "
+                + "     isnull(g.idGrupo, 0) as idGrupo, isnull(g.codigoGrupo, 0) as codigoGrupo, isnull(g.grupo, '') as grupo, "
+                + "     isnull(m.idMarca, 0) as idMarca, isnull(m.marca, '') as marca, "
                 + "     COALESCE(u.idUnidad, 0) AS idUnidad, COALESCE(u.unidad, '') AS UNIDAD, COALESCE(u.abreviatura, '') AS abreviatura, p.contenido,"
                 + "     COALESCE(um.idUnidadMedida, 0) AS idUnidadMedida, COALESCE(um.unidadMedida, '') as unidadMedida, COALESCE(um.abreviatura, '') as medAbrev, 0 as idTipoUnidadMedida,"
-                + "     i.idGrupo, i.grupo "
+                + "     i.idGrupo as idImpuestoGrupo, i.grupo as impuestoGrupo "
                 + "FROM productos p "
                 + "INNER JOIN productosPartes pa ON pa.idParte=p.idParte "
                 + "INNER JOIN productosTipos t ON t.idTipo=p.idTipo "
-                + "INNER JOIN productosSubGrupos sg ON sg.idSubGrupo=p.idSubGrupo "
-                + "INNER JOIN productosGrupos g ON g.idGrupo=sg.idGrupo "
+                + "LEFT JOIN productosSubGrupos sg ON sg.idSubGrupo=p.idSubGrupo "
+                + "LEFT JOIN productosGrupos g ON g.idGrupo=p.idGrupo "
                 + "LEFT JOIN productosUnidades u ON u.idUnidad=p.idUnidad "
                 + "LEFT JOIN unidadesMedida um ON um.idUnidadMedida=p.idUnidadMedida "
+                + "LEFT JOIN productosMarcas m on m.idMarca=p.idMarca "
                 + "INNER JOIN impuestosGrupos i ON i.idGrupo=p.idImpuesto "
                 + "WHERE p.idProducto="+idProducto;
         Connection cn=ds.getConnection();
@@ -200,6 +200,7 @@ public class DAOProductos {
         Producto prod=new Producto(rs.getInt("idProducto"));
         prod.setParte2(new Parte2(rs.getInt("idParte"), rs.getString("parte")));
         prod.setDescripcion(rs.getString("descripcion"));
+        prod.setMarca(new Marca(rs.getInt("idMarca"), rs.getString("marca"), false));
         //prod.setCodigoBarras(rs.getString("codigoBarras"));
         prod.setTipo(new Tipo(rs.getInt("idTipo"), rs.getString("tipo")));
         prod.setGrupo(new Grupo(rs.getInt("idGrupo"), rs.getInt("codigoGrupo"), rs.getString("grupo")));
@@ -209,32 +210,10 @@ public class DAOProductos {
         //prod.setContenido(d.toString());
         prod.setContenido(rs.getDouble("contenido"));
         prod.setUnidadMedida(new UnidadMedida(rs.getInt("idUnidadMedida"), rs.getString("unidadMedida"), rs.getString("medAbrev"), rs.getInt("idTipo")));
-        prod.setImpuesto(new ImpuestoGrupo(rs.getInt("idGrupo"), rs.getString("grupo")));
+        prod.setImpuesto(new ImpuestoGrupo(rs.getInt("idImpuestoGrupo"), rs.getString("impuestoGrupo")));
         return prod;
     }
-    /*
-    public int agregarParte(String strParte) throws SQLException {
-        int idParte=0;
-        String strSQL="INSERT INTO productosPartes (parte) VALUES ('"+strParte+"')";
-        Connection cn=ds.getConnection();
-        Statement st=cn.createStatement();
-        try {
-            st.executeUpdate("begin Transaction");
-            st.executeUpdate(strSQL);
-            ResultSet rs=st.executeQuery("SELECT MAX(idParte) as idParte FROM productosPartes");
-            if(rs.next()) {
-                idParte=rs.getInt("idParte");
-            }
-            st.executeUpdate("commit Transaction");
-        } catch(SQLException ex) {
-            st.executeUpdate("rollback Transaction");
-            throw(ex);
-        } finally {
-            cn.close();
-        }
-        return idParte;
-    }
-    */
+    
     public ArrayList<Parte> completePartes(String strParte) throws SQLException {
         ArrayList<Parte> partes=new ArrayList<Parte>();
         String strSQL="SELECT idParte, parte FROM productosPartes WHERE parte like '%"+strParte+"%' ORDER BY parte";

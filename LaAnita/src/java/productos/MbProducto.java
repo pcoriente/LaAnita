@@ -13,13 +13,12 @@ import javax.faces.bean.SessionScoped;
 import javax.faces.context.FacesContext;
 import javax.faces.model.SelectItem;
 import javax.naming.NamingException;
-import productos.dao.DAOGrupos;
+import productos.dao.DAOMarcas;
 import productos.dao.DAOPartes;
 import productos.dao.DAOProductos;
-import productos.dao.DAOSubGrupos;
-import productos.dao.DAOTipos;
 import productos.dao.DAOUnidades;
 import productos.dominio.Grupo;
+import productos.dominio.Marca;
 import productos.dominio.Parte;
 import productos.dominio.Parte2;
 import productos.dominio.Producto;
@@ -45,7 +44,7 @@ public class MbProducto implements Serializable {
     //private Grupo grupo;
     private ArrayList<SelectItem> listaGrupos;
     private ArrayList<SelectItem> listaSubGrupos;
-    //private ArrayList<SelectItem> listaMarcas;
+    private ArrayList<SelectItem> listaMarcas;
     private ArrayList<SelectItem> listaUnidades;
     private ArrayList<SelectItem> listaUnidadesMedida;
     //private SelectItem[] arrayTipos;
@@ -63,6 +62,8 @@ public class MbProducto implements Serializable {
     private MbGrupo mbGrupo;
     @ManagedProperty(value = "#{mbSubGrupo}")
     private MbSubGrupo mbSubGrupo;
+    @ManagedProperty(value = "{mbMarca}")
+    private MbMarca mbMarca;
     @ManagedProperty(value = "#{mbUnidadProducto}")
     private MbUnidadProducto mbUnidadProducto;
     @ManagedProperty(value = "#{mbImpuesto}")
@@ -78,6 +79,7 @@ public class MbProducto implements Serializable {
             this.mbTipo = new MbTipo();
             this.mbGrupo = new MbGrupo();
             this.mbSubGrupo = new MbSubGrupo();
+            this.mbMarca = new MbMarca();
             this.mbUnidadProducto = new MbUnidadProducto();
             this.mbImpuesto = new FrmImpuestos();
             //this.arrayTipos =  new SelectItem[1];
@@ -132,6 +134,55 @@ public class MbProducto implements Serializable {
             this.mbUnidadProducto.setUnidad(this.mbUnidadProducto.copia(this.producto.getUnidad()));
         }
     }
+    
+    public void eliminarMarca() {
+        if(this.mbMarca.eliminar()) {
+            this.producto.setMarca(this.mbMarca.getMarca());
+            this.listaMarcas=null;
+        }
+    }
+    
+    public void grabarMarca() {
+        if(this.mbMarca.grabar()) {
+            this.producto.setMarca(this.mbMarca.getMarca());
+            this.listaMarcas=null;
+        }
+    }
+    
+    public void cargaMarcas() {
+        boolean oki = false;
+        FacesMessage fMsg = new FacesMessage(FacesMessage.SEVERITY_WARN, "Aviso:", "");
+        
+        this.listaMarcas = new ArrayList<SelectItem>();
+        Marca mark = new Marca(0, "SELECCIONE UNA MARCA", true);
+        this.listaMarcas.add(new SelectItem(mark, mark.toString()));
+        try {
+            DAOMarcas daoMarcas = new DAOMarcas();
+            ArrayList<Marca> lstMarcas = daoMarcas.obtenerMarcas();
+            for (Marca m : lstMarcas) {
+                this.listaMarcas.add(new SelectItem(m, m.toString()));
+            }
+            oki=true;
+        } catch (NamingException ex) {
+            fMsg.setSeverity(FacesMessage.SEVERITY_ERROR);
+            fMsg.setDetail(ex.getMessage());
+        } catch (SQLException ex) {
+            fMsg.setSeverity(FacesMessage.SEVERITY_ERROR);
+            fMsg.setDetail(ex.getErrorCode() + " " + ex.getMessage());
+        }
+        if (!oki) {
+            FacesContext.getCurrentInstance().addMessage(null, fMsg);
+        }
+    }
+    
+    public void mttoMarcas() {
+        if(this.producto.getMarca().getIdMarca()==0) {
+            this.mbMarca.setMarca(new Marca(0, "", false));
+        } else {
+            this.mbMarca.copia(this.producto.getMarca());
+        }
+        //this.mbMarca.setStrFabricante(Integer.toString(this.mbMarca.getMarca().getIdFabricante()));
+    }
 
     public void eliminarSubGrupo() {
         if (this.mbSubGrupo.eliminar(this.producto.getGrupo().getIdGrupo())) {
@@ -173,10 +224,16 @@ public class MbProducto implements Serializable {
             }
         }
     }
+    
+    public void cambioGrupo() {
+        this.producto.getSubGrupo().setIdSubGrupo(0);
+        this.producto.getSubGrupo().setSubGrupo("");
+        this.cargaSubGrupos();
+    }
 
     public void mttoGrupo() {
         if (this.producto.getGrupo().getIdGrupo() == 0) {
-            this.mbGrupo.setGrupo(new Grupo(0, this.mbGrupo.obtenerUltimoGrupo(), ""));
+            this.mbGrupo.setGrupo(new Grupo(0, 0, ""));
         } else {
             this.mbGrupo.setGrupo(this.mbGrupo.copia(this.producto.getGrupo()));
         }
@@ -232,7 +289,7 @@ public class MbProducto implements Serializable {
         this.producto.setUnidadMedida(new UnidadMedida(0, "", "", 0));
     }
 
-    public void nuevoProducto() {
+    public void nuevo() {
         this.producto = new Producto(0);
     }
 
@@ -245,8 +302,8 @@ public class MbProducto implements Serializable {
                 fMsg.setDetail("Se requiere una parte !!");
             } else if (this.producto.getTipo().getIdTipo() == 0) {
                 fMsg.setDetail("Se requiere un tipo de producto !!");
-            } else if (this.producto.getSubGrupo().getIdSubGrupo() == 0) {
-                fMsg.setDetail("Se requiere el subgrupo !!");
+            } else if (this.producto.getGrupo().getIdGrupo() == 0) {
+                fMsg.setDetail("Se requiere el grupo !!");
             } else if(this.producto.getUnidad().getIdUnidad() == 0) {
                 fMsg.setDetail("Se requiere una unidad de empaque");
             } else if(this.producto.getUnidad().getIdUnidad() > 1 && (this.producto.getContenido() <= 0 || this.producto.getContenido() >= 1000)) {
@@ -260,16 +317,16 @@ public class MbProducto implements Serializable {
                 try {
                     if (this.producto.getIdProducto() == 0) {
                         this.producto.setIdProducto(this.dao.agregar(this.producto));
-                        if (this.producto.getUpcs().isEmpty()) {
-                            resultado = true;
+                        if(this.producto.getUpcs().isEmpty()) {
+                            resultado=true;
                         } else {
                             for (Upc u : this.producto.getUpcs()) {
                                 u.setIdProducto(this.producto.getIdProducto());
-                                this.cargaListaUpcs();
                             }
                             fMsg.setSeverity(FacesMessage.SEVERITY_INFO);
                             fMsg.setDetail("El producto se grabó correctamente, hay modificaciones pendientes !!");
                         }
+                        this.cargaListaUpcs();
                     } else {
                         this.dao.modificar(producto);
                         resultado = true;
@@ -377,6 +434,7 @@ public class MbProducto implements Serializable {
      * */
 
     public void cargaSubGrupos() {
+        
         this.listaSubGrupos = new ArrayList<SelectItem>();
         SubGrupo sgpo = new SubGrupo(0, "SELECCIONE");
         this.listaSubGrupos.add(new SelectItem(sgpo, sgpo.toString()));
@@ -410,7 +468,7 @@ public class MbProducto implements Serializable {
         this.listaUpcs = new ArrayList<SelectItem>();
         if (this.producto.getIdProducto() > 0) {
             Upc xUpc = new Upc(this.producto.getIdProducto());
-            xUpc.setIdProducto(this.producto.getIdProducto());
+            //xUpc.setIdProducto(this.producto.getIdProducto());
             this.listaUpcs.add(new SelectItem(xUpc, xUpc.toString()));
         }
         for (Upc u : this.producto.getUpcs()) {
@@ -624,4 +682,23 @@ public class MbProducto implements Serializable {
         this.arraySubGrupos = arraySubGrupos;
     }
     * */
+
+    public MbMarca getMbMarca() {
+        return mbMarca;
+    }
+
+    public void setMbMarca(MbMarca mbMarca) {
+        this.mbMarca = mbMarca;
+    }
+
+    public ArrayList<SelectItem> getListaMarcas() {
+        if(this.listaMarcas==null) {
+            this.cargaMarcas();
+        }
+        return listaMarcas;
+    }
+
+    public void setListaMarcas(ArrayList<SelectItem> listaMarcas) {
+        this.listaMarcas = listaMarcas;
+    }
 }

@@ -42,10 +42,8 @@ public class FiltroSesionUsuario implements Filter {
             httpSession.setAttribute("usuarioSesion", usuarioSesion);
         }
         if(destino.endsWith("/")) {
-        //if(destino.equals("http://localhost:8080/LaAnita/")) {
             chain.doFilter(request, response);
         } else if(usuarioSesion.getUsuario()==null && !destino.contains("login.xhtml")) {
-            //httpResponse.sendRedirect("http://localhost:8080/LaAnita/faces/login.xhtml");
             httpResponse.sendRedirect("/LaAnita/faces/login.xhtml");
         } else {
             request.setCharacterEncoding("UTF-8");

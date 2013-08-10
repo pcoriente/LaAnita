@@ -65,7 +65,7 @@ public class DAOUsuarios {
         usuario.setId(rs.getInt("idUsuario"));
         usuario.setUsuario(rs.getString("usuario"));
         usuario.setCorreo(rs.getString("email"));
-        usuario.setIdRol(rs.getInt("rol"));
+        usuario.setIdPerfil(rs.getInt("idPerfil"));
         return usuario;
     }
 }

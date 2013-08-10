@@ -12,34 +12,7 @@
         <div id="header">
             <h:graphicImage name="/images/encabezado.jpg" /> 
             <h:form>
-                <p:menubar widgetVar="menu" >
-                    <p:submenu label="Catalogos" >
-                        <p:menuitem value="Empresas" url="menuEmpresas.xhtml" />
-                        <p:menuitem value="Cedis" url="menuCedis.xhtml" />
-                        <p:menuitem value="Bancos" url="menuBancos.xhtml" />
-                        <p:menuitem value="ProductosOld" url="menuProductosOld.xhtml" />
-                        <p:menuitem value="Productos" url="productos.xhtml" />
-                        <p:submenu label="Impuestos" >
-                            <p:menuitem value="Mantenimiento" url="impuestos.xhtml" />
-                             
-                        </p:submenu>
-                    </p:submenu>
-                    <p:submenu label="Compras" >
-                        <p:menuitem value="Proveedores" url="menuProveedores.xhtml" />
-                        <p:menuitem value="Clientes" url="menuClientes.xhtml" />
-                    </p:submenu>
-                    <p:submenu label="Inventarios" >
-                        <p:menuitem value="Clasificaciones" url="menuClasificaciones.xhtml" />
-                        <p:menuitem value="Marcas" url="menuMarcas.xhtml" />
-                    </p:submenu>
-                    <p:submenu label="Pedidos" >
-                        <p:menuitem value="Calculo de Pedidos" url="pedidos.xhtml" />
-                    </p:submenu>
-                    <p:submenu label="Requisicion" >
-                        <p:menuitem value="Requisicion" url="requisicion.xhtml" />
-                        <p:menuitem value="PickList" url="PickListPruebas.xhtml" />
-                    </p:submenu>
-                </p:menubar>
+                <p:menubar model="#{mbMenu.model}"/>
             </h:form>
  
         </div> <!-- FIN ENCABEZADO -->

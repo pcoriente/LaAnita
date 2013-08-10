@@ -22,7 +22,7 @@ public class MiniCedisConverter implements Converter {
             if(idCedis==0) {
                 cedis=new MiniCedis();
                 cedis.setIdCedis(0);
-                cedis.setCodigo("00");
+                //cedis.setCodigo("00");
                 cedis.setCedis("Seleccione una bodega");
             } else {
                 DAOCedis dao=new DAOCedis();

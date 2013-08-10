@@ -15,6 +15,8 @@ import javax.faces.bean.ManagedProperty;
 import javax.faces.context.FacesContext;
 import javax.faces.model.SelectItem;
 import javax.naming.NamingException;
+import main.MbMenu;
+import usuarios.MbAcciones;
 import usuarios.UsuarioSesion;
 import usuarios.dominio.Usuario;
 
@@ -26,12 +28,17 @@ public class MbDbs implements Serializable {
     private String password;
     @ManagedProperty(value = "#{usuarioSesion}")
     private UsuarioSesion usuarioSesion;
+    //@ManagedProperty(value = "#{mbMenu}")
+    //private MbMenu mbMenu;
+    @ManagedProperty(value = "#{mbAcciones}")
+    private MbAcciones mbAcciones;
     private Dbs dbs;
     private List<SelectItem> listaDbs;
     DAODbs dao;
 
     public MbDbs() throws NamingException {
         dao=new DAODbs();
+        //this.mbAcciones=new MbAcciones(0);
     }
 
     public Dbs getDbs() {
@@ -103,34 +110,53 @@ public class MbDbs implements Serializable {
         return bases;
     }
     
-    public String doLogin() throws SQLException, NamingException {
-        FacesMessage mensajeErrorLogin = new FacesMessage();
-        String outcome;
-
-        Usuario usuario=this.dao.login(this.login, this.password, this.dbs.getJndiDbs());
-        if (usuario == null) {
-            mensajeErrorLogin.setDetail("Usuario no válido !!!");
-            FacesContext.getCurrentInstance().addMessage(null, mensajeErrorLogin);
-            outcome = "fallo.login";
-        } else if(usuario.getId()==0) {
-            mensajeErrorLogin.setDetail("Clave incorrecta !!!");
-            FacesContext.getCurrentInstance().addMessage(null, mensajeErrorLogin);
-            outcome = "fallo.login";
-        } else {
-            /*
-            FacesContext context = FacesContext.getCurrentInstance();
-            ExternalContext externalContext = context.getExternalContext();
-            HttpSession httpSession = (HttpSession) externalContext.getSession(false);
-            UsuarioSesion userSession = (UsuarioSesion) httpSession.getAttribute("usuarioSesion");
-            userSession.setUsuario(usuario);
-            userSession.setJndi(this.dbs.getJndiDbs());
-            httpSession.setAttribute("usuarioSesion", userSession);
-             * 
-             */
-            this.usuarioSesion.setUsuario(usuario);
-            this.usuarioSesion.setJndi(this.dbs.getJndiDbs());
-            outcome = "exito.login";
+    public String doLogin() {
+        FacesMessage fMsg = new FacesMessage(FacesMessage.SEVERITY_WARN, "Aviso:", "");
+        String outcome=null;
+        try {
+            Usuario usuario = this.dao.login(this.login, this.password, this.dbs.getJndiDbs(), this.dbs.getIdDbs());
+            if (usuario == null) {
+                fMsg.setDetail("Usuario no válido !!!");
+            } else if(usuario.getId()==0) {
+                fMsg.setDetail("Clave incorrecta !!!");
+            } else if(usuario.getIdPerfil()==0) {
+                fMsg.setDetail("El usuario no tiene permisos para ingresar al sistema !!!");
+            } else {
+                this.usuarioSesion.setUsuario(usuario);
+                this.usuarioSesion.setJndi(this.dbs.getJndiDbs());
+                //this.mbMenu.actualizarMenu();
+                outcome = "exito.login";
+            }
+        } catch (NamingException ex) {
+            fMsg.setSeverity(FacesMessage.SEVERITY_ERROR);
+            fMsg.setDetail(ex.getMessage());
+        } catch (SQLException ex) {
+            fMsg.setSeverity(FacesMessage.SEVERITY_ERROR);
+            fMsg.setDetail(ex.getErrorCode() + " " + ex.getMessage());
+        } catch (Exception ex) {
+            fMsg.setSeverity(FacesMessage.SEVERITY_ERROR);
+            fMsg.setDetail("Error al encriptar el password !!!");
+        }
+        if(outcome==null) {
+            FacesContext.getCurrentInstance().addMessage(null, fMsg);
         }
         return outcome;
     }
+
+    public MbAcciones getMbAcciones() {
+        return mbAcciones;
+    }
+
+    public void setMbAcciones(MbAcciones mbAcciones) {
+        this.mbAcciones = mbAcciones;
+    }
+    /*
+    public MbMenu getMbMenu() {
+        return mbMenu;
+    }
+
+    public void setMbMenu(MbMenu mbMenu) {
+        this.mbMenu = mbMenu;
+    }
+    * */
 }

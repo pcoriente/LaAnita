@@ -48,7 +48,7 @@ public class DAOEmpaques {
         try {
             st.executeUpdate("begin transaction");
             st.executeUpdate("UPDATE empaques "
-                    + "SET cod_pro='"+e.getCod_pro()+"', idProducto="+e.getProducto().getIdProducto()+", idMarca=" + e.getMarca().getIdMarca() + ", "
+                    + "SET cod_pro='"+e.getCod_pro()+"', idProducto="+e.getProducto().getIdProducto() + ", "
                     + "piezas="+e.getPiezas()+", idUnidadEmpaque="+e.getUnidadEmpaque().getIdUnidad()+", idSubEmpaque="+e.getSubEmpaque().getIdEmpaque()+", "
                     + "dun14='"+e.getDun14()+"', peso="+e.getPeso()+", volumen= "+e.getVolumen()+ " "
                     + "WHERE idEmpaque="+e.getIdEmpaque());
@@ -72,7 +72,7 @@ public class DAOEmpaques {
     public int agregar(String cod_emp, Empaque empaque) throws SQLException {
         int idEmpaque=0;
         String strSQL="INSERT INTO empaques (cod_pro, idProducto, idMarca, piezas, idUnidadEmpaque, idSubEmpaque, dun14, peso, volumen) "
-                + "VALUES ('"+empaque.getCod_pro() + "', " + empaque.getProducto().getIdProducto() + ", " + empaque.getMarca().getIdMarca() + ", "
+                + "VALUES ('"+empaque.getCod_pro() + "', " + empaque.getProducto().getIdProducto() + ", "
                 + " "+empaque.getPiezas() + ", " + empaque.getUnidadEmpaque().getIdUnidad() + ", " + empaque.getSubEmpaque().getIdEmpaque() + ","
                 + " '"+empaque.getDun14() + "', " + empaque.getPeso() + ", " + empaque.getVolumen() + ")";
         Connection cn=this.ds.getConnection();
@@ -104,12 +104,10 @@ public class DAOEmpaques {
         DAOProductos daoProductos;
         String strSQL=""
                 + "SELECT e.idEmpaque, e.cod_pro, e.idProducto, e.piezas, e.dun14, e.peso, e.volumen"
-                + "     , isnull(m.idMarca, 0) as idMarca, isnull(m.marca, '') as marca"
                 + "     , u.idUnidad as idUnidadEmpaque, u.unidad as unidadEmpaque, u.abreviatura as abreviaturaEmpaque"
                 + "     , isnull(se.idEmpaque, 0) as idSubEmpaque, se.piezas as piezasSubEmpaque"
                 + "     , su.idUnidad as idUnidadSubEmpaque, su.unidad as unidadSubEmpaque, su.abreviatura as abreviaturaSubEmpaque "
                 + "FROM empaques e "
-                + "LEFT JOIN productosMarcas m ON m.idMarca=e.idMarca "
                 + "INNER JOIN empaquesUnidades u ON u.idUnidad=e.idUnidadEmpaque "
                 + "LEFT JOIN empaques se ON se.idEmpaque=e.idSubEmpaque "
                 + "LEFT JOIN empaquesUnidades su ON su.idUnidad=se.idUnidadEmpaque "
@@ -133,12 +131,10 @@ public class DAOEmpaques {
         DAOProductos daoProductos;
         String strSQL=""
                 + "SELECT e.idEmpaque, e.cod_pro, e.idProducto, e.piezas, e.dun14, e.peso, e.volumen"
-                + "     , isnull(m.idMarca, 0) as idMarca, isnull(m.marca, '') as marca"
                 + "     , u.idUnidad as idUnidadEmpaque, u.unidad as unidadEmpaque, u.abreviatura as abreviaturaEmpaque"
                 + "     , isnull(se.idEmpaque, 0) as idSubEmpaque, se.piezas as piezasSubEmpaque"
                 + "     , su.idUnidad as idUnidadSubEmpaque, su.unidad as unidadSubEmpaque, su.abreviatura as abreviaturaSubEmpaque "
                 + "FROM empaques e "
-                + "LEFT JOIN productosMarcas m ON m.idMarca=e.idMarca "
                 + "INNER JOIN empaquesUnidades u ON u.idUnidad=e.idUnidadEmpaque "
                 + "LEFT JOIN empaques se ON se.idEmpaque=e.idSubEmpaque "
                 + "LEFT JOIN empaquesUnidades su ON su.idUnidad=se.idUnidadEmpaque "
@@ -161,14 +157,14 @@ public class DAOEmpaques {
         Empaque epq=new Empaque(rs.getInt("idEmpaque"));
         epq.setCod_pro(rs.getString("cod_pro"));
         epq.setProducto(daoProductos.obtenerProducto(rs.getInt("idProducto")));
-        epq.setMarca(new Marca(rs.getInt("idMarca"), rs.getString("marca"), false));
+        //epq.setMarca(new Marca(rs.getInt("idMarca"), rs.getString("marca"), false));
         epq.setPiezas(rs.getInt("piezas"));
         UnidadEmpaque unidadEmpaque=new UnidadEmpaque(rs.getInt("idUnidadEmpaque"), rs.getString("unidadEmpaque"), rs.getString("abreviaturaEmpaque"));
         epq.setUnidadEmpaque(unidadEmpaque);
         SubEmpaque subEmpaque=new SubEmpaque(rs.getInt("idSubEmpaque"));
         if(subEmpaque.getIdEmpaque() > 0) {
             UnidadEmpaque unidadSubEmpaque=new UnidadEmpaque(rs.getInt("idUnidadSubEmpaque"), rs.getString("unidadSubEmpaque"), rs.getString("abreviaturaSubEmpaque"));
-            subEmpaque.setPiezas(rs.getInt("subEmpaquePiezas"));
+            subEmpaque.setPiezas(rs.getInt("piezasSubEmpaque"));
             subEmpaque.setUnidadEmpaque(unidadSubEmpaque);
         }
         epq.setSubEmpaque(subEmpaque);

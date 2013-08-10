@@ -35,6 +35,39 @@ public class DAOUnidadesMedida {
         }
     }
     
+    public void modificar(UnidadMedida unidadMedida) throws SQLException {
+        Connection cn=this.ds.getConnection();
+        Statement st=cn.createStatement();
+        try {
+            st.executeUpdate("UPDATE unidadesMedida "
+                    + "SET unidadMedida='"+unidadMedida.getUnidadMedida()+"', abreviatura='"+unidadMedida.getAbreviatura()+"' "
+                    + "WHERE idUnidadMedida="+unidadMedida.getIdUnidadMedida());
+        } finally {
+            cn.close();
+        }
+    }
+    
+    public int agregar(UnidadMedida unidadMedida) throws SQLException {
+        int idUnidadMedida=0;
+        Connection cn=this.ds.getConnection();
+        Statement st=cn.createStatement();
+        try {
+            st.executeUpdate("begin Transaction");
+            st.executeUpdate("INSERT INTO unidadesMedida (unidadMedida, abreviatura) "
+                    + "VALUES ('"+unidadMedida.getUnidadMedida()+"', '"+unidadMedida.getAbreviatura()+"')");
+            
+            ResultSet rs=st.executeQuery("SELECT MAX(idUnidadMedida) AS idUnidadMedida FROM unidadesMedida");
+            if(rs.next()) idUnidadMedida=rs.getInt("idUnidadMedida");
+            st.executeUpdate("commit Transaction");
+        } catch (SQLException ex) {
+            st.executeUpdate("rollback Transaction");
+            throw(ex);
+        } finally {
+            cn.close();
+        }
+        return idUnidadMedida;
+    }
+    
     public ArrayList<UnidadMedida> obtenerUnidades() throws SQLException {
         ArrayList<UnidadMedida> unidades=new ArrayList<UnidadMedida>();
         String strSQL="SELECT * FROM unidadesMedida ORDER BY unidadMedida";

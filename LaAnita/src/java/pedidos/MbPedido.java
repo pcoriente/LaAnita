@@ -135,7 +135,8 @@ public String Salir(){
     public void agregarProducto() throws SQLException {
         String cod_emp = mbBuscar.getProducto().getCod_emp();
         String cod_pro = mbBuscar.getProducto().getCod_pro();
-        String cod_bod = miniCedis.getCodigo();
+        //String cod_bod = miniCedis.getCodigo();
+        String cod_bod = Integer.toString(miniCedis.getIdCedis());
         //String cod_bod = String.format("%02d", miniCedis.getCodigo());
 
         if (!productoAgregado(cod_emp, cod_pro, cod_bod)) {
@@ -143,6 +144,7 @@ public String Salir(){
         cancelarProducto();
     }
 
+    //private boolean productoAgregado(String cod_emp, String cod_pro, String cod_bod) throws SQLException {
     private boolean productoAgregado(String cod_emp, String cod_pro, String cod_bod) throws SQLException {
         int i = 0;
         boolean agregado = false;
@@ -464,7 +466,8 @@ public String Salir(){
 
     public void nuevoPedido() throws SQLException {
         pedido = new Pedido();
-        pedido.setCod_bod(miniCedis.getCodigo());
+        //pedido.setCod_bod(miniCedis.getCodigo());
+        pedido.setCod_bod(Integer.toString(miniCedis.getIdCedis()));
         pedido.setCod_env("000000");
         pedido.setEstado("A");
         pedido.setDiasInventario(0);
@@ -507,7 +510,7 @@ public String Salir(){
     public void actualizaListaPedidos() throws SQLException, NamingException {
         cedis = this.mbCedis.obtenerCedis(miniCedis.getIdCedis());
         listaPedidos = new ArrayList<SelectItem>();
-        ArrayList<Pedido> aPedidos = this.dao.obtenerPedidos(miniCedis.getCodigo());
+        ArrayList<Pedido> aPedidos = this.dao.obtenerPedidos(Integer.toString(miniCedis.getIdCedis()));
         for (Pedido p : aPedidos) {
             listaPedidos.add(new SelectItem(p, p.toString()));
         }

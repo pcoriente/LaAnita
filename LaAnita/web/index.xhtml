@@ -18,7 +18,7 @@
                     <br></br>
                     <br></br>
                     <div align="right">
-                        |<p:commandLink styleClass="nueva"  action="#{mbMain.logout}" value="Logout" ajax="false" />|
+                        |<p:commandLink styleClass="nueva" action="#{mbMain.logout()}" value="Logout" ajax="false" immediate="true" />|
                     </div>
                     <br></br>
                     <p:messages id="msgs" showDetail="true" showSummary="false"  />
@@ -28,8 +28,8 @@
                             <h:outputText value="Esto es solamente el inicio..." style="color: blue;font-size:18px;" />
                         </p:notificationBar>
 
-                        <p:commandButton value="Ver" onclick="bar.show()" type="button" />
-                        <p:commandButton value="Ocultar" onclick="bar.hide()" type="button" /> 
+                        <p:commandButton value="Ver" onclick="bar.show();" type="button" />
+                        <p:commandButton value="Ocultar" onclick="bar.hide();" type="button" /> 
                     </p:panel>
                     <p:panel header="F E C H A" styleClass="quitaCuadro" style="width: 300px">
                         <h:outputScript library="js" name="lenguaje.js" />

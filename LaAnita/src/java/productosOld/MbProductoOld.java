@@ -188,7 +188,7 @@ public class MbProductoOld implements Serializable {
             }
             //this.mbEmpaque.setOk(true);
             this.mbEmpaque.setEmpaque(empaque);
-            this.mbEmpaque.cargaMarcas();
+            //this.mbEmpaque.cargaMarcas();
             this.mbEmpaque.cargaListaUpcs();
             if (this.mbProducto.getListaTipos() == null) {
                 this.mbProducto.cargaTipos();
@@ -198,6 +198,7 @@ public class MbProductoOld implements Serializable {
             }
             this.mbProducto.getProducto().setGrupo(empaque.getProducto().getGrupo());
             this.mbProducto.cargaSubGrupos();
+            this.mbProducto.cargaMarcas();
         } catch (SQLException ex) {
             Logger.getLogger(MbProductoOld.class.getName()).log(Level.SEVERE, null, ex);
         } catch (NamingException ex) {

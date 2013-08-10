@@ -97,20 +97,13 @@
                                                  readonly="true" maxlength="50" size="55" />
                                 </p:column>
                             </p:row>
-                            <p:row >
-                                <p:column >
-                                    <h:outputLabel for="marca" value="MARCA :" style="font-weight: bold; color: red; width: 90px;" />
+                            <p:row>
+                                <p:column>
+                                    <h:outputLabel for="marcaEpq" value="MARCA :" style="font-weight: bold; color: red; width: 90px;" />
                                 </p:column>
-                                <p:column colspan="2" >
-                                    <p:selectOneMenu id="marca" value="#{mbProductoOld.mbEmpaque.empaque.marca}" style="width: 250px;" >
-                                        <f:converter converterId="converters.Marca" />
-                                        <f:selectItems value="#{mbProductoOld.mbEmpaque.listaMarcas}" />
-                                    </p:selectOneMenu>
-                                </p:column>
-                                <p:column colspan="3" >
-                                    <p:commandButton id="btnMttoMarcas" value="Mtto.Marcas" 
-                                                     actionListener="#{mbProductoOld.mbEmpaque.mttoMarcas()}" 
-                                                     process="@this marca" update="mttoMarcas" oncomplete="mttoMarcasDlg.show()" />
+                                <p:column colspan="5" >
+                                    <p:inputText id="marcaEpq" value="#{mbProductoOld.mbEmpaque.empaque.producto.marca.marca}" 
+                                                 readonly="true" maxlength="50" size="55" />
                                 </p:column>
                             </p:row>
                             <p:row>
@@ -184,45 +177,6 @@
                             </f:facet>
                         </p:panelGrid>
                     </p:panel>
-                    <p:dialog header="MANTENIMIENTO DE MARCAS" widgetVar="mttoMarcasDlg" resizable="false" style="width: 500px;" modal="true" >
-                        <p:messages id="messages5" showDetail="true" autoUpdate="true" closable="true" />
-                        <p:panelGrid id="mttoMarcas" styleClass="sinBorde" >
-                            <p:row >
-                                <p:column >
-                                    <h:outputLabel for="fabricante" value="FABRICANTE :" style="font-weight: bold; color: red; width: 105px;" />
-                                </p:column>
-                                <p:column >
-                                    <p:selectOneRadio id="fabricante" value="#{mbProductoOld.mbEmpaque.mbMarca.strFabricante}" 
-                                                      disabled="#{mbProductoOld.mbEmpaque.mbMarca.marca.idMarca>0}"
-                                                      style="background-color: #ccc" >
-                                        <f:selectItem itemLabel="La Anita" itemValue="1" />
-                                        <f:selectItem itemLabel="Externo " itemValue="2" />
-                                    </p:selectOneRadio>
-                                </p:column>
-                            </p:row>
-                            <p:row >
-                                <p:column >
-                                    <h:outputLabel for="txtMarca" value="MARCA :" style="font-weight: bold; color: red; width: 105px;" />
-                                </p:column>
-                                <p:column >
-                                    <p:inputText id="txtMarca" value="#{mbProductoOld.mbEmpaque.mbMarca.marca.marca}" maxlength="50" size="55" />
-                                </p:column>
-                            </p:row>
-                            <f:facet name="footer" >
-                                <p:row >
-                                    <p:column colspan="2" >
-                                        <p:commandButton id="btnGrabarMarca" value="Grabar" 
-                                                         process="@this fabricante txtMarca" actionListener="#{mbProductoOld.mbEmpaque.grabarMarca()}" 
-                                                         update="marca" oncomplete="handleMarca(xhr, status, args)" />
-                                        <p:commandButton id="btnEliminarMarca" value="Eliminar" 
-                                                         disabled="#{mbProductoOld.mbEmpaque.mbMarca.marca.idMarca==0}"
-                                                         process="@this" actionListener="#{mbProductoOld.mbEmpaque.eliminarMarca()}" 
-                                                         update="marca" oncomplete="handleMarca(xhr, status, args)" />
-                                    </p:column>
-                                </p:row>
-                            </f:facet>
-                        </p:panelGrid>
-                    </p:dialog>
                     <p:dialog header="MANTENIMIENTO DE UNIDADES DE EMPAQUE" widgetVar="mttoUnidadesEmpaqueDlg" resizable="false" style="width: 500px;" modal="true" >
                         <p:messages id="messages6" showDetail="true" autoUpdate="true" closable="true" />
                         <p:panelGrid id="mttoUnidadesEmpaque" styleClass="sinBorde" >
@@ -349,6 +303,22 @@
                             </p:row>
                             <p:row >
                                 <p:column >
+                                    <h:outputLabel for="marca" value="MARCA :" style="font-weight: bold; color: red; width: 90px;" />
+                                </p:column>
+                                <p:column >
+                                    <p:selectOneMenu id="marca" value="#{mbProductoOld.mbProducto.producto.marca}" style="width: 250px;" >
+                                        <f:converter converterId="converters.Marca" />
+                                        <f:selectItems value="#{mbProductoOld.mbProducto.listaMarcas}" />
+                                    </p:selectOneMenu>
+                                </p:column>
+                                <p:column >
+                                    <p:commandButton id="btnMttoMarcas" icon="ui-icon-pencil" title="Mtto.Marcas" 
+                                                     actionListener="#{mbProductoOld.mbProducto.mttoMarcas()}" 
+                                                     process="@this marca" update="mttoMarcas" oncomplete="mttoMarcasDlg.show()" />
+                                </p:column>
+                            </p:row>
+                            <p:row >
+                                <p:column >
                                     <h:outputLabel for="unidad" value="EMPAQUE :"  style="font-weight: bold; color: red; width: 105px;" />
                                 </p:column>
                                 <p:column >
@@ -406,7 +376,7 @@
                                 <p:row >
                                     <p:column colspan="3" >
                                         <p:commandButton id="nuevoProducto" value="Nuevo" process="@this mttoProducto"
-                                                         actionListener="#{mbProductoOld.mbProducto.nuevoProducto()}" 
+                                                         actionListener="#{mbProductoOld.mbProducto.nuevo()}" 
                                                          update="messages mttoProducto" />
                                         <p:commandButton id="grabarProducto" value="Grabar" process="@this mttoProducto"
                                                          actionListener="#{mbProductoOld.grabarProducto()}" 
@@ -505,6 +475,45 @@
                                                          disabled="#{mbProductoOld.mbProducto.mbSubGrupo.subGrupo.idSubGrupo==0}" 
                                                          actionListener="#{mbProductoOld.mbProducto.eliminarSubGrupo()}"
                                                          update="subGrupo" oncomplete="handleSubGrupo(xhr, status, args)" />
+                                    </p:column>
+                                </p:row>
+                            </f:facet>
+                        </p:panelGrid>
+                    </p:dialog>
+                    <p:dialog header="MANTENIMIENTO DE MARCAS" widgetVar="mttoMarcasDlg" resizable="false" style="width: 500px;" modal="true" >
+                        <p:messages id="messages5" showDetail="true" autoUpdate="true" closable="true" />
+                        <p:panelGrid id="mttoMarcas" styleClass="sinBorde" >
+                            <p:row >
+                                <p:column >
+                                    <h:outputLabel for="fabricante" value="FABRICANTE :" style="font-weight: bold; color: red; width: 105px;" />
+                                </p:column>
+                                <p:column >
+                                    <p:selectOneRadio id="fabricante" value="#{mbProductoOld.mbProducto.mbMarca.strFabricante}" 
+                                                      disabled="#{mbProductoOld.mbProducto.mbMarca.marca.idMarca>0}"
+                                                      style="background-color: #ccc" >
+                                        <f:selectItem itemLabel="La Anita" itemValue="1" />
+                                        <f:selectItem itemLabel="Externo " itemValue="2" />
+                                    </p:selectOneRadio>
+                                </p:column>
+                            </p:row>
+                            <p:row >
+                                <p:column >
+                                    <h:outputLabel for="txtMarca" value="MARCA :" style="font-weight: bold; color: red; width: 105px;" />
+                                </p:column>
+                                <p:column >
+                                    <p:inputText id="txtMarca" value="#{mbProductoOld.mbProducto.mbMarca.marca.marca}" maxlength="50" size="55" />
+                                </p:column>
+                            </p:row>
+                            <f:facet name="footer" >
+                                <p:row >
+                                    <p:column colspan="2" >
+                                        <p:commandButton id="btnGrabarMarca" value="Grabar" 
+                                                         process="@this fabricante txtMarca" actionListener="#{mbProductoOld.mbProducto.grabarMarca()}" 
+                                                         update="marca" oncomplete="handleMarca(xhr, status, args)" />
+                                        <p:commandButton id="btnEliminarMarca" value="Eliminar" 
+                                                         disabled="#{mbProductoOld.mbProducto.mbMarca.marca.idMarca==0}"
+                                                         process="@this" actionListener="#{mbProductoOld.mbProducto.eliminarMarca()}" 
+                                                         update="marca" oncomplete="handleMarca(xhr, status, args)" />
                                     </p:column>
                                 </p:row>
                             </f:facet>

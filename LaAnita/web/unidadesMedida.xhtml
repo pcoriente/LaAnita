@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:ui="http://java.sun.com/jsf/facelets">
+    <h:head>
+        <title>Actualización de Unidades de Medida</title>
+         <h:outputStylesheet library="css" name="main.css"/>
+    </h:head>
+    <h:body>
+        <div id="wrapper" align="center">
+            <ui:include src="wrapper.xhtml" />
+            <div id="content" align="center"  >
+                <br></br>
+                <h:form>
+                    <div align="right" >
+                        |<p:commandLink styleClass="nueva"  action="menuUnidadesMedida" value="Salir" ajax="false"/>
+                    </div>
+                </h:form>
+                <h:form id="main" >
+                    <p:messages id="msgs" showDetail="true" showSummary="false" closable="true" />
+                    <p:panel header="MANTENIMIENTO DE UNIDADES DE MEDIDA">
+
+                        <h:panelGrid id="panelCapturaUnidadesMedida" frame="box" border="0" columns="2" >
+                            <h:outputLabel value="Unidad de Medida :"  style="font-weight: bold; width: 150px; color: red;" />
+                            <p:inputText id="unidad" value="#{mbUnidadMedida.unidadMedida.unidadMedida}" maxlength="55" size="50" />
+                            
+                            <h:outputLabel value="Abreviatura :"  style="font-weight: bold; width: 150px; color: red;" />
+                            <p:inputText id="abreviatura" value="#{mbUnidadMedida.unidadMedida.abreviatura}" maxlength="10" size="15" />
+                            
+                            <h:outputLabel />
+                            <h:panelGroup style="display: block; text-align: right" >
+                                <p:commandButton value="Grabar" ajax="false" action="#{mbUnidadMedida.grabar()}" />
+                                <p:commandButton value="Cancelar" ajax="false" action="#{mbUnidadMedida.cancelar()}" />
+                            </h:panelGroup>
+                        </h:panelGrid>
+                    </p:panel>
+                </h:form>
+            </div>
+            <!-- FIN DE CONTENIDO -->
+            <ui:include src="footer.html" />
+        </div>
+    </h:body>
+</html>

@@ -42,7 +42,8 @@ public class Producto implements Serializable {
     
     @Override
     public String toString() {
-        return this.parte + (this.descripcion.equals("") ? "" : " "+this.descripcion) 
+        return (this.marca==null || this.marca.getIdMarca()==0 ? "" : this.marca.toString()+" ")
+                + this.parte + (this.descripcion.equals("") ? "" : " "+this.descripcion) 
                 + (this.unidad==null || this.unidad.getIdUnidad()==1 ? "" : " " + this.unidad.getAbreviatura()) 
                 + (this.contenido == 0 ? "" : " " + Double.toString(this.contenido))
                 + (this.contenido == 0 || this.unidadMedida == null ? "" : " " + this.unidadMedida.getAbreviatura());

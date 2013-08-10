@@ -19,7 +19,7 @@
             <div id="content" align="center"  >
                 <!--   CAMBIAR DE AQUI EN ADELANTE  -->
 
-                <h:messages layout="table" style="font-size: large; color: #A00F0F;"/>
+                <p:messages showDetail="true" closable="true" />
 
                 <p:panel header="CONTROL DE ACCESO: BASES DE DATOS" style="width: 60%;  ">
                     <h:form >
@@ -32,7 +32,7 @@
                                 <f:selectItems value="#{mbDbs.listaDbs}" />
                             </p:selectOneMenu>
                             
-                            <h:outputText  value="Login: "  />
+                            <h:outputText  value="Login: " />
                             <p:inputText id="login"
                                          value="#{mbDbs.login}" disabled="#{mbDbs.dbs.idDbs==0}"
                                          required="true"
@@ -49,7 +49,7 @@
                             <p:commandButton id="boton"
                                              value="Acceder"
                                              action="#{mbDbs.doLogin}"
-                                             ajax="false"/> 
+                                             ajax="false"/>
                         </h:panelGrid>
                     </h:form> 
                 </p:panel>

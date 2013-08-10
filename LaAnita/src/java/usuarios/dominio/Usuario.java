@@ -10,38 +10,13 @@ public class Usuario implements Serializable {
     private int id;
     private String usuario;
     private String correo;
-    private int idRol;
-
-    public String getCorreo() {
-        return correo;
-    }
-
-    public void setCorreo(String correo) {
-        this.correo = correo;
-    }
-
-    public int getId() {
-        return id;
-    }
-
-    public void setId(int id) {
-        this.id = id;
-    }
-
-    public int getIdRol() {
-        return idRol;
-    }
-
-    public void setIdRol(int idRol) {
-        this.idRol = idRol;
-    }
-
-    public String getUsuario() {
-        return usuario;
-    }
-
-    public void setUsuario(String usuario) {
-        this.usuario = usuario;
+    private int idPerfil;
+    
+    public Usuario() {
+        this.id=0;
+        this.usuario="";
+        this.correo="";
+        this.idPerfil=0;
     }
 
     @Override
@@ -64,5 +39,37 @@ public class Usuario implements Serializable {
         int hash = 3;
         hash = 23 * hash + this.id;
         return hash;
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    public String getUsuario() {
+        return usuario;
+    }
+
+    public void setUsuario(String usuario) {
+        this.usuario = usuario;
+    }
+
+    public String getCorreo() {
+        return correo;
+    }
+
+    public void setCorreo(String correo) {
+        this.correo = correo;
+    }
+
+    public int getIdPerfil() {
+        return idPerfil;
+    }
+
+    public void setIdPerfil(int idPerfil) {
+        this.idPerfil = idPerfil;
     }
 }

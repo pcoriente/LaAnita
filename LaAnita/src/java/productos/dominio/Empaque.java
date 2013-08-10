@@ -9,7 +9,7 @@ public class Empaque {
     private int idEmpresa;
     private String cod_pro;
     private Producto producto;
-    private Marca marca;
+    //private Marca marca;
     private int piezas;
     private UnidadEmpaque unidadEmpaque;
     private SubEmpaque subEmpaque;
@@ -22,7 +22,7 @@ public class Empaque {
         this.idEmpresa=0;
         this.cod_pro="";
         this.producto=new Producto(0);
-        this.marca=new Marca();
+        //this.marca=new Marca();
         this.piezas=0;
         this.unidadEmpaque=new UnidadEmpaque();
         this.subEmpaque=new SubEmpaque(0);
@@ -34,9 +34,6 @@ public class Empaque {
     @Override
     public String toString() {
         String empaque=producto.toString();
-        if(this.marca.getIdMarca() > 0) {
-            empaque+=" " + marca.toString();
-        }
         if(this.piezas > 1) {
             empaque+=" " + this.unidadEmpaque.toString() + " x "+Integer.toString(this.piezas);
         }
@@ -144,7 +141,7 @@ public class Empaque {
     public void setVolumen(double volumen) {
         this.volumen = volumen;
     }
-
+    /*
     public Marca getMarca() {
         return marca;
     }
@@ -152,4 +149,5 @@ public class Empaque {
     public void setMarca(Marca marca) {
         this.marca = marca;
     }
+    * */
 }

@@ -6,12 +6,12 @@ package cedis.dominio;
  */
 public class MiniCedis {
     private int idCedis;
-    private String codigo;
+    //private String codigo;
     private String cedis;
 
     @Override
     public String toString() {
-        return "("+ codigo +") "+cedis;
+        return "("+ idCedis +") "+cedis;
     }
 
     @Override
@@ -43,7 +43,7 @@ public class MiniCedis {
     public void setCedis(String cedis) {
         this.cedis = cedis;
     }
-
+    /*
     public String getCodigo() {
         return codigo;
     }
@@ -51,7 +51,7 @@ public class MiniCedis {
     public void setCodigo(String codigo) {
         this.codigo = codigo;
     }
-
+    * */
     public int getIdCedis() {
         return idCedis;
     }

@@ -39,14 +39,23 @@ public class DAOCedis {
     public int agregar(int codigo, String cedis, int idDireccion, String telefono, String fax, String correo, String representante) throws SQLException {
         System.out.println("idDireccion: "+idDireccion);
         int idCedis=0;
+        int idZona=0;
         Connection cn=this.ds.getConnection();
         Statement st=cn.createStatement();
         try {
             st.executeUpdate("begin Transaction");
+            
             st.executeUpdate("INSERT INTO cedis (codigo, cedis, idDireccion, telefono, fax, eMail, representante) "
                     + "VALUES ("+codigo+", '"+cedis+"', "+idDireccion+", '"+telefono+"', '"+fax+"', '"+correo+"', '"+representante+"')");
             ResultSet rs=st.executeQuery("SELECT MAX(idCedis) AS idCedis FROM cedis");
             if(rs.next()) idCedis=rs.getInt("idCedis");
+            
+            st.executeUpdate("INSERT INTO cedisZonas (zona, eliminable) VALUES ('"+cedis+"', 0)");
+            rs=st.executeQuery("SELECT MAX(idZona) AS idZona FROM cedisZonas");
+            if(rs.next()) idZona=rs.getInt("idZona");
+            
+            st.executeUpdate("INSERT INTO cedisZonasDetalle (idZona, idCedis) VALUES ("+idZona+", "+idCedis+")");
+            
             st.executeUpdate("commit Transaction");
         } catch (SQLException ex) {
             st.executeUpdate("rollback Transaction");
@@ -61,13 +70,21 @@ public class DAOCedis {
         Connection cn=this.ds.getConnection();
         Statement st=cn.createStatement();
         try {
+            st.executeUpdate("begin Transaction");
+            
             st.executeUpdate("UPDATE cedis SET cedis='"+cedis+"', idDireccion="+idDireccion+", telefono='"+telefono+"', fax='"+fax+"', eMail='"+correo+"', representante='"+representante+"' "
                     + "WHERE idCedis="+idCedis);
+            st.executeUpdate("UPDATE cedisZonas SET cedis='"+cedis+"'");
+            
+            st.executeUpdate("commit Transaction");
+        } catch (SQLException ex) {
+            st.executeUpdate("rollback Transaction");
+            throw(ex);
         } finally {
             cn.close();
         }
     }
-    
+    /*
     public int ultimoCedis() throws SQLException {
         int ultimo=0;
         Connection cn=this.ds.getConnection();
@@ -80,7 +97,7 @@ public class DAOCedis {
         }
         return ultimo;
     }
-    
+    */
     public TOCedis obtenerUnCedis(int idCedis) throws SQLException {
         TOCedis to=null;
         Connection cn=this.ds.getConnection();
@@ -112,7 +129,7 @@ public class DAOCedis {
         ResultSet rs=null;
         
         Connection cn=ds.getConnection();
-        String strSQL="SELECT * FROM cedis ORDER BY cedis";
+        String strSQL="SELECT * FROM cedis ORDER BY idCedis";
         try {
             Statement sentencia = cn.createStatement();
             rs = sentencia.executeQuery(strSQL);
@@ -128,7 +145,7 @@ public class DAOCedis {
     private TOCedis construir(ResultSet rs) throws SQLException {
         TOCedis to=new TOCedis();
         to.setIdCedis(rs.getInt("idCedis"));
-        to.setCodigo(rs.getInt("codigo"));
+        //to.setCodigo(rs.getInt("codigo"));
         to.setCedis(rs.getString("cedis"));
         to.setIdDireccion(rs.getInt("idDireccion"));
         to.setTelefono(rs.getString("telefono"));
@@ -143,7 +160,7 @@ public class DAOCedis {
         Connection cn=this.ds.getConnection();
         Statement st=cn.createStatement();
         try {
-            ResultSet rs=st.executeQuery("SELECT idCedis, codigo, cedis FROM cedis WHERE idCedis="+idCedis);
+            ResultSet rs=st.executeQuery("SELECT idCedis, cedis FROM cedis WHERE idCedis="+idCedis);
             if(rs.next()) to=construirMini(rs);
         } finally {
             cn.close();
@@ -157,7 +174,7 @@ public class DAOCedis {
         
         Connection cn=ds.getConnection();
         Statement sentencia = cn.createStatement();
-        String strSQL="SELECT idCedis, codigo, cedis FROM cedis ORDER BY codigo";
+        String strSQL="SELECT idCedis, cedis FROM cedis ORDER BY idCedis";
         try {
             rs = sentencia.executeQuery(strSQL);
             while(rs.next()) {
@@ -172,7 +189,7 @@ public class DAOCedis {
     private MiniCedis construirMini(ResultSet rs) throws SQLException {
         MiniCedis to=new MiniCedis();
         to.setIdCedis(rs.getInt("idCedis"));
-        to.setCodigo(String.format("%02d", rs.getInt("codigo")));
+        //to.setCodigo(String.format("%02d", rs.getInt("codigo")));
         to.setCedis(rs.getString("cedis"));
         return to;
     }

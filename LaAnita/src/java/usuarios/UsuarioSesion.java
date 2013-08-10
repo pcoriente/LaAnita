@@ -13,7 +13,12 @@ import usuarios.dominio.Usuario;
 public class UsuarioSesion {
     private Usuario usuario;
     private String jndi;
-    
+    /*
+    public UsuarioSesion() {
+        usuario=new Usuario();
+        jndi="";
+    }
+    */
     public String getJndi() {
         return jndi;
     }

@@ -16,10 +16,33 @@ public class FrmProducto implements Serializable {
     private MbProducto mbProducto;
     @ManagedProperty(value = "#{mbBuscarProd}")
     private MbBuscarProd mbBuscarProd;
+    @ManagedProperty(value = "#{mbEmpaque}")
+    private MbEmpaque mbEmpaque;
     
     public FrmProducto() {
         this.mbProducto = new MbProducto();
         this.mbBuscarProd = new MbBuscarProd();
+        this.mbEmpaque = new MbEmpaque();
+    }
+    
+    public void nuevoEmpaque() {
+        this.mbEmpaque.nuevoEmpaque(this.mbProducto.getProducto());
+    }
+    
+    public void actualizaProductoSeleccionado() {
+        this.mbProducto.setProducto(this.mbBuscarProd.obtenerSeleccionado());
+        this.mbProducto.cargaListaUpcs();
+        if(!this.mbProducto.getProducto().getUpcs().isEmpty()) {
+            //Upc upc=this.mbProducto.getProducto().getUpcs().get(0);
+            this.mbProducto.getMbUpc().setUpc(this.mbProducto.getProducto().getUpcs().get(0));
+        }
+    }
+    
+    public void buscar() {
+        this.mbBuscarProd.buscarLista();
+        if(this.mbBuscarProd.getProducto()!=null) {
+            this.mbProducto.setProducto(this.mbBuscarProd.getProducto());
+        }
     }
     
     public String terminar() {
@@ -59,5 +82,13 @@ public class FrmProducto implements Serializable {
 
     public void setMbBuscarProd(MbBuscarProd mbBuscarProd) {
         this.mbBuscarProd = mbBuscarProd;
+    }
+
+    public MbEmpaque getMbEmpaque() {
+        return mbEmpaque;
+    }
+
+    public void setMbEmpaque(MbEmpaque mbEmpaque) {
+        this.mbEmpaque = mbEmpaque;
     }
 }

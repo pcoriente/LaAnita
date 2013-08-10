@@ -12,15 +12,6 @@
         <converter-class>dbs.converters.DbsConverter</converter-class>
     </converter>
     
-     <converter>
-        <converter-id>converters.requsicion</converter-id>
-        <converter-class>requisicion.Converter.RequsicionConverter</converter-class>
-    </converter>
-    <converter>
-        <converter-id>converters.pickList</converter-id>
-        <converter-class>requisicion.Converter.PickListConverter</converter-class>
-    </converter>
-    
     <navigation-rule>
         <from-view-id>/login.xhtml</from-view-id>
         <navigation-case>
@@ -30,6 +21,14 @@
         <navigation-case>
             <from-outcome>fallo.login</from-outcome>
             <to-view-id>/login.xhtml</to-view-id>
+        </navigation-case>
+    </navigation-rule>
+    
+    <navigation-rule>
+        <from-view-id>/index.xhtml</from-view-id>
+        <navigation-case>
+            <from-outcome>cedis.exito</from-outcome>
+            <to-view-id>/menuCedis.xhtml</to-view-id>
         </navigation-case>
     </navigation-rule>
     
@@ -317,6 +316,26 @@
         <navigation-case>
             <from-outcome>productos.terminar</from-outcome>
             <to-view-id>/index.xhtml</to-view-id>
+        </navigation-case>
+    </navigation-rule>
+    
+    <navigation-rule>
+        <from-view-id>/menuUnidadesMedida.xhtml</from-view-id>
+        <navigation-case>
+            <from-outcome>unidadesMedida.mantenimiento</from-outcome>
+            <to-view-id>/unidadesMedida.xhtml</to-view-id>
+        </navigation-case>
+        <navigation-case>
+            <from-outcome>menuUnidadesMedida.terminar</from-outcome>
+            <to-view-id>/index.xhtml</to-view-id>
+        </navigation-case>
+    </navigation-rule>
+    
+    <navigation-rule>
+        <from-view-id>/unidadesMedida.xhtml</from-view-id>
+        <navigation-case>
+            <from-outcome>unidadesMedida.salir</from-outcome>
+            <to-view-id>/menuUnidadesMedida.xhtml</to-view-id>
         </navigation-case>
     </navigation-rule>
     

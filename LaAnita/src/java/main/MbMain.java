@@ -34,7 +34,7 @@ public class MbMain {
         this.date = date;
     }
     
-    public void logout() {
+    public String logout() {
         FacesContext context = FacesContext.getCurrentInstance();
         ExternalContext externalContext = context.getExternalContext();
         HttpSession httpSession = (HttpSession) externalContext.getSession(false);
@@ -48,5 +48,6 @@ public class MbMain {
         }
         usuarioSesion.setJndi("jdbc/__systemWeb");
         httpSession.invalidate();
+        return "login.xhtml";
     }
 }
