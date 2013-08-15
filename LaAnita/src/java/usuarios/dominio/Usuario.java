@@ -18,6 +18,11 @@ public class Usuario implements Serializable {
         this.correo="";
         this.idPerfil=0;
     }
+    
+    public Usuario(int id, String usuario) {
+        this.id=id;
+        this.usuario=usuario;
+    }
 
     @Override
     public boolean equals(Object obj) {

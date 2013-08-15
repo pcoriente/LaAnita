@@ -1,0 +1,129 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:p="http://primefaces.org/ui">
+    <h:head>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"></meta>
+        <title>Relación de Requisiciones</title>
+        <h:outputStylesheet library="css" name="main.css"/>
+
+    </h:head>
+    <body>
+        <div id="wrapper" align="center">
+            <ui:include src="wrapper.xhtml" />
+            <div id="content" align="center"  >
+                <h:form id="form" >
+                    <div align="right">
+                        <p:commandButton id="salir"
+                                         icon="ui-icon-home"
+                                         title="Salir de Listado de Requisiciones"
+                                         action="#{mbRequisiciones.salirMenuRequisiciones()}"
+                                         />
+                    </div>
+                    <p:panel header="RELACION DE REQUISICIONES" styleClass="quitaCuadro"  >
+                        <h:outputText value="No hay requisiciones que mostrar !!" rendered="#{empty mbRequisiciones.listaRequisicionesEncabezado}" />
+                        <p:dataTable id="requisicion"
+                                     value="#{mbRequisiciones.listaRequisicionesEncabezado}"
+                                     var="req" 
+                                     widgetVar="requisicionesTable"
+                                     emptyMessage="No existen elementos para desplegar..."
+
+                                     filteredValue="#{mbRequisiciones.requisicionesFiltradas}">
+
+
+
+                            <p:column filterBy="#{req.idRequisicion}" headerText="No." filterMatchMode="contains"   >
+                                <h:outputText value="#{req.idRequisicion}" />
+                            </p:column>
+                            <p:column filterBy="#{req.fecha}" headerText="F. Solicitud" filterMatchMode="contains" >
+                                <f:facet name="header">
+                                    <h:outputText value="Fecha"/>
+                                </f:facet>
+                                <h:outputText value="#{req.fecha}"/>
+                            </p:column>
+                            <p:column filterBy="#{req.nombreComercial}" headerText="Nombre Comercial" filterMatchMode="contains"  >
+                                <f:facet name="header" >
+                                    <h:outputText value="Empresa"/>
+                                </f:facet>
+                                <h:outputText value="#{req.nombreComercial}"/>
+                            </p:column>
+                            <p:column id="nc" filterBy="#{req.depto}" headerText="Departamento" filterMatchMode="contains" >
+                                <f:facet name="header">
+                                    <h:outputText value="Departamento"/>
+                                </f:facet>
+                                <h:outputText value="#{req.depto}"/>
+                            </p:column>
+                            <p:column filterBy="#{req.usuario}" headerText="Usuario" filterMatchMode="contains" >
+                                <f:facet name="header">
+                                    <h:outputText value="Usuario"/>
+                                </f:facet>
+                                <h:outputText value="#{req.usuario}"/>
+                            </p:column>
+
+                            <p:column id="procesos"  headerText="Procesos" style="width: 125px;" >
+                                <p:commandButton id="detalle"
+                                                 icon="ui-icon-circle-plus"
+                                                 title="Ver Detalle"
+                                                 actionListener="#{mbRequisiciones.onRowSelect(req.idRequisicion)}"
+                                                 update=":form:detalle"  
+                                                 oncomplete="reqDialog.show()" 
+
+
+
+                                                 />
+                                <p:commandButton id="aprobar"
+                                                 icon="ui-icon-pencil"
+                                                 title="Aprobar"
+
+                                                 />
+                                <p:commandButton id="cotizar"
+                                                 icon="ui-icon-calculator"
+                                                 title="cotizar"
+
+                                                 />
+
+                            </p:column>
+                            <p:resizable for="nc" maxWidth="15"/>
+                        </p:dataTable>
+                    </p:panel>
+                    <p:dialog header="Detalle de Requisición" widgetVar="reqDialog" resizable="false"  
+                              showEffect="fade" hideEffect="explode" modal="true">
+                        <p:dataTable id="detalle" value="#{mbRequisiciones.requisicionProductos}" 
+                                     var="det" scrollable="true" scrollHeight="200"
+                                     style="width: 800px;"
+                                     rowKey="#{det.producto.idProducto}">
+                            <f:facet name="header">  
+                                Detalle de productos requisitados  
+                            </f:facet>
+
+                            
+                            <p:column  headerText="CodigoProducto" style="width: 25px;" >
+                                <h:outputText value="#{det.producto.idProducto}"  />
+                            </p:column>
+                            <p:column headerText="Descripcion" style="width: 200px;" >
+                                <h:outputText value="#{det.producto.toString()}" />
+                            </p:column>
+                            <p:column headerText="Unidad" style="width: 50px;" >
+                                <h:outputText value="#{det.producto.unidad.unidad}" />
+                            </p:column>
+
+                            <p:column headerText="Cantidad" style="width: 50px;" >
+                                <p:inplace id="ajaxInplace" editor="true">  
+                                    <p:inputText value="#{det.cantidad}"
+                                                 />  
+                                </p:inplace> 
+                            </p:column>
+                        </p:dataTable>
+                    </p:dialog>
+
+                </h:form>
+            </div>
+            <!-- FIN DE CONTENIDO -->
+            <ui:include src="footer.html" />
+        </div>
+    </body>
+</html>
+
