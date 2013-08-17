@@ -46,7 +46,7 @@ public class DAODepto {
         Connection cn = this.ds.getConnection();
         Statement st = cn.createStatement();
         try {
-            ResultSet rs = st.executeQuery("SELECT * FROM depto");
+            ResultSet rs = st.executeQuery("SELECT * FROM empleadosDeptos");
             while (rs.next()) {
                 dp.add(construirDepto(rs));
             }
@@ -61,7 +61,7 @@ public class DAODepto {
         Connection cn = this.ds.getConnection();
         Statement st = cn.createStatement();
         try {
-            ResultSet rs = st.executeQuery("SELECT * FROM depto WHERE idDepto=" + idDepto);
+            ResultSet rs = st.executeQuery("SELECT * FROM empleadosDeptos WHERE idDepto=" + idDepto);
             if (rs.next()) {
                 dp = construirDepto(rs);
             }
@@ -84,7 +84,7 @@ public class DAODepto {
         Connection cn = ds.getConnection();
         Statement st = cn.createStatement();
         try {
-            ResultSet rs = st.executeQuery("SELECT * FROM depto WHERE idDepto=" + idDepto);
+            ResultSet rs = st.executeQuery("SELECT * FROM empleadosDeptos WHERE idDepto=" + idDepto);
             if (rs.next()) {
                 dep = construirDepto(rs);
             }

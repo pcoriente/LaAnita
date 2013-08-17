@@ -25,7 +25,7 @@
                                 <p:column colspan="2" >
                                     <p:selectOneMenu id="empresa" value="#{mbRequisiciones.mbMiniEmpresa.empresa}" style="width: 300px">
                                         <f:converter converterId="converters.MiniEmpresa" />
-                                        <f:selectItems value="#{mbRequisiciones.mbMiniEmpresa.listaMini}"  />
+                                        <f:selectItems value="#{mbRequisiciones.listaMini}"  />
                                     </p:selectOneMenu>
                                 </p:column>
                             </p:row>
@@ -38,7 +38,7 @@
                                         <f:converter converterId="converters.depto" />
                                         <f:selectItems value="#{mbRequisiciones.mbDepto.listaDeptos}" />
                                         <p:ajax event="change"
-                                                listener="#{mbRequisiciones.cargaSubUsuarios()}" 
+                                                listener="#{mbRequisiciones.cargaSubUsuarios()}"
                                                 update="solicitante"
                                                 process="@this"/>
 
@@ -108,11 +108,11 @@
                         </p:dataTable>
 
                         <p:commandButton 
-                                         icon="ui-icon-disk"
-                                         title="Finalizar la requisicion"
-                                         actionListener="#{mbRequisiciones.agregarRequisicion()}"
-                                         update="departamento empresa solicitante detalle"
-                                         />
+                            icon="ui-icon-disk"
+                            title="Finalizar la requisicion"
+                            actionListener="#{mbRequisiciones.agregarRequisicion()}"
+                            update="departamento empresa solicitante detalle"
+                            />
                         <p:commandButton id="Limpiar"
                                          icon="ui-icon-refresh"
                                          title="Limpiar la requisicion"
@@ -200,9 +200,16 @@
                     </p:dialog>
 
                 </h:form>
-                <h:outputScript library="javascript" name="productos.js" target="head" />
+                <script type="text/javascript">
+                    function handleBuscar(xhr, status, args) {
+                        if (!(args.validationFailed || !args.okBuscar)) {
+                            buscarProductoDlg.hide();
+                        }
+                    }
+                </script>
             </div>
             <ui:include src="footer.html" />
         </div>
     </h:body>
+
 </html>

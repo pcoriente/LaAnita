@@ -77,4 +77,9 @@ public class Usuario implements Serializable {
     public void setIdPerfil(int idPerfil) {
         this.idPerfil = idPerfil;
     }
+    
+     @Override
+    public String toString() {
+        return  usuario;
+    }
 }

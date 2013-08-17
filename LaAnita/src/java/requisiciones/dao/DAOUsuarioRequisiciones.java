@@ -55,7 +55,7 @@ public class DAOUsuarioRequisiciones {
         Connection cn = this.ds.getConnection();
         Statement st = cn.createStatement();
         try {
-            ResultSet rs = st.executeQuery("SELECT * FROM usuarios");
+            ResultSet rs = st.executeQuery("SELECT * FROM empleados");
             while (rs.next()) {
                 usu.add(convertirAUsuario(rs));
             }
@@ -68,16 +68,16 @@ public class DAOUsuarioRequisiciones {
     public ArrayList<Usuario> obtenerSubUsuario(int idDepto) throws SQLException {
         ArrayList<Usuario> su=new ArrayList<Usuario>();
         String strSQL=""
-                + "SELECT sg.idUsuario, sg.usuario "
-                + "FROM usuarios sg "
+                + "SELECT sg.idEmpleado, sg.empleado "
+                + "FROM empleados sg "
                 + "WHERE sg.idDepto="+idDepto+" "
-                + "ORDER BY sg.usuario";
+                + "ORDER BY sg.empleado";
         Connection cn=ds.getConnection();
         Statement st=cn.createStatement();
         try {
             ResultSet rs=st.executeQuery(strSQL);
             while(rs.next()) {
-                su.add(new Usuario(rs.getInt("idUsuario"), rs.getString("usuario")));
+                su.add(new Usuario(rs.getInt("idEmpleado"), rs.getString("empleado")));
             }
         } finally {
             cn.close();
@@ -90,7 +90,7 @@ public class DAOUsuarioRequisiciones {
         Connection cn=ds.getConnection();
         Statement st=cn.createStatement();
         try {
-            ResultSet rs=st.executeQuery("SELECT * FROM Usuarios WHERE idUsuario="+idUsuario);
+            ResultSet rs=st.executeQuery("SELECT * FROM empleados WHERE idEmpleado="+idUsuario);
             if(rs.next()) {
                 usu=construir(rs);
             }
@@ -101,7 +101,7 @@ public class DAOUsuarioRequisiciones {
     }
     
     private Usuario construir(ResultSet rs) throws SQLException {
-        return new Usuario(rs.getInt("idUsuario"), rs.getString("usuario"));
+        return new Usuario(rs.getInt("idEmpleado"), rs.getString("empleado"));
     }
     
 }

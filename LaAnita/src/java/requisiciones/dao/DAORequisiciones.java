@@ -83,11 +83,11 @@ public class DAORequisiciones {
         ResultSet rs;
         Connection cn = ds.getConnection();
         try {
-            String stringSQL = "select r.idRequisicion, eg.nombreComercial, d.depto, u.usuario, r.fechaRequisicion\n"
-                    + "from requisiciones r\n"
-                    + "inner join empresasGrupo eg on r.idEmpresa=eg.idEmpresa\n"
-                    + "inner join depto d on r.idDepto=d.idDepto\n"
-                    + "inner join usuarios u on r.idSolicitante= u.idUsuario order by idRequisicion";
+            String stringSQL = "select r.idRequisicion, eg.empresa, ed.depto, e.empleado,  r.fechaRequisicion from requisiciones r\n" +
+"                    inner join empresasGrupo eg on r.idEmpresa=eg.idEmpresa\n" +
+"                    inner join empleados e on r.idSolicitante= e.idEmpleado\n" +
+"                    inner join empleadosDeptos ed on ed.idDepto = e.idDepto\n" +
+"                     order by idRequisicion";
             Statement sentencia = cn.createStatement();
             rs = sentencia.executeQuery(stringSQL);
             while (rs.next()) {
@@ -103,9 +103,9 @@ public class DAORequisiciones {
         TORequisicionEncabezado to = new TORequisicionEncabezado();
 
         to.setIdRequisicion(rs.getInt("idRequisicion"));
-        to.setNombreComercial(rs.getString("nombreComercial"));
+        to.setNombreComercial(rs.getString("empresa"));
         to.setDepto(rs.getString("depto"));
-        to.setUsuario(rs.getString("usuario"));
+        to.setUsuario(rs.getString("empleado"));
         to.setFecha(rs.getDate("fechaRequisicion"));
 
         return to;

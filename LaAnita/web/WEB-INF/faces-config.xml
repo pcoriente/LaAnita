@@ -424,5 +424,12 @@
             <to-view-id>/AltasBanco.xhtml</to-view-id>
         </navigation-case>
     </navigation-rule>    
-    
+     <converter>
+        <converter-id>converters.depto</converter-id>
+        <converter-class>requisiciones.converters.DeptoConverter</converter-class>
+    </converter>
+    <converter>
+        <converter-id>converters.subUsuario</converter-id>
+        <converter-class>requisiciones.converters.SubUsuarioConverter</converter-class>
+    </converter>
 </faces-config>

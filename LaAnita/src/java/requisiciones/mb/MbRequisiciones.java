@@ -44,6 +44,20 @@ public class MbRequisiciones implements Serializable {
     private MbBuscarProd mbBuscarProd;
     private Producto producto;
     private ProdStr prodStr;
+    
+    //DAVID
+    
+     private ArrayList<SelectItem> listaMini = new ArrayList<SelectItem>();
+
+    public ArrayList<SelectItem> getListaMini() throws SQLException {
+        listaMini = this.mbMiniEmpresa.obtenerListaMiniEmpresas();
+        return listaMini;
+    }
+
+    public void setListaMini(ArrayList<SelectItem> listaMini) {
+        this.listaMini = listaMini;
+    }
+    //
 
     public MbRequisiciones() throws NamingException {
         this.mbMiniEmpresa = new MbMiniEmpresa();
@@ -114,8 +128,6 @@ public class MbRequisiciones implements Serializable {
         return salir;
     }
 
-    
-
     public ArrayList<RequisicionEncabezado> getRequisicionesFiltradas() {
         return requisicionesFiltradas;
     }
@@ -132,8 +144,6 @@ public class MbRequisiciones implements Serializable {
     public void setRequisicionProductos(ArrayList<RequisicionProducto> requisicionProductos) {
         this.requisicionProductos = requisicionProductos;
     }
-
-   
 
     public MbBuscarProd getMbBuscarProd() {
         return mbBuscarProd;
@@ -158,12 +168,11 @@ public class MbRequisiciones implements Serializable {
     public void setProdStr(ProdStr prodStr) {
         this.prodStr = prodStr;
     }
-
     //METODOS REQUISICIONES
     public void actualizaProductoSeleccionado() {
         RequisicionProducto rp = new RequisicionProducto(this.mbBuscarProd.obtenerSeleccionado());
-                
-        
+
+
         this.requisicionProductos.add(rp);
     }
 
@@ -198,7 +207,7 @@ public class MbRequisiciones implements Serializable {
             idUsuario = 0;
         }
 
-       // pr = this.getRequisicionProductos();
+        // pr = this.getRequisicionProductos();
 
         if (idEmpresa == 0) {
             fMsg = new FacesMessage(FacesMessage.SEVERITY_WARN, "Aviso:", "Seleccione una Empresa.");
@@ -248,12 +257,12 @@ public class MbRequisiciones implements Serializable {
     }
 
     private void cargaRequisicionesDetalle(int id) throws NamingException, SQLException {
-       requisicionProductos = new ArrayList<RequisicionProducto>();
+        requisicionProductos = new ArrayList<RequisicionProducto>();
         DAORequisiciones daoListaDetalle = new DAORequisiciones();
         ArrayList<TORequisicionProducto> toLista = daoListaDetalle.dameRequisicionDetalle(id);
-        DAOProductos daoPro =new DAOProductos();
+        DAOProductos daoPro = new DAOProductos();
         for (TORequisicionProducto e : toLista) {
-            requisicionProductos.add(convertir(e,daoPro));
+            requisicionProductos.add(convertir(e, daoPro));
         }
     }
 
@@ -287,9 +296,9 @@ public class MbRequisiciones implements Serializable {
 //        } catch (SQLException ex) {
 //            Logger.getLogger(FrmProducto.class.getName()).log(Level.SEVERE, null, ex);
 //        }
-        
+
         this.cargaRequisicionesDetalle(idRequi);
-        
+
     }
 
     public void eliminarProducto(int idProd) {
@@ -304,13 +313,16 @@ public class MbRequisiciones implements Serializable {
     }
 
     public void inicializaRequisicion() {
-        this.requisicionProductos =new ArrayList<RequisicionProducto>();
+        this.requisicionProductos = new ArrayList<RequisicionProducto>();
     }
 
     public void buscar() {
+        System.err.println( mbBuscarProd.getParte());
         this.mbBuscarProd.buscarLista();
         if (this.mbBuscarProd.getProducto() != null) {
             this.setProducto(this.mbBuscarProd.getProducto());
+        }else{
+        System.out.println("No existe...........");
         }
     }
 }
