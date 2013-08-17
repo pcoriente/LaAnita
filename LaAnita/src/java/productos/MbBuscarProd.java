@@ -127,7 +127,7 @@ public class MbBuscarProd implements Serializable {
                 }
                 if(this.productos.isEmpty()) {
                     fMsg.setSeverity(FacesMessage.SEVERITY_INFO);
-                    fMsg.setDetail("No se encontraron productos en la busqueda");
+                    fMsg.setDetail("No se encontraron productos en la busqueda2");
                     FacesContext.getCurrentInstance().addMessage(null, fMsg);
                 }
             }
