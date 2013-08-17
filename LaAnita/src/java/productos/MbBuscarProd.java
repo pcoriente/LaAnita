@@ -28,6 +28,7 @@ import productos.dominio.Tipo;
 @Named(value = "mbBuscarProd")
 @SessionScoped
 public class MbBuscarProd implements Serializable {
+
     private String tipoBuscar;
     private String strBuscar;
     private Parte2 parte;
@@ -38,17 +39,17 @@ public class MbBuscarProd implements Serializable {
     private SelectItem[] arrayTipos;
     private SelectItem[] arrayGrupos;
     private SelectItem[] arraySubGrupos;
-    
+
     public MbBuscarProd() {
         this.inicializa();
     }
-    
+
     private void inicializa() {
         this.tipoBuscar = "2";
         this.strBuscar = "";
         this.parte = new Parte2(0, "");
         this.producto = new Producto(0);
-        this.prodStr=null;
+        this.prodStr = null;
         this.productos = null;
         this.filtrados = null;
         this.arrayTipos = new SelectItem[1];
@@ -58,7 +59,7 @@ public class MbBuscarProd implements Serializable {
         this.arraySubGrupos = new SelectItem[1];
         this.arraySubGrupos[0] = new SelectItem("", "Seleccione un subgrupo");
     }
-    
+
     public void inicializar() {
         this.inicializa();
     }
@@ -74,7 +75,7 @@ public class MbBuscarProd implements Serializable {
         }
         return this.producto;
     }
-    
+
     public void buscarLista() {
         boolean ok = false;
         RequestContext context = RequestContext.getCurrentInstance();
@@ -125,6 +126,11 @@ public class MbBuscarProd implements Serializable {
                 for (SubGrupo sg : lstSubGrupos) {
                     this.arraySubGrupos[i++] = new SelectItem(sg.getSubGrupo(), sg.getSubGrupo());
                 }
+                if (this.productos.isEmpty()) {
+                    fMsg.setSeverity(FacesMessage.SEVERITY_INFO);
+                    fMsg.setDetail("No se encontraron productos en la busqueda");
+                    FacesContext.getCurrentInstance().addMessage(null, fMsg);
+                }
             }
         } catch (NamingException ex) {
             fMsg.setSeverity(FacesMessage.SEVERITY_ERROR);
@@ -150,19 +156,19 @@ public class MbBuscarProd implements Serializable {
         }
         return partes;
     }
-    
+
     public void verCambio() {
         if (this.tipoBuscar.equals("2")) {
             this.parte = new Parte2(0, "");
         } else {
             this.strBuscar = "";
         }
-        this.prodStr=null;
-        this.productos=null;
-        this.filtrados=null;
-        this.arrayTipos=new SelectItem[0];
-        this.arrayGrupos=new SelectItem[0];
-        this.arraySubGrupos=new SelectItem[0];
+        this.prodStr = null;
+        this.productos = null;
+        this.filtrados = null;
+        this.arrayTipos = new SelectItem[0];
+        this.arrayGrupos = new SelectItem[0];
+        this.arraySubGrupos = new SelectItem[0];
     }
 
     public String getTipoBuscar() {
