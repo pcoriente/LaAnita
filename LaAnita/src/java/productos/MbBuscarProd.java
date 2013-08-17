@@ -125,6 +125,11 @@ public class MbBuscarProd implements Serializable {
                 for (SubGrupo sg : lstSubGrupos) {
                     this.arraySubGrupos[i++] = new SelectItem(sg.getSubGrupo(), sg.getSubGrupo());
                 }
+                if(this.productos.isEmpty()) {
+                    fMsg.setSeverity(FacesMessage.SEVERITY_INFO);
+                    fMsg.setDetail("No se encontraron productos en la busqueda");
+                    FacesContext.getCurrentInstance().addMessage(null, fMsg);
+                }
             }
         } catch (NamingException ex) {
             fMsg.setSeverity(FacesMessage.SEVERITY_ERROR);
