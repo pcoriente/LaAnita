@@ -1,4 +1,6 @@
-
+.evenRow{  
+    background: PowderBlue;  
+}
 body {
     font-family: Arial, Helvetica, sans-serif;
     font-size: 13px;
@@ -63,7 +65,7 @@ a.nueva{ display:  inline;}
 
 
 .quitaCuadro   {
-    border-color: white;
+   box-shadow: none !important; 
 
 }
 .sinBorde tr, .sinBorde td {
@@ -94,4 +96,14 @@ a.nueva{ display:  inline;}
 #izquierdo {
     float: left;
 }
+
+.textoEtiquetas{
+    font-weight: bold;
+    color: red;
+    font-size: 12px;
+}
+
+.ui-panel, ui-widget, ui-widget-content, ui-corner-all {
     
+    border-color: #FFF!important;
+}

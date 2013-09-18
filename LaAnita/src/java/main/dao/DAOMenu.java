@@ -52,7 +52,7 @@ public class DAOMenu {
                         "		where p.idPerfil="+idPerfil+") x\n" +
                         "inner join systemWeb.dbo.modulosMenus mm on mm.idMenu=x.idMenu\n" +
                         "left join systemWeb.dbo.modulosSubMenus ms on ms.idSubMenu=x.idSubMenu\n" +
-                        "inner join systemWeb.dbo.modulos m on m.idModulo=x.idModulo";
+                        "inner join systemWeb.dbo.modulos m on m.idModulo=x.idModulo ORDER BY x.idMenu, x.idSubMenu, x.idModulo";
         Connection cn=this.ds.getConnection();
         Statement st=cn.createStatement();
         try {

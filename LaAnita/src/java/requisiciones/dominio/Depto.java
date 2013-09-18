@@ -3,7 +3,9 @@ package requisiciones.dominio;
 public class Depto {
 
     private int idDepto;
+    private int idEmpresa;
     private String depto;
+    private int codigo;
 
     public Depto() {
     }
@@ -11,6 +13,7 @@ public class Depto {
     public Depto(int idDepto, String depto) {
         this.idDepto = idDepto;
         this.depto = depto;
+       
     }
 
     @Override
@@ -57,4 +60,22 @@ public class Depto {
     public void setDepto(String depto) {
         this.depto = depto;
     }
+
+    public int getIdEmpresa() {
+        return idEmpresa;
+    }
+
+    public void setIdEmpresa(int idEmpresa) {
+        this.idEmpresa = idEmpresa;
+    }
+
+    public int getCodigo() {
+        return codigo;
+    }
+
+    public void setCodigo(int codigo) {
+        this.codigo = codigo;
+    }
+    
+    
 }

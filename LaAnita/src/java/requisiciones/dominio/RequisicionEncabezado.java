@@ -1,20 +1,25 @@
 package requisiciones.dominio;
 
-import java.util.ArrayList;
+import empresas.dominio.MiniEmpresa;
+import usuarios.dominio.Usuario;
 
 public class RequisicionEncabezado {
 
     private int idRequisicion;
     private int idEmpresa;
-    private String nombreComercial;
     private int idDepto;
-    private String Depto;
-    private int idUsuario;
-    private String Usuario;
-    private String fecha;
-    private RequisicionProducto requisicionProducto;
-    private ArrayList<RequisicionProducto> requisicionProductos;
-  
+    private int idSolicito;
+    private int IdAprobo;
+    private String fechaRequisicion;
+    private String fechaAprobacion;
+    private int status;
+    private String observaciones;
+    private MiniEmpresa miniEmpresa;
+    private Depto depto;
+    private Usuario Usuario;
+    
+    private String empleadoAprobo;
+    
 
     public int getIdRequisicion() {
         return idRequisicion;
@@ -32,15 +37,6 @@ public class RequisicionEncabezado {
         this.idEmpresa = idEmpresa;
     }
 
-    public String getNombreComercial() {
-        return nombreComercial;
-    }
-
-    public void setNombreComercial(String nombreComercial) {
-        this.nombreComercial = nombreComercial;
-    }
-
-
     public int getIdDepto() {
         return idDepto;
     }
@@ -49,52 +45,105 @@ public class RequisicionEncabezado {
         this.idDepto = idDepto;
     }
 
-    public String getDepto() {
-        return Depto;
+    public int getIdSolicito() {
+        return idSolicito;
     }
 
-    public void setDepto(String Depto) {
-        this.Depto = Depto;
+    public void setIdSolicito(int idSolicito) {
+        this.idSolicito = idSolicito;
     }
 
-    public int getIdUsuario() {
-        return idUsuario;
+    public int getIdAprobo() {
+        return IdAprobo;
     }
 
-    public void setIdUsuario(int idUsuario) {
-        this.idUsuario = idUsuario;
+    public void setIdAprobo(int IdAprobo) {
+        this.IdAprobo = IdAprobo;
     }
 
-    public String getUsuario() {
+    public int getStatus() {
+        return status;
+    }
+
+    public void setStatus(int status) {
+        this.status = status;
+    }
+
+    public String getObservaciones() {
+        return observaciones;
+    }
+
+    public void setObservaciones(String observaciones) {
+        this.observaciones = observaciones;
+    }
+
+    public String getFechaRequisicion() {
+        return fechaRequisicion;
+    }
+
+    public void setFechaRequisicion(String fechaRequisicion) {
+        this.fechaRequisicion = fechaRequisicion;
+    }
+
+    public String getFechaAprobacion() {
+        return fechaAprobacion;
+    }
+
+    public void setFechaAprobacion(String fechaAprobacion) {
+        this.fechaAprobacion = fechaAprobacion;
+    }
+
+   
+
+    public MiniEmpresa getMiniEmpresa() {
+        return miniEmpresa;
+    }
+
+    public void setMiniEmpresa(MiniEmpresa miniEmpresa) {
+        this.miniEmpresa = miniEmpresa;
+    }
+
+    public Depto getDepto() {
+        return depto;
+    }
+
+    public void setDepto(Depto depto) {
+        this.depto = depto;
+    }
+
+    public Usuario getUsuario() {
         return Usuario;
     }
 
-    public void setUsuario(String Usuario) {
+    public void setUsuario(Usuario Usuario) {
         this.Usuario = Usuario;
     }
 
-    public String getFecha() {
-        return fecha;
+//    public RequisicionProducto getRd() {
+//        return rd;
+//    }
+//
+//    public void setRd(RequisicionProducto rd) {
+//        this.rd = rd;
+//    }
+//
+//    public UsuarioSesion getUsuarioSesion() {
+//        return usuarioSesion;
+//    }
+//
+//    public void setUsuarioSesion(UsuarioSesion usuarioSesion) {
+//        this.usuarioSesion = usuarioSesion;
+ //   }
+
+    public String getEmpleadoAprobo() {
+        return empleadoAprobo;
     }
 
-    public void setFecha(String fecha) {
-        this.fecha = fecha;
+    public void setEmpleadoAprobo(String empleadoAprobo) {
+        this.empleadoAprobo = empleadoAprobo;
     }
-
-    public RequisicionProducto getRequisicionProducto() {
-        return requisicionProducto;
-    }
-
-    public void setRequisicionProducto(RequisicionProducto requisicionProducto) {
-        this.requisicionProducto = requisicionProducto;
-    }
-
-    public ArrayList<RequisicionProducto> getRequisicionProductos() {
-        return requisicionProductos;
-    }
-
-    public void setRequisicionProductos(ArrayList<RequisicionProducto> requisicionProductos) {
-        this.requisicionProductos = requisicionProductos;
-    }
-
+    
+    
+    
+    
 }

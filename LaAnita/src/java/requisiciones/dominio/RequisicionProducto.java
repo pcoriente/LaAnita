@@ -4,6 +4,8 @@
  */
 package requisiciones.dominio;
 
+import cotizaciones.dominio.CotizacionDetalle;
+import cotizaciones.dominio.CotizacionEncabezado;
 import productos.dominio.Producto;
 
 /**
@@ -12,16 +14,40 @@ import productos.dominio.Producto;
  */
 public class RequisicionProducto {
     
-   
+   private int idRequisicion;
     private Producto producto;
     private int cantidad;
+    private int cantidadAutorizada;
+   // private CotizacionDetalle cotizacionDetalle = new CotizacionDetalle();
+   
     
     public RequisicionProducto(Producto producto) {
         this.producto = producto;
-        this.cantidad=0;
+       // this.cantidad=0;
+        
+    }
+    
+    
+
+   
+    
+    
+
+    public RequisicionProducto() {
+//        this.neto=0.0;
+//        this.subtotal=0.0;
         
     }
 
+    public int getIdRequisicion() {
+        return idRequisicion;
+    }
+
+    public void setIdRequisicion(int idRequisicion) {
+        this.idRequisicion = idRequisicion;
+    }
+
+    
    
 
     public Producto getProducto() {
@@ -39,5 +65,27 @@ public class RequisicionProducto {
     public void setCantidad(int cantidad) {
         this.cantidad = cantidad;
     }
+
+    public int getCantidadAutorizada() {
+        return cantidadAutorizada;
+    }
+
+    public void setCantidadAutorizada(int cantidadAutorizada) {
+        
+         this.cantidadAutorizada = cantidadAutorizada;
+       
+    }
+
+   
+
+//    public CotizacionDetalle getCotizacionDetalle() {
+//        return cotizacionDetalle;
+//    }
+//
+//    public void setCotizacionDetalle(CotizacionDetalle cotizacionDetalle) {
+//        this.cotizacionDetalle = cotizacionDetalle;
+//    }
+
+   
     
 }

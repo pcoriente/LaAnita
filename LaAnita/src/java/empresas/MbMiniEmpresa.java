@@ -21,7 +21,7 @@ import javax.naming.NamingException;
 public class MbMiniEmpresa implements Serializable {
     private MiniEmpresa empresa;
     private ArrayList<MiniEmpresa> lstEmpresas;
-    private DAOMiniEmpresas dao;
+    private DAOMiniEmpresas dao = new DAOMiniEmpresas();
     
     public MbMiniEmpresa() throws NamingException {
         this.dao = new DAOMiniEmpresas();
@@ -33,7 +33,7 @@ public class MbMiniEmpresa implements Serializable {
             MiniEmpresa e0=new MiniEmpresa();
             e0.setIdEmpresa(0);
             e0.setCodigoEmpresa("0");
-            e0.setNombreComercial("Seleccione una empresa");
+            e0.setNombreComercial("Empresa");
             listaEmpresas.add(new SelectItem(e0, e0.toString()));
 
             ArrayList<MiniEmpresa> empresas=this.dao.obtenerMiniEmpresas();
