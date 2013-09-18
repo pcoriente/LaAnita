@@ -14,6 +14,7 @@ import javax.servlet.http.HttpSession;
 import javax.sql.DataSource;
 import main.dominio.Menu;
 import usuarios.UsuarioSesion;
+import usuarios.dominio.Accion;
 
 /**
  *
@@ -42,6 +43,25 @@ public class DAOMenu {
         }
     }
     
+    public ArrayList<Accion> obtenerAcciones(int idModulo) throws SQLException {
+        ArrayList<Accion> acciones = new ArrayList<Accion>();
+        String strSQL="select a.idAccion, a.accion, a.idBoton\n" +
+                        "from usuarioPerfil up\n" +
+                        "inner join systemWeb.dbo.acciones a on a.idAccion=up.idAccion\n" +
+                        "where up.idPerfil="+this.idPerfil+" and up.idModulo="+idModulo;
+        Connection cn=this.ds.getConnection();
+        Statement st=cn.createStatement();
+        try {
+            ResultSet rs=st.executeQuery(strSQL);
+            while(rs.next()) {
+                acciones.add(new Accion(rs.getInt("idAccion"), rs.getString("accion"), rs.getString("idBoton")));
+            }
+        } finally {
+            cn.close();
+        }
+        return acciones;
+    }
+    
     public ArrayList<Menu> obtenermenu() throws SQLException {
         ArrayList<Menu> menuItems=new ArrayList<Menu>();
         String strSQL="select x.idMenu, mm.menu, x.idSubmenu, isnull(ms.submenu, '') as subMenu, " +
@@ -52,7 +72,8 @@ public class DAOMenu {
                         "		where p.idPerfil="+idPerfil+") x\n" +
                         "inner join systemWeb.dbo.modulosMenus mm on mm.idMenu=x.idMenu\n" +
                         "left join systemWeb.dbo.modulosSubMenus ms on ms.idSubMenu=x.idSubMenu\n" +
-                        "inner join systemWeb.dbo.modulos m on m.idModulo=x.idModulo";
+                        "inner join systemWeb.dbo.modulos m on m.idModulo=x.idModulo "
+                + "order by x.idMenu, x.idSubMenu, x.idModulo";
         Connection cn=this.ds.getConnection();
         Statement st=cn.createStatement();
         try {
