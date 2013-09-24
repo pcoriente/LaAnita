@@ -21,6 +21,16 @@
                         <p:panelGrid id="panelCapturaProveedores" styleClass="quitaCuadro" >
                             <p:row >
                                 <p:column >
+                                    <h:outputLabel for="nombreComercial" value="Nombre Comercial:" styleClass="colorLetra"/>
+                                </p:column>
+                                <p:column colspan="5" >
+                                    <p:inputText id="nombreComercial" value="#{mbProveedores.proveedor.nombreComercial}"
+                                                 maxlength="60" size="50" >
+                                    </p:inputText>
+                                </p:column>
+                            </p:row>
+                            <p:row >
+                                <p:column >
                                     <h:outputLabel for="rfc" value="RFC:" styleClass="colorLetra"/>
                                 </p:column>
                                 <p:column style="width: 120px;" >
@@ -79,7 +89,7 @@
                                     <p:selectOneMenu id="clasificacion" value="#{mbProveedores.proveedor.clasificacion}" style="width: 300px" >
                                         <f:converter converterId="converters.Proveedor.Clasificacion" />
                                         <f:selectItems value="#{mbProveedores.listaClasificaciones}" />
-                                        <p:ajax event="change" listener="#{mbProveedores.carga}" 
+                                        <p:ajax event="change" listener="#{mbProveedores.cargaSubClasificaciones()}" 
                                                 update="subClasificacion btnMttoSubClasificaciones" />
                                     </p:selectOneMenu>
                                 </p:column>
@@ -96,7 +106,6 @@
                                 </p:column>
                                 <p:column colspan="3" >
                                     <p:selectOneMenu id="subClasificacion" value="#{mbProveedores.proveedor.subClasificacion}"
-                                                     disabled="#{mbProveedores.proveedor.clasificacion.idClasificacion==0}" 
                                                      style="width: 300px" >
                                         <f:converter converterId="converters.Proveedor.SubClasificacion" />
                                         <f:selectItems value="#{mbProveedores.listaSubClasificaciones}" />
@@ -145,47 +154,13 @@
                             </p:row>
                             <p:row >
                                 <p:column >
-                                    <h:outputLabel value="Teléfono:" styleClass="colorLetra"/>
-                                </p:column>
-                                <p:column >
-                                    <p:inputMask id="etelefono"
-                                                 value="#{mbProveedores.proveedor.telefono}"
-                                                 maxlength="10"
-                                                 mask="(999)9-99-99-99"
-                                                 size="15" />
-                                </p:column>
-                                <p:column style="width: 100px;" >
-                                    <h:outputLabel value="Fax:" styleClass="colorLetra"/>
-                                </p:column>
-                                <p:column colspan="3" >
-                                    <p:inputMask id="fax"
-                                                 value="#{mbProveedores.proveedor.fax}"
-                                                 maxlength="10"
-                                                 mask="(999)9-99-99-99"
-                                                 size="15" />
-                                </p:column>
-                            </p:row>
-                            <p:row >
-                                <p:column >
-                                    <h:outputLabel value="eMail:" styleClass="colorLetra"/>
-                                </p:column>
-                                <p:column colspan="5" >
-                                    <p:inputText id="correo"
-                                                 value="#{mbProveedores.proveedor.correo}"
-                                                 maxlength="100"
-                                                 size="50" >
-                                    </p:inputText>
-                                </p:column>
-                            </p:row>
-                            <p:row >
-                                <p:column >
                                     <h:outputLabel value="Contactos:" styleClass="colorLetra"/>
                                 </p:column>
                                 <p:column colspan="3" >
                                     <p:selectOneMenu id="contacto" value="#{mbProveedores.contacto}" style="width: 300px" >
                                         <f:converter converterId="converters.Contacto" />
                                         <f:selectItems value="#{mbProveedores.mbContactos.listaContactos}" />
-                                        <p:ajax event="change" listener="#{mbProveedores.cargarTelefonos()}" update="telefono" />
+                                        <p:ajax event="change" listener="#{mbProveedores.cargarTelefonos()}" update="telefono btnMttoTelefonos" />
                                     </p:selectOneMenu>
                                 </p:column>
                                 <p:column colspan="2" >
@@ -201,11 +176,12 @@
                                 <p:column colspan="3" >
                                     <p:selectOneMenu id="telefono" value="#{mbProveedores.telefono}" style="width: 300px;" >
                                         <f:converter converterId="converters.Telefono" />
-                                        <f:selectItems value="#{mbProveedores.mbTelefonos.listaTelefonos}" />
+                                        <f:selectItems value="#{mbProveedores.mbContactos.mbTelefonos.listaTelefonos}" />
                                     </p:selectOneMenu>
                                 </p:column>
                                 <p:column colspan="2" >
                                     <p:commandButton id="btnMttoTelefonos" icon="ui-icon-pencil" title="Mtto.Teléfonos" 
+                                                     disabled="#{mbProveedores.contacto.idContacto==0}"
                                                      process="@this telefono" actionListener="#{mbProveedores.mttoTelefono()}" 
                                                      update="msgs mttoTelefonos" oncomplete="mttoTelefonosDialog.show()" />
                                 </p:column>
@@ -288,7 +264,7 @@
                                     <h:outputLabel for="txtTelefonoTipo" value="Tipo:" style="font-weight: bold; color: red; width: 120px;" />
                                 </p:column>
                                 <p:column >
-                                    <p:inputText id="txtTelefonoTipo" value="#{mbProveedores.mbTelefonos.tipo.tipo}" />
+                                    <p:inputText id="txtTelefonoTipo" value="#{mbProveedores.mbContactos.mbTelefonos.tipo.tipo}" />
                                 </p:column>
                             </p:row>
                             <f:facet name="footer" >
@@ -300,7 +276,7 @@
                                                          update="cmbTelefonoTipo" 
                                                          oncomplete="handleTelefonoTipo(xhr, status, args)" />
                                         <p:commandButton id="btnEliminarTelefonoTipo" value="Eliminar" 
-                                                         disabled="#{mbProveedores.mbTelefonos.tipo.idTipo==0}" process="@this" 
+                                                         disabled="#{mbProveedores.mbContactos.mbTelefonos.tipo.idTipo==0}" process="@this" 
                                                          actionListener="#{mbProveedores.eliminarTelefonoTipo()}"
                                                          update="cmbTelefonoTipo" 
                                                          oncomplete="handleTelefonoTipo(xhr, status, args)" />
@@ -313,13 +289,13 @@
                               style="width: 500px;" modal="true" >
                         <p:messages id="messages2" showDetail="true" closable="true" />
                         <p:panelGrid id="mttoTelefonos" styleClass="sinBorde" >
-                            <p:row rendered="#{mbProveedores.mbTelefonos.telefono.idTelefono==0}" >
+                            <p:row rendered="#{mbProveedores.mbContactos.mbTelefonos.telefono.idTelefono==0}" >
                                 <p:column >
                                     <h:outputLabel for="celular" value="Celular:" style="font-weight: bold; color: red; width: 120px;" />
                                 </p:column>
                                 <p:column colspan="2" >
-                                    <p:selectBooleanCheckbox id="celular" value="#{mbProveedores.mbTelefonos.celular}" >
-                                        <p:ajax listener="#{mbProveedores.mbTelefonos.cargaTipos()}" update="cmbTelefonoTipo" />
+                                    <p:selectBooleanCheckbox id="celular" value="#{mbProveedores.mbContactos.mbTelefonos.celular}" >
+                                        <p:ajax listener="#{mbProveedores.mbContactos.mbTelefonos.cargaTipos()}" update="cmbTelefonoTipo" />
                                     </p:selectBooleanCheckbox>
                                 </p:column>
                             </p:row>
@@ -328,9 +304,9 @@
                                     <h:outputLabel for="cmbTelefonoTipo" value="Tipo:" style="font-weight: bold; color: red; width: 120px;" />
                                 </p:column>
                                 <p:column >
-                                    <p:selectOneMenu id="cmbTelefonoTipo" value="#{mbProveedores.mbTelefonos.telefono.tipo}" style="margin: 0px;" >
+                                    <p:selectOneMenu id="cmbTelefonoTipo" value="#{mbProveedores.mbContactos.mbTelefonos.telefono.tipo}" style="margin: 0px;" >
                                         <f:converter converterId="converters.TelefonoTipo" />
-                                        <f:selectItems value="#{mbProveedores.mbTelefonos.listaTipos}" />
+                                        <f:selectItems value="#{mbProveedores.mbContactos.mbTelefonos.listaTipos}" />
                                     </p:selectOneMenu>
                                 </p:column>
                                 <p:column >
@@ -344,7 +320,7 @@
                                     <h:outputLabel for="txtLada" value="Lada:" style="font-weight: bold; color: red; width: 120px;" />
                                 </p:column>
                                 <p:column colspan="2" >
-                                    <p:inputText id="txtLada" value="#{mbProveedores.mbTelefonos.telefono.lada}" maxlength="3" size="5" />
+                                    <p:inputText id="txtLada" value="#{mbProveedores.mbContactos.mbTelefonos.telefono.lada}" maxlength="3" size="5" />
                                 </p:column>
                             </p:row>
                             <p:row >
@@ -352,7 +328,7 @@
                                     <h:outputLabel for="txtTelefono" value="Teléfono:" style="font-weight: bold; color: red; width: 120px;" />
                                 </p:column>
                                 <p:column colspan="2" >
-                                    <p:inputText id="txtTelefono" value="#{mbProveedores.mbTelefonos.telefono.telefono}" 
+                                    <p:inputText id="txtTelefono" value="#{mbProveedores.mbContactos.mbTelefonos.telefono.telefono}" 
                                                  maxlength="8" size="10" />
                                 </p:column>
                             </p:row>
@@ -361,7 +337,7 @@
                                     <h:outputLabel for="txtExtension" value="Extensión:" style="font-weight: bold; color: red; width: 120px;" />
                                 </p:column>
                                 <p:column colspan="2" >
-                                    <p:inputText id="txtExtension" value="#{mbProveedores.mbTelefonos.telefono.extension}" maxlength="15" size="20" />
+                                    <p:inputText id="txtExtension" value="#{mbProveedores.mbContactos.mbTelefonos.telefono.extension}" maxlength="15" size="20" />
                                 </p:column>
                             </p:row>
                             <f:facet name="footer" >
@@ -372,16 +348,19 @@
                                                          actionListener="#{mbProveedores.grabarTelefono()}"
                                                          update="messages2 telefono" 
                                                          oncomplete="handleTelefono(xhr, status, args)" />
-                                        <p:commandButton id="btnEliminarTelefono" value="Eliminar" 
-                                                         disabled="#{mbProveedores.mbTelefonos.telefono.idTelefono==0}" process="@this" 
-                                                         actionListener="#{mbProveedores.eliminarTelefono()}"
-                                                         update="messages2 telefono" 
-                                                         oncomplete="handleTelefono(xhr, status, args)" />
+                                        <p:commandButton id="btnEliminarTelefono" value="Eliminar"
+                                                         disabled="#{mbProveedores.mbContactos.mbTelefonos.telefono.idTelefono==0}" 
+                                                         type="button" onclick="eTel.show();" />
                                     </p:column>
                                 </p:row>
                             </f:facet>
                         </p:panelGrid>
                     </p:dialog>
+                    <p:confirmDialog message="Esta seguro de eliminar el teléfono ?" header="Eliminar un teléfono de un contacto" widgetVar="eTel" >
+                        <p:commandButton value="No, cancelar" onclick="eTel.hide();" type="button" />
+                        <p:commandButton value="Si, seguro" actionListener="#{mbProveedores.eliminarTelefono()}" 
+                                         update="messages2 telefono" oncomplete="eTel.hide();handleTelefono(xhr, status, args);"/>
+                    </p:confirmDialog>
                     <p:dialog header="MANTENIMIENTO DE CONTACTOS" widgetVar="mttoContactosDialog" resizable="false"
                               style="width: 500px;" modal="true" >
                         <p:messages id="messages3" showDetail="true" closable="true" autoUpdate="true" />
@@ -422,18 +401,20 @@
                                         <p:commandButton id="btnGrabarContacto" value="Grabar" 
                                                          process="@this txtPuesto txtContacto txtCorreo" 
                                                          actionListener="#{mbProveedores.grabarContacto()}"
-                                                         update="contacto" 
+                                                         update="contacto telefono btnMttoTelefonos" 
                                                          oncomplete="handleContacto(xhr, status, args)" />
-                                        <p:commandButton id="btnEliminarContacto" value="Eliminar" 
-                                                         process="@this" 
-                                                         actionListener="#{mbProveedores.eliminarContacto()}"
-                                                         update="contacto" 
-                                                         oncomplete="handleContacto(xhr, status, args)" />
+                                        <p:commandButton id="btnEliminarContacto" value="Eliminar" type="button" onclick="eContacto.show();" />
                                     </p:column>
                                 </p:row>
                             </f:facet>
                         </p:panelGrid>
                     </p:dialog>
+                    <p:confirmDialog message="Esta seguro de eliminar el contacto ?" header="Eliminar un contacto" widgetVar="eContacto" >
+                        <p:commandButton value="No, cancelar" onclick="eContacto.hide();" type="button" />
+                        <p:commandButton value="Si, seguro" actionListener="#{mbProveedores.eliminarContacto()}" 
+                                         update="messages3 contacto telefono btnMttoTelefonos" 
+                                         oncomplete="eContacto.hide();handleContacto(xhr, status, args);"/>
+                    </p:confirmDialog>
                     <p:dialog header="MANTENIMIENTO DE CONTRIBUYENTES" widgetVar="mttoContribDialog" resizable="false"
                               style="width: 500px;" modal="true" >
                         <p:messages id="messages6" showDetail="true" closable="true" autoUpdate="true" />
@@ -518,15 +499,20 @@
                                                          process="@this txtTipoOperacion txtOperacion" 
                                                          actionListener="#{mbProveedores.grabarTipoOperacion()}"
                                                          update="tipoOperacion" oncomplete="handleTipoOperacion(xhr, status, args)" />
-                                        <p:commandButton id="btnEliminarTipoOperacion" value="Eliminar" 
-                                                         disabled="#{mbProveedores.mbTipoOperacion.tipoOperacion.idTipoOperacion==0}" 
-                                                         process="@this" actionListener="#{mbProveedores.eliminarTipoOperacion()}"
-                                                         update="tipoOperacion" oncomplete="handleTipoOperacion(xhr, status, args)" />
+                                        <p:commandButton id="btnEliminarTipoOperacion" value="Eliminar" type="button" onclick="eTipoOperacion.show();"
+                                                         disabled="#{mbProveedores.mbTipoOperacion.tipoOperacion.idTipoOperacion==0}" />
                                     </p:column>
                                 </p:row>
                             </f:facet>
                         </p:panelGrid>
                     </p:dialog>
+                    <p:confirmDialog message="Esta seguro de eliminar el tipod de operación ?" header="Eliminar un tipo de operación" 
+                                     widgetVar="eTipoOperacion" >
+                        <p:commandButton value="No, cancelar" onclick="eTipoOperacion.hide();" type="button" />
+                        <p:commandButton value="Si, seguro" actionListener="#{mbProveedores.eliminarTipoOperacion()}" 
+                                         update="messages7 tipoOperacion" 
+                                         oncomplete="eTipoOperacion.hide();handleTipoOperacion(xhr, status, args);"/>
+                    </p:confirmDialog>
                     <p:dialog header="MANTENIMIENTO DE TIPOS DE TERCEROS" widgetVar="mttoTiposTerDlg" resizable="false" style="width: 500px;" modal="true" >
                         <p:messages id="messages9" showDetail="true" autoUpdate="true" closable="true" />
                         <p:panelGrid id="mttoTipoTerceros" styleClass="sinBorde">
@@ -554,16 +540,21 @@
                                         <p:commandButton id="btnGrabarTipoTercero" value="Grabar" 
                                                          process="@this txtTipoTercero txtTercero" 
                                                          actionListener="#{mbProveedores.grabarTipoTercero()}"
-                                                         update="tipoTercero" oncomplete="handleTipoTercero(xhr, status, args)" />
-                                        <p:commandButton id="btnEliminarTipoTercero" value="Eliminar" 
-                                                         disabled="#{mbProveedores.mbTipoTerceros.tipoTercero.idTipoTercero==0}" 
-                                                         process="@this" actionListener="#{mbProveedores.eliminarTipoTercero()}"
-                                                         update="tipoTercero" oncomplete="handleTipoTercero(xhr, status, args)" />
+                                                         update="messages9 tipoTercero" oncomplete="handleTipoTercero(xhr, status, args)" />
+                                        <p:commandButton id="btnEliminarTipoTercero" value="Eliminar" type="button" onclick="eTipoTercero.show();"
+                                                         disabled="#{mbProveedores.mbTipoTerceros.tipoTercero.idTipoTercero==0}" />
                                     </p:column>
                                 </p:row>
                             </f:facet>
                         </p:panelGrid>
                     </p:dialog>
+                    <p:confirmDialog message="Esta seguro de eliminar el tipo de tercero ?" header="Eliminar un tipo de tercero" 
+                                     widgetVar="eTipoTercero" >
+                        <p:commandButton value="No, cancelar" onclick="eTipoTercero.hide();" type="button" />
+                        <p:commandButton value="Si, seguro" actionListener="#{mbProveedores.eliminarTipoTercero()}" 
+                                         update="messages9 tipoTercero" 
+                                         oncomplete="eTipoTercero.hide();handleTipoTercero(xhr, status, args);"/>
+                    </p:confirmDialog>
                     <p:dialog header="MANTENIMIENTO DE SUBCLASIFICACIONES" widgetVar="mttoSubClasifDlg" resizable="false" style="width: 500px;" modal="true" >
                         <p:messages id="messages5" showDetail="true" autoUpdate="true" closable="true" />
                         <p:panelGrid id="mttoSubClasificaciones" styleClass="sinBorde">
@@ -582,15 +573,20 @@
                                         <p:commandButton id="btnGrabarSubClasificacion" value="Grabar" 
                                                          process="@this txtSubClasificacion" actionListener="#{mbProveedores.grabarSubClasificacion()}"
                                                          update="subClasificacion" oncomplete="handleSubClasificacion(xhr, status, args)" />
-                                        <p:commandButton id="btnEliminarSubClasificacion" value="Eliminar" 
-                                                         disabled="#{mbProveedores.mbClasificaciones.subClasificacion.idSubClasificacion==0}" 
-                                                         process="@this" actionListener="#{mbProveedores.eliminarSubClasificacion()}"
-                                                         update="subClasificacion" oncomplete="handleSubClasificacion(xhr, status, args)" />
+                                        <p:commandButton id="btnEliminarSubClasificacion" value="Eliminar" type="button" onclick="eSubClasificacion.show()"
+                                                         disabled="#{mbProveedores.mbClasificaciones.subClasificacion.idSubClasificacion==0}" />
                                     </p:column>
                                 </p:row>
                             </f:facet>
                         </p:panelGrid>
                     </p:dialog>
+                    <p:confirmDialog message="Esta seguro de eliminar la subClasificacion ?" header="Eliminar una subClasificacion" 
+                                     widgetVar="eSubClasificacion" >
+                        <p:commandButton value="No, cancelar" onclick="eSubClasificacion.hide();" type="button" />
+                        <p:commandButton value="Si, seguro" actionListener="#{mbProveedores.eliminarSubClasificacion()}" 
+                                         update="messages5 subClasificacion" 
+                                         oncomplete="eSubClasificacion.hide();handleSubClasificacion(xhr, status, args);"/>
+                    </p:confirmDialog>
                     <p:dialog header="MANTENIMIENTO DE CLASIFICACIONES" widgetVar="mttoClasifDlg" resizable="false" style="width: 500px;" modal="true" >
                         <p:messages id="messages8" showDetail="true" autoUpdate="true" closable="true" />
                         <p:panelGrid id="mttoClasificaciones" styleClass="sinBorde">
@@ -608,16 +604,22 @@
                                     <p:column colspan="2" >
                                         <p:commandButton id="btnGrabarClasificacion" value="Grabar" 
                                                          process="@this txtClasificacion" actionListener="#{mbProveedores.grabarClasificacion()}"
-                                                         update="clasificacion" oncomplete="handleClasificacion(xhr, status, args)" />
-                                        <p:commandButton id="btnEliminarClasificacion" value="Eliminar" 
-                                                         disabled="#{mbProveedores.mbClasificaciones.clasificacion.idClasificacion==0}" 
-                                                         process="@this" actionListener="#{mbProveedores.eliminarClasificacion()}"
-                                                         update="clasificacion" oncomplete="handleClasificacion(xhr, status, args)" />
+                                                         update="clasificacion subClasificacion btnMttoSubClasificaciones" 
+                                                         oncomplete="handleClasificacion(xhr, status, args)" />
+                                        <p:commandButton id="btnEliminarClasificacion" value="Eliminar" type="button" onclick="eClasificacion.show();"
+                                                         disabled="#{mbProveedores.mbClasificaciones.clasificacion.idClasificacion==0}" />
                                     </p:column>
                                 </p:row>
                             </f:facet>
                         </p:panelGrid>
                     </p:dialog>
+                    <p:confirmDialog message="Esta seguro de eliminar la clasificacion ?" header="Eliminar una clasificacion" 
+                                     widgetVar="eClasificacion" >
+                        <p:commandButton value="No, cancelar" onclick="eClasificacion.hide();" type="button" />
+                        <p:commandButton value="Si, seguro" actionListener="#{mbProveedores.eliminarClasificacion()}" 
+                                         update="messages8 clasificacion subClasificacion btnMttoSubClasificaciones" 
+                                         oncomplete="eClasificacion.hide();handleClasificacion(xhr, status, args);"/>
+                    </p:confirmDialog>
                     <p:dialog header="BUSCADOR DE PROVEEDORES" widgetVar="buscarProvDlg" resizable="false" style="width: 600px;" modal="true" >
                         <p:messages id="messages4" showDetail="true" closable="true" />
                         <p:panelGrid id="buscarProveedores" styleClass="sinBorde" >

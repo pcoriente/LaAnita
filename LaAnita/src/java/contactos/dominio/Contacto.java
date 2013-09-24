@@ -11,12 +11,14 @@ public class Contacto {
     private String contacto;
     private String puesto;
     private String correo;
+    private ArrayList<Telefono> telefonos;
 
     public Contacto() {
         this.idContacto=0;
         this.contacto="";
         this.puesto="";
         this.correo="";
+        this.telefonos=new ArrayList<Telefono>();
     }
 
     @Override
@@ -76,5 +78,13 @@ public class Contacto {
 
     public void setCorreo(String correo) {
         this.correo = correo;
+    }
+
+    public ArrayList<Telefono> getTelefonos() {
+        return telefonos;
+    }
+
+    public void setTelefonos(ArrayList<Telefono> telefonos) {
+        this.telefonos = telefonos;
     }
 }

@@ -17,22 +17,34 @@
             <div id="content" align="center"  >
                 <h:form >
                     <p:panel header="LISTA DE PROVEEDORES" styleClass="quitaCuadro" rendered="#{not empty mbProveedores.acciones}">
-                        <div align="right">
-                            <p:commandLink id="lnkNuevoProveedor" styleClass="nueva" 
-                                           disabled="#{not mbProveedores.mbAcciones.validarAccion('lnkNuevoProveedor')}" 
-                                           action="#{mbProveedores.mantenimiento(0)}" value="Nueva" ajax="false" immediate="true" />|
-                            <p:commandLink styleClass="nueva" action="#{mbProveedores.terminar()}" value="Salir" ajax="false" />|
-                        </div>
-                        <p:dataTable value="#{mbProveedores.listaProveedores}" 
-                                     var="proveedor"
+                        <p:panelGrid >
+                            <p:row>
+                                <p:column style="width: 755px;" >
+                                    <p:selectOneMenu id="clasificacion" value="#{mbProveedores.clasificacion}" style="width: 300px" >
+                                        <f:converter converterId="converters.Proveedor.Clasificacion" />
+                                        <f:selectItems value="#{mbProveedores.listaClasificaciones}" />
+                                        <p:ajax event="change" listener="#{mbProveedores.cargaProveedores(mbProveedores.clasificacion.idClasificacion)}" 
+                                                update="listaProveedores" />
+                                    </p:selectOneMenu>
+                                </p:column>
+                                <p:column >
+                                    <p:outputPanel >
+                                        <p:commandLink id="lnkNuevoProveedor" styleClass="nueva" 
+                                                       disabled="#{not mbProveedores.mbAcciones.validarAccion('lnkNuevoProveedor')}" 
+                                                       action="#{mbProveedores.mantenimiento(0)}" value="Nueva" ajax="false" immediate="true" />|
+                                        <p:commandLink styleClass="nueva" action="#{mbProveedores.terminar()}" value="Salir" ajax="false" />|
+                                    </p:outputPanel>
+                                </p:column>
+                            </p:row>
+                        </p:panelGrid>
+                        <p:dataTable id="listaProveedores" value="#{mbProveedores.listaProveedores}" 
+                                     var="proveedor" filteredValue="#{mbProveedores.listaFiltrados}"
                                      style="border:solid 1px"
                                      widgetVar="proveedorTable" 
                                      emptyMessage="No hay elementos que desplegar">
                             <f:facet name="header">
                                 <p:outputPanel >
-                                    <h:outputText value="Filtrado de campos: " />
-                                    <h:inputText id="globalFilter" onkeyup="proveedorTable.filter();" />
-                                    <h:outputText value="[F5] Ver todos" />
+                                    
                                 </p:outputPanel>
                             </f:facet>
                             <p:column filterBy="#{proveedor.contribuyente.rfc}" filterMatchMode="contains" >
@@ -47,21 +59,34 @@
                                 </f:facet>
                                 <h:outputText value="#{proveedor.toString()}"/>
                             </p:column>
-                            <p:column headerText="Clasificación" 
-                                      filterBy="#{proveedor.clasificacion}" 
-                                      filterOptions="#{mbProveedores.listaClasificaciones}" 
-                                      filterMatchMode="exact" >
-                                <h:outputText value="#{proveedor.clasificacion}" />
+                            <p:column >
+                                <f:facet name="header" >
+                                    <h:outputText value="Clasificacion" />
+                                </f:facet>
+                                <h:outputText value="#{proveedor.clasificacion.toString()}"/>
                             </p:column>
                             <p:column headerText="Más" colspan="">
-                                <p:rowToggler />
+                                <p:rowToggler  />
                             </p:column>
                             <p:rowExpansion  >
-                                <h:outputText value="CORREO: #{proveedor.correo}" /><br/>
-                                <h:outputText value="TELEFONO: #{proveedor.telefono}" /><br/>
-                                <h:outputText  value="FAX: #{proveedor.fax}"  /><br/>
-                                <h:outputText value="DIRECCION FISCAL: " /><br/>
-                                <p:inputTextarea id="direccion" readonly="true" value="#{proveedor.contribuyente.direccion.toString()}" rows="10" cols="50" />
+                                <p:accordionPanel value="#{proveedor.contactos}" var="c" >
+                                    <p:tab title="#{c.contacto}" >
+                                        <h:panelGrid columns="2" >
+                                            <h:outputText value="Puesto :" />
+                                            <h:outputText value="#{c.puesto}" />
+                                            
+                                            <h:outputText value="eMail :" />
+                                            <h:outputText value="#{c.correo}" />
+                                            
+                                            <h:outputText value="Teléfonos :" />
+                                            <p:dataTable value="#{c.telefonos}" var="t" >
+                                                <p:column headerText="Teléfono" >
+                                                    <h:outputText value="#{t.toString()}" />
+                                                </p:column>
+                                            </p:dataTable>
+                                        </h:panelGrid>
+                                    </p:tab>
+                                </p:accordionPanel>
                             </p:rowExpansion>
                             <p:column  headerText="Procesos"  style="width: 5px">
                                 <h:commandLink id="lnkModificarProveedor" action="#{mbProveedores.mantenimiento(proveedor.idProveedor)}" 

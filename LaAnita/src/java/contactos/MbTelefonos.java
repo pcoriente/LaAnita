@@ -176,6 +176,27 @@ public class MbTelefonos implements Serializable {
         return ok;
     }
     
+    public ArrayList<Telefono> obtenerTelefonos(int idContacto) throws NamingException, SQLException {
+//        boolean ok=false;
+//        ArrayList<Telefono> tels=new ArrayList<Telefono>();
+//        FacesMessage fMsg = new FacesMessage(FacesMessage.SEVERITY_WARN, "Aviso:", "");
+//        try {
+            this.dao=new DAOTelefonos();
+            ArrayList<Telefono> tels=this.dao.obtenerTelefonos(idContacto);
+//            ok=true;
+//        } catch (SQLException ex) {
+//            fMsg.setSeverity(FacesMessage.SEVERITY_ERROR);
+//            fMsg.setDetail(ex.getErrorCode() + " " + ex.getMessage());
+//        } catch (NamingException ex) {
+//            fMsg.setSeverity(FacesMessage.SEVERITY_ERROR);
+//            fMsg.setDetail(ex.getMessage());
+//        }
+//        if(!ok) {
+//            FacesContext.getCurrentInstance().addMessage(null, fMsg);
+//        }
+        return tels;
+    }
+    
     public void cargaTelefonos(int idContacto) {
         boolean ok=false;
         FacesMessage fMsg = new FacesMessage(FacesMessage.SEVERITY_WARN, "Aviso:", "");

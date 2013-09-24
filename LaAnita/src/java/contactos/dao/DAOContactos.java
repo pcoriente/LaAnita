@@ -1,6 +1,8 @@
 package contactos.dao;
 
 import contactos.dominio.Contacto;
+import contactos.dominio.Telefono;
+import contactos.dominio.TelefonoTipo;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
