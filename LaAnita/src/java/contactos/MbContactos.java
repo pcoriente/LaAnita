@@ -2,6 +2,7 @@ package contactos;
 
 import contactos.dao.DAOContactos;
 import contactos.dominio.Contacto;
+import contactos.dominio.Telefono;
 import javax.inject.Named;
 import javax.enterprise.context.SessionScoped;
 import java.io.Serializable;
@@ -10,6 +11,7 @@ import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.faces.application.FacesMessage;
+import javax.faces.bean.ManagedProperty;
 import javax.faces.context.FacesContext;
 import javax.faces.model.SelectItem;
 import javax.naming.NamingException;
@@ -25,10 +27,13 @@ public class MbContactos implements Serializable {
     private Contacto contacto;
     private ArrayList<Contacto> contactos;
     private ArrayList<SelectItem> listaContactos;
+    @ManagedProperty(value="#{mbTelefonos}")
+    private MbTelefonos mbTelefonos;
     private DAOContactos dao;
     
     public MbContactos() {
         this.contacto=new Contacto();
+        this.mbTelefonos=new MbTelefonos();
     }
     
     public boolean eliminar(int idPadre) {
@@ -51,7 +56,6 @@ public class MbContactos implements Serializable {
         }
         context.addCallbackParam("okContacto", ok);
         return ok;
-        
     }
     
     public boolean grabar(int idTipo, int idPadre) {
@@ -84,12 +88,20 @@ public class MbContactos implements Serializable {
         return ok;
     }
     
+    public ArrayList<Contacto> obtenerContactos(int idTipo, int idPadre) throws NamingException, SQLException {
+        this.dao=new DAOContactos();
+        ArrayList<Contacto> lstContactos=this.dao.obtenerContactos(idTipo, idPadre);
+        for(Contacto c: lstContactos) {
+            c.setTelefonos(this.mbTelefonos.obtenerTelefonos(c.getIdContacto()));
+        }
+        return lstContactos;
+    }
+    
     public void cargaContactos(int idTipo, int idPadre) {
         boolean ok=false;
         FacesMessage fMsg = new FacesMessage(FacesMessage.SEVERITY_WARN, "Aviso:", "");
         try {
-            this.dao=new DAOContactos();
-            this.contactos=this.dao.obtenerContactos(idTipo, idPadre);
+            this.contactos=this.obtenerContactos(idTipo, idPadre);
             
             Contacto c0=new Contacto();
             c0.setContacto("Nuevo Contacto");
@@ -117,6 +129,10 @@ public class MbContactos implements Serializable {
         c.setContacto(c1.getContacto());
         c.setPuesto(c1.getPuesto());
         c.setCorreo(c1.getCorreo());
+        c.setTelefonos(c1.getTelefonos());
+//        for(Telefono t:c1.getTelefonos()) {
+//            c.getTelefonos().add(this.mbTelefonos.copia(t));
+//        }
         return c;
     }
 
@@ -142,5 +158,13 @@ public class MbContactos implements Serializable {
 
     public void setListaContactos(ArrayList<SelectItem> listaContactos) {
         this.listaContactos = listaContactos;
+    }
+
+    public MbTelefonos getMbTelefonos() {
+        return mbTelefonos;
+    }
+
+    public void setMbTelefonos(MbTelefonos mbTelefonos) {
+        this.mbTelefonos = mbTelefonos;
     }
 }

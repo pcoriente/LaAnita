@@ -80,12 +80,29 @@ public class DAOTipoOperaciones {
         return tipoOperacion;
     }
     
-    public void eliminar(int idTipoOperacion) throws SQLException {
+    public void eliminar(int idTipoOperacion) throws SQLException, Exception {
         Connection cn=ds.getConnection();
         Statement st=cn.createStatement();
         String strSQL="DELETE FROM "+this.tabla+" WHERE idTipoOperacion=" + idTipoOperacion;
         try {
-            st.executeUpdate(strSQL);
+            int total=0;
+            st.executeUpdate("begin transaction");
+            ResultSet rs=st.executeQuery("SELECT count(*) AS total FROM proveedores WHERE idTipoOperacion="+idTipoOperacion);
+            if(rs.next()) {
+                total=rs.getInt("total");
+            }
+            if(total==0) {
+                st.executeUpdate(strSQL);
+            } else {
+                throw new Exception("El tipo de operación no se puede eliminar, se encuentra en uso !!!");
+            }
+            st.executeUpdate("commit transaction");
+        } catch (SQLException ex) {
+            st.executeUpdate("rollback transaction");
+            throw (ex);
+        } catch (Exception ex) {
+            st.executeUpdate("rollback transaction");
+            throw (ex);
         } finally {
             cn.close();
         }

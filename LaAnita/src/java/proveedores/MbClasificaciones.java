@@ -51,6 +51,8 @@ public class MbClasificaciones implements Serializable {
         } catch (SQLException ex) {
             fMsg.setSeverity(FacesMessage.SEVERITY_ERROR);
             fMsg.setDetail(ex.getErrorCode() + " " + ex.getMessage());
+        }catch (Exception ex) {
+            fMsg.setDetail(ex.getMessage());
         }
         if (!ok) {
             FacesContext.getCurrentInstance().addMessage(null, fMsg);
@@ -154,6 +156,8 @@ public class MbClasificaciones implements Serializable {
         } catch (SQLException ex) {
             fMsg.setSeverity(FacesMessage.SEVERITY_ERROR);
             fMsg.setDetail(ex.getErrorCode() + " " + ex.getMessage());
+        } catch (Exception ex) {
+            fMsg.setDetail(ex.getMessage());
         }
         if (!ok) {
             FacesContext.getCurrentInstance().addMessage(null, fMsg);

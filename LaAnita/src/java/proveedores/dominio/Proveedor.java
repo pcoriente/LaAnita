@@ -1,9 +1,11 @@
 package proveedores.dominio;
 
+import contactos.dominio.Contacto;
 import contribuyentes.Contribuyente;
 import contribuyentes.TOContribuyente;
 import direccion.dominio.Direccion;
 import impuestos.dominio.ImpuestoZona;
+import java.util.ArrayList;
 
 /**
  *
@@ -11,6 +13,7 @@ import impuestos.dominio.ImpuestoZona;
  */
 public class Proveedor {
     private int idProveedor;
+    private String nombreComercial;
     private Contribuyente contribuyente;
     private Clasificacion clasificacion;
     private SubClasificacion subClasificacion;
@@ -19,25 +22,22 @@ public class Proveedor {
     private ImpuestoZona impuestoZona;
     private Direccion direccionFiscal;
     private Direccion direccionEntrega;
-    private String telefono;
-    private String fax;
-    private String correo;
     private int diasCredito;
     private double limiteCredito;
     private String fechaAlta;
+    private ArrayList<Contacto> contactos;
 
     public Proveedor() {
         this.idProveedor=0;
+        this.nombreComercial="";
         this.contribuyente=new Contribuyente();
         this.clasificacion=new Clasificacion();
         this.subClasificacion=new SubClasificacion();
         this.tipoOperacion=new TipoOperacion();
         this.tipoTercero=new TipoTercero();
+        this.contactos=new ArrayList<Contacto>();
         this.impuestoZona=new ImpuestoZona(0, "");
         this.direccionEntrega=new Direccion();
-        this.telefono="";
-        this.fax="";
-        this.correo="";
         this.diasCredito=0;
         this.limiteCredito=0.00;
         this.fechaAlta="";
@@ -45,6 +45,7 @@ public class Proveedor {
     
     @Override
     public String toString() {
+        //return this.nombreComercial;
         return this.contribuyente.getContribuyente();
     }
 
@@ -112,30 +113,6 @@ public class Proveedor {
         this.direccionEntrega = direccionEntrega;
     }
 
-    public String getTelefono() {
-        return telefono;
-    }
-
-    public void setTelefono(String telefono) {
-        this.telefono = telefono;
-    }
-
-    public String getFax() {
-        return fax;
-    }
-
-    public void setFax(String fax) {
-        this.fax = fax;
-    }
-
-    public String getCorreo() {
-        return correo;
-    }
-
-    public void setCorreo(String correo) {
-        this.correo = correo;
-    }
-
     public int getDiasCredito() {
         return diasCredito;
     }
@@ -166,5 +143,21 @@ public class Proveedor {
 
     public void setSubClasificacion(SubClasificacion subClasificacion) {
         this.subClasificacion = subClasificacion;
+    }
+
+    public ArrayList<Contacto> getContactos() {
+        return contactos;
+    }
+
+    public void setContactos(ArrayList<Contacto> contactos) {
+        this.contactos = contactos;
+    }
+
+    public String getNombreComercial() {
+        return nombreComercial;
+    }
+
+    public void setNombreComercial(String nombreComercial) {
+        this.nombreComercial = nombreComercial;
     }
 }

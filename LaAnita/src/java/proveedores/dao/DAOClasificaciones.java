@@ -78,12 +78,29 @@ public class DAOClasificaciones {
         return subClasificacion;
     }
     
-    public void eliminarSubClasificacion(int idSubClasificacion) throws SQLException {
+    public void eliminarSubClasificacion(int idSubClasificacion) throws SQLException, Exception {
         Connection cn=ds.getConnection();
         Statement st=cn.createStatement();
         String strSQL="DELETE FROM "+this.tabla1+" WHERE idSubClasificacion=" + idSubClasificacion;
         try {
-            st.executeUpdate(strSQL);
+            int total=0;
+            st.executeUpdate("begin transaction");
+            ResultSet rs=st.executeQuery("SELECT count(*) AS total FROM proveedores WHERE idSubClasificacion="+idSubClasificacion);
+            if(rs.next()) {
+                total=rs.getInt("total");
+            }
+            if(total==0) {
+                st.executeUpdate(strSQL);
+            } else {
+                throw(new Exception("La subclasificacion esta en uso, no puede eliminarse !!!"));
+            }
+            st.executeUpdate("commit transaction");
+        } catch(SQLException ex) {
+            st.executeUpdate("rollback transaction");
+            throw (ex);
+        } catch(Exception ex) {
+            st.executeUpdate("rollback transaction");
+            throw (ex);
         } finally {
             cn.close();
         }
@@ -164,12 +181,29 @@ public class DAOClasificaciones {
         return clasificacion;
     }
     
-    public void eliminar(int idClasificacion) throws SQLException {
+    public void eliminar(int idClasificacion) throws SQLException, Exception {
         Connection cn=ds.getConnection();
         Statement st=cn.createStatement();
         String strSQL="DELETE FROM "+this.tabla+" WHERE idClasificacion=" + idClasificacion;
         try {
-            st.executeUpdate(strSQL);
+            int total=0;
+            st.executeUpdate("begin transaction");
+            ResultSet rs=st.executeQuery("SELECT count(*) AS total FROM proveedores WHERE idClasificacion="+idClasificacion);
+            if(rs.next()) {
+                total=rs.getInt("total");
+            }
+            if(total==0) {
+                st.executeUpdate(strSQL);
+            } else {
+                throw new Exception("No se puede eliminar, la clasificación se encuentra en uso !!!");
+            }
+            st.executeUpdate("commit transaction");
+        } catch (SQLException ex) {
+            st.executeUpdate("rollback transaction");
+            throw (ex);
+        } catch (Exception ex) {
+            st.executeUpdate("rollback transaction");
+            throw (ex);
         } finally {
             cn.close();
         }

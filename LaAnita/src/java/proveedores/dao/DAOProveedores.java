@@ -57,6 +57,8 @@ public class DAOProveedores {
                         idRfc=rs.getInt("idRfc");
                     }
                 }
+            } else {
+                st.executeUpdate("UPDATE contribuyentesRfc SET rfc='"+p.getContribuyente().getRfc()+"' WHERE idRFC="+p.getContribuyente().getIdRfc());
             }
             if((idContribuyente=p.getContribuyente().getIdContribuyente())==0) {
                 st.executeUpdate("INSERT INTO contribuyentes (idRfc, contribuyente, idDireccion) "
@@ -64,15 +66,21 @@ public class DAOProveedores {
                 rs=st.executeQuery("SELECT @@IDENTITY AS idContribuyente");
                 if(rs.next()) {
                     idContribuyente=rs.getInt("idContribuyente");
+//                    p.getContribuyente().setIdContribuyente(idContribuyente);
                 }
+            } else {
+                st.executeUpdate("UPDATE contribuyentes "
+                        + "SET idRfc="+idRfc+", contribuyente='"+p.getContribuyente().getContribuyente()+" "
+                        + "WHERE idContribuyente="+idContribuyente);
             }
-            String strSQL="INSERT INTO proveedores (codigoProveedor, idContribuyente, idClasificacion, idSubClasificacion"
+            String strSQL="INSERT INTO proveedores (codigoProveedor, nombreComercial, idContribuyente, idClasificacion, idSubClasificacion"
                     + ", idTipoTercero, idTipoOperacion, idImpuestoZona"
-                    + ", idDireccionEntrega, telefono, fax, eMail, diasCredito, limiteCredito, fechaAlta) "
-                    + "VALUES(0, "+idContribuyente+", "+p.getClasificacion().getIdClasificacion()+", "+p.getSubClasificacion().getIdSubClasificacion()+""
-                    + ", "+p.getTipoTercero().getIdTipoTercero()+", "+p.getTipoOperacion().getIdTipoOperacion()+", "+p.getImpuestoZona().getIdZona()+""
-                    + ", "+p.getDireccionEntrega().getIdDireccion()+""
-                    + ", '"+p.getTelefono()+"', '"+p.getFax()+"', '"+p.getCorreo()+"', "+p.getDiasCredito()+", "+p.getLimiteCredito()+", CURRENT_TIMESTAMP)";
+                    + ", idDireccionEntrega, diasCredito, limiteCredito, fechaAlta) "
+                    + "VALUES(0, '"+p.getNombreComercial()+"', "+idContribuyente+""
+                    + ", "+p.getClasificacion().getIdClasificacion()+", "+p.getSubClasificacion().getIdSubClasificacion()+""
+                    + ", "+p.getTipoTercero().getIdTipoTercero()+", "+p.getTipoOperacion().getIdTipoOperacion()+""
+                    + ", "+p.getImpuestoZona().getIdZona()+", "+p.getDireccionEntrega().getIdDireccion()+""
+                    + ", "+p.getDiasCredito()+", "+p.getLimiteCredito()+", CURRENT_TIMESTAMP)";
             st.executeUpdate(strSQL);
             rs=st.executeQuery("SELECT @@IDENTITY AS idProveedor");
             if(rs.next()) {
@@ -107,6 +115,8 @@ public class DAOProveedores {
                         idRfc=rs.getInt("idRfc");
                     }
                 }
+            } else {
+                st.executeUpdate("UPDATE contribuyentesRfc SET rfc='"+p.getContribuyente().getRfc()+"' WHERE idRFC="+p.getContribuyente().getIdRfc());
             }
             if((idContribuyente=p.getContribuyente().getIdContribuyente())==0) {
                 st.executeUpdate("INSERT INTO contribuyentes (idRfc, contribuyente, idDireccion) "
@@ -114,17 +124,22 @@ public class DAOProveedores {
                 rs=st.executeQuery("SELECT @@IDENTITY AS idContribuyente");
                 if(rs.next()) {
                     idContribuyente=rs.getInt("idContribuyente");
+//                    p.getContribuyente().setIdContribuyente(idContribuyente);
                 }
+            } else {
+                st.executeUpdate("UPDATE contribuyentes "
+                        + "SET idRfc="+idRfc+", contribuyente='"+p.getContribuyente().getContribuyente()+"' "
+                        + "WHERE idContribuyente="+idContribuyente);
             }
             st.executeUpdate("UPDATE proveedores "
-                    + "SET idContribuyente="+idContribuyente+""
+                    + "SET nombreComercial='"+p.getNombreComercial()+"'"
+                    + ",   idContribuyente="+idContribuyente+""
                     + ",   idClasificacion="+p.getClasificacion().getIdClasificacion()+""
                     + ",   idSubClasificacion="+p.getSubClasificacion().getIdSubClasificacion()+""
                     + ",   idTipoTercero="+p.getTipoTercero().getIdTipoTercero()+""
                     + ",   idTipoOperacion="+p.getTipoOperacion().getIdTipoOperacion()+""
                     + ",   idImpuestoZona="+p.getImpuestoZona().getIdZona()+""
                     + ",   idDireccionEntrega="+p.getDireccionEntrega().getIdDireccion()+""
-                    + ",   telefono='"+p.getTelefono()+"', fax='"+p.getFax()+"', eMail='"+p.getCorreo()+"'"
                     + ",   diasCredito="+p.getDiasCredito()+", limiteCredito="+p.getLimiteCredito()+""
                     + "WHERE idProveedor="+p.getIdProveedor());
             st.executeUpdate("commit transaction");
@@ -138,12 +153,13 @@ public class DAOProveedores {
     
     private String sqlProveedor() {
         String strSQL="" +
-"select p.idProveedor, c.idContribuyente, c.contribuyente, r.idRfc, r.rfc, c.idDireccion as idDireccionFiscal\n" +
+"select p.idProveedor, p.nombreComercial\n" +
+"       , c.idContribuyente, c.contribuyente, r.idRfc, r.rfc, c.idDireccion as idDireccionFiscal\n" +
 "	, cl.idClasificacion, cl.clasificacion, isnull(sc.idSubClasificacion, 0) as idSubClasificacion, isnull(sc.subClasificacion, '') as subClasificacion\n" +
 "	, isnull(tipOpe.idTipoOperacion, 0) as idTipoOperacion, isnull(tipOpe.operacion, '') as operacion\n" +
 "	, isnull(tipTer.idTipoTercero, 0) as idTipoTercero, isnull(tipTer.tercero, '') as tercero\n" +
 "	, isnull(iz.idZona, 0) as idImpuestoZona, isnull(iz.zona, '') as impuestoZona\n" +
-"	, p.idDireccionEntrega, p.telefono, p.fax, p.eMail, p.diasCredito, p.limiteCredito, p.fechaAlta\n" +
+"	, p.idDireccionEntrega, p.diasCredito, p.limiteCredito, p.fechaAlta\n" +
 "from proveedores p\n" +
 "inner join contribuyentes c on p.idContribuyente=c.idContribuyente\n" +
 "inner join contribuyentesRfc r on c.idRfc=r.idRfc\n" +
@@ -169,6 +185,23 @@ public class DAOProveedores {
             cn.close();
         }
         return to;
+    }
+    
+    public ArrayList<Proveedor> obtenerProveedores(int idClasificacion) throws SQLException {
+        ArrayList<Proveedor> lista=new ArrayList<Proveedor>();
+        
+        Connection cn=ds.getConnection();
+        String strSQL=this.sqlProveedor()+"WHERE cl.idClasificacion="+idClasificacion+" ORDER BY c.contribuyente";
+        try {
+            Statement sentencia = cn.createStatement();
+            ResultSet rs = sentencia.executeQuery(strSQL);
+            while(rs.next()) {
+                lista.add(construir(rs));
+            }
+        } finally {
+            cn.close();
+        }
+        return lista;
     }
     
     public ArrayList<Proveedor> obtenerProveedores() throws SQLException {
@@ -232,6 +265,7 @@ public class DAOProveedores {
         
         Proveedor p=new Proveedor();
         p.setIdProveedor(rs.getInt("idProveedor"));
+        p.setNombreComercial(rs.getString("nombreComercial"));
         p.setContribuyente(contribuyente);
         p.getClasificacion().setIdClasificacion(rs.getInt("idClasificacion"));
         p.getClasificacion().setClasificacion(rs.getString("clasificacion"));
@@ -246,9 +280,6 @@ public class DAOProveedores {
         p.getImpuestoZona().setIdZona(rs.getInt("idImpuestoZona"));
         p.getImpuestoZona().setZona(rs.getString("impuestoZona"));
         p.getDireccionEntrega().setIdDireccion(rs.getInt("idDireccionEntrega"));
-        p.setTelefono(rs.getString("telefono"));
-        p.setFax(rs.getString("fax"));
-        p.setCorreo(rs.getString("eMail"));
         p.setDiasCredito(rs.getInt("diasCredito"));
         p.setLimiteCredito(rs.getDouble("limiteCredito"));
         p.setFechaAlta(utilerias.Utilerias.date2String(rs.getDate("fechaAlta")));

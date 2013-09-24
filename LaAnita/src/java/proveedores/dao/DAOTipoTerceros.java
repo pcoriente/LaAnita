@@ -78,12 +78,29 @@ public class DAOTipoTerceros {
         return tipoTercero;
     }
     
-    public void eliminar(int idTipoTercero) throws SQLException {
+    public void eliminar(int idTipoTercero) throws SQLException, Exception {
         Connection cn=ds.getConnection();
         Statement st=cn.createStatement();
         String strSQL="DELETE FROM "+this.tabla+" WHERE idTipoTercero=" + idTipoTercero;
         try {
-            st.executeUpdate(strSQL);
+            int total=0;
+            st.executeUpdate("begin transaction");
+            ResultSet rs=st.executeQuery("SELECT count(*) AS total FROM proveedores WHERE idTipoTercero="+idTipoTercero);
+            if(rs.next()) {
+                total=rs.getInt("total");
+            }
+            if(total==0) {
+                st.executeUpdate(strSQL);
+            } else {
+                throw new Exception("El tipo tercero está en uso, no puede eliminarse !!!");
+            }
+            st.executeUpdate("commit transaction");
+        } catch(SQLException ex) {
+            st.executeUpdate("rollback transaction");
+            throw (ex);
+        } catch (Exception ex) {
+            st.executeUpdate("rollback transaction");
+            throw (ex);
         } finally {
             cn.close();
         }
