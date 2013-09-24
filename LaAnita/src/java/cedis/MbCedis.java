@@ -36,7 +36,8 @@ public class MbCedis implements Serializable {
     
     public MbCedis() {
         this.mbDireccion=new MbDireccion();
-        this.mbAcciones=new MbAcciones(1);
+        this.mbAcciones=new MbAcciones();
+//        this.mbAcciones.setIdModulo(1);
     }
     
     public String regresarSinAcceso() {

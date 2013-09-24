@@ -1,0 +1,40 @@
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:h="http://java.sun.com/jsf/html">
+    <h:head>
+        <title>ENTRADA AL BDS</title>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"></meta>
+    </h:head>
+    <body>
+        <div id="wrapper" align="center">
+            <div id="content" align="center"  >
+                <!--   CAMBIAR DE AQUI EN ADELANTE  -->
+                <div style="width: 960px">
+                    <h:graphicImage  library="images" name="encabezado.jpg" />
+                    <p:panel header="CONTROL DE ACCESO: PANEL ADMINISTRATIVO" style="width: 60%;  ">
+                        <h:form>
+                            <center> 
+                                <p:messages id="messages" showDetail="true" autoUpdate="true" closable="true" />  
+                                <h:panelGrid  columns="2" style="width: 50%;" >
+                                    <h:outputText  value="Password: " />
+                                    <p:password   id="password"
+                                                  value="#{mbLogin.login.password}"
+                                                  feedback="true" /> 
+                                    <center>
+                                        <p:commandButton id="boton"
+                                                         value="Acceder"
+                                                         action="#{mbLogin.validarLogin()}"
+                                                         ajax="false"/>
+                                    </center>
+                                </h:panelGrid> 
+                            </center>
+                        </h:form>
+
+                    </p:panel>
+                </div> 
+            </div>
+        </div>
+    </body>
+</html>

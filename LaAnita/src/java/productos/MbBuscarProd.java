@@ -38,7 +38,7 @@ public class MbBuscarProd implements Serializable {
     private SelectItem[] arrayTipos;
     private SelectItem[] arrayGrupos;
     private SelectItem[] arraySubGrupos;
-    
+    private int borrarVariable;
     public MbBuscarProd() {
         this.inicializa();
     }
@@ -124,6 +124,11 @@ public class MbBuscarProd implements Serializable {
                 this.arraySubGrupos[i++] = new SelectItem("", "Seleccione un subGrupo");
                 for (SubGrupo sg : lstSubGrupos) {
                     this.arraySubGrupos[i++] = new SelectItem(sg.getSubGrupo(), sg.getSubGrupo());
+                }
+                if(this.productos.isEmpty()) {
+                    fMsg.setSeverity(FacesMessage.SEVERITY_INFO);
+                    fMsg.setDetail("No se encontraron productos en la busqueda");
+                    FacesContext.getCurrentInstance().addMessage(null, fMsg);
                 }
             }
         } catch (NamingException ex) {

@@ -1,6 +1,7 @@
 package requisiciones.mb;
 
 import cotizaciones.dominio.CotizacionDetalle;
+import cotizaciones.dominio.CotizacionEncabezado;
 import empresas.MbMiniEmpresa;
 import empresas.dao.DAOMiniEmpresas;
 import javax.inject.Named;
@@ -21,6 +22,7 @@ import productos.MbBuscarProd;
 import productos.dao.DAOProductos;
 import productos.dominio.ProdStr;
 import productos.dominio.Producto;
+import proveedores.MbMiniProveedor;
 import requisiciones.dao.DAODepto;
 import requisiciones.dao.DAORequisiciones;
 import requisiciones.dao.DAOUsuarioRequisiciones;
@@ -69,6 +71,10 @@ public class MbRequisiciones implements Serializable {
     private String descGralAplicF;
     private double sumaDescuentoTotales;
     private String desctoTotalesF;
+    @ManagedProperty(value = "#{mbMiniProveedor}")
+    private MbMiniProveedor mbMiniProveedor = new MbMiniProveedor();
+    private ArrayList<CotizacionEncabezado> cotizacionesEncabezado;
+    private CotizacionEncabezado cotizacionEncabezado = new CotizacionEncabezado();
 
     //GETS Y SETS
     public MbRequisiciones() throws NamingException {
@@ -76,6 +82,7 @@ public class MbRequisiciones implements Serializable {
         this.mbDepto = new MbDepto();
         this.mbUsuarios = new MbUsuarios();
         this.mbBuscarProd = new MbBuscarProd();
+        this.mbMiniProveedor = new MbMiniProveedor();
 
     }
 
@@ -320,7 +327,32 @@ public class MbRequisiciones implements Serializable {
     }
 
     public void setDesctoTotalesF(String desctoTotalesF) {
+
         this.desctoTotalesF = desctoTotalesF;
+    }
+
+    public MbMiniProveedor getMbMiniProveedor() {
+        return mbMiniProveedor;
+    }
+
+    public void setMbMiniProveedor(MbMiniProveedor mbMiniProveedor) {
+        this.mbMiniProveedor = mbMiniProveedor;
+    }
+
+    public ArrayList<CotizacionEncabezado> getCotizacionesEncabezado() {
+        return cotizacionesEncabezado;
+    }
+
+    public void setCotizacionesEncabezado(ArrayList<CotizacionEncabezado> cotizacionesEncabezado) {
+        this.cotizacionesEncabezado = cotizacionesEncabezado;
+    }
+
+    public CotizacionEncabezado getCotizacionEncabezado() {
+        return cotizacionEncabezado;
+    }
+
+    public void setCotizacionEncabezado(CotizacionEncabezado cotizacionEncabezado) {
+        this.cotizacionEncabezado = cotizacionEncabezado;
     }
 
 //------------------------------------------------------------------------------------------------------------------------------------------
@@ -437,20 +469,44 @@ public class MbRequisiciones implements Serializable {
         re.setUsuario(daoU.obtenerUsuarioConverter(to.getIdSolicito()));
         int state = to.getStatus();
         re.setStatus(state);
-        if (state == 2) {
-            re.setEmpleadoAprobo(to.getEmpleadoAprobo());
-            re.setFechaAprobacion(utilerias.Utilerias.date2String(to.getFechaAprobacion()));
-        } else {
-            String noAprobado = "No Aprobado";
-            re.setEmpleadoAprobo(noAprobado);
-            re.setFechaAprobacion(noAprobado);
+        String estado = null;
+
+
+        switch (state) {
+            case 0:
+                estado = "Rechazado";
+                re.setEstado(estado);
+                re.setEmpleadoAprobo(to.getEmpleadoAprobo());
+                re.setFechaAprobacion(utilerias.Utilerias.date2String(to.getFechaAprobacion()));
+                break;
+            case 1:
+                estado = "Solicitado";
+                re.setEstado(estado);
+                break;
+            case 2:
+                estado = "Aprobado";
+                re.setEstado(estado);
+                re.setEmpleadoAprobo(to.getEmpleadoAprobo());
+                re.setFechaAprobacion(utilerias.Utilerias.date2String(to.getFechaAprobacion()));
+                break;
+            default:
+                String noAprobado = "No Aprobado";
+
         }
+
         return re;
+
     }
 
     public String salir() throws NamingException {
         this.limpiaRequisicion();
         String navega = "menuRequisiciones.xhtml";
+        return navega;
+    }
+
+    public String salirCotizacion() throws NamingException {
+        this.limpiaRequisicion();
+        String navega = "menuCotizaciones.xhtml";
         return navega;
     }
 
@@ -497,7 +553,7 @@ public class MbRequisiciones implements Serializable {
         this.mbBuscarProd.buscarLista();
     }
 
-    public void aprobarRequisicion(int idReq) throws SQLException {
+    public void aprobarRequisicion(int idReq, int estado) throws SQLException {
         DAORequisiciones daoReq = null;
         FacesMessage msg = null;
         try {
@@ -507,13 +563,21 @@ public class MbRequisiciones implements Serializable {
                 if (ca < 0) {
                     msg = new FacesMessage(FacesMessage.SEVERITY_INFO, "Aviso:", "No sé realizó la operación de aprobación");
                     break;
-                } else {
+                } else if (estado == 2) {
                     daoReq = new DAORequisiciones();
-                    daoReq.actualizaRequisicion(idReq);
-                    this.requisicionEncabezado.setStatus(2);
+                    daoReq.actualizaRequisicion(idReq, estado);
+                    this.requisicionEncabezado.setStatus(estado);
                     msg = new FacesMessage(FacesMessage.SEVERITY_INFO, "Aviso:", "La aprobación se ha realizado..");
                     this.cargaRequisiciones();
                     this.cargaRequisicionesDetalle(idReq);
+                } else if (estado == 0) {
+                    daoReq = new DAORequisiciones();
+                    daoReq.actualizaRequisicion(idReq, estado);
+                    this.requisicionEncabezado.setStatus(estado);
+                    msg = new FacesMessage(FacesMessage.SEVERITY_INFO, "Aviso:", "La requisición ha sido RECHAZADA..");
+                    this.cargaRequisiciones();
+                    this.cargaRequisicionesDetalle(idReq);
+
                 }
             }
 
@@ -596,12 +660,16 @@ public class MbRequisiciones implements Serializable {
         DAORequisiciones daoReq = null;
         FacesMessage msg = null;
         try {
+            int idProv = this.mbMiniProveedor.getMiniProveedor().getIdProveedor();
             daoReq = new DAORequisiciones();
-            daoReq.grabarCotizacion(idReq,descGral, this.cotizacionProductos);
+            daoReq.grabarCotizacion(idReq, idProv, descGral, this.cotizacionProductos);
             msg = new FacesMessage(FacesMessage.SEVERITY_INFO, "Aviso:", "La cotización ha sido registrada..");
-            numCotizacion +=  1;
+            numCotizacion += 1;
             this.setNumCotizacion(numCotizacion);
             this.limpiaCotizacion();
+            mbMiniProveedor.getMiniProveedor().setIdProveedor(0);
+            this.setDescuentoGeneral(0);
+
         } catch (NamingException ex) {
             Logger.getLogger(MbRequisiciones.class.getName()).log(Level.SEVERE, null, ex);
             msg = new FacesMessage(FacesMessage.SEVERITY_INFO, "Aviso:", "Error en la aprobación, verifique su información...");
@@ -619,10 +687,10 @@ public class MbRequisiciones implements Serializable {
             cotizacionProductos.get(x).setSubtotal(0);
         }
 
-      //  this.numCotizacion = 0;
+        //  this.numCotizacion = 0;
         this.subtotalGeneral = 0;
 
-      //  this.descuentoGeneral = 0;
+        //  this.descuentoGeneral = 0;
         this.setDescuentoGeneral(0);
         this.sumaDescuentosProductos = 0;
         this.descuentoGeneralAplicado = 0;
@@ -709,7 +777,7 @@ public class MbRequisiciones implements Serializable {
         impuesto = 0;
         double desc = subtotalGeneral - descuentoGeneralAplicado;
         if (desc > 0) {
-            impuesto = (desc) * this.iva; 
+            impuesto = (desc) * this.iva;
         } else {
             impuesto = 0;
         }
@@ -719,7 +787,7 @@ public class MbRequisiciones implements Serializable {
         total = 0;
         double desc = subtotalGeneral - descuentoGeneralAplicado;
         if (desc > 0) {
-            total = (desc) + impuesto; 
+            total = (desc) + impuesto;
         } else {
             total = 0;
         }

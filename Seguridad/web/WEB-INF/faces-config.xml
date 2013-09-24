@@ -1,0 +1,60 @@
+<?xml version='1.0' encoding='UTF-8'?>
+
+<!-- =========== FULL CONFIGURATION FILE ================================== -->
+
+<faces-config version="2.1"
+              xmlns="http://java.sun.com/xml/ns/javaee"
+              xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+              xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-facesconfig_2_1.xsd">
+    <converter>
+        <converter-id>traerModulos</converter-id>
+        <converter-class>converterPermisos.ConverterModulo</converter-class>
+    </converter>
+    <converter>
+        <converter-id>traerModulosMenus</converter-id>
+        <converter-class>converterPermisos.ConverterModuloMenu</converter-class>
+    </converter>
+    <converter>
+        <converter-id>traerModulosSubMenus</converter-id>
+        <converter-class>converterPermisos.ConverterModuloSubMenu</converter-class>
+    </converter>
+    
+    
+    <converter>
+        <converter-id>traerAcciones</converter-id>
+        <converter-class>converterPermisos.ConverterAcciones</converter-class>
+    </converter>
+    
+    
+    <converter>
+        <converter-id>traerBdsPickList</converter-id>
+        <converter-class>converterPermisos.ConverterPickBds</converter-class>
+    </converter>
+    
+    
+    <converter>
+        <converter-id>traerBd</converter-id>
+        <converter-class>converterPermisos.ConverterBd</converter-class>
+    </converter>
+    
+    <converter>
+        <converter-id>traerBdPickListNUevo</converter-id>
+        <converter-class>converterPermisos.COnverterBdsNuevo</converter-class>
+    </converter>
+    
+    
+    
+    
+    <converter>
+        <converter-id>traerPerfil</converter-id>
+        <converter-class>converterPermisos.ConverterPerfil</converter-class>
+    </converter>
+
+    
+    
+    <converter>
+        <converter-id>traerUsuarios</converter-id>
+        <converter-class>converterPermisos.ConverterUsuarios</converter-class>
+    </converter>
+
+</faces-config>

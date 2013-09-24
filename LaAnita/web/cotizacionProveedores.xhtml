@@ -14,15 +14,11 @@
             <div id="content" align="center"  >
                 <h:form id="form" >
                     <div align="right">
-                        <p:commandButton id="Nuevo"
-                                         icon="ui-icon-circle-plus"
-                                         title="Nueva requisición"
-
-                                         />
+                       
                         <p:commandButton id="salir"
                                          icon="ui-icon-home"
                                          title="Salir de Listado de Requisiciones"
-
+                                         action="menuCotizaciones.xhtml"
                                          />
                     </div>
 
@@ -30,37 +26,37 @@
                     <p:messages id="messagePanel" showDetail="true" autoUpdate="true" closable="true" />
                     <p:panel header="PANEL DE ADMINISTRACION DE COTIZACIONES" styleClass="quitaCuadro"  >
 
-                        <p:dataTable id="listaProveedores" var="ce" value="#{mbCotizaciones.listaCotizacionEncabezado}">  
+                        <p:dataTable id="listaProveedores" var="prov" value="#{mbCotizaciones.listaCotizacionDetalle}">  
                             
-                            <p:subTable var="prov" value="#{ce.cotizacionDetalle}">
-                                <f:facet name="header">  
-                                    #{ce.idProveedor}
-                                </f:facet>
-                                <p:column>  
+                            <p:column headerText="ID Prov">  
+                                    #{prov.cotizacionEncabezado.idProveedor}  
+                                </p:column> 
+                                
+                            <p:column headerText="Producto">  
                                     #{prov.producto.toString()}  
                                 </p:column> 
 
-                                <p:column> 
+                            <p:column headerText="Ctd Cot."> 
 
                                     #{prov.cantidadCotizada}  
                                 </p:column>  
 
-                                <p:column>  
+                            <p:column headerText="Costo">  
                                     #{prov.costoCotizado}  
                                 </p:column>  
 
-                                <p:column>  
+                            <p:column headerText="Descto">  
                                     #{prov.descuentoProducto}  
                                 </p:column> 
 
-                                <p:column>  
+                            <p:column headerText="Neto">  
                                     #{prov.neto}  
                                 </p:column> 
 
-                                <p:column>  
+                            <p:column headerText="Subtotal">  
                                     #{prov.subtotal}  
                                 </p:column> 
-                            </p:subTable>
+                           
                         </p:dataTable>  
                     </p:panel>
 

@@ -1,0 +1,146 @@
+package contactos;
+
+import contactos.dao.DAOContactos;
+import contactos.dominio.Contacto;
+import javax.inject.Named;
+import javax.enterprise.context.SessionScoped;
+import java.io.Serializable;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.faces.application.FacesMessage;
+import javax.faces.context.FacesContext;
+import javax.faces.model.SelectItem;
+import javax.naming.NamingException;
+import org.primefaces.context.RequestContext;
+
+/**
+ *
+ * @author jsolis
+ */
+@Named(value = "mbContactos")
+@SessionScoped
+public class MbContactos implements Serializable {
+    private Contacto contacto;
+    private ArrayList<Contacto> contactos;
+    private ArrayList<SelectItem> listaContactos;
+    private DAOContactos dao;
+    
+    public MbContactos() {
+        this.contacto=new Contacto();
+    }
+    
+    public boolean eliminar(int idPadre) {
+        boolean ok=false;
+        RequestContext context = RequestContext.getCurrentInstance();
+        FacesMessage fMsg = new FacesMessage(FacesMessage.SEVERITY_WARN, "Aviso:", "");
+        try {
+            this.dao=new DAOContactos();
+            this.dao.eliminar(idPadre);
+            ok=true;
+        } catch (SQLException ex) {
+            fMsg.setSeverity(FacesMessage.SEVERITY_ERROR);
+            fMsg.setDetail(ex.getErrorCode() + " " + ex.getMessage());
+        } catch (NamingException ex) {
+            fMsg.setSeverity(FacesMessage.SEVERITY_ERROR);
+            fMsg.setDetail(ex.getMessage());
+        }
+        if(!ok) {
+            FacesContext.getCurrentInstance().addMessage(null, fMsg);
+        }
+        context.addCallbackParam("okContacto", ok);
+        return ok;
+        
+    }
+    
+    public boolean grabar(int idTipo, int idPadre) {
+        boolean ok=false;
+        RequestContext context = RequestContext.getCurrentInstance();
+        FacesMessage fMsg = new FacesMessage(FacesMessage.SEVERITY_WARN, "Aviso:", "");
+        try {
+            if(this.contacto.getContacto().isEmpty()) {
+                fMsg.setDetail("Se requiere la descripción del contacto");
+            } else {
+                this.dao=new DAOContactos();
+                if(this.contacto.getIdContacto()==0) {
+                    this.contacto.setIdContacto(this.dao.agregar(this.contacto, idPadre, idTipo));
+                } else {
+                    this.dao.modificar(contacto);
+                }
+                ok=true;
+            }
+        } catch (SQLException ex) {
+            fMsg.setSeverity(FacesMessage.SEVERITY_ERROR);
+            fMsg.setDetail(ex.getErrorCode() + " " + ex.getMessage());
+        } catch (NamingException ex) {
+            fMsg.setSeverity(FacesMessage.SEVERITY_ERROR);
+            fMsg.setDetail(ex.getMessage());
+        }
+        if(!ok) {
+            FacesContext.getCurrentInstance().addMessage(null, fMsg);
+        }
+        context.addCallbackParam("okContacto", ok);
+        return ok;
+    }
+    
+    public void cargaContactos(int idTipo, int idPadre) {
+        boolean ok=false;
+        FacesMessage fMsg = new FacesMessage(FacesMessage.SEVERITY_WARN, "Aviso:", "");
+        try {
+            this.dao=new DAOContactos();
+            this.contactos=this.dao.obtenerContactos(idTipo, idPadre);
+            
+            Contacto c0=new Contacto();
+            c0.setContacto("Nuevo Contacto");
+            this.listaContactos=new ArrayList<SelectItem>();
+            this.listaContactos.add(new SelectItem(c0, c0.toString()));
+            for(Contacto c: this.contactos) {
+                this.listaContactos.add(new SelectItem(c, c.toString()));
+            }
+            ok=true;
+        } catch (SQLException ex) {
+            fMsg.setSeverity(FacesMessage.SEVERITY_ERROR);
+            fMsg.setDetail(ex.getErrorCode() + " " + ex.getMessage());
+        } catch (NamingException ex) {
+            fMsg.setSeverity(FacesMessage.SEVERITY_ERROR);
+            fMsg.setDetail(ex.getMessage());
+        }
+        if(!ok) {
+            FacesContext.getCurrentInstance().addMessage(null, fMsg);
+        }
+    }
+    
+    public Contacto copia(Contacto c1) {
+        Contacto c=new Contacto();
+        c.setIdContacto(c1.getIdContacto());
+        c.setContacto(c1.getContacto());
+        c.setPuesto(c1.getPuesto());
+        c.setCorreo(c1.getCorreo());
+        return c;
+    }
+
+    public Contacto getContacto() {
+        return contacto;
+    }
+
+    public void setContacto(Contacto contacto) {
+        this.contacto = contacto;
+    }
+
+    public ArrayList<Contacto> getContactos() {
+        return contactos;
+    }
+
+    public void setContactos(ArrayList<Contacto> contactos) {
+        this.contactos = contactos;
+    }
+
+    public ArrayList<SelectItem> getListaContactos() {
+        return listaContactos;
+    }
+
+    public void setListaContactos(ArrayList<SelectItem> listaContactos) {
+        this.listaContactos = listaContactos;
+    }
+}

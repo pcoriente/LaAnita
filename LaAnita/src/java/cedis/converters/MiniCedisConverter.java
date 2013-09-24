@@ -28,7 +28,7 @@ public class MiniCedisConverter implements Converter {
                 DAOCedis dao=new DAOCedis();
                 cedis=dao.obtenerMiniCedis(idCedis);
             }
-        }catch(Throwable ex) {
+        } catch(Throwable ex) {
             ResourceBundle bundle = ResourceBundle.getBundle("messages");
             FacesMessage msg = new FacesMessage(bundle.getString("Mensaje_conversion_MiniCedis_getAsObject"));
             msg.setSeverity(FacesMessage.SEVERITY_ERROR);

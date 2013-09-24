@@ -3,14 +3,17 @@ package cotizaciones;
 import cotizaciones.dao.DAOCotizaciones;
 import cotizaciones.dominio.CotizacionDetalle;
 import cotizaciones.dominio.CotizacionEncabezado;
+import empresas.MbMiniEmpresa;
 import java.io.Serializable;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.enterprise.context.SessionScoped;
+import javax.faces.bean.ManagedProperty;
 import javax.inject.Named;
 import javax.naming.NamingException;
+import proveedores.MbProveedores;
 
 @Named(value = "mbCotizaciones")
 @SessionScoped
@@ -18,12 +21,11 @@ public class MbCotizaciones implements Serializable {
 
     private ArrayList<CotizacionEncabezado> listaCotizacionEncabezado;
     private CotizacionEncabezado cotizacionEncabezado;
-  
     private ArrayList<CotizacionDetalle> listaCotizacionDetalle;
     private CotizacionDetalle cotizacionDetalle;
-    
     private ArrayList<CotizacionEncabezado> miniCotizacionProveedor;
-    
+    @ManagedProperty(value = "#{mbProveedores}")
+    private MbProveedores mbProveedores;
 
     //CONSTRUCTORES-------------------------------------------------------------------------------------------------------------------------------------------------------
     public MbCotizaciones() {
@@ -47,8 +49,8 @@ public class MbCotizaciones implements Serializable {
             listaCotizacionDetalle.add(d);
         }
     }
-    
-     public void cargaCotizacionesProveedorEncabezado(int idReq) throws NamingException, SQLException {
+
+    public void cargaCotizacionesProveedorEncabezado(int idReq) throws NamingException, SQLException {
         listaCotizacionEncabezado = new ArrayList<CotizacionEncabezado>();
         DAOCotizaciones daoCot = new DAOCotizaciones();
         ArrayList<CotizacionEncabezado> lista = daoCot.consultaCotizacionesProveedoresEncabezado(idReq);
@@ -56,18 +58,21 @@ public class MbCotizaciones implements Serializable {
             listaCotizacionEncabezado.add(d);
         }
     }
-     
-     public void cotizacionxProveedor(){
-         miniCotizacionProveedor = new ArrayList<CotizacionEncabezado>();
-         
-        
-     
-     }
-    
 
-  
+    public void cotizacionxProveedor() {
+        miniCotizacionProveedor = new ArrayList<CotizacionEncabezado>();
+
+
+
+    }
+
+    public String salirMenuCotizaciones() throws NamingException {
+       
+        String salir = "index.xhtml";
+        return salir;
+    }
+
     //GETS Y SETS------------------------------------------------------------------------------------------------------------------------------------------------------
-
     public ArrayList<CotizacionEncabezado> getListaCotizacionEncabezado() throws SQLException {
         if (listaCotizacionEncabezado == null) {
             try {
@@ -116,7 +121,14 @@ public class MbCotizaciones implements Serializable {
         this.miniCotizacionProveedor = miniCotizacionProveedor;
     }
 
+    public MbProveedores getMbProveedores() {
+        return mbProveedores;
+    }
 
+    public void setMbProveedores(MbProveedores mbProveedores) {
+        this.mbProveedores = mbProveedores;
+    }
     
-   
+    
+    
 }

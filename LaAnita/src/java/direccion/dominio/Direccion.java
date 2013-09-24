@@ -19,6 +19,25 @@ public class Direccion {
     private String numeroLocalizacion;
     private Asentamiento selAsentamiento;
 
+    public Direccion() {
+        Pais p=new Pais();
+        p.setIdPais(0);
+        p.setPais("");
+        
+        this.idDireccion=0;
+        this.calle="";
+        this.numeroExterior="";
+        this.numeroInterior="";
+        this.referencia="";
+        this.pais=p;
+        this.codigoPostal="";
+        this.estado="";
+        this.municipio="";
+        this.localidad="";
+        this.colonia="";
+        this.numeroLocalizacion="";
+    }
+
     @Override
     public String toString() {
         return calle.isEmpty() ? "" : (" CALLE: "+calle + "\n NUMERO: " + numeroExterior + "\n NO. INTERIOR: " + numeroInterior

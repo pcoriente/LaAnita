@@ -17,6 +17,7 @@ public class RequisicionEncabezado {
     private MiniEmpresa miniEmpresa;
     private Depto depto;
     private Usuario Usuario;
+    private String Estado;
     
     private String empleadoAprobo;
     
@@ -142,8 +143,13 @@ public class RequisicionEncabezado {
     public void setEmpleadoAprobo(String empleadoAprobo) {
         this.empleadoAprobo = empleadoAprobo;
     }
-    
-    
-    
+
+    public String getEstado() {
+        return Estado;
+    }
+
+    public void setEstado(String Estado) {
+        this.Estado = Estado;
+    }
     
 }

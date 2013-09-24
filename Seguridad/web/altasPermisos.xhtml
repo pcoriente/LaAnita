@@ -1,0 +1,363 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://java.sun.com/jsf/core">
+    <h:head>
+        <title>Facelet Title</title>
+    </h:head>
+    <h:body>
+        <h:form>
+            <div style="width: 950px; margin: auto">
+                <h:graphicImage  library="images" name="encabezado.jpg" /> 
+                <center>
+                    <p:panel header="Panel de Administración" style="width: 700px" >
+                        <p:growl id="growl" showDetail="true" life="3000" />
+                        <p:menubar id="Menu">  
+                            <p:menuitem value="Base de Datos" onclick="agregarBds.show();" icon="ui-icon-disk" />
+                            <p:menuitem value="Perfiles" icon="ui-icon-person" actionListener="#{mbSeguridad.limpiarPerfiles()}" update="nombrePerfil" process="@this listaPerfiles"  onclick="perfil.show();"/>
+                            <p:menuitem value="Usuarios" update="Menu" icon="ui-icon-person" disabled="#{mbSeguridad.mbBasesDatos.baseDatos.idBaseDatos==0 || mbSeguridad.mbPerfiles.perfilCmb.idPerfil==0}" onclick="dlg.show();"/>
+                            <p:submenu  icon="ui-icon-wrench"> 
+                                <p:menuitem  value="Modulos" actionListener="#{mbSeguridad.limpiarModulos()}" onclick="modulo.show();" icon="ui-icon-document"/>  
+                                <p:menuitem value="Acciones" disabled="#{mbSeguridad.mbModulos.moduloCmb.idModulo== 0}" onclick="acciones.show();" icon="ui-icon-document"/>  
+                                <p:menuitem value="Usuarios" onclick="usuarios.show();" icon="ui-icon-document"/>  
+                            </p:submenu>  
+                            <p:menuitem  icon="ui-icon-home"  url="index.xhtml"/>
+                        </p:menubar> 
+                        <!--<p:messages id="messages" showDetail="true" autoUpdate="true" closable="true"/>-->
+                        <br></br>
+                        <h:panelGrid columns="2">
+                            <p:outputLabel>Base de Datos:</p:outputLabel>
+                            <p:selectOneMenu id="listaBd" style="width: 230px" 
+                                             value="#{mbSeguridad.mbBasesDatos.baseDatos}">
+                                <f:selectItems value="#{mbSeguridad.mbBasesDatos.listaBaseDatos}"/>
+                                <f:converter converterId="traerBd"/>
+                                <p:ajax listener="#{mbSeguridad.dameModulosAcciones(0)}"
+                                        event="change" 
+                                        update="PickAcciones  Menu"
+                                        process="@this listaPerfiles modulos perfilNom"/>
+
+                            </p:selectOneMenu>
+                            <p:outputLabel> Perfiles:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</p:outputLabel>
+                            <p:selectOneMenu  
+                                id="listaPerfiles" style="width: 230px"
+                                value="#{mbSeguridad.mbPerfiles.perfilCmb}">
+                                <f:selectItems value="#{mbSeguridad.mbPerfiles.listaPerfiles}" />
+                                <f:converter converterId="traerPerfil"/>
+                                <p:ajax listener="#{mbSeguridad.dameModulosAcciones(0)}"
+                                        event="change" 
+                                        update="PickAcciones  Menu  perfilNom"
+                                        process="@this modulos listaBd"/>
+                            </p:selectOneMenu>
+                            <p:outputLabel>Modulo:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</p:outputLabel>
+                            <p:selectOneMenu 
+                                id="modulos" 
+                                style="width: 230px"
+                                value="#{mbSeguridad.mbModulos.moduloCmb}">
+                                <f:selectItems value="#{mbSeguridad.mbModulos.listaModulos}"/>
+                                <f:converter converterId="traerModulos"/>
+                                <p:ajax listener="#{mbSeguridad.dameModulosAcciones(0)}"
+                                        event="change" 
+                                        update="PickAcciones Menu perfilNom"
+                                        process="@this listaPerfiles listaBd"/>
+                            </p:selectOneMenu>
+                        </h:panelGrid>
+                        <p:pickList  
+                            id="PickAcciones"
+                            style="width: 200px"
+                            effect="slide"
+                            value="#{mbSeguridad.mbAcciones.pickAcciones}"
+                            var="ListaAcciones"
+                            itemLabel="#{ListaAcciones}"
+                            itemValue="#{ListaAcciones}"
+                            >
+                            <f:facet name="sourceCaption">Disponibles</f:facet>
+                            <f:facet name="targetCaption">Seleccionados</f:facet>
+                            <f:converter converterId="traerAcciones"/>
+                        </p:pickList>
+                        <p:commandButton 
+                            id="btnGuardar"
+                            value="Guardar"
+                            action="#{mbSeguridad.guardarValores()}"
+                            icon="ui-icon-disk"
+                            update="growl"
+                            />
+                        <p:commandButton
+                            value="Cancelar"
+                            action="#{mbSeguridad.cancelarUsuarioPerfil()}"
+                            update="growl modulos listaPerfiles listaBd PickAcciones Menu"
+                            icon="ui-icon-cancel"
+                            />
+                    </p:panel>
+                </center>
+                <p:dialog modal="true" header="Altas de Usuarios" widgetVar="dlg" hideEffect="explode" showEffect="explode">
+                    <br></br>
+                    <h:panelGrid columns="2">
+                        <p:outputLabel value="Perfil"/>
+                        <p:outputLabel  id="perfilNom" value="#{mbSeguridad.mbPerfiles.perfil.perfil}"/>
+                        <p:outputLabel value="Usuario"/>
+                        <p:inputText  style="width: 150px" id="usuario" value="#{mbSeguridad.mbUsuarios.usuario.usuario}"/>
+                        <p:outputLabel value="Login"/>
+                        <p:inputText style="width: 150px" id="login" value="#{mbSeguridad.mbUsuarios.usuario.login}"/>
+                        <p:outputLabel value="Password"/>
+                        <p:password  style="width: 150px" id="password" value="#{mbSeguridad.mbUsuarios.usuario.password}"/>
+                        <p:outputLabel value="Correo" />
+                        <p:inputText  style="width:150px" id="correo"  value="#{mbSeguridad.mbUsuarios.usuario.email}"/>
+                    </h:panelGrid>
+                    <p:commandButton 
+                        value="Guardar"
+                        icon="ui-icon-disk"
+                        action="#{mbSeguridad.insertarDatos()}"
+                        oncomplete="altasUsuarios(xhr, status, args);"
+                        update="usuario login password correo growl"
+                        />
+                </p:dialog>
+                <p:dialog showEffect="explode"
+                          modal="true" 
+                          header="Altas de Modulos" 
+                          widgetVar="modulo" 
+                          hideEffect="explode">
+                    <p:ajax event="close" update="Menu modulo url moduloMenu subMenu modulos" listener="#{mbSeguridad.limpiarAltasModulos()}"/> 
+                    <h:panelGrid  id="panelPrincipal" columns="3">
+                        <p:outputLabel value="Modulo: "/>
+                        <p:inputText id="modulo" value="#{mbSeguridad.mbModulos.modulo.modulo}"/>
+                        <p:outputLabel/>
+                        <p:outputLabel value="Url: "/>
+                        <p:inputText id="url" value="#{mbSeguridad.mbModulos.modulo.url}"/>
+                        <p:outputLabel/>
+                        <p:outputLabel value="Modulo Menu: "/>
+                        <p:selectOneMenu id="moduloMenu" 
+                                         style="width: 210px" 
+                                         value="#{mbSeguridad.mbModulos.moduloMenucmb2}">
+
+                            <f:selectItems value="#{mbSeguridad.mbModulos.moduloMenuCmb2}"/>
+                            <f:converter converterId="traerModulosMenus"/>
+                            <p:ajax event="change" 
+                                    listener="#{mbSeguridad.mbModulos.dameValoresModuloChange()}"
+                                    update="subMenu"/>
+                        </p:selectOneMenu>
+                        <p:commandButton  icon="ui-icon-plus" 
+                                          style="height: 33px; width: 20px"
+                                          actionListener="#{mbSeguridad.control()}"
+                                          update="menuRendered panelSubMenu"/>
+                        <p:outputLabel value="Modulo SubMenu: "/>
+                        <p:selectOneMenu style="width: 210px" id="subMenu" value="#{mbSeguridad.mbModulos.moduloSubMenuCmb}">
+                            <f:selectItems value="#{mbSeguridad.mbModulos.moduloSubMenuCmb2}"/>
+                            <f:converter converterId="traerModulosSubMenus"/>
+                        </p:selectOneMenu>
+                        <p:commandButton  actionListener="#{mbSeguridad.controlSubMenu()}"
+                                          icon="ui-icon-plus" 
+                                          style="height: 33px; width: 20px"
+                                          update="panelSubMenu menuRendered"/>
+                    </h:panelGrid>
+                    <p:commandButton 
+                        icon="ui-icon-disk"
+                        value="Guardar"
+                        action="#{mbSeguridad.guardarValoresModulo()}" 
+                        update="growl Menu modulo url moduloMenu subMenu modulos"
+                        oncomplete="altasModulo(xhr, status, args);">
+                    </p:commandButton> 
+                    <p:separator/>
+                    <p:outputPanel id="menuRendered">
+                        <p:outputLabel value="Menu:" rendered="#{mbSeguridad.aparecer gt 0}"/>
+                        <p:inputText id="modulosMenu" rendered="#{mbSeguridad.aparecer gt 0}" value="#{mbSeguridad.mbModulos.moduloMenu.menu}"/>
+                        <br></br>
+                        <p:commandButton rendered="#{mbSeguridad.aparecer gt 0}" 
+                                         value="Guardar"
+                                         icon="ui-icon-disk"
+                                         actionListener="#{mbSeguridad.guardarModuloMenu()}"
+                                         update="menuRendered growl cmbModuloSubMenucmbMenu moduloMenu modulosMenu"
+                                         />
+                        <p:commandButton rendered="#{mbSeguridad.aparecer gt 0}"
+                                         value="Cancelar" 
+                                         icon="ui-icon-cancel"
+                                         actionListener="#{mbSeguridad.cancelarDRendereds()}"
+                                         update="menuRendered panelSubMenu"/>
+                    </p:outputPanel>
+                    <p:outputLabel id="panelSubMenu">
+                        <h:panelGrid columns="2"> 
+                            <p:outputLabel value="Nombre SubMenu:" rendered="#{mbSeguridad.aparecerSubMenu gt 0}"/>
+                            <p:inputText id="subMenuNom" value="#{mbSeguridad.sub.subMenu}" rendered="#{mbSeguridad.aparecerSubMenu gt 0}"/>
+                            <p:outputLabel value="Menu" rendered="#{mbSeguridad.aparecerSubMenu gt 0}"/>
+                            <p:selectOneMenu style="width: 210px" id="cmbModuloSubMenucmbMenu" 
+                                             value="#{mbSeguridad.mbModulos.m}"
+                                             rendered="#{mbSeguridad.aparecerSubMenu gt 0}">
+                                <f:selectItems value="#{mbSeguridad.mbModulos.moduloMenuCmb2}"/>
+                                <f:converter converterId="traerModulosMenus"/>
+                            </p:selectOneMenu>
+                        </h:panelGrid>
+                        <p:commandButton rendered="#{mbSeguridad.aparecerSubMenu gt 0}"
+                                         value="Guardar"
+                                         icon="ui-icon-disk"
+                                         actionListener="#{mbSeguridad.guardarModuloSubMenu()}"
+                                         update="growl panelSubMenu subMenuNom cmbModuloSubMenucmbMenu"/>
+                        <p:commandButton  rendered="#{mbSeguridad.aparecerSubMenu gt 0}"
+                                          value="Cancelar" 
+                                          icon="ui-icon-cancel"
+                                          actionListener="#{mbSeguridad.cancelarDRendereds()}"
+                                          update="menuRendered panelSubMenu"/>
+                    </p:outputLabel>
+                </p:dialog>
+                <p:dialog  modal="true"
+                           showEffect="explode"
+                           header="Altas de Perfiles" 
+                           widgetVar="perfil" 
+                           hideEffect="explode">
+                    <h:panelGrid columns="2">
+                        <p:outputLabel value="Perfil"/>
+                        <p:inputText id="nombrePerfil" value="#{mbSeguridad.mbPerfiles.perfil.perfil}"/>
+                    </h:panelGrid>
+                    <p:commandButton value="Guardar" 
+                                     icon="ui-icon-disk"
+                                     action="#{mbSeguridad.guardarPerfil()}"
+                                     update="growl listaPerfiles nombrePerfil  Menu PickAcciones perfilNom"
+                                     oncomplete="altasPerfiles(xhr, status, args);"/>
+                </p:dialog>
+                <p:dialog  modal="true" 
+                           header="Acciones del Modulo"
+                           widgetVar="acciones" 
+                           hideEffect="explode"
+                           showEffect="explode"
+                           >
+
+                    <h:panelGrid columns="2">
+                        <p:outputLabel value="Accion"/>
+                        <p:inputText id="accion" value="#{mbSeguridad.mbAcciones.acion.accion}" />
+                        <p:outputLabel value="Id Boton"/>
+                        <p:inputText id="idBoton" value="#{mbSeguridad.mbAcciones.acion.idBoton}"/>
+                    </h:panelGrid>
+                    <p:commandButton   value="Guardar" 
+                                       icon="ui-icon-disk"
+                                       actionListener="#{mbSeguridad.guardarAcciones()}"
+                                       update="PickAcciones accion idBoton  modulos growl"
+                                       oncomplete="altasAcciones(xhr, status, args);"/>
+
+                </p:dialog>
+                <p:dialog  modal="true" header="Base de Datos Del Servidor"
+                           widgetVar="agregarBds"
+                           hideEffect="explode"
+                           showEffect="explode">
+                    <p:pickList  
+                        id="PickModulos"
+                        style="width: 200px"
+                        effect="slide"
+                        value="#{mbSeguridad.mbBasesDatos.pickBd}"
+                        var="pickBd"
+                        itemLabel="#{pickBd}"
+                        itemValue="#{pickBd}">
+                        <f:facet name="sourceCaption">Disponibles</f:facet>
+                        <f:facet name="targetCaption">Seleccionados</f:facet>
+                        <f:converter converterId="traerBdPickListNUevo"/>
+                    </p:pickList>
+                    <p:commandButton value="Guardar"
+                                     icon="ui-icon-disk"
+                                     actionListener="#{mbSeguridad.mbBasesDatos.dameBdsPickList()}"
+                                     update="growl listaBd"
+                                     oncomplete="altasBds(xhr, status, args);"
+                                     />
+                </p:dialog >
+
+                <p:dialog widgetVar="usuarios" hideEffect="explode" modal="true"
+                          showEffect="explode">
+                    <h:panelGrid columns="2">
+                        <p:outputLabel value="Usuario : "/>
+                        <p:selectOneMenu id="listaUsuarios" style="width: 250px" value="#{mbSeguridad.mbUsuarios.usuarioCmb}">
+                            <f:selectItems  value="#{mbSeguridad.mbUsuarios.listaUsuarios}"/>
+                            <f:converter converterId="traerUsuarios"/>
+                            <p:ajax event="change" 
+                                    listener="#{mbSeguridad.mbUsuarios.damePerfilUsuario()}"
+                                    update="listaPerfil"/>
+                        </p:selectOneMenu>
+                        <p:outputLabel value="Perfil : "/>
+                        <p:selectOneMenu style="width: 250px" id="listaPerfil" value="#{mbSeguridad.mbUsuarios.p2}">
+                            <f:selectItems value="#{mbSeguridad.mbUsuarios.listaPerfiles}"/>
+                            <f:converter converterId="traerPerfil"/>
+                        </p:selectOneMenu>
+                    </h:panelGrid>
+                    <p:commandButton value="Guardar"
+                                     icon="ui-icon-disk"
+                                     actionListener="#{mbSeguridad.actualizarUsuarioPerfil()}"
+                                     update="growl listaUsuarios listaPerfil"
+                                     oncomplete="modificarUsuarios(xhr, status, args);"/>
+                    <p:ajax event="close" update="listaUsuarios listaPerfil" listener="#{mbSeguridad.limpiarModificacionesPerfilUsuario()}"/> 
+                </p:dialog>
+            </div>
+        </h:form>
+        <script type="text/javascript">
+                                function modificarUsuarios(xhr, status, args) {
+                                    if (args.validationFailed || !args.loggedIn) {
+                                        usuarios.jq.effect("shake", {times: 5}, 100);
+                                    }
+                                    else {
+                                        usuarios.hide();
+                                    }
+                                }
+
+
+                                function altasAcciones(xhr, status, args) {
+                                    if (args.validationFailed || !args.loggedIn) {
+                                        acciones.jq.effect("shake", {times: 5}, 100);
+                                    }
+                                    else {
+                                        acciones.hide();
+                                    }
+                                }
+                                function altasBds(xhr, status, args) {
+                                    agregarBds.hide();
+                                }
+
+                                function altasPerfiles(xhr, status, args) {
+                                    if (args.validationFailed || !args.loggedIn) {
+                                        perfil.jq.effect("shake", {times: 5}, 100);
+                                    }
+                                    else {
+                                        perfil.hide();
+                                    }
+                                }
+                                function altasModulo(xhr, status, args) {
+                                    if (args.validationFailed || !args.loggedIn) {
+                                        modulo.jq.effect("shake", {times: 5}, 100);
+                                    }
+                                    else {
+                                        modulo.hide();
+                                    }
+
+                                }
+
+
+
+                                function altasUsuarios(xhr, status, args) {
+                                    if (args.validationFailed || !args.loggedIn) {
+                                        dlg.jq.effect("shake", {times: 5}, 100);
+                                    }
+                                    else {
+                                        dlg.hide();
+                                    }
+                                }
+
+
+                                function altasModuloMenu(xhr, status, args) {
+                                    if (args.validationFailed || !args.loggedIn) {
+                                        agrgarModuloMenu.jq.effect("shake", {times: 5}, 100);
+                                    }
+                                    else {
+                                        agrgarModuloMenu.hide();
+                                    }
+                                }
+
+                                function altasModuloSubMenu(xhr, status, args) {
+                                    if (args.validationFailed || !args.loggedIn) {
+                                        agregarModuloSubMenu.jq.effect("shake", {times: 5}, 100);
+                                    }
+                                    else {
+                                        agregarModuloSubMenu.hide();
+                                    }
+                                }
+
+
+
+        </script>
+    </h:body>
+</html>
+

@@ -20,11 +20,13 @@
                         <p:commandButton id="Nuevo"
                                          icon="ui-icon-circle-plus"
                                          title="Nueva requisición"
+                                         action="menuRequisiciones.xhtml"
 
                                          />
                         <p:commandButton id="salir"
-                                         icon="ui-icon-home"
+                                       icon="ui-icon-home"
                                          title="Salir de Listado de Requisiciones"
+                                         action="#{mbCotizaciones.salirMenuCotizaciones()}"
 
                                          />
                     </div>
@@ -60,13 +62,8 @@
                                 </f:facet>
                                 <h:outputText value="#{cot.fechaAprobacion}"/>
                             </p:column>
-                            <p:column  width="25" >
-                                <f:facet name="header">
-                                    <h:outputText value="Desc."/>
-                                </f:facet>
-                                <h:outputText value="#{cot.descuentoProveedor}"/>
-                            </p:column>
-                            <p:column width="25" >
+                          
+                            <p:column width="20" >
                                 <f:facet name="header">
                                     <h:outputText value="Cotiz."/>
                                 </f:facet>
@@ -78,11 +75,11 @@
                                 </f:facet>
                                 <h:outputText value="#{cot.numProductos}"/>
                             </p:column>
-                            <p:column width="25" >
+                            <p:column width="45" >
                                 <f:facet name="header">
                                     <h:outputText value="Status"/>
                                 </f:facet>
-                                <h:outputText value="#{cot.estado}"/>
+                                <h:outputText value="#{cot.estado eq 2?'Finalizado':'Proceso'}"/>
                             </p:column>
                             <p:column width="25" >
                                 <f:facet name="header">
@@ -92,7 +89,7 @@
                                                  icon="ui-icon-note"
                                                  title="Procedimiento de cotización"
                                                  action="cotizacionProveedores.xhtml"
-                                                 actionListener="#{mbCotizaciones.cargaCotizacionesProveedorEncabezado(cot.idRequisicion)}"
+                                                 actionListener="#{mbCotizaciones.cargaCotizacionesProveedor(cot.idRequisicion)}"
                                                  style="margin:0 auto;"
                                                  >
                                 </p:commandButton>

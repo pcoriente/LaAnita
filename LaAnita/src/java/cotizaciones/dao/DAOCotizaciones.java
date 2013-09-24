@@ -138,7 +138,7 @@ public class DAOCotizaciones {
     }
 
     private CotizacionEncabezado construirConsultaEncabezado(ResultSet rs) throws SQLException, NamingException {
-        CotizacionEncabezado ce = new CotizacionEncabezado(rs.getInt("idCotizacion"), rs.getInt("idProveedor"));
+        CotizacionEncabezado ce = new CotizacionEncabezado();
         CotizacionDetalle cd = new CotizacionDetalle();
         DAOProductos daoP = new DAOProductos();
         cd.setIdCotizacion(rs.getInt("idCotizacion"));

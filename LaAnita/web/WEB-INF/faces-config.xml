@@ -403,6 +403,46 @@
     <!-- =========== FINAL CONVERTER PRODUCTOS (JULIO) ================================== -->
     
     <converter>
+        <converter-id>converters.Proveedor.Clasificacion</converter-id>
+        <converter-class>proveedores.converters.ClasificacionConverter</converter-class>
+    </converter>
+    
+    <converter>
+        <converter-id>converters.Proveedor.SubClasificacion</converter-id>
+        <converter-class>proveedores.converters.SubClasificacionConverter</converter-class>
+    </converter>
+    
+    <converter>
+        <converter-id>converters.Proveedor.TipoTercero</converter-id>
+        <converter-class>proveedores.converters.TipoTerceroConverter</converter-class>
+    </converter>
+    
+    <converter>
+        <converter-id>converters.Proveedor.TipoOperacion</converter-id>
+        <converter-class>proveedores.converters.TipoOperacionConverter</converter-class>
+    </converter>
+    
+    <converter>
+        <converter-id>converters.Contribuyente</converter-id>
+        <converter-class>contribuyentes.ContribuyenteConverter</converter-class>
+    </converter>
+    
+    <converter>
+        <converter-id>converters.Contacto</converter-id>
+        <converter-class>contactos.converters.ContactoConverter</converter-class>
+    </converter>
+    
+    <converter>
+        <converter-id>converters.Telefono</converter-id>
+        <converter-class>contactos.converters.TelefonoConverter</converter-class>
+    </converter>
+    
+    <converter>
+        <converter-id>converters.TelefonoTipo</converter-id>
+        <converter-class>contactos.converters.TipoConverter</converter-class>
+    </converter>
+    
+    <converter>
         <converter-id>converters.ImpuestoGrupo</converter-id>
         <converter-class>impuestos.converters.ImpuestoGrupoConverter</converter-class>
     </converter>
@@ -431,5 +471,10 @@
     <converter>
         <converter-id>converters.subUsuario</converter-id>
         <converter-class>requisiciones.converters.SubUsuarioConverter</converter-class>
+    </converter>
+    
+     <converter>
+        <converter-id>converters.miniProveedor</converter-id>
+        <converter-class>proveedores.converters.MiniProveedorConverter</converter-class>
     </converter>
 </faces-config>

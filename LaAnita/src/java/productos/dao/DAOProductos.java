@@ -56,7 +56,7 @@ public class DAOProductos {
                     + "SET idParte="+p.getParte2().getIdParte()+", descripcion='"+p.getDescripcion()+"', "
                     + "idTipo="+p.getTipo().getIdTipo()+", idSubGrupo="+p.getSubGrupo().getIdSubGrupo()+", "
                     + "idGrupo="+p.getGrupo().getIdGrupo() + ", "
-                    + "idUnidad="+p.getUnidad().getIdUnidad()+", idMarca=" + p.getMarca().getIdMarca() + ", "
+                    + "idUnidadProducto="+p.getUnidad().getIdUnidad()+", idMarca=" + p.getMarca().getIdMarca() + ", "
                     + "contenido="+p.getContenido()+", idUnidadMedida="+p.getUnidadMedida().getIdUnidadMedida()+", idImpuesto= "+p.getImpuesto().getIdGrupo()+ " "
                     + "WHERE idProducto="+p.getIdProducto());
             for(Upc u: p.getUpcs()) {
@@ -76,7 +76,7 @@ public class DAOProductos {
     public int agregar(Producto p) throws SQLException, NamingException {
         int idProducto=0;
         String strSQL=""
-                + "INSERT INTO productos (idParte, descripcion, idTipo, idGrupo, idSubGrupo, idMarca, idUnidad, contenido, idUnidadMedida, idImpuesto) "
+                + "INSERT INTO productos (idParte, descripcion, idTipo, idGrupo, idSubGrupo, idMarca, idUnidadProducto, contenido, idUnidadMedida, idImpuesto) "
                 + "VALUES ("+ p.getParte2().getIdParte() + ", '" + p.getDescripcion() + "', "
                 + p.getTipo().getIdTipo() + ", " + p.getGrupo().getIdGrupo() + ", " + p.getSubGrupo().getIdSubGrupo() + ", " + p.getMarca().getIdMarca() + ", "
                 + p.getUnidad().getIdUnidad() + ", " + p.getContenido() + ", " + p.getUnidadMedida().getIdUnidadMedida() + ","
@@ -139,7 +139,7 @@ public class DAOProductos {
                 + "INNER JOIN productosTipos t ON t.idTipo=p.idTipo "
                 + "LEFT JOIN productosSubGrupos sg ON sg.idSubGrupo=p.idSubGrupo "
                 + "LEFT JOIN productosGrupos g ON g.idGrupo=p.idGrupo "
-                + "LEFT JOIN productosUnidades u ON u.idUnidad=p.idUnidad "
+                + "LEFT JOIN productosUnidades u ON u.idUnidad=p.idUnidadProducto "
                 + "LEFT JOIN unidadesMedida um ON um.idUnidadMedida=p.idUnidadMedida "
                 + "LEFT JOIN productosMarcas m on m.idMarca=p.idMarca "
                 + "INNER JOIN impuestosGrupos i ON i.idGrupo=p.idImpuesto "
@@ -176,7 +176,7 @@ public class DAOProductos {
                 + "INNER JOIN productosTipos t ON t.idTipo=p.idTipo "
                 + "LEFT JOIN productosSubGrupos sg ON sg.idSubGrupo=p.idSubGrupo "
                 + "LEFT JOIN productosGrupos g ON g.idGrupo=p.idGrupo "
-                + "LEFT JOIN productosUnidades u ON u.idUnidad=p.idUnidad "
+                + "LEFT JOIN productosUnidades u ON u.idUnidad=p.idUnidadProducto "
                 + "LEFT JOIN unidadesMedida um ON um.idUnidadMedida=p.idUnidadMedida "
                 + "LEFT JOIN productosMarcas m on m.idMarca=p.idMarca "
                 + "INNER JOIN impuestosGrupos i ON i.idGrupo=p.idImpuesto "

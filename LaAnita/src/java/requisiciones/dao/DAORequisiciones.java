@@ -83,7 +83,7 @@ public class DAORequisiciones {
         try {
             String stringSQL = "select r.idRequisicion, r.idEmpresa, r.idDepto, e.idEmpleado, r.idAprobo, r.fechaRequisicion, r.fechaAprobacion, r.estado from requisiciones r\n"
                     + "                    inner join empleados e on r.idSolicito= e.idEmpleado\n"
-                    + "                    where r.estado between 1 and 2\n"
+                    + "                    where r.estado between 0 and 2\n"
                     + "                    order by  idRequisicion desc";
             Statement sentencia = cn.createStatement();
             rs = sentencia.executeQuery(stringSQL);
@@ -161,7 +161,7 @@ public class DAORequisiciones {
         return to;
     }
 
-    public void actualizaRequisicion(int idReq) throws SQLException {
+    public void actualizaRequisicion(int idReq, int estado) throws SQLException {
         Connection cn = this.ds.getConnection();
         Statement st = cn.createStatement();
         PreparedStatement ps4;
@@ -172,7 +172,7 @@ public class DAORequisiciones {
             if (us == 0) {
                 System.out.println("El usuario no existe...");
             } else {
-                String strSQL4 = "UPDATE requisiciones SET  fechaAprobacion=GETDATE(),idAprobo='" + us + "', estado=2 WHERE idRequisicion=" + idReq;
+                String strSQL4 = "UPDATE requisiciones SET  fechaAprobacion=GETDATE(),idAprobo='" + us + "', estado='" + estado + "' WHERE idRequisicion=" + idReq;
                 ps4 = cn.prepareStatement(strSQL4);
                 ps4.executeUpdate();
             }
@@ -272,7 +272,7 @@ public class DAORequisiciones {
     }
 
     //COTIZACIONES
-    public void grabarCotizacion(int idReq, double descGral, ArrayList<CotizacionDetalle> cd) throws SQLException {
+    public void grabarCotizacion(int idReq, int idProv, double descGral, ArrayList<CotizacionDetalle> cd) throws SQLException {
         Connection cn = this.ds.getConnection();
         Statement st = cn.createStatement();
         PreparedStatement ps1, ps2, ps3, ps4;
@@ -281,7 +281,7 @@ public class DAORequisiciones {
             st.executeUpdate("begin transaction");
             //CABECERO
             String strSQL1 = "INSERT INTO cotizaciones(idRequisicion, idProveedor, folioProveedor, fechaCotizacion,descuentoCotizacion,observaciones)"
-                    + " VALUES (" + idReq + ", " + 1 + ",'Folio' ,GETDATE(), " + descGral + ",'hola')";
+                    + " VALUES (" + idReq + ", " + idProv + ",'Folio' ,GETDATE(), " + descGral + ",'hola')";
             String strSQLIdentity = "SELECT @@IDENTITY as idCot";
             ps1 = cn.prepareStatement(strSQL1);
             ps1.executeUpdate();

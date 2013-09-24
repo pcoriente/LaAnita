@@ -3,7 +3,7 @@
 }
 body {
     font-family: Arial, Helvetica, sans-serif;
-    font-size: 13px;
+    font-size: 8px;
     background-color: #FFFFFF;
 }
 #wrapper { 
@@ -65,7 +65,7 @@ a.nueva{ display:  inline;}
 
 
 .quitaCuadro   {
-   box-shadow: none !important; 
+    box-shadow: none !important; 
 
 }
 .sinBorde tr, .sinBorde td {
@@ -84,7 +84,7 @@ a.nueva{ display:  inline;}
 .salida {
     font: 15px bold;
     color: #045FB4;
-   
+
 }
 .colorLetra{
     font: 15px bold; color: #045FB4; 
@@ -104,6 +104,10 @@ a.nueva{ display:  inline;}
 }
 
 .ui-panel, ui-widget, ui-widget-content, ui-corner-all {
-    
+
     border-color: #FFF!important;
+}
+
+.ui-selectonemenu, ui-widget, ui-state-default, ui-corner-all, ui-helper-clearfix{
+    width: 250px!important;
 }

@@ -40,7 +40,7 @@
                                      emptyMessage="No existen elementos para desplegar..."
                                      filteredValue="#{mbRequisiciones.requisicionesFiltradas}"
                                      >
-                            <p:column sortBy="#{req.idRequisicion}" filterBy="#{req.idRequisicion}" headerText="No." filterMatchMode="contains" width="15"  >
+                            <p:column sortBy="#{req.idRequisicion}" filterBy="#{req.idRequisicion}" headerText="Folio: " filterMatchMode="contains" width="15"  >
                                 <h:outputText value="#{req.idRequisicion}"   />
                             </p:column>
                             <p:column filterBy="#{req.fechaRequisicion}" headerText="F. Solicitud" filterMatchMode="contains" width="60" >
@@ -67,12 +67,11 @@
                                 </f:facet>
                                 <h:outputText value="#{req.usuario.usuario}"/>
                             </p:column>
-                            <p:column sortBy="#{req.status}" headerText="Status" filterMatchMode="contains" width="70"   >
+                            <p:column filterBy="#{req.estado}" headerText="Status" filterMatchMode="contains" width="70"   >
                                 <f:facet name="header">
-                                    <h:outputText id='keyValor' value="Status"/>
-
+                                    <h:outputText  value="Status"/>
                                 </f:facet>
-                                <h:outputText  id="otEstadoAprobacion" value="#{(req.status eq 2?'Aprobado':'Solicitado')}"  />
+                                <h:outputText  id="otEstadoAprobacion" value="#{(req.estado)}"  />
 
                             </p:column>
 
@@ -150,7 +149,7 @@
                     <p:dialog header="PROCESO DE APROBACION" widgetVar="aprobarDialog" resizable="false"  
                               showEffect="fade" hideEffect="explode" modal="true" id="dialogo" >
                         <h:panelGrid id="pgCabecero" columns="4"  > 
-                            <h:outputLabel  value="Empresa :"  style="font-weight: bold; color: red; width: 105px;" />
+                            <h:outputLabel  value="Empresa :"  style="font-weight: bold; color: red; width: 120px;" />
 
                             <h:outputText id="otEmpresa" value="#{mbRequisiciones.requisicionEncabezado.miniEmpresa.nombreComercial}"  /> 
 
@@ -170,13 +169,13 @@
 
                             <h:outputText id="otRequisicion" value="#{mbRequisiciones.requisicionEncabezado.idRequisicion}"  />
 
-                            <h:outputLabel  value="Aprobó: "  style="font-weight: bold; color: red; width: 105px;" />
+                            <h:outputLabel  id="estatus" value="#{mbRequisiciones.requisicionEncabezado.estado}"  style="font-weight: bold; color: red; width: 105px;" />
 
                             <h:outputText id="otUsuario" value="#{mbRequisiciones.requisicionEncabezado.empleadoAprobo}" />
 
                             <h:outputLabel  value="Estado: "  style="font-weight: bold; color: red; width: 105px;" />
 
-                            <h:outputText id="otEstado" value="#{(mbRequisiciones.requisicionEncabezado.status eq 2?'Aprobado':'Solicitado')} " />
+                            <h:outputText id="otEstado" value="#{(mbRequisiciones.requisicionEncabezado.estado)}"  />
 
                             <h:outputLabel  value="F. Aprobación: "  style="font-weight: bold; color: red; width: 105px;" />
 
@@ -254,9 +253,19 @@
                                     id="btnAprobarRequimiento"
                                     icon="ui-icon-disk"
                                     title="Aprobar"
-                                    actionListener="#{mbRequisiciones.aprobarRequisicion(mbRequisiciones.requisicionEncabezado.idRequisicion)}"
+                                    actionListener="#{mbRequisiciones.aprobarRequisicion(mbRequisiciones.requisicionEncabezado.idRequisicion,2)}"
                                     disabled="#{mbRequisiciones.requisicionEncabezado.status eq 2}"
                                     update=":form:dialogo :form:requisicion :form:detalleAprobar :form:pgCabecero "
+                                    process="@this"
+
+                                    />
+                                <p:commandButton 
+                                    id="btnRechazarRequimiento"
+                                    icon="ui-icon-closethick"
+                                    title="Rechazar"
+                                    actionListener="#{mbRequisiciones.aprobarRequisicion(mbRequisiciones.requisicionEncabezado.idRequisicion, 0)}"
+                                    disabled="#{mbRequisiciones.requisicionEncabezado.status eq 2}"
+                                    update=":form:dialogo :form:requisicion :form:detalleAprobar :form:pgCabecero :form:estatus "
                                     process="@this"
 
                                     />
