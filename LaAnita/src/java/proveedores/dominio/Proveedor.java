@@ -26,6 +26,8 @@ public class Proveedor {
     private double limiteCredito;
     private String fechaAlta;
     private ArrayList<Contacto> contactos;
+    private double desctoComercial;
+    private double desctoProntoPago;
 
     public Proveedor() {
         this.idProveedor=0;
@@ -41,6 +43,8 @@ public class Proveedor {
         this.diasCredito=0;
         this.limiteCredito=0.00;
         this.fechaAlta="";
+        this.desctoComercial=0.00;
+        this.desctoProntoPago=0.00;
     }
     
     @Override
@@ -159,5 +163,21 @@ public class Proveedor {
 
     public void setNombreComercial(String nombreComercial) {
         this.nombreComercial = nombreComercial;
+    }
+
+    public double getDesctoComercial() {
+        return desctoComercial;
+    }
+
+    public void setDesctoComercial(double desctoComercial) {
+        this.desctoComercial = desctoComercial;
+    }
+
+    public double getDesctoProntoPago() {
+        return desctoProntoPago;
+    }
+
+    public void setDesctoProntoPago(double desctoProntoPago) {
+        this.desctoProntoPago = desctoProntoPago;
     }
 }

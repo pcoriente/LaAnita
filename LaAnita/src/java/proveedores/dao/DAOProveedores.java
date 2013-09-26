@@ -73,14 +73,16 @@ public class DAOProveedores {
                         + "SET idRfc="+idRfc+", contribuyente='"+p.getContribuyente().getContribuyente()+" "
                         + "WHERE idContribuyente="+idContribuyente);
             }
-            String strSQL="INSERT INTO proveedores (codigoProveedor, nombreComercial, idContribuyente, idClasificacion, idSubClasificacion"
+            String strSQL="INSERT INTO proveedores (codigoProveedor, nombreComercial, idContribuyente"
+                    + ", idClasificacion, idSubClasificacion"
                     + ", idTipoTercero, idTipoOperacion, idImpuestoZona"
+                    + ", desctoComercial, desctoProntoPago"
                     + ", idDireccionEntrega, diasCredito, limiteCredito, fechaAlta) "
                     + "VALUES(0, '"+p.getNombreComercial()+"', "+idContribuyente+""
                     + ", "+p.getClasificacion().getIdClasificacion()+", "+p.getSubClasificacion().getIdSubClasificacion()+""
-                    + ", "+p.getTipoTercero().getIdTipoTercero()+", "+p.getTipoOperacion().getIdTipoOperacion()+""
-                    + ", "+p.getImpuestoZona().getIdZona()+", "+p.getDireccionEntrega().getIdDireccion()+""
-                    + ", "+p.getDiasCredito()+", "+p.getLimiteCredito()+", CURRENT_TIMESTAMP)";
+                    + ", "+p.getTipoTercero().getIdTipoTercero()+", "+p.getTipoOperacion().getIdTipoOperacion()+", "+p.getImpuestoZona().getIdZona()
+                    + ", "+p.getDesctoComercial()+", "+p.getDesctoProntoPago()
+                    + ", "+p.getDireccionEntrega().getIdDireccion()+", "+p.getDiasCredito()+", "+p.getLimiteCredito()+", CURRENT_TIMESTAMP)";
             st.executeUpdate(strSQL);
             rs=st.executeQuery("SELECT @@IDENTITY AS idProveedor");
             if(rs.next()) {
@@ -134,13 +136,15 @@ public class DAOProveedores {
             st.executeUpdate("UPDATE proveedores "
                     + "SET nombreComercial='"+p.getNombreComercial()+"'"
                     + ",   idContribuyente="+idContribuyente+""
-                    + ",   idClasificacion="+p.getClasificacion().getIdClasificacion()+""
-                    + ",   idSubClasificacion="+p.getSubClasificacion().getIdSubClasificacion()+""
-                    + ",   idTipoTercero="+p.getTipoTercero().getIdTipoTercero()+""
-                    + ",   idTipoOperacion="+p.getTipoOperacion().getIdTipoOperacion()+""
-                    + ",   idImpuestoZona="+p.getImpuestoZona().getIdZona()+""
-                    + ",   idDireccionEntrega="+p.getDireccionEntrega().getIdDireccion()+""
-                    + ",   diasCredito="+p.getDiasCredito()+", limiteCredito="+p.getLimiteCredito()+""
+                    + ",   idClasificacion="+p.getClasificacion().getIdClasificacion()
+                    + ",   idSubClasificacion="+p.getSubClasificacion().getIdSubClasificacion()
+                    + ",   idTipoTercero="+p.getTipoTercero().getIdTipoTercero()
+                    + ",   idTipoOperacion="+p.getTipoOperacion().getIdTipoOperacion()
+                    + ",   desctoComercial="+p.getDesctoComercial()
+                    + ",   desctoProntoPago="+p.getDesctoProntoPago()
+                    + ",   idImpuestoZona="+p.getImpuestoZona().getIdZona()
+                    + ",   idDireccionEntrega="+p.getDireccionEntrega().getIdDireccion()
+                    + ",   diasCredito="+p.getDiasCredito()+", limiteCredito="+p.getLimiteCredito()
                     + "WHERE idProveedor="+p.getIdProveedor());
             st.executeUpdate("commit transaction");
         } catch(SQLException ex) {
@@ -158,6 +162,7 @@ public class DAOProveedores {
 "	, cl.idClasificacion, cl.clasificacion, isnull(sc.idSubClasificacion, 0) as idSubClasificacion, isnull(sc.subClasificacion, '') as subClasificacion\n" +
 "	, isnull(tipOpe.idTipoOperacion, 0) as idTipoOperacion, isnull(tipOpe.operacion, '') as operacion\n" +
 "	, isnull(tipTer.idTipoTercero, 0) as idTipoTercero, isnull(tipTer.tercero, '') as tercero\n" +
+"       , p.desctoComercial, p.desctoProntoPago\n" +
 "	, isnull(iz.idZona, 0) as idImpuestoZona, isnull(iz.zona, '') as impuestoZona\n" +
 "	, p.idDireccionEntrega, p.diasCredito, p.limiteCredito, p.fechaAlta\n" +
 "from proveedores p\n" +
@@ -277,6 +282,8 @@ public class DAOProveedores {
         p.getTipoTercero().setIdTipoTercero(rs.getInt("idTipoTercero"));
         p.getTipoTercero().setTipoTercero("");
         p.getTipoTercero().setTercero(rs.getString("tercero"));
+        p.setDesctoComercial(rs.getDouble("desctoComercial"));
+        p.setDesctoProntoPago(rs.getDouble("desctoProntoPago"));
         p.getImpuestoZona().setIdZona(rs.getInt("idImpuestoZona"));
         p.getImpuestoZona().setZona(rs.getString("impuestoZona"));
         p.getDireccionEntrega().setIdDireccion(rs.getInt("idDireccionEntrega"));

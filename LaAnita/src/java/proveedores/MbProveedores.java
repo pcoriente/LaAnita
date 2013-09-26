@@ -404,6 +404,10 @@ public class MbProveedores implements Serializable {
             fMsg.setDetail("Se requiere la zona de impuestos del proveedor !!");
         } else if(this.proveedor.getDiasCredito() < 0) {
             fMsg.setDetail("Los dias de crédito no debe ser menores que cero !!");
+        } else if(this.proveedor.getDesctoComercial() < 0) {
+            fMsg.setDetail("El descuento comercial no debe ser menor que cero !!");
+        } else if(this.proveedor.getDesctoProntoPago() < 0) {
+            fMsg.setDetail("El descuento por pronto pago no debe ser menor que cero !!");
         } else if(this.proveedor.getLimiteCredito() < 0.00) {
             fMsg.setDetail("El límite de crédito no debe ser menor que cero !!");
         } else {
