@@ -4,6 +4,8 @@
  */
 package proveedores;
 
+import cotizaciones.dao.DAOCotizaciones;
+import dominios.Moneda;
 import java.io.Serializable;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -18,10 +20,12 @@ import proveedores.dominio.MiniProveedor;
 
 @Named(value = "mbMiniProveedor")
 @SessionScoped
-public class MbMiniProveedor implements Serializable{
+public class MbMiniProveedor implements Serializable {
 
     private ArrayList<SelectItem> listaMiniProveedores = new ArrayList<SelectItem>();
     private MiniProveedor miniProveedor = new MiniProveedor();
+    private ArrayList<SelectItem> listaMonedas = new ArrayList<SelectItem>();
+    private Moneda moneda = new Moneda();
 
     public MbMiniProveedor() {
     }
@@ -43,6 +47,20 @@ public class MbMiniProveedor implements Serializable{
         return listaMiniProveedores;
     }
 
+    private ArrayList<SelectItem> obtenerListaMonedas() throws NamingException {
+
+        Moneda m0 = new Moneda();
+        m0.setIdMoneda(0);
+        m0.setMoneda("Moneda: ");
+        listaMiniProveedores.add(new SelectItem(m0, m0.toString()));
+        DAOCotizaciones daoC = new DAOCotizaciones();
+        ArrayList<Moneda> monedas = daoC.obtenerMonedas();
+        for (Moneda e : monedas) {
+            listaMonedas.add(new SelectItem(e, e.toString()));
+        }
+        return listaMiniProveedores;
+    }
+
     public ArrayList<SelectItem> getListaMiniProveedores() throws SQLException, NamingException {
 
         listaMiniProveedores = this.obtenerListaMiniProveedor();
@@ -59,5 +77,23 @@ public class MbMiniProveedor implements Serializable{
 
     public void setMiniProveedor(MiniProveedor miniProveedor) {
         this.miniProveedor = miniProveedor;
+    }
+
+    public ArrayList<SelectItem> getListaMonedas() throws NamingException {
+        listaMonedas = this.obtenerListaMonedas();
+
+        return listaMonedas;
+    }
+
+    public void setListaMonedas(ArrayList<SelectItem> listaMonedas) {
+        this.listaMonedas = listaMonedas;
+    }
+
+    public Moneda getMoneda() {
+        return moneda;
+    }
+
+    public void setMoneda(Moneda moneda) {
+        this.moneda = moneda;
     }
 }

@@ -2,6 +2,7 @@ package cotizaciones.dao;
 
 import cotizaciones.dominio.CotizacionDetalle;
 import cotizaciones.dominio.CotizacionEncabezado;
+import dominios.Moneda;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -15,7 +16,7 @@ import javax.naming.NamingException;
 import javax.servlet.http.HttpSession;
 import javax.sql.DataSource;
 import productos.dao.DAOProductos;
-import productos.dominio.Producto;
+import proveedores.dominio.MiniProveedor;
 import usuarios.UsuarioSesion;
 
 public class DAOCotizaciones {
@@ -152,6 +153,49 @@ public class DAOCotizaciones {
         ce.setCotizacionDetalle(cd);
 
         return ce;
+    }
 
+    public Moneda obtenerMonedasConverter(int idMoneda) throws SQLException, NamingException {
+        Context cI = new InitialContext();
+        DataSource ds1 = (DataSource) cI.lookup("java:comp/env/systemWeb");
+        Moneda mon = null;
+        Connection cn = ds1.getConnection();
+        Statement st = cn.createStatement();
+        try {
+            ResultSet rs = st.executeQuery("SELECT idMoneda, moneda, codigoIso FROM Monedas\n"
+                    + "WHERE idMoneda=" + idMoneda);
+            if (rs.next()) {
+                mon = construirMoneda(rs);
+            }
+        } finally {
+            cn.close();
+        }
+        return mon;
+    }
+
+    private Moneda construirMoneda(ResultSet rs) throws SQLException {
+        return new Moneda(rs.getInt("idMoneda"), rs.getString("moneda"), rs.getString("codigoIso"));
+    }
+
+    public ArrayList<Moneda> obtenerMonedas() throws NamingException, SQLException {
+         Context cI = new InitialContext();
+        DataSource ds2 = (DataSource) cI.lookup("java:comp/env/systemWeb");
+         ArrayList<Moneda> lista = new ArrayList<Moneda>();
+        ResultSet rs;
+        Connection cn = ds2.getConnection();
+        try {
+
+            String stringSQL = "SELECT idMoneda, moneda, codigoIso FROM monedas";
+
+            Statement sentencia = cn.createStatement();
+            rs = sentencia.executeQuery(stringSQL);
+            while (rs.next()) {
+                lista.add(construirMoneda(rs));
+            }
+        } finally {
+            cn.close();
+        }
+        return lista;
+        
     }
 }

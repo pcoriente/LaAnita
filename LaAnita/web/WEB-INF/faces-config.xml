@@ -477,4 +477,9 @@
         <converter-id>converters.miniProveedor</converter-id>
         <converter-class>proveedores.converters.MiniProveedorConverter</converter-class>
     </converter>
+    
+     <converter>
+        <converter-id>converters.Moneda</converter-id>
+        <converter-class>cotizaciones.converters.MonedasConverter</converter-class>
+    </converter>
 </faces-config>
