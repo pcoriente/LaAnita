@@ -47,17 +47,23 @@ public class MbMiniProveedor implements Serializable {
         return listaMiniProveedores;
     }
 
-    private ArrayList<SelectItem> obtenerListaMonedas() throws NamingException {
+    private ArrayList<SelectItem> obtenerListaMonedas() throws NamingException{
 
         Moneda m0 = new Moneda();
         m0.setIdMoneda(0);
         m0.setMoneda("Moneda: ");
         listaMiniProveedores.add(new SelectItem(m0, m0.toString()));
         DAOCotizaciones daoC = new DAOCotizaciones();
-        ArrayList<Moneda> monedas = daoC.obtenerMonedas();
-        for (Moneda e : monedas) {
+        ArrayList<Moneda> monedas;
+        try {
+            monedas = daoC.obtenerMonedas();
+            for (Moneda e : monedas) {
             listaMonedas.add(new SelectItem(e, e.toString()));
         }
+        } catch (SQLException ex) {
+            Logger.getLogger(MbMiniProveedor.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        
         return listaMiniProveedores;
     }
 
