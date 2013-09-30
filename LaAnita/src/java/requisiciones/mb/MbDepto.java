@@ -31,6 +31,16 @@ public class MbDepto implements Serializable {
         this.deptos = deptos;
     }
 
+    public DAODepto getDao() {
+        return dao;
+    }
+
+    public void setDao(DAODepto dao) {
+        this.dao = dao;
+    }
+    
+    
+
     public ArrayList<SelectItem> getListaDeptos() throws SQLException {
         if (this.listaDeptos == null) {
             this.cargarDeptos();

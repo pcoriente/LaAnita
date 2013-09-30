@@ -4,18 +4,28 @@
  */
 package requisiciones.to;
 
-import productos.dominio.Producto;
-
 public class TORequisicionProducto {
     
    
+    private int idRequisicion;
     private int idProducto;
     private int cantidad;
+    private int cantidadAutorizada;
 
+    
+     public int getIdRequisicion() {
+        return idRequisicion;
+    }
+
+    public void setIdRequisicion(int idRequisicion) {
+        this.idRequisicion = idRequisicion;
+    }
+    
     public int getIdProducto() {
         return idProducto;
     }
 
+   
     public void setIdProducto(int idProducto) {
         this.idProducto = idProducto;
     }
@@ -28,6 +38,15 @@ public class TORequisicionProducto {
         this.cantidad = cantidad;
     }
 
+    public int getCantidadAutorizada() {
+        return cantidadAutorizada;
+    }
+
+    public void setCantidadAutorizada(int cantidadAutorizada) {
+        this.cantidadAutorizada = cantidadAutorizada;
+    }
+
+    
    
     
 }

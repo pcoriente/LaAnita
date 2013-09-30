@@ -15,17 +15,19 @@
             <ui:include src="wrapper.xhtml" />
             <div id="content">
                 <h:form id="main" >
-                    <p:panel id="panelCapturaRequisicion" header="Requisiciones de Productos"   >
+
+                    <!--  R E Q U I S I C I O N E S ... -->
+                    <p:panel id="panelCapturaRequisicion" header="REQUISICION DE PRODUCTOS"  style="text-align: center;  width: 900px; margin:0 auto;"  >
                         <p:messages id="messages" showDetail="true" autoUpdate="true" closable="true" />
-                        <p:panelGrid id="cabecero" > 
+                        <h:panelGrid id="cabecero" columns="6" style="width: 855px; margin:0 auto;" > 
                             <p:row>
                                 <p:column >
-                                    <h:outputLabel for="empresa" value="Empresa :"  style="font-weight: bold; color: red; width: 105px;" />
+                                    <h:outputLabel for="empresa" value="Empresa :"  style="font-weight: bold; color: red;" />
                                 </p:column>
-                                <p:column colspan="2" >
-                                    <p:selectOneMenu id="empresa" value="#{mbRequisiciones.mbMiniEmpresa.empresa}" style="width: 300px">
+                                <p:column >
+                                    <p:selectOneMenu id="empresa" value="#{mbRequisiciones.mbMiniEmpresa.empresa}" style="width: 200px">
                                         <f:converter converterId="converters.MiniEmpresa" />
-                                        <f:selectItems value="#{mbRequisiciones.mbMiniEmpresa.listaMini}"  />
+                                        <f:selectItems value="#{mbRequisiciones.listaMini}"  />
                                     </p:selectOneMenu>
                                 </p:column>
                             </p:row>
@@ -38,7 +40,7 @@
                                         <f:converter converterId="converters.depto" />
                                         <f:selectItems value="#{mbRequisiciones.mbDepto.listaDeptos}" />
                                         <p:ajax event="change"
-                                                listener="#{mbRequisiciones.cargaSubUsuarios()}" 
+                                                listener="#{mbRequisiciones.cargaSubUsuarios()}"
                                                 update="solicitante"
                                                 process="@this"/>
 
@@ -58,27 +60,43 @@
 
                             </p:row>
 
-                        </p:panelGrid >   
+                        </h:panelGrid >   
 
-                        <h:panelGrid  id="mttoProductos" style="float: right">
-                            <p:row>
-                                <p:column >
-                                    <p:commandButton icon="ui-icon-search" title="Buscar Productos" 
-                                                     process="@this" actionListener="#{mbRequisiciones.mbBuscarProd.inicializar()}" 
-                                                     update="buscarProductos listaProductos" oncomplete="buscarProductoDlg.show()"
-                                                     />
-                                </p:column>
-                            </p:row>
-                        </h:panelGrid>
-                        <br></br>
+                        <p:toolbar id="tb" style="width: 845px; margin:0 auto;" >  
+                            <p:toolbarGroup align="right">  
+                                <p:commandButton
+                                    icon="ui-icon-disk"
+                                    title="Guardar requerimiento"
+                                    actionListener="#{mbRequisiciones.agregarRequisicion()}"
+                                    update="departamento empresa solicitante detalle"
+                                    />
+                                <p:commandButton id="Limpiar"
+                                                 icon="ui-icon-refresh"
+                                                 title="Cancelar requerimiento"
+                                                 action="#{mbRequisiciones.limpiaRequisicion()}"
+                                                 update="detalle solicitante departamento empresa cabecero"
+                                                 />
+
+                                <p:separator />
+                                <p:commandButton  icon="ui-icon-search" title="Buscar Productos" 
+                                                  process="@this" actionListener="#{mbRequisiciones.mbBuscarProd.inicializar()}" 
+                                                  update="buscarProductos listaProductos" oncomplete="buscarProductoDlg.show()"
+                                                  />
+                                <p:separator />
+                                <p:commandButton id="salir"
+                                                 icon="ui-icon-home"
+                                                 title="Salir de requerimientos"
+                                                 action="#{mbRequisiciones.salir()}"
+                                                 update="detalle solicitante departamento empresa cabecero"
+                                                 />
+
+                            </p:toolbarGroup>  
+                        </p:toolbar>  
+
 
                         <p:dataTable id="detalle" value="#{mbRequisiciones.requisicionProductos}" 
-                                     var="prod" scrollable="true" scrollHeight="200" style="width: 800px;" styleClass="sinBorde"
+                                     var="prod" scrollable="true" scrollHeight="200" style="width: 850px; margin:0 auto;" styleClass="sinBorde"
                                      rowKey="#{prod.producto.idProducto}"  selection="#{mbRequisiciones.mbBuscarProd.producto}"  >
-                            <f:facet name="header">  
-                                Detalle de Productos requisitados  
-                            </f:facet>
-
                             <p:column  headerText="Código" style="width: 25px;"  >
                                 <h:outputText value="#{prod.producto.idProducto}" />
                             </p:column>
@@ -89,9 +107,10 @@
                                 <h:outputText value="#{prod.producto.unidad.unidad}" />
                             </p:column>
                             <p:column headerText="Cantidad" style="width: 50px;" >
-                                <p:inplace id="ajaxInplace" editor="true">  
+                                <p:inplace id="ajaxInplace" editor="true" >  
                                     <p:inputText value="#{prod.cantidad}"
-                                                 />  
+                                                 required="true"
+                                                 requiredMessage="Capture una cantidad numérica y positiva..."/>  
                                 </p:inplace> 
                             </p:column>
                             <p:column headerText="Editar" style="width: 50px;" >
@@ -101,33 +120,12 @@
                                                  actionListener="#{mbRequisiciones.eliminarProducto(prod.producto.idProducto)}" 
                                                  update="detalle" 
                                                  />
-
-                                <h:outputText  />
                             </p:column>
-
                         </p:dataTable>
-
-                        <p:commandButton 
-                                         icon="ui-icon-disk"
-                                         title="Finalizar la requisicion"
-                                         actionListener="#{mbRequisiciones.agregarRequisicion()}"
-                                         update="departamento empresa solicitante detalle"
-                                         />
-                        <p:commandButton id="Limpiar"
-                                         icon="ui-icon-refresh"
-                                         title="Limpiar la requisicion"
-                                         action="#{mbRequisiciones.limpiaRequisicion()}"
-                                         update="detalle solicitante departamento empresa cabecero"
-                                         />
-                        <p:commandButton id="salir"
-                                         icon="ui-icon-home"
-                                         title="Limpiar la requisicion"
-                                         action="#{mbRequisiciones.salir()}"
-                                         update="detalle solicitante departamento empresa cabecero"
-                                         />
 
                     </p:panel>
 
+                    <!-- B U S C A D O R  DE  P R O D U C T O S... -->
                     <p:dialog header="BUSCADOR DE PRODUCTOS" widgetVar="buscarProductoDlg" resizable="false" style="width: 600px;" modal="true" >
                         <p:messages id="messages4" showDetail="true" autoUpdate="true" closable="true" />
                         <p:panelGrid id="buscarProductos" styleClass="sinBorde" >
@@ -152,7 +150,7 @@
                                     <p:autoComplete id="opcionParte" value="#{mbRequisiciones.mbBuscarProd.parte}" maxlength="50" size="30"
                                                     completeMethod="#{mbRequisiciones.mbBuscarProd.completePartes}" process="@this"
                                                     var="p" itemLabel="#{p.parte}" itemValue="#{p}" converter="converters.ParteBuscar" 
-                                                    forceSelection="true" />
+                                                    forceSelection="true" maxResults="8"  />
                                     <p:commandButton id="btnBuscarLista" value="Buscar" 
                                                      process="@this opcionParte" actionListener="#{mbRequisiciones.buscar()}" 
                                                      update="listaProductos" oncomplete="handleBuscar(xhr, status, args)" />
@@ -200,9 +198,16 @@
                     </p:dialog>
 
                 </h:form>
-                <h:outputScript library="javascript" name="productos.js" target="head" />
+                <script type="text/javascript">
+                    function handleBuscar(xhr, status, args) {
+                        if (!(args.validationFailed || !args.okBuscar)) {
+                            buscarProductoDlg.hide();
+                        }
+                    }
+                </script>
             </div>
             <ui:include src="footer.html" />
         </div>
     </h:body>
+
 </html>

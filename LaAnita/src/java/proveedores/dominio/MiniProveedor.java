@@ -13,6 +13,7 @@ public class MiniProveedor {
         this.idProveedor=0;
         this.proveedor="";
         this.rfc="";
+       
     }
 
     public MiniProveedor(int idProveedor, String proveedor, String rfc) {

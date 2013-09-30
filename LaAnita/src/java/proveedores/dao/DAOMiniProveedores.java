@@ -13,7 +13,6 @@ import javax.naming.NamingException;
 import javax.servlet.http.HttpSession;
 import javax.sql.DataSource;
 import proveedores.dominio.MiniProveedor;
-import proveedores.to.TOProveedor;
 import usuarios.UsuarioSesion;
 
 /**
@@ -21,8 +20,9 @@ import usuarios.UsuarioSesion;
  * @author jsolis
  */
 public class DAOMiniProveedores {
+
     private DataSource ds;
-    
+
     public DAOMiniProveedores() throws NamingException {
         try {
             FacesContext context = FacesContext.getCurrentInstance();
@@ -31,35 +31,42 @@ public class DAOMiniProveedores {
             UsuarioSesion usuarioSesion = (UsuarioSesion) httpSession.getAttribute("usuarioSesion");
 
             Context cI = new InitialContext();
-            ds = (DataSource) cI.lookup("java:comp/env/"+usuarioSesion.getJndi());
+            ds = (DataSource) cI.lookup("java:comp/env/" + usuarioSesion.getJndi());
         } catch (NamingException ex) {
-            throw(ex);
+            throw (ex);
         }
     }
-    
+
     public MiniProveedor obtenerProveedor(int idProveedor) throws SQLException {
-        MiniProveedor to=null;
-        Connection cn=this.ds.getConnection();
-        Statement st=cn.createStatement();
+        MiniProveedor to = null;
+        Connection cn = this.ds.getConnection();
+        Statement st = cn.createStatement();
         try {
-            ResultSet rs=st.executeQuery("SELECT * FROM proveedores WHERE idProveedor="+idProveedor);
-            if(rs.next()) to=construir(rs);
+            ResultSet rs = st.executeQuery("select p.idProveedor, c.contribuyente from proveedores p\n"
+                    + "inner join contribuyentes c on c.idContribuyente = p.idContribuyente\n"
+                    + "where p.idProveedor=" + idProveedor + "\n"
+                    + "order by c.contribuyente"); //MODIFICO DAVID
+            if (rs.next()) {
+                to = construir(rs);
+            }
         } finally {
             cn.close();
         }
         return to;
     }
-    
+
     public ArrayList<MiniProveedor> obtenerProveedores() throws SQLException {
-        ArrayList<MiniProveedor> lista=new ArrayList<MiniProveedor>();
-        ResultSet rs=null;
-        
-        Connection cn=ds.getConnection();
-        String strSQL="SELECT * FROM proveedores ORDER BY proveedor";
+        ArrayList<MiniProveedor> lista = new ArrayList<MiniProveedor>();
+        ResultSet rs = null;
+
+        Connection cn = ds.getConnection();
+        String strSQL = "select p.idProveedor, c.contribuyente from proveedores p\n"
+                + "inner join contribuyentes c on c.idContribuyente = p.idContribuyente\n"
+                + "order by c.contribuyente";  //Modifico DAVID
         try {
             Statement sentencia = cn.createStatement();
             rs = sentencia.executeQuery(strSQL);
-            while(rs.next()) {
+            while (rs.next()) {
                 lista.add(construir(rs));
             }
         } finally {
@@ -67,20 +74,20 @@ public class DAOMiniProveedores {
         }
         return lista;
     }
-    
+
     public ArrayList<MiniProveedor> obtenerProveedores(String cadena) throws SQLException {
-        ArrayList<MiniProveedor> lista=new ArrayList<MiniProveedor>();
-        ResultSet rs=null;
-        
-        Connection cn=ds.getConnection();
-        String strSQL="SELECT * "
+        ArrayList<MiniProveedor> lista = new ArrayList<MiniProveedor>();
+        ResultSet rs = null;
+
+        Connection cn = ds.getConnection();
+        String strSQL = "SELECT * "
                 + "FROM proveedoresRfc "
-                + "WHERE contribuyente like '%"+cadena+"%' "
+                + "WHERE contribuyente like '%" + cadena + "%' "
                 + "ORDER BY proveedor";
         try {
             Statement sentencia = cn.createStatement();
             rs = sentencia.executeQuery(strSQL);
-            while(rs.next()) {
+            while (rs.next()) {
                 lista.add(construir(rs));
             }
         } finally {
@@ -88,12 +95,12 @@ public class DAOMiniProveedores {
         }
         return lista;
     }
-    
+
     private MiniProveedor construir(ResultSet rs) throws SQLException {
-        MiniProveedor to=new MiniProveedor();
+        MiniProveedor to = new MiniProveedor();
         to.setIdProveedor(rs.getInt("idProveedor"));
-        to.setProveedor(rs.getString("proveedor"));
-        to.setRfc(rs.getString("rfc"));
+        to.setProveedor(rs.getString("contribuyente"));
+        //      to.setRfc(rs.getString("rfc")); Modificó DAVID
         return to;
     }
 }

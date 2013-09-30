@@ -27,6 +27,17 @@ public class MbMiniEmpresas implements Serializable {
         this.dao = new DAOMiniEmpresas();
     }
     
+//    private ArrayList<SelectItem> listaMini = new ArrayList<SelectItem>();
+//
+//    public ArrayList<SelectItem> getListaMini() throws SQLException {
+//          listaMini = obtenerListaMiniEmpresas();
+//        return listaMini;
+//    }
+//
+//    public void setListaMini(ArrayList<SelectItem> listaMini) {
+//        this.listaMini = listaMini;
+//    }
+//    
     public ArrayList<SelectItem> obtenerListaMiniEmpresas() throws SQLException {
         ArrayList<SelectItem> listaEmpresas=new ArrayList<SelectItem>();
         try {
