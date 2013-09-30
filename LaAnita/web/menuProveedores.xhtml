@@ -42,11 +42,6 @@
                                      style="border:solid 1px"
                                      widgetVar="proveedorTable" 
                                      emptyMessage="No hay elementos que desplegar">
-                            <f:facet name="header">
-                                <p:outputPanel >
-                                    
-                                </p:outputPanel>
-                            </f:facet>
                             <p:column filterBy="#{proveedor.contribuyente.rfc}" filterMatchMode="contains" >
                                 <f:facet name="header" >
                                     <h:outputText value="RFC" />
