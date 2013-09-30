@@ -30,7 +30,7 @@ public class MbMiniProveedor implements Serializable {
     public MbMiniProveedor() {
     }
 
-    public ArrayList<SelectItem> obtenerListaMiniProveedor() throws SQLException, NamingException {
+    public ArrayList<SelectItem> obtenerListaMiniProveedor() throws NamingException {
         try {
             MiniProveedor p0 = new MiniProveedor();
             p0.setIdProveedor(0);
