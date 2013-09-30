@@ -210,6 +210,28 @@
                             </p:row>
                             <p:row >
                                 <p:column >
+                                    <h:outputLabel value="Descto.Comercial:" styleClass="colorLetra"/>
+                                </p:column>
+                                <p:column >
+                                    <p:inputText id="desctoComercial"
+                                                 readonly="#{not mbProveedores.mbAcciones.validarAccion('desctoComercial')}"
+                                                 value="#{mbProveedores.proveedor.desctoComercial}"
+                                                 maxlength="10"
+                                                 size="15" />
+                                </p:column>
+                                <p:column >
+                                    <h:outputLabel value="Descto.Pronto Pago:"  styleClass="colorLetra"/>
+                                </p:column>
+                                <p:column colspan="3" >
+                                    <p:inputText id="prontoPago"
+                                                 readonly="#{not mbProveedores.mbAcciones.validarAccion('desctoProntoPago')}"
+                                                 value="#{mbProveedores.proveedor.desctoProntoPago}"
+                                                 maxlength="10"
+                                                 size="15" />
+                                </p:column>
+                            </p:row>
+                            <p:row >
+                                <p:column >
                                     <h:outputLabel for="impuestoZona" value="Impuestos Zona:" styleClass="colorLetra" />
                                 </p:column>
                                 <p:column >
@@ -573,7 +595,7 @@
                                         <p:commandButton id="btnGrabarSubClasificacion" value="Grabar" 
                                                          process="@this txtSubClasificacion" actionListener="#{mbProveedores.grabarSubClasificacion()}"
                                                          update="subClasificacion" oncomplete="handleSubClasificacion(xhr, status, args)" />
-                                        <p:commandButton id="btnEliminarSubClasificacion" value="Eliminar" type="button" onclick="eSubClasificacion.show()"
+                                        <p:commandButton id="btnEliminarSubClasificacion" value="Eliminar" type="button" onclick="eSubClasificacion.show();"
                                                          disabled="#{mbProveedores.mbClasificaciones.subClasificacion.idSubClasificacion==0}" />
                                     </p:column>
                                 </p:row>
