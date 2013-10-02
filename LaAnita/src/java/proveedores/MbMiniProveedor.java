@@ -12,6 +12,8 @@ import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.enterprise.context.SessionScoped;
+import javax.faces.application.FacesMessage;
+import javax.faces.context.FacesContext;
 import javax.faces.model.SelectItem;
 import javax.inject.Named;
 import javax.naming.NamingException;
@@ -22,54 +24,79 @@ import proveedores.dominio.MiniProveedor;
 @SessionScoped
 public class MbMiniProveedor implements Serializable {
 
-    private ArrayList<SelectItem> listaMiniProveedores = new ArrayList<SelectItem>();
-    private MiniProveedor miniProveedor = new MiniProveedor();
-    private ArrayList<SelectItem> listaMonedas = new ArrayList<SelectItem>();
-    private Moneda moneda = new Moneda();
+    private ArrayList<SelectItem> listaMiniProveedores;
+    private MiniProveedor miniProveedor;
+    private ArrayList<SelectItem> listaMonedas;
+    private Moneda moneda;
 
     public MbMiniProveedor() {
+        this.miniProveedor=new MiniProveedor();
+        this.moneda=new Moneda();
     }
 
-    public ArrayList<SelectItem> obtenerListaMiniProveedor() throws SQLException, NamingException {
+    public void obtenerListaMiniProveedor() {
+        boolean ok=false;
+        FacesMessage fMsg = new FacesMessage(FacesMessage.SEVERITY_WARN, "Aviso:", "");
         try {
+            this.listaMiniProveedores=new ArrayList<SelectItem>();
+            
             MiniProveedor p0 = new MiniProveedor();
             p0.setIdProveedor(0);
             p0.setProveedor("Proveedor....");
             listaMiniProveedores.add(new SelectItem(p0, p0.toString()));
+            
             DAOMiniProveedores daoP = new DAOMiniProveedores();
             ArrayList<MiniProveedor> proveedores = daoP.obtenerProveedores();
             for (MiniProveedor e : proveedores) {
                 listaMiniProveedores.add(new SelectItem(e, e.toString()));
             }
-        } catch (SQLException e) {
-            Logger.getLogger(MbMiniProveedor.class.getName()).log(Level.SEVERE, null, e);
-        }
-        return listaMiniProveedores;
-    }
-
-    private ArrayList<SelectItem> obtenerListaMonedas() throws NamingException{
-
-        Moneda m0 = new Moneda();
-        m0.setIdMoneda(0);
-        m0.setMoneda("Moneda: ");
-        listaMiniProveedores.add(new SelectItem(m0, m0.toString()));
-        DAOCotizaciones daoC = new DAOCotizaciones();
-        ArrayList<Moneda> monedas;
-        try {
-            monedas = daoC.obtenerMonedas();
-            for (Moneda e : monedas) {
-            listaMonedas.add(new SelectItem(e, e.toString()));
-        }
+            ok=true;
+        } catch (NamingException ex) {
+            fMsg.setSeverity(FacesMessage.SEVERITY_ERROR);
+            fMsg.setDetail(ex.getMessage());
         } catch (SQLException ex) {
-            Logger.getLogger(MbMiniProveedor.class.getName()).log(Level.SEVERE, null, ex);
+            fMsg.setSeverity(FacesMessage.SEVERITY_ERROR);
+            fMsg.setDetail(ex.getErrorCode() + " " + ex.getMessage());
         }
-        
-        return listaMiniProveedores;
+        if (!ok) {
+            FacesContext.getCurrentInstance().addMessage(null, fMsg);
+        }
     }
 
-    public ArrayList<SelectItem> getListaMiniProveedores() throws SQLException, NamingException {
+    private void obtenerListaMonedas() throws NamingException{
+        boolean ok=false;
+        FacesMessage fMsg = new FacesMessage(FacesMessage.SEVERITY_WARN, "Aviso:", "");
+        
+        try {
+            this.listaMonedas=new ArrayList<SelectItem>();
 
-        listaMiniProveedores = this.obtenerListaMiniProveedor();
+            Moneda m0 = new Moneda();
+            m0.setIdMoneda(0);
+            m0.setMoneda("Moneda: ");
+            listaMonedas.add(new SelectItem(m0, m0.toString()));
+            
+            DAOCotizaciones daoC = new DAOCotizaciones();
+            ArrayList<Moneda> monedas = daoC.obtenerMonedas();
+            for (Moneda e : monedas) {
+                listaMonedas.add(new SelectItem(e, e.toString()));
+            }
+            ok=true;
+        } catch (NamingException ex) {
+            fMsg.setSeverity(FacesMessage.SEVERITY_ERROR);
+            fMsg.setDetail(ex.getMessage());
+        } catch (SQLException ex) {
+            fMsg.setSeverity(FacesMessage.SEVERITY_ERROR);
+            fMsg.setDetail(ex.getErrorCode() + " " + ex.getMessage());
+        }
+        if (!ok) {
+            FacesContext.getCurrentInstance().addMessage(null, fMsg);
+        }
+    }
+
+    public ArrayList<SelectItem> getListaMiniProveedores() {
+        if(this.listaMiniProveedores==null) {
+            this.obtenerListaMiniProveedor();
+        }
         return listaMiniProveedores;
     }
 
@@ -86,8 +113,9 @@ public class MbMiniProveedor implements Serializable {
     }
 
     public ArrayList<SelectItem> getListaMonedas() throws NamingException {
-        listaMonedas = this.obtenerListaMonedas();
-
+        if(this.listaMonedas==null) {
+            this.obtenerListaMonedas();
+        }
         return listaMonedas;
     }
 

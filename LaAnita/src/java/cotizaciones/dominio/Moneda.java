@@ -27,7 +27,9 @@ public class Moneda implements Serializable {
     }
 
     public Moneda() {
-        
+        this.idMoneda=0;
+        this.moneda="";
+        this.codigoIso="";
     }
 
     public int getIdMoneda() {
