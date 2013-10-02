@@ -28,7 +28,12 @@ public class MbMiniProveedor implements Serializable {
     private Moneda moneda = new Moneda();
 
     public MbMiniProveedor() {
+        
+        
     }
+    
+    
+    //////////////////////////////M E T O D O S
 
     public ArrayList<SelectItem> obtenerListaMiniProveedor() throws NamingException {
         try {
@@ -41,32 +46,38 @@ public class MbMiniProveedor implements Serializable {
             for (MiniProveedor e : proveedores) {
                 listaMiniProveedores.add(new SelectItem(e, e.toString()));
             }
-        } catch (SQLException e) {
-            Logger.getLogger(MbMiniProveedor.class.getName()).log(Level.SEVERE, null, e);
-        }
-        return listaMiniProveedores;
-    }
-
-    private ArrayList<SelectItem> obtenerListaMonedas() throws NamingException{
-
-        Moneda m0 = new Moneda();
-        m0.setIdMoneda(0);
-        m0.setMoneda("Moneda: ");
-        listaMiniProveedores.add(new SelectItem(m0, m0.toString()));
-        DAOCotizaciones daoC = new DAOCotizaciones();
-        ArrayList<Moneda> monedas;
-        try {
-            monedas = daoC.obtenerMonedas();
-            for (Moneda e : monedas) {
-            listaMonedas.add(new SelectItem(e, e.toString()));
-        }
         } catch (SQLException ex) {
             Logger.getLogger(MbMiniProveedor.class.getName()).log(Level.SEVERE, null, ex);
         }
-        
         return listaMiniProveedores;
     }
 
+    private ArrayList<SelectItem> obtenerListaMonedas() throws NamingException {
+        try {
+            Moneda m0 = new Moneda();
+            m0.setIdMoneda(0);
+            m0.setMoneda("Moneda: ");
+            listaMonedas.add(new SelectItem(m0, m0.toString()));
+            DAOCotizaciones daoC = new DAOCotizaciones();
+            ArrayList<Moneda> monedas;
+
+            monedas = daoC.obtenerMonedas();
+            for (Moneda e : monedas) {
+                listaMonedas.add(new SelectItem(e, e.toString()));
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(MbMiniProveedor.class.getName()).log(Level.SEVERE, null, ex);
+        }
+
+        return listaMonedas;
+    }
+
+   
+    
+    
+    
+    ///////////////////////////////// GETS Y SETS
+    
     public ArrayList<SelectItem> getListaMiniProveedores() throws SQLException, NamingException {
 
         listaMiniProveedores = this.obtenerListaMiniProveedor();

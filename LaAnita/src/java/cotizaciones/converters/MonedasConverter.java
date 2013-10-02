@@ -42,10 +42,10 @@ public class MonedasConverter implements Converter {
             Moneda moneda = (Moneda) value;
             val = Integer.toString(moneda.getIdMoneda());
         } catch(Throwable ex) {
-            ResourceBundle bundle = ResourceBundle.getBundle("messages");
-            FacesMessage msg = new FacesMessage(bundle.getString("Mensaje_conversion_MiniProveedor_getAsString"));
-            msg.setSeverity(FacesMessage.SEVERITY_ERROR);
-            throw new ConverterException(msg);
+//            ResourceBundle bundle = ResourceBundle.getBundle("messages");
+//            FacesMessage msg = new FacesMessage(bundle.getString("Mensaje_conversion_MiniProveedor_getAsString"));
+//            msg.setSeverity(FacesMessage.SEVERITY_ERROR);
+//            throw new ConverterException(msg);
         }
         return val;
     }

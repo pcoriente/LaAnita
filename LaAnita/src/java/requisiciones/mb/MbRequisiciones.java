@@ -661,13 +661,15 @@ public class MbRequisiciones implements Serializable {
         FacesMessage msg = null;
         try {
             int idProv = this.mbMiniProveedor.getMiniProveedor().getIdProveedor();
+            int idMon= this.mbMiniProveedor.getMoneda().getIdMoneda();
             daoReq = new DAORequisiciones();
-            daoReq.grabarCotizacion(idReq, idProv, descGral, this.cotizacionProductos);
+            daoReq.grabarCotizacion(idReq, idProv, idMon, descGral, this.cotizacionProductos);
             msg = new FacesMessage(FacesMessage.SEVERITY_INFO, "Aviso:", "La cotización ha sido registrada..");
             numCotizacion += 1;
             this.setNumCotizacion(numCotizacion);
             this.limpiaCotizacion();
             mbMiniProveedor.getMiniProveedor().setIdProveedor(0);
+            mbMiniProveedor.getMoneda().setIdMoneda(0);
             this.setDescuentoGeneral(0);
 
         } catch (NamingException ex) {
@@ -699,6 +701,8 @@ public class MbRequisiciones implements Serializable {
         this.impuesto = 0;
 
         this.total = 0;
+        
+        this.mbMiniProveedor= new MbMiniProveedor();
 
     }
 

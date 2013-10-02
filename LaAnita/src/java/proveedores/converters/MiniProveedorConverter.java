@@ -27,10 +27,10 @@ public class MiniProveedorConverter implements Converter {
                 proveedor=dao.obtenerProveedor(idProveedor);
             }
         } catch(Throwable ex) {
-            ResourceBundle bundle = ResourceBundle.getBundle("messages");
-            FacesMessage msg = new FacesMessage(bundle.getString("Mensaje_conversion_MiniProveedor_getAsObject"));
-            msg.setSeverity(FacesMessage.SEVERITY_ERROR);
-            throw new ConverterException(msg);
+//            ResourceBundle bundle = ResourceBundle.getBundle("messages");
+//            FacesMessage msg = new FacesMessage(bundle.getString("Mensaje_conversion_MiniProveedor_getAsObject"));
+//            msg.setSeverity(FacesMessage.SEVERITY_ERROR);
+//            throw new ConverterException(msg);
         }
         return proveedor;
     }
@@ -42,10 +42,10 @@ public class MiniProveedorConverter implements Converter {
             MiniProveedor proveedor = (MiniProveedor) value;
             val = Integer.toString(proveedor.getIdProveedor());
         } catch(Throwable ex) {
-            ResourceBundle bundle = ResourceBundle.getBundle("messages");
-            FacesMessage msg = new FacesMessage(bundle.getString("Mensaje_conversion_MiniProveedor_getAsString"));
-            msg.setSeverity(FacesMessage.SEVERITY_ERROR);
-            throw new ConverterException(msg);
+         //   ResourceBundle bundle = ResourceBundle.getBundle("messages");
+        //    FacesMessage msg = new FacesMessage(bundle.getString("Mensaje_conversion_MiniProveedor_getAsString"));
+        //    msg.setSeverity(FacesMessage.SEVERITY_ERROR);
+        //    throw new ConverterException(msg);
         }
         return val;
     }

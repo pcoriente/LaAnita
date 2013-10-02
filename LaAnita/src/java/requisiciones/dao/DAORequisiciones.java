@@ -272,7 +272,7 @@ public class DAORequisiciones {
     }
 
     //COTIZACIONES
-    public void grabarCotizacion(int idReq, int idProv, double descGral, ArrayList<CotizacionDetalle> cd) throws SQLException {
+    public void grabarCotizacion(int idReq, int idProv, int idMon, double descGral, ArrayList<CotizacionDetalle> cd) throws SQLException {
         Connection cn = this.ds.getConnection();
         Statement st = cn.createStatement();
         PreparedStatement ps1, ps2, ps3, ps4;
@@ -280,8 +280,8 @@ public class DAORequisiciones {
         try {
             st.executeUpdate("begin transaction");
             //CABECERO
-            String strSQL1 = "INSERT INTO cotizaciones(idRequisicion, idProveedor, folioProveedor, fechaCotizacion,descuentoCotizacion,observaciones)"
-                    + " VALUES (" + idReq + ", " + idProv + ",'Folio' ,GETDATE(), " + descGral + ",'hola')";
+            String strSQL1 = "INSERT INTO cotizaciones(idRequisicion, idProveedor, idMoneda, folioProveedor, fechaCotizacion,descuentoCotizacion,observaciones)"
+                    + " VALUES (" + idReq + ", " + idProv +  ", " + idMon + ",'Folio' ,GETDATE(), " + descGral + ",'hola')";
             String strSQLIdentity = "SELECT @@IDENTITY as idCot";
             ps1 = cn.prepareStatement(strSQL1);
             ps1.executeUpdate();

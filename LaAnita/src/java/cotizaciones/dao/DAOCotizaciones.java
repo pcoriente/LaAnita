@@ -174,7 +174,11 @@ public class DAOCotizaciones {
     }
 
     private Moneda construirMoneda(ResultSet rs) throws SQLException {
-        return new Moneda(rs.getInt("idMoneda"), rs.getString("moneda"), rs.getString("codigoIso"));
+        Moneda mon = new Moneda();
+        mon.setIdMoneda(rs.getInt("idMoneda"));
+        mon.setMoneda(rs.getString("moneda"));
+        mon.setCodigoIso(rs.getString("codigoIso"));
+        return mon;
     }
 
     public ArrayList<Moneda> obtenerMonedas() throws NamingException, SQLException {
@@ -185,7 +189,7 @@ public class DAOCotizaciones {
         Connection cn = ds2.getConnection();
         try {
 
-            String stringSQL = "SELECT idMoneda, moneda, codigoIso FROM monedas";
+            String stringSQL = "SELECT idMoneda, moneda, codigoIso FROM monedas where idMoneda between 0 and 4";
 
             Statement sentencia = cn.createStatement();
             rs = sentencia.executeQuery(stringSQL);
@@ -198,4 +202,7 @@ public class DAOCotizaciones {
         return lista;
         
     }
+    
+    
+    
 }

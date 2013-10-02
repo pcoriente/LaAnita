@@ -34,14 +34,14 @@
                                     icon="ui-icon-disk"
                                     title="Guardar cotización"
                                     actionListener="#{mbRequisiciones.guardaCotizacion(mbRequisiciones.requisicionEncabezado.idRequisicion,mbRequisiciones.descuentoGeneral)}"
-                                    update="detalleCotizacion numCotizacion proveedor descuentoGeneral dg "
-                                    process="@this proveedor :fc:detalleCotizacion "
+                                    update="detalleCotizacion numCotizacion proveedor moneda desctoComercial"
+                                    process="@this proveedor moneda :fc:detalleCotizacion "
                                     />
                                 <p:commandButton id="limpiarCotizacion"
                                                  icon="ui-icon-refresh"
                                                  title="Cancelar cotización"
                                                  actionListener="#{mbRequisiciones.limpiaCotizacion()}"
-                                                 update="detalleCotizacion  descuentoGeneral cabeceroCotizacion proveedor"
+                                                 update="detalleCotizacion desctoComercial cabeceroCotizacion proveedor moneda"
                                                  />
                                 <p:separator />
 
@@ -66,9 +66,12 @@
                             </p:column >
                             <p:column  >
                                 <p:selectOneMenu id="proveedor"
-                                                 value="#{mbRequisiciones.mbMiniProveedor.miniProveedor}" >
+                                                 value="#{mbRequisiciones.mbMiniProveedor.miniProveedor}"   >
                                     <f:converter converterId="converters.miniProveedor" />
                                     <f:selectItems value="#{mbRequisiciones.mbMiniProveedor.listaMiniProveedores}"  />
+                                    <p:ajax event="change"
+                                            update="desctoComercial" />
+
                                 </p:selectOneMenu>
                             </p:column>
                             <p:column width="10"  >
@@ -79,41 +82,37 @@
                                                  value="#{mbRequisiciones.mbMiniProveedor.moneda}" >
                                     <f:converter converterId="converters.Moneda" />
                                     <f:selectItems value="#{mbRequisiciones.mbMiniProveedor.listaMonedas}"   />
+
                                 </p:selectOneMenu>
                             </p:column>
                         </h:panelGrid>
                         <h:panelGrid id="cabeceroCotizacion" columns="12" width="800"  > 
 
+
+                            <!--  DESCUENTOS COMERCIALES -->
                             <p:column width="25">
                                 <h:outputLabel value="Desc. General: *" styleClass="textoEtiquetas" />  
                             </p:column>
                             <p:column width="50">
-                                <p:inplace id="dg" editor="true">
-                                    <pe:inputNumber id="descuentoGeneral" value="#{mbRequisiciones.descuentoGeneral}"   
-                                                    decimalPlaces="2" minValue="0" maxValue="100" >
-                                        <p:ajax event="blur" 
-                                                listener="#{mbRequisiciones.calculoDescuentoGeneral()}"
-
-                                                update="detalleCotizacion"
-                                                process="@this"/>
-                                    </pe:inputNumber> 
-                                </p:inplace>
+                                <h:outputText id="desctoComercial" value="#{mbRequisiciones.mbMiniProveedor.miniProveedor.desctoComercial}" />
                             </p:column>
-                            <p:column width="25">
+                            <p:column width="25" >
                                 <h:outputLabel value="Desc. P. Pago: *" styleClass="textoEtiquetas" />  
                             </p:column>
                             <p:column width="50">
                                 <p:inplace id="dg2" editor="true">
-                                    <pe:inputNumber id="descuentoGeneral2" value="#{mbRequisiciones.descuentoGeneral}"   
+                                    <pe:inputNumber id="desctoProntoPago" value="#{mbRequisiciones.mbMiniProveedor.miniProveedor.desctoProntoPago}"   
                                                     decimalPlaces="2" minValue="0" maxValue="100" >
                                         <p:ajax event="blur" 
                                                 listener="#{mbRequisiciones.calculoDescuentoGeneral()}"
-
                                                 update="detalleCotizacion"
                                                 process="@this"/>
                                     </pe:inputNumber> 
                                 </p:inplace>
                             </p:column>
+
+                            <!--   -->
+
                             <p:column width="15">
                                 <h:outputLabel value="Requisición :"  styleClass="textoEtiquetas" />
                             </p:column>
