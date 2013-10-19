@@ -68,11 +68,11 @@ public class DAOMenu {
                                 "x.idModulo, m.modulo, m.url\n" +
                         "from (select distinct m.idMenu, m.idSubMenu, m.idModulo \n" +
                         "		from usuarioPerfil p\n" +
-                        "		inner join systemWeb.dbo.modulos m on m.idModulo=p.idModulo\n" +
+                        "		inner join webSystem.dbo.modulos m on m.idModulo=p.idModulo\n" +
                         "		where p.idPerfil="+idPerfil+") x\n" +
-                        "inner join systemWeb.dbo.modulosMenus mm on mm.idMenu=x.idMenu\n" +
-                        "left join systemWeb.dbo.modulosSubMenus ms on ms.idSubMenu=x.idSubMenu\n" +
-                        "inner join systemWeb.dbo.modulos m on m.idModulo=x.idModulo "
+                        "inner join webSystem.dbo.modulosMenus mm on mm.idMenu=x.idMenu\n" +
+                        "left join webSystem.dbo.modulosSubMenus ms on ms.idSubMenu=x.idSubMenu\n" +
+                        "inner join webSystem.dbo.modulos m on m.idModulo=x.idModulo "
                 + "order by x.idMenu, x.idSubMenu, x.idModulo";
         Connection cn=this.ds.getConnection();
         Statement st=cn.createStatement();
