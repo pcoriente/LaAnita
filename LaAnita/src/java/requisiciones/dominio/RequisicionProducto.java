@@ -1,42 +1,18 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package requisiciones.dominio;
 
-import cotizaciones.dominio.CotizacionDetalle;
-import cotizaciones.dominio.CotizacionEncabezado;
 import productos.dominio.Producto;
 
-/**
- *
- * @author daap
- */
 public class RequisicionProducto {
-    
-   private int idRequisicion;
+    private int idRequisicion;
     private Producto producto;
     private int cantidad;
     private int cantidadAutorizada;
-   // private CotizacionDetalle cotizacionDetalle = new CotizacionDetalle();
-   
-    
+
     public RequisicionProducto(Producto producto) {
         this.producto = producto;
-       // this.cantidad=0;
-        
     }
-    
-    
-
-   
-    
-    
 
     public RequisicionProducto() {
-//        this.neto=0.0;
-//        this.subtotal=0.0;
-        
     }
 
     public int getIdRequisicion() {
@@ -46,9 +22,6 @@ public class RequisicionProducto {
     public void setIdRequisicion(int idRequisicion) {
         this.idRequisicion = idRequisicion;
     }
-
-    
-   
 
     public Producto getProducto() {
         return producto;
@@ -71,21 +44,6 @@ public class RequisicionProducto {
     }
 
     public void setCantidadAutorizada(int cantidadAutorizada) {
-        
-         this.cantidadAutorizada = cantidadAutorizada;
-       
+        this.cantidadAutorizada = cantidadAutorizada;
     }
-
-   
-
-//    public CotizacionDetalle getCotizacionDetalle() {
-//        return cotizacionDetalle;
-//    }
-//
-//    public void setCotizacionDetalle(CotizacionDetalle cotizacionDetalle) {
-//        this.cotizacionDetalle = cotizacionDetalle;
-//    }
-
-   
-    
 }

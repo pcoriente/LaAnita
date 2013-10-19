@@ -42,12 +42,12 @@ public class DAOMiniProveedores {
         Connection cn = this.ds.getConnection();
         Statement st = cn.createStatement();
         try {
-            ResultSet rs = st.executeQuery("select p.idProveedor, c.contribuyente from proveedores p\n"
-                    + "inner join contribuyentes c on c.idContribuyente = p.idContribuyente\n"
-                    + "where p.idProveedor=" + idProveedor + "\n"
-                    + "order by c.contribuyente"); //MODIFICO DAVID
+            ResultSet rs = st.executeQuery("select p.idProveedor,  c.contribuyente, p.desctoComercial, p.desctoProntoPago from proveedores p\n" +
+"                   inner join contribuyentes c on c.idContribuyente = p.idContribuyente\n" +
+"                    where p.idProveedor =" + idProveedor + "\n" +
+"                    order by c.contribuyente"); //MODIFICO DAVID
             if (rs.next()) {
-                to = construir(rs);
+                to = construirConverter(rs);
             }
         } finally {
             cn.close();
@@ -60,9 +60,8 @@ public class DAOMiniProveedores {
         ResultSet rs = null;
 
         Connection cn = ds.getConnection();
-        String strSQL = "select p.idProveedor, c.contribuyente from proveedores p\n"
-                + "inner join contribuyentes c on c.idContribuyente = p.idContribuyente\n"
-                + "order by c.contribuyente";  //Modifico DAVID
+        String strSQL = "select p.idProveedor,  c.contribuyente from proveedores p\n" +
+"                    inner join contribuyentes c on c.idContribuyente = p.idContribuyente order by p.idProveedor";  //Modifico DAVID
         try {
             Statement sentencia = cn.createStatement();
             rs = sentencia.executeQuery(strSQL);
@@ -100,7 +99,16 @@ public class DAOMiniProveedores {
         MiniProveedor to = new MiniProveedor();
         to.setIdProveedor(rs.getInt("idProveedor"));
         to.setProveedor(rs.getString("contribuyente"));
-        //      to.setRfc(rs.getString("rfc")); Modificó DAVID
+    //    to.setRfc(rs.getString("rfc"));
+        return to;
+    }
+
+    private MiniProveedor construirConverter(ResultSet rs) throws SQLException {
+        MiniProveedor to = new MiniProveedor();
+        to.setIdProveedor(rs.getInt("idProveedor"));
+        to.setProveedor(rs.getString("contribuyente"));
+        to.setDesctoComercial(rs.getDouble("desctoComercial"));
+        to.setDesctoProntoPago(rs.getDouble("desctoProntoPago"));
         return to;
     }
 }

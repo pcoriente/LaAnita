@@ -66,7 +66,6 @@ public class MbRequisiciones implements Serializable {
     private String descF;
     private String impF;
     private String totalF;
-    private double descuentoGeneral;
     private double descuentoGeneralAplicado;
     private String descGralAplicF;
     private double sumaDescuentoTotales;
@@ -75,6 +74,7 @@ public class MbRequisiciones implements Serializable {
     private MbMiniProveedor mbMiniProveedor = new MbMiniProveedor();
     private ArrayList<CotizacionEncabezado> cotizacionesEncabezado;
     private CotizacionEncabezado cotizacionEncabezado = new CotizacionEncabezado();
+    private double subtotalBruto;
 
     //GETS Y SETS
     public MbRequisiciones() throws NamingException {
@@ -276,7 +276,7 @@ public class MbRequisiciones implements Serializable {
         return descF;
     }
 
-    public String getImpF() {
+    public String getImpF() { //IVA
         impF = utilerias.Utilerias.formatoMonedas(this.getImpuesto());
         return impF;
     }
@@ -284,14 +284,6 @@ public class MbRequisiciones implements Serializable {
     public String getTotalF() {
         totalF = utilerias.Utilerias.formatoMonedas(this.getTotal());
         return totalF;
-    }
-
-    public double getDescuentoGeneral() {
-        return descuentoGeneral;
-    }
-
-    public void setDescuentoGeneral(double descuentoGeneral) {
-        this.descuentoGeneral = descuentoGeneral;
     }
 
     public double getDescuentoGeneralAplicado() {
@@ -353,6 +345,15 @@ public class MbRequisiciones implements Serializable {
 
     public void setCotizacionEncabezado(CotizacionEncabezado cotizacionEncabezado) {
         this.cotizacionEncabezado = cotizacionEncabezado;
+    }
+
+    public double getSubtotalBruto() {
+        this.calcularSubtotalBruto();
+        return subtotalBruto;
+    }
+
+    public void setSubtotalBruto(double subtotalBruto) {
+        this.subtotalBruto = subtotalBruto;
     }
 
 //------------------------------------------------------------------------------------------------------------------------------------------
@@ -656,19 +657,31 @@ public class MbRequisiciones implements Serializable {
     }
 
     //COTIZACIONES
-    public void guardaCotizacion(int idReq, double descGral) throws SQLException {
+    public void guardaCotizacion(int idReq, double dc, double dpp) throws SQLException {
         DAORequisiciones daoReq = null;
         FacesMessage msg = null;
         try {
+
             int idProv = this.mbMiniProveedor.getMiniProveedor().getIdProveedor();
+            int idMon = this.mbMiniProveedor.getMoneda().getIdMoneda();
+
             daoReq = new DAORequisiciones();
-            daoReq.grabarCotizacion(idReq, idProv, descGral, this.cotizacionProductos);
-            msg = new FacesMessage(FacesMessage.SEVERITY_INFO, "Aviso:", "La cotización ha sido registrada..");
-            numCotizacion += 1;
-            this.setNumCotizacion(numCotizacion);
-            this.limpiaCotizacion();
-            mbMiniProveedor.getMiniProveedor().setIdProveedor(0);
-            this.setDescuentoGeneral(0);
+            if (idProv != 0 && idMon != 0) {
+                if (this.total != 0) {
+                    daoReq.grabarCotizacion(idReq, idProv, idMon, dc, dpp, this.cotizacionProductos);
+                    msg = new FacesMessage(FacesMessage.SEVERITY_INFO, "Aviso:", "La cotización ha sido registrada..");
+                    numCotizacion += 1;
+                    this.setNumCotizacion(numCotizacion);
+                    this.limpiaCotizacion();
+                    mbMiniProveedor.getMiniProveedor().setIdProveedor(0);
+                    mbMiniProveedor.getMoneda().setIdMoneda(0);
+                } else {
+                    msg = new FacesMessage(FacesMessage.SEVERITY_INFO, "Aviso:", "Capture al menos la cotización para un producto..");
+                }
+
+            } else {
+                msg = new FacesMessage(FacesMessage.SEVERITY_INFO, "Aviso:", "Falta información para realizar la cotización");
+            }
 
         } catch (NamingException ex) {
             Logger.getLogger(MbRequisiciones.class.getName()).log(Level.SEVERE, null, ex);
@@ -678,20 +691,18 @@ public class MbRequisiciones implements Serializable {
     }
 
     public void limpiaCotizacion() throws NamingException {
-        this.mbMiniEmpresa = new MbMiniEmpresa();
         int longitud = this.cotizacionProductos.size();
         for (int x = 0; x < longitud; x++) {
+            cotizacionProductos.get(x).setCantidadCotizada(0);
             cotizacionProductos.get(x).setCostoCotizado(0);
             cotizacionProductos.get(x).setDescuentoProducto(0);
+            cotizacionProductos.get(x).setDescuentoProducto2(0);
             cotizacionProductos.get(x).setNeto(0);
             cotizacionProductos.get(x).setSubtotal(0);
         }
 
-        //  this.numCotizacion = 0;
         this.subtotalGeneral = 0;
 
-        //  this.descuentoGeneral = 0;
-        this.setDescuentoGeneral(0);
         this.sumaDescuentosProductos = 0;
         this.descuentoGeneralAplicado = 0;
         this.sumaDescuentoTotales = 0;
@@ -700,38 +711,20 @@ public class MbRequisiciones implements Serializable {
 
         this.total = 0;
 
-    }
+        this.mbMiniProveedor = new MbMiniProveedor();
 
-    public void calculaPrecioDescuento(int idProd) {
-        subtotalGeneral = 0;
-        try {
-            for (CotizacionDetalle e : cotizacionProductos) {
-                if (e.getProducto().getIdProducto() == idProd) {
-                    double neto = e.getCostoCotizado() - (e.getCostoCotizado() * (e.getDescuentoProducto() / 100));
-                    e.setNeto(neto);
-                    // double netoObtenido = e.getNeto();
-                    e.setSubtotal(neto * e.getCantidadCotizada());
-                    break;
-                }
-            }
-        } catch (Exception e) {
-            Logger.getLogger(MbRequisiciones.class.getName()).log(Level.SEVERE, null, e);
-        }
     }
 
     ///nueva propuesta
-    public void cargaRequisicionesDetalleCotizar1(int id) throws NamingException, SQLException {
-        this.numCotizacion = 0;
-        this.subtotalGeneral = 0;
-
-        this.setDescuentoGeneral(0);
-        this.sumaDescuentosProductos = 0;
-        this.descuentoGeneralAplicado = 0;
-        this.sumaDescuentoTotales = 0;
-
-        this.impuesto = 0;
-
-        this.total = 0;
+    public void cargaRequisicionesDetalleCotizar(int id, int modi) throws NamingException, SQLException {
+            this.numCotizacion = 0;
+            this.subtotalGeneral = 0;
+            this.sumaDescuentosProductos = 0;
+            this.descuentoGeneralAplicado = 0;
+            this.sumaDescuentoTotales = 0;
+            this.impuesto = 0;
+            this.total = 0;
+            mbMiniProveedor = new MbMiniProveedor();
 
         cotizacionProductos = new ArrayList<CotizacionDetalle>();
         DAORequisiciones daoListaDetalle = new DAORequisiciones();
@@ -741,21 +734,25 @@ public class MbRequisiciones implements Serializable {
 
         for (TORequisicionProducto e : toLista) {
             requisicionProductos.add(convertir(e, daoPro));
-            cotizacionProductos.add(convertirCotizar(e, daoPro));
+            cotizacionProductos.add(convertirCotizar(e, daoPro, modi));
         }
     }
 
-    private CotizacionDetalle convertirCotizar(TORequisicionProducto to, DAOProductos daoPro) throws SQLException, NamingException {
+    private CotizacionDetalle convertirCotizar(TORequisicionProducto to, DAOProductos daoPro, int modi) throws SQLException, NamingException {
         RequisicionProducto rd;
         rd = new RequisicionProducto(daoPro.obtenerProducto(to.getIdProducto()));
         CotizacionDetalle cd = new CotizacionDetalle();
         cd.setProducto(rd.getProducto());
         cd.setCantidadAutorizada(to.getCantidadAutorizada());
         cd.setCantidadCotizada(to.getCantidadAutorizada());
+
         cd.setCostoCotizado(0);
         cd.setNeto(0);
         cd.setSubtotal(0);
         cd.setDescuentoProducto(0);
+        cd.setDescuentoProducto2(0);
+
+
         return cd;
     }
 
@@ -766,16 +763,9 @@ public class MbRequisiciones implements Serializable {
         }
     }
 
-    public void calculoDescuentoProducto() {
-        sumaDescuentosProductos = 0;
-        for (CotizacionDetalle e : cotizacionProductos) {
-            sumaDescuentosProductos += (e.getCantidadCotizada() * (e.getCostoCotizado() - e.getNeto()));
-        }
-    }
-
     public void calculoIVA() {
         impuesto = 0;
-        double desc = subtotalGeneral - descuentoGeneralAplicado;
+        double desc = this.subtotalBruto;                           //subtotalGeneral - descuentoGeneralAplicado;
         if (desc > 0) {
             impuesto = (desc) * this.iva;
         } else {
@@ -785,9 +775,9 @@ public class MbRequisiciones implements Serializable {
 
     public void calculoTotal() {
         total = 0;
-        double desc = subtotalGeneral - descuentoGeneralAplicado;
+        double desc = this.subtotalBruto;                                           //subtotalGeneral - descuentoGeneralAplicado;
         if (desc > 0) {
-            total = (desc) + impuesto;
+            total = (desc) + this.getImpuesto();
         } else {
             total = 0;
         }
@@ -796,15 +786,74 @@ public class MbRequisiciones implements Serializable {
     public void calculoDescuentoGeneral() {
         descuentoGeneralAplicado = 0;
         double sumaCostoCotizado = 0;
-
+        double descuentoC = 0;
+        double descuentoPP = 0;
+        double descuentoGA = 0;
         for (CotizacionDetalle e : cotizacionProductos) {
             sumaCostoCotizado += (e.getCantidadCotizada() * e.getNeto());
         }
-        descuentoGeneralAplicado = sumaCostoCotizado * (this.getDescuentoGeneral() / 100);
+        descuentoC = sumaCostoCotizado * (this.mbMiniProveedor.getMiniProveedor().getDesctoComercial() / 100);
+        sumaCostoCotizado = sumaCostoCotizado - descuentoC;
+        descuentoPP = sumaCostoCotizado * (this.mbMiniProveedor.getMiniProveedor().getDesctoProntoPago() / 100);
+        descuentoGA = descuentoC + descuentoPP;
+        this.setDescuentoGeneralAplicado(descuentoGA);
+    }
+
+    public void calculaPrecioDescuento(int idProd) {
+        subtotalGeneral = 0;
+        try {
+            for (CotizacionDetalle e : cotizacionProductos) {
+                if (e.getProducto().getIdProducto() == idProd) {
+                    double neto = e.getCostoCotizado() - (e.getCostoCotizado() * (e.getDescuentoProducto() / 100));
+
+                    double neto2 = neto - neto * (e.getDescuentoProducto2() / 100);
+                    e.setNeto(neto2);
+                    e.setSubtotal(e.getNeto() * e.getCantidadCotizada());
+                    break;
+                }
+            }
+        } catch (Exception e) {
+            Logger.getLogger(MbRequisiciones.class.getName()).log(Level.SEVERE, null, e);
+        }
+    }
+
+    public void calculoDescuentoProducto() {
+        sumaDescuentosProductos = 0;
+        for (CotizacionDetalle e : cotizacionProductos) {
+            sumaDescuentosProductos += (e.getCantidadCotizada() * (e.getCostoCotizado() - e.getNeto()));
+        }
     }
 
     public void calculoDescuentoTotales() {
         sumaDescuentoTotales = 0;
-        sumaDescuentoTotales = this.getSumaDescuentosProductos() + this.getDescuentoGeneralAplicado();
+        sumaDescuentoTotales = this.getSumaDescuentosProductos() + (this.getDescuentoGeneralAplicado());
+    }
+
+    public void limpiaDetalle() throws NamingException {
+        int longitud = this.cotizacionProductos.size();
+        for (int x = 0; x < longitud; x++) {
+            cotizacionProductos.get(x).setCostoCotizado(0);
+            cotizacionProductos.get(x).setDescuentoProducto(0);
+            cotizacionProductos.get(x).setNeto(0);
+            cotizacionProductos.get(x).setSubtotal(0);
+        }
+
+        this.subtotalGeneral = 0;
+
+        this.sumaDescuentosProductos = 0;
+        this.descuentoGeneralAplicado = 0;
+        this.sumaDescuentoTotales = 0;
+
+        this.impuesto = 0;
+
+        this.total = 0;
+        ArrayList<SelectItem> listaMonedas = new ArrayList<SelectItem>();
+
+        this.mbMiniProveedor.setListaMonedas(listaMonedas);
+    }
+
+    public void calcularSubtotalBruto() {
+        subtotalBruto = this.subtotalGeneral - this.descuentoGeneralAplicado;
+
     }
 }

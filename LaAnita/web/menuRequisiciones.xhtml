@@ -7,7 +7,7 @@
       xmlns:p="http://primefaces.org/ui">
     <h:head>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"></meta>
-        <title>Panel de Administración de Requisiciones</title>
+        <title>Menu de Requisiciones</title>
         <h:outputStylesheet library="css" name="main.css"/>
 
     </h:head>
@@ -21,6 +21,12 @@
                                          icon="ui-icon-circle-plus"
                                          title="Nueva requisición"
                                          action="#{mbRequisiciones.nuevo()}"
+                                         />
+                        <p:commandButton id="Menu"
+                                         icon="ui-icon-document"
+                                         title="Ir a menu cotizaciones"
+                                         action="menuCotizaciones.xhtml"
+
                                          />
                         <p:commandButton id="salir"
                                          icon="ui-icon-home"
@@ -40,9 +46,7 @@
                                      emptyMessage="No existen elementos para desplegar..."
                                      filteredValue="#{mbRequisiciones.requisicionesFiltradas}"
                                      >
-                            <p:column sortBy="#{req.idRequisicion}" filterBy="#{req.idRequisicion}" headerText="Folio: " filterMatchMode="contains" width="15"  >
-                                <h:outputText value="#{req.idRequisicion}"   />
-                            </p:column>
+                          
                             <p:column filterBy="#{req.fechaRequisicion}" headerText="F. Solicitud" filterMatchMode="contains" width="60" >
                                 <f:facet name="header">
                                     <h:outputText value="Fecha"/>
@@ -92,6 +96,7 @@
                                     title="Procedimiento de aprobación"
                                     actionListener="#{mbRequisiciones.requisicionAprobar(req.idRequisicion)}"
                                     style="margin:0 auto;" 
+                                    disabled="#{req.status eq 0 || req.status eq 2}"
                                     >  
                                     <f:setPropertyActionListener value="#{req}" target="#{mbRequisiciones.requisicionEncabezado}" />  
                                 </p:commandButton> 
@@ -99,8 +104,9 @@
                                                  icon="ui-icon-note"
                                                  title="Procedimiento de cotización"
                                                  action="cotizaciones.xhtml"
-                                                 actionListener="#{mbRequisiciones.cargaRequisicionesDetalleCotizar1(req.idRequisicion)}"
+                                                 actionListener="#{mbRequisiciones.cargaRequisicionesDetalleCotizar(req.idRequisicion,0)}"
                                                  style="margin:0 auto;"
+                                                 disabled="#{req.status eq 0 || req.status eq 1}"
                                                  >
                                     <f:setPropertyActionListener value="#{req}" target="#{mbRequisiciones.requisicionEncabezado}" /> 
                                 </p:commandButton>
@@ -112,7 +118,7 @@
                                     actionListener="#{mbRequisiciones.modificarRequisicionStatus(req.idRequisicion,mbRequisiciones.requisicionProducto.producto.idProducto,req.status)}" 
                                     update=":form:requisicion" 
                                     style="margin:0 auto;"
-                                    disabled="#{req.status eq 1}"
+                                    disabled="#{req.status eq 1 || req.status eq 0 }"
                                     />
                             </p:column>
                             <p:resizable for="nc" maxWidth="15"/>

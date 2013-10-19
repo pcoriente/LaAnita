@@ -7,7 +7,7 @@
       xmlns:p="http://primefaces.org/ui">
     <h:head>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"></meta>
-        <title>Panel de Administración de Cotizaciones</title>
+        <title>Menu de Cotizaciones</title>
         <h:outputStylesheet library="css" name="main.css"/>
 
     </h:head>
@@ -23,6 +23,7 @@
                                          action="menuRequisiciones.xhtml"
 
                                          />
+                        
                         <p:commandButton id="salir"
                                        icon="ui-icon-home"
                                          title="Salir de Listado de Requisiciones"
@@ -63,15 +64,15 @@
                                 <h:outputText value="#{cot.fechaAprobacion}"/>
                             </p:column>
                           
-                            <p:column width="20" >
+                            <p:column width="45" >
                                 <f:facet name="header">
-                                    <h:outputText value="Cotiz."/>
+                                    <h:outputText value="Cotizaciones."/>
                                 </f:facet>
                                 <h:outputText value="#{cot.numCotizaciones}"/>
                             </p:column>
-                            <p:column width="25" >
+                            <p:column width="45" >
                                 <f:facet name="header">
-                                    <h:outputText value="Prods."/>
+                                    <h:outputText value="Productos"/>
                                 </f:facet>
                                 <h:outputText value="#{cot.numProductos}"/>
                             </p:column>
@@ -81,9 +82,9 @@
                                 </f:facet>
                                 <h:outputText value="#{cot.estado eq 2?'Finalizado':'Proceso'}"/>
                             </p:column>
-                            <p:column width="25" >
+                            <p:column width="45" >
                                 <f:facet name="header">
-                                    <h:outputText value="Proceso"/>
+                                    <h:outputText value="Procesos"/>
                                 </f:facet>
                                 <p:commandButton id="verProveedores"
                                                  icon="ui-icon-note"
@@ -93,6 +94,7 @@
                                                  style="margin:0 auto;"
                                                  >
                                 </p:commandButton>
+                                
                             </p:column>
 
 
