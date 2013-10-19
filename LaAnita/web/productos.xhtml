@@ -140,9 +140,9 @@
                                     <h:outputLabel for="unidad" value="EMPAQUE :" style="font-weight: bold; color: red; width: 105px;" />
                                 </p:column>
                                 <p:column >
-                                    <p:selectOneMenu id="unidad" value="#{frmProducto.mbProducto.producto.unidad}" style="width: 300px;" >
+                                    <p:selectOneMenu id="unidad" value="#{frmProducto.mbProducto.producto.presentacion}" style="width: 300px;" >
                                         <f:converter converterId="converters.Unidad" />
-                                        <f:selectItems value="#{frmProducto.mbProducto.listaUnidades}" />
+                                        <f:selectItems value="#{frmProducto.mbProducto.mbPresentacion.listaPresentaciones}" />
                                         <p:ajax event="change" listener="#{frmProducto.mbProducto.actualizarContenido()}" 
                                                 update="contenido unimed" />
                                     </p:selectOneMenu>
@@ -150,7 +150,7 @@
                                 <p:column >
                                     <p:commandButton id="btnMttoUnidadesProducto" icon="ui-icon-pencil" title="Mtto.Empaques" 
                                                      process="@this unidad" actionListener="#{frmProducto.mbProducto.mttoUnidad()}" 
-                                                     update="mttoUnidadesProducto" oncomplete="mttoUnidadesProductoDlg.show()" />
+                                                     update="mttoUnidadesProducto" oncomplete="mttoPresentacionDlg.show()" />
                                 </p:column>
                             </p:row>
                             <p:row >
@@ -160,7 +160,7 @@
                                 <p:column colspan="2">
                                     <p:inputText id="contenido" immediate="true" maxlength="7" size="10"
                                                  required="true" requiredMessage="Se requiere un número"
-                                                 disabled="#{frmProducto.mbProducto.producto.unidad.idUnidad==0 || frmProducto.mbProducto.producto.unidad.idUnidad==1}"
+                                                 disabled="#{frmProducto.mbProducto.producto.presentacion.idPresentacion==0 || frmProducto.mbProducto.producto.presentacion.idPresentacion==1}"
                                                  value="#{frmProducto.mbProducto.producto.contenido}" >
                                         <f:convertNumber maxIntegerDigits="3" maxFractionDigits="3" pattern="##0.###" />
                                     </p:inputText>
@@ -172,7 +172,7 @@
                                 </p:column>
                                 <p:column colspan="2" >
                                     <p:selectOneMenu id="unimed" value="#{frmProducto.mbProducto.producto.unidadMedida}" style="width: 300px" 
-                                                     disabled="#{frmProducto.mbProducto.producto.unidad.idUnidad==0 || frmProducto.mbProducto.producto.unidad.idUnidad==1}" >
+                                                     disabled="#{frmProducto.mbProducto.producto.presentacion.idPresentacion==0 || frmProducto.mbProducto.producto.presentacion.idPresentacion==1}" >
                                         <f:converter converterId="converters.UnidadMedida" />
                                         <f:selectItems value="#{frmProducto.mbProducto.listaUnidadesMedida}" />
                                     </p:selectOneMenu>
@@ -327,7 +327,7 @@
                             </f:facet>
                         </p:panelGrid>
                     </p:dialog>
-                    <p:dialog header="MANTENIMIENTO DE EMPAQUES" widgetVar="mttoUnidadesProductoDlg" resizable="false" style="width: 500px;" modal="true" >
+                    <p:dialog header="MANTENIMIENTO DE EMPAQUES" widgetVar="mttoPresentacionDlg" resizable="false" style="width: 500px;" modal="true" >
                         <p:messages id="messages9" showDetail="true" autoUpdate="true" closable="true" />
                         <p:panelGrid id="mttoUnidadesProducto" styleClass="sinBorde">
                             <p:row >
@@ -335,7 +335,7 @@
                                     <h:outputLabel for="txtUnidadProducto" value="EMPAQUE :" style="font-weight: bold; color: red; width: 90px;" />
                                 </p:column>
                                 <p:column >
-                                    <p:inputText id="txtUnidadProducto" value="#{frmProducto.mbProducto.mbUnidadProducto.unidad.unidad}" 
+                                    <p:inputText id="txtUnidadProducto" value="#{frmProducto.mbProducto.mbPresentacion.presentacion.presentacion}" 
                                                  maxlength="50" size="55" />
                                 </p:column>
                             </p:row>
@@ -344,7 +344,7 @@
                                     <h:outputLabel for="txtUnidadProductoAbrev" value="EMPAQUE :" style="font-weight: bold; color: red; width: 90px;" />
                                 </p:column>
                                 <p:column >
-                                    <p:inputText id="txtUnidadProductoAbrev" value="#{frmProducto.mbProducto.mbUnidadProducto.unidad.abreviatura}" 
+                                    <p:inputText id="txtUnidadProductoAbrev" value="#{frmProducto.mbProducto.mbPresentacion.presentacion.abreviatura}" 
                                                  maxlength="50" size="55" />
                                 </p:column>
                             </p:row>
@@ -354,11 +354,11 @@
                                         <p:commandButton id="btnGrabarUnidadProducto" value="Grabar" 
                                                          process="@this txtUnidadProducto txtUnidadProductoAbrev" 
                                                          actionListener="#{frmProducto.mbProducto.grabarUnidadProducto()}"
-                                                         update="unidad contenido unimed" oncomplete="handleUnidadProducto(xhr, status, args)" />
+                                                         update="unidad contenido unimed" oncomplete="handlePresentacion(xhr, status, args)" />
                                         <p:commandButton id="btnEliminarUnidadProducto" value="Eliminar" 
-                                                         disabled="#{frmProducto.mbProducto.mbUnidadProducto.unidad.idUnidad==0}" 
+                                                         disabled="#{frmProducto.mbProducto.mbPresentacion.presentacion.idPresentacion==0}" 
                                                          process="@this" actionListener="#{frmProducto.mbProducto.eliminarUnidadProducto()}"
-                                                         update="unidad contenido unimed" oncomplete="handleUnidadProducto(xhr, status, args)" />
+                                                         update="unidad contenido unimed" oncomplete="handlePresentacion(xhr, status, args)" />
                                     </p:column>
                                 </p:row>
                             </f:facet>
@@ -598,11 +598,11 @@
                     </p:dialog>
                 </h:form>
                 <script type="text/javascript">
-                    function handleUnidadProducto(xhr, status, args) {
-                        if(args.validationFailed || !args.okUnidadProducto) {
-                            mttoUnidadesProductoDlg.jq.effect("shake", { times: 5}, 100);
+                    function handlePresentacion(xhr, status, args) {
+                        if(args.validationFailed || !args.okPresentacion) {
+                            mttoPresentacionDlg.jq.effect("shake", { times: 5}, 100);
                         } else {
-                            mttoUnidadesProductoDlg.hide();
+                            mttoPresentacionDlg.hide();
                         }
                     }
                     

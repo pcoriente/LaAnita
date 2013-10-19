@@ -386,8 +386,8 @@
     </converter>
     
     <converter>
-        <converter-id>converters.Unidad</converter-id>
-        <converter-class>productos.converters.UnidadConverter</converter-class>
+        <converter-id>converters.Presentacion</converter-id>
+        <converter-class>productos.converters.PresentacionConverter</converter-class>
     </converter>
     
     <converter>

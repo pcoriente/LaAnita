@@ -20,7 +20,7 @@ import productos.dominio.Parte2;
 import productos.dominio.Producto;
 import productos.dominio.SubGrupo;
 import productos.dominio.Tipo;
-import productos.dominio.Unidad;
+import productos.dominio.Presentacion;
 import productos.dominio.Upc;
 import unidadesMedida.UnidadMedida;
 import usuarios.UsuarioSesion;
@@ -56,7 +56,7 @@ public class DAOProductos {
                     + "SET idParte="+p.getParte2().getIdParte()+", descripcion='"+p.getDescripcion()+"', "
                     + "idTipo="+p.getTipo().getIdTipo()+", idSubGrupo="+p.getSubGrupo().getIdSubGrupo()+", "
                     + "idGrupo="+p.getGrupo().getIdGrupo() + ", "
-                    + "idUnidadProducto="+p.getUnidad().getIdUnidad()+", idMarca=" + p.getMarca().getIdMarca() + ", "
+                    + "idUnidadProducto="+p.getPresentacion().getIdPresentacion()+", idMarca=" + p.getMarca().getIdMarca() + ", "
                     + "contenido="+p.getContenido()+", idUnidadMedida="+p.getUnidadMedida().getIdUnidadMedida()+", idImpuesto= "+p.getImpuesto().getIdGrupo()+ " "
                     + "WHERE idProducto="+p.getIdProducto());
             for(Upc u: p.getUpcs()) {
@@ -79,7 +79,7 @@ public class DAOProductos {
                 + "INSERT INTO productos (idParte, descripcion, idTipo, idGrupo, idSubGrupo, idMarca, idUnidadProducto, contenido, idUnidadMedida, idImpuesto) "
                 + "VALUES ("+ p.getParte2().getIdParte() + ", '" + p.getDescripcion() + "', "
                 + p.getTipo().getIdTipo() + ", " + p.getGrupo().getIdGrupo() + ", " + p.getSubGrupo().getIdSubGrupo() + ", " + p.getMarca().getIdMarca() + ", "
-                + p.getUnidad().getIdUnidad() + ", " + p.getContenido() + ", " + p.getUnidadMedida().getIdUnidadMedida() + ","
+                + p.getPresentacion().getIdPresentacion() + ", " + p.getContenido() + ", " + p.getUnidadMedida().getIdUnidadMedida() + ","
                 + p.getImpuesto().getIdGrupo() + ")";
         Connection cn=this.ds.getConnection();
         Statement st=cn.createStatement();
@@ -205,7 +205,7 @@ public class DAOProductos {
         prod.setTipo(new Tipo(rs.getInt("idTipo"), rs.getString("tipo")));
         prod.setGrupo(new Grupo(rs.getInt("idGrupo"), rs.getInt("codigoGrupo"), rs.getString("grupo")));
         prod.setSubGrupo(new SubGrupo(rs.getInt("idSubGrupo"), rs.getString("subGrupo")));
-        prod.setUnidad(new Unidad(rs.getInt("idUnidad"), rs.getString("unidad"), rs.getString("abreviatura")));
+        prod.setPresentacion(new Presentacion(rs.getInt("idUnidad"), rs.getString("unidad"), rs.getString("abreviatura")));
         //Double d=rs.getDouble("contenido");
         //prod.setContenido(d.toString());
         prod.setContenido(rs.getDouble("contenido"));

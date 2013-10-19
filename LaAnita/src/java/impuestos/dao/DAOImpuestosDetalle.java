@@ -12,6 +12,8 @@ import java.sql.Statement;
 import java.text.Format;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.faces.context.ExternalContext;
 import javax.faces.context.FacesContext;
 import javax.naming.Context;
@@ -118,26 +120,32 @@ public class DAOImpuestosDetalle {
     
     private String sqlDetalles(int idZona, int idGrupo, String periodo) {
         String strPeriodo;
-        Date fecha=new java.sql.Date(Utilerias.hoy().getTime());
-        if(periodo.equals("1")) {
-            strPeriodo="AND '"+fecha.toString()+"' between id.fechaInicial AND id.fechaFinal";
-        } else {
-            strPeriodo="AND id.fechaInicial > '"+fecha.toString()+"'";
+        String strSQL="";
+        Date fecha;
+        try {
+            strSQL="";
+            fecha = new java.sql.Date(Utilerias.hoy().getTime());
+            if(periodo.equals("1")) {
+                strPeriodo="AND '"+fecha.toString()+"' between id.fechaInicial AND id.fechaFinal";
+            } else {
+                strPeriodo="AND id.fechaInicial > '"+fecha.toString()+"'";
+            }
+            strSQL += "SELECT z.idZona, z.zona "
+                    + "         , g.idGrupo, g.grupo "
+                    + "         , i.idImpuesto, i.impuesto, i.aplicable, i.modo, i.acreditable "
+                    + "         , id.fechaInicial, id.fechaFinal, id.valor, ids.fechaInicial as fechaInicialSiguiente "
+                    + "FROM impuestosDetalle id "
+                    + "INNER JOIN impuestosZonas z ON z.idZona=id.idZona "
+                    + "INNER JOIN impuestosGrupos g ON g.idGrupo=id.idGrupo "
+                    + "INNER JOIN impuestos i ON i.idImpuesto=id.idImpuesto "
+                    + "LEFT JOIN (SELECT idGrupo, idImpuesto, idZona, fechaInicial FROM impuestosDetalle "
+                    + "             WHERE idZona="+idZona+" AND idGrupo="+idGrupo+" AND fechaInicial > '"+fecha.toString()+"') ids "
+                    + "                 ON ids.idGrupo=id.idGrupo AND ids.idImpuesto=id.idImpuesto AND ids.idZona=ids.idZona "
+                    + "WHERE id.idZona="+idZona+" AND id.idGrupo="+idGrupo+" "+strPeriodo+" "
+                    + "ORDER BY id.idImpuesto";
+        } catch (Exception ex) {
+            Logger.getLogger(DAOImpuestosDetalle.class.getName()).log(Level.SEVERE, null, ex);
         }
-        String strSQL = ""
-                + "SELECT z.idZona, z.zona "
-                + "         , g.idGrupo, g.grupo "
-                + "         , i.idImpuesto, i.impuesto, i.aplicable, i.modo, i.acreditable "
-                + "         , id.fechaInicial, id.fechaFinal, id.valor, ids.fechaInicial as fechaInicialSiguiente "
-                + "FROM impuestosDetalle id "
-                + "INNER JOIN impuestosZonas z ON z.idZona=id.idZona "
-                + "INNER JOIN impuestosGrupos g ON g.idGrupo=id.idGrupo "
-                + "INNER JOIN impuestos i ON i.idImpuesto=id.idImpuesto "
-                + "LEFT JOIN (SELECT idGrupo, idImpuesto, idZona, fechaInicial FROM impuestosDetalle "
-                + "             WHERE idZona="+idZona+" AND idGrupo="+idGrupo+" AND fechaInicial > '"+fecha.toString()+"') ids "
-                + "                 ON ids.idGrupo=id.idGrupo AND ids.idImpuesto=id.idImpuesto AND ids.idZona=ids.idZona "
-                + "WHERE id.idZona="+idZona+" AND id.idGrupo="+idGrupo+" "+strPeriodo+" "
-                + "ORDER BY id.idImpuesto";
         return strSQL;
     }
     

@@ -48,7 +48,7 @@ public class FrmProducto implements Serializable {
     public String terminar() {
         this.mbProducto.setListaTipos(null);
         this.mbProducto.setListaGrupos(null);
-        this.mbProducto.setListaUnidades(null);
+        this.mbProducto.getMbPresentacion().setListaPresentaciones(null);
         this.mbProducto.setListaUnidadesMedida(null);
         this.mbProducto.getMbImpuesto().getMbGrupos().setListaGrupos(null);
         return "productos.terminar";

@@ -8,6 +8,8 @@ import java.io.Serializable;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.enterprise.context.SessionScoped;
 import javax.faces.application.FacesMessage;
 import javax.faces.bean.ManagedProperty;
@@ -239,7 +241,11 @@ public class FrmImpuestos implements Serializable {
             }
         } else if (this.detalles == null || this.detalles.isEmpty()) {  // Si el periodo uno esta vacio
             this.soloLectura = false;   // Se pueden editar todos los campos
-            this.fechaTope = Utilerias.hoy();   // Como tope para fecha inicial es HOY
+            try {
+                this.fechaTope = Utilerias.hoy();   // Como tope para fecha inicial es HOY
+            } catch (Exception ex) {
+                Logger.getLogger(FrmImpuestos.class.getName()).log(Level.SEVERE, null, ex);
+            }
         } else {
             this.soloLectura = true;    // No se puede editar la fecha inicial
             this.fechaTope=null;

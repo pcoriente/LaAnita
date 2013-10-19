@@ -17,7 +17,7 @@ import productos.dominio.Empaque;
 import productos.dominio.Grupo;
 import productos.dominio.SubEmpaque;
 import productos.dominio.SubGrupo;
-import productos.dominio.Unidad;
+import productos.dominio.Presentacion;
 import productos.dominio.UnidadEmpaque;
 import productos.dominio.Upc;
 import productosOld.dominio.ProductoOld;
@@ -179,7 +179,7 @@ public class MbProductoOld implements Serializable {
                 }
                 empaque.getProducto().setGrupo(new Grupo(0, 0, ""));
                 empaque.getProducto().setSubGrupo(new SubGrupo(0, ""));
-                empaque.getProducto().setUnidad(new Unidad(0, "", ""));
+                empaque.getProducto().setPresentacion(new Presentacion(0, "", ""));
                 empaque.setUnidadEmpaque(new UnidadEmpaque(0, "", ""));
                 empaque.setPiezas(0);
                 empaque.setSubEmpaque(new SubEmpaque(0, 0, new UnidadEmpaque(0, "", "")));
@@ -193,7 +193,6 @@ public class MbProductoOld implements Serializable {
             if (this.mbProducto.getListaTipos() == null) {
                 this.mbProducto.cargaTipos();
                 this.mbProducto.cargaGrupos();
-                this.mbProducto.cargaUnidades();
                 this.mbProducto.cargaUnidadesMedida();
             }
             this.mbProducto.getProducto().setGrupo(empaque.getProducto().getGrupo());

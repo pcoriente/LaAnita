@@ -12,18 +12,18 @@ import javax.naming.InitialContext;
 import javax.naming.NamingException;
 import javax.servlet.http.HttpSession;
 import javax.sql.DataSource;
-import productos.dominio.Unidad;
+import productos.dominio.Presentacion;
 import usuarios.UsuarioSesion;
 
 /**
  *
  * @author JULIOS
  */
-public class DAOUnidades {
+public class DAOPresentaciones {
     private DataSource ds;
-    private String tabla="productosUnidades";
+    private String tabla="productosPresentaciones";
     
-    public DAOUnidades() throws NamingException {
+    public DAOPresentaciones() throws NamingException {
         try {
             FacesContext context = FacesContext.getCurrentInstance();
             ExternalContext externalContext = context.getExternalContext();
@@ -37,39 +37,39 @@ public class DAOUnidades {
         }
     }
     
-    public void eliminar(int idUnidad) throws SQLException {
+    public void eliminar(int idPresentacion) throws SQLException {
         Connection cn=ds.getConnection();
         Statement st=cn.createStatement();
         try {
-            st.executeUpdate("DELETE FROM "+this.tabla+" WHERE idUnidad="+idUnidad);
+            st.executeUpdate("DELETE FROM "+this.tabla+" WHERE idPresentacion="+idPresentacion);
         } finally {
             cn.close();
         }
     }
     
-    public void modificar(Unidad u) throws SQLException {
+    public void modificar(Presentacion presentacion) throws SQLException {
         Connection cn=ds.getConnection();
         Statement st=cn.createStatement();
         try {
             st.executeUpdate("UPDATE "+this.tabla+" "
-                    + "SET unidad='"+u.getUnidad()+"', abreviatura='"+u.getAbreviatura()+"' "
-                    + "WHERE idUnidad="+u.getIdUnidad());
+                    + "SET presentacion='"+presentacion.getPresentacion()+"', abreviatura='"+presentacion.getAbreviatura()+"' "
+                    + "WHERE idPresentacion="+presentacion.getIdPresentacion());
         } finally {
             cn.close();
         }
     }
     
-    public int agregar(Unidad u) throws SQLException {
+    public int agregar(Presentacion presentacion) throws SQLException {
         int idUnidad=0;
         Connection cn=ds.getConnection();
         Statement st=cn.createStatement();
         try {
             st.executeUpdate("begin Transaction");
-            st.executeUpdate("INSERT INTO "+this.tabla+" (unidad, abreviatura) "
-                    + "VALUES('"+u.getUnidad()+"', '"+u.getAbreviatura()+"')");
-            ResultSet rs=st.executeQuery("SELECT max(idUnidad) AS idUnidad FROM "+this.tabla);
+            st.executeUpdate("INSERT INTO "+this.tabla+" (presentacion, abreviatura) "
+                    + "VALUES('"+presentacion.getPresentacion()+"', '"+presentacion.getAbreviatura()+"')");
+            ResultSet rs=st.executeQuery("SELECT max(idPresentacion) AS idPresentacion FROM "+this.tabla);
             if(rs.next()) {
-                idUnidad=rs.getInt("idUnidad");
+                idUnidad=rs.getInt("idPresentacion");
             }
             st.executeUpdate("commit Transaction");
         } catch(SQLException ex) {
@@ -81,15 +81,15 @@ public class DAOUnidades {
         return idUnidad;
     }
     
-    public ArrayList<Unidad> obtenerUnidades() throws SQLException {
-        ArrayList<Unidad> unidades=new ArrayList<Unidad>();
-        String strSQL="SELECT * FROM "+this.tabla+" ORDER BY unidad";
+    public ArrayList<Presentacion> obtenerPresentaciones() throws SQLException {
+        ArrayList<Presentacion> unidades=new ArrayList<Presentacion>();
+        String strSQL="SELECT * FROM "+this.tabla+" ORDER BY presentacion";
         Connection cn=ds.getConnection();
         Statement st=cn.createStatement();
         try {
             ResultSet rs=st.executeQuery(strSQL);
             while(rs.next()) {
-                unidades.add(new Unidad(rs.getInt("idUnidad"), rs.getString("unidad"), rs.getString("abreviatura")));
+                unidades.add(new Presentacion(rs.getInt("idPresentacion"), rs.getString("presentacion"), rs.getString("abreviatura")));
             }
         } finally {
             cn.close();
@@ -97,15 +97,15 @@ public class DAOUnidades {
         return unidades;
     }
     
-    public Unidad obtenerUnidad(int idUnidad) throws SQLException {
-        Unidad unidad=null;
-        String strSQL="SELECT * FROM "+this.tabla+" WHERE idUnidad="+idUnidad;
+    public Presentacion obtenerPresentacion(int idPresentacion) throws SQLException {
+        Presentacion unidad=null;
+        String strSQL="SELECT * FROM "+this.tabla+" WHERE idPresentacion="+idPresentacion;
         Connection cn=ds.getConnection();
         Statement st=cn.createStatement();
         try {
             ResultSet rs=st.executeQuery(strSQL);
             if(rs.next()) {
-                unidad=new Unidad(rs.getInt("idUnidad"), rs.getString("unidad"), rs.getString("abreviatura"));
+                unidad=new Presentacion(rs.getInt("idPresentacion"), rs.getString("presentacion"), rs.getString("abreviatura"));
             }
         } finally {
             cn.close();

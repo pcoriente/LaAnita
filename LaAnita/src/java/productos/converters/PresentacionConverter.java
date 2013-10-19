@@ -6,44 +6,44 @@ import javax.faces.component.UIComponent;
 import javax.faces.context.FacesContext;
 import javax.faces.convert.Converter;
 import javax.faces.convert.ConverterException;
-import productos.dao.DAOUnidades;
-import productos.dominio.Unidad;
+import productos.dao.DAOPresentaciones;
+import productos.dominio.Presentacion;
 
 /**
  *
  * @author JULIOS
  */
-public class UnidadConverter implements Converter {
+public class PresentacionConverter implements Converter {
 
     @Override
     public Object getAsObject(FacesContext context, UIComponent component, String value) {
-        Unidad unidad=null;
+        Presentacion presentacion=null;
         try {
-            int idUnidad=Integer.parseInt(value);
-            if(idUnidad==0) {
-                unidad=new Unidad(0, "", "");
+            int idPresentacion=Integer.parseInt(value);
+            if(idPresentacion==0) {
+                presentacion=new Presentacion(0, "", "");
             } else {
-                DAOUnidades dao=new DAOUnidades();
-                unidad=dao.obtenerUnidad(idUnidad);
+                DAOPresentaciones dao=new DAOPresentaciones();
+                presentacion=dao.obtenerPresentacion(idPresentacion);
             }
         } catch(Throwable ex) {
             ResourceBundle bundle = ResourceBundle.getBundle("messages");
-            FacesMessage msg = new FacesMessage(bundle.getString("Mensaje_conversion_UnidadConverter_getAsObject"));
+            FacesMessage msg = new FacesMessage(bundle.getString("Mensaje_conversion_PresentacionConverter_getAsObject"));
             msg.setSeverity(FacesMessage.SEVERITY_ERROR);
             throw new ConverterException(msg);
         }
-        return unidad;
+        return presentacion;
     }
 
     @Override
     public String getAsString(FacesContext context, UIComponent component, Object value) {
         String val = null;
         try {
-            Unidad unidad=(Unidad) value;
-            val=Integer.toString(unidad.getIdUnidad());
+            Presentacion presentacion=(Presentacion) value;
+            val=Integer.toString(presentacion.getIdPresentacion());
         } catch(Throwable ex) {
             ResourceBundle bundle = ResourceBundle.getBundle("messages");
-            FacesMessage msg = new FacesMessage(bundle.getString("Mensaje_conversion_UnidadConverter_getAsString"));
+            FacesMessage msg = new FacesMessage(bundle.getString("Mensaje_conversion_PresentacionConverter_getAsString"));
             msg.setSeverity(FacesMessage.SEVERITY_ERROR);
             throw new ConverterException(msg);
         }

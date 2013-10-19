@@ -145,7 +145,7 @@ public class DAOProveedores {
                     + ",   idImpuestoZona="+p.getImpuestoZona().getIdZona()
                     + ",   idDireccionEntrega="+p.getDireccionEntrega().getIdDireccion()
                     + ",   diasCredito="+p.getDiasCredito()+", limiteCredito="+p.getLimiteCredito()
-                    + "WHERE idProveedor="+p.getIdProveedor());
+                    + " WHERE idProveedor="+p.getIdProveedor());
             st.executeUpdate("commit transaction");
         } catch(SQLException ex) {
             st.executeUpdate("rollback transaction");

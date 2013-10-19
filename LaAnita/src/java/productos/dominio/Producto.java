@@ -18,7 +18,7 @@ public class Producto implements Serializable {
     private Grupo grupo;
     private SubGrupo subGrupo;
     private Marca marca;
-    private Unidad unidad;
+    private Presentacion presentacion;
     //private String contenido;
     private double contenido;
     private UnidadMedida unidadMedida;
@@ -33,7 +33,7 @@ public class Producto implements Serializable {
         this.grupo=new Grupo(0, 0, "");
         this.subGrupo=new SubGrupo(0, "");
         this.marca=new Marca(0, "", false);
-        this.unidad=new Unidad(0, "", "");
+        this.presentacion=new Presentacion(0, "", "");
         //this.contenido="0.0";
         this.contenido=0;
         this.unidadMedida=new UnidadMedida(0, "", "", 0);
@@ -44,7 +44,7 @@ public class Producto implements Serializable {
     public String toString() {
         return (this.marca==null || this.marca.getIdMarca()==0 ? "" : this.marca.toString()+" ")
                 + this.parte + (this.descripcion.equals("") ? "" : " "+this.descripcion) 
-                + (this.unidad==null || this.unidad.getIdUnidad()==1 ? "" : " " + this.unidad.getAbreviatura()) 
+                + (this.presentacion==null || this.presentacion.getIdPresentacion()==1 ? "" : " " + this.presentacion.getAbreviatura()) 
                 + (this.contenido == 0 ? "" : " " + Double.toString(this.contenido))
                 + (this.contenido == 0 || this.unidadMedida == null ? "" : " " + this.unidadMedida.getAbreviatura());
     }
@@ -97,15 +97,15 @@ public class Producto implements Serializable {
         this.subGrupo = subGrupo;
     }
 
-    public Unidad getUnidad() {
-        if(this.unidad==null) {
-            this.unidad=new Unidad();
+    public Presentacion getPresentacion() {
+        if(this.presentacion==null) {
+            this.presentacion=new Presentacion();
         }
-        return unidad;
+        return presentacion;
     }
 
-    public void setUnidad(Unidad unidad) {
-        this.unidad = unidad;
+    public void setPresentacion(Presentacion presentacion) {
+        this.presentacion = presentacion;
     }
     /*
     public String getContenido() {

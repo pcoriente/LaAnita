@@ -16,7 +16,7 @@ import javax.naming.NamingException;
 import productos.dao.DAOMarcas;
 import productos.dao.DAOPartes;
 import productos.dao.DAOProductos;
-import productos.dao.DAOUnidades;
+import productos.dao.DAOPresentaciones;
 import productos.dominio.Grupo;
 import productos.dominio.Marca;
 import productos.dominio.Parte;
@@ -24,7 +24,7 @@ import productos.dominio.Parte2;
 import productos.dominio.Producto;
 import productos.dominio.SubGrupo;
 import productos.dominio.Tipo;
-import productos.dominio.Unidad;
+import productos.dominio.Presentacion;
 import productos.dominio.Upc;
 import unidadesMedida.DAOUnidadesMedida;
 import unidadesMedida.UnidadMedida;
@@ -64,8 +64,8 @@ public class MbProducto implements Serializable {
     private MbSubGrupo mbSubGrupo;
     @ManagedProperty(value = "{mbMarca}")
     private MbMarca mbMarca;
-    @ManagedProperty(value = "#{mbUnidadProducto}")
-    private MbUnidadProducto mbUnidadProducto;
+    @ManagedProperty(value = "#{mbPresentacion}")
+    private MbPresentacion mbPresentacion;
     @ManagedProperty(value = "#{mbImpuesto}")
     private FrmImpuestos mbImpuesto;
     private DAOProductos dao;
@@ -80,7 +80,7 @@ public class MbProducto implements Serializable {
             this.mbGrupo = new MbGrupo();
             this.mbSubGrupo = new MbSubGrupo();
             this.mbMarca = new MbMarca();
-            this.mbUnidadProducto = new MbUnidadProducto();
+            this.mbPresentacion = new MbPresentacion();
             this.mbImpuesto = new FrmImpuestos();
             //this.arrayTipos =  new SelectItem[1];
             //this.arrayTipos[0]=new SelectItem("", "Seleccione");
@@ -113,25 +113,25 @@ public class MbProducto implements Serializable {
     }
 
     public void eliminarUnidadProducto() {
-        if (this.mbUnidadProducto.eliminar()) {
-            this.producto.setUnidad(new Unidad());
+        if (this.mbPresentacion.eliminar()) {
+            this.producto.setPresentacion(new Presentacion());
             this.listaUnidades = null;
         }
     }
 
     public void grabarUnidadProducto() {
-        if (this.mbUnidadProducto.grabar()) {
-            this.producto.setUnidad(this.mbUnidadProducto.getUnidad());
+        if (this.mbPresentacion.grabar()) {
+            this.producto.setPresentacion(this.mbPresentacion.getPresentacion());
             this.producto.setContenido(1);
             this.listaUnidades = null;
         }
     }
 
     public void mttoUnidad() {
-        if (this.producto.getUnidad().getIdUnidad() == 0) {
-            this.mbUnidadProducto.setUnidad(new Unidad());
+        if (this.producto.getPresentacion().getIdPresentacion() == 0) {
+            this.mbPresentacion.setPresentacion(new Presentacion());
         } else {
-            this.mbUnidadProducto.setUnidad(this.mbUnidadProducto.copia(this.producto.getUnidad()));
+            this.mbPresentacion.setPresentacion(this.mbPresentacion.copia(this.producto.getPresentacion()));
         }
     }
     
@@ -279,9 +279,9 @@ public class MbProducto implements Serializable {
     }
 
     public void actualizarContenido() {
-        if (this.producto.getUnidad().getIdUnidad() == 0) {
+        if (this.producto.getPresentacion().getIdPresentacion() == 0) {
             this.producto.setContenido(0);
-        } else if(this.producto.getUnidad().getIdUnidad()==1) {
+        } else if(this.producto.getPresentacion().getIdPresentacion()==1) {
             this.producto.setContenido(0);
         } else if(this.producto.getContenido()==0) {
             this.producto.setContenido(1);
@@ -304,12 +304,12 @@ public class MbProducto implements Serializable {
                 fMsg.setDetail("Se requiere un tipo de producto !!");
             } else if (this.producto.getGrupo().getIdGrupo() == 0) {
                 fMsg.setDetail("Se requiere el grupo !!");
-            } else if(this.producto.getUnidad().getIdUnidad() == 0) {
+            } else if(this.producto.getPresentacion().getIdPresentacion() == 0) {
                 fMsg.setDetail("Se requiere una unidad de empaque");
-            } else if(this.producto.getUnidad().getIdUnidad() > 1 && (this.producto.getContenido() <= 0 || this.producto.getContenido() >= 1000)) {
+            } else if(this.producto.getPresentacion().getIdPresentacion() > 1 && (this.producto.getContenido() <= 0 || this.producto.getContenido() >= 1000)) {
                 this.producto.setContenido(0);
                 fMsg.setDetail("Se requiere un número mayor que cero y menor a 1000");
-            } else if (this.producto.getUnidad().getIdUnidad() > 1 && this.producto.getUnidadMedida().getIdUnidadMedida() == 0) {
+            } else if (this.producto.getPresentacion().getIdPresentacion() > 1 && this.producto.getUnidadMedida().getIdUnidadMedida() == 0) {
                 fMsg.setDetail("Se requiere la unidad de medida !!");
             } else if (this.producto.getImpuesto().getIdGrupo() == 0) {
                 fMsg.setDetail("Se requiere un impuesto !!");
@@ -368,9 +368,9 @@ public class MbProducto implements Serializable {
         //prod1.getMarca().setCodigoMarca(prod2.getMarca().getCodigoMarca());
         prod1.getMarca().setMarca(prod2.getMarca().getMarca());
         prod1.getMarca().setProduccion(prod2.getMarca().isProduccion());
-        prod1.getUnidad().setIdUnidad(prod2.getUnidad().getIdUnidad());
-        prod1.getUnidad().setUnidad(prod2.getUnidad().getUnidad());
-        prod1.getUnidad().setAbreviatura(prod2.getUnidad().getAbreviatura());
+        prod1.getPresentacion().setIdPresentacion(prod2.getPresentacion().getIdPresentacion());
+        prod1.getPresentacion().setPresentacion(prod2.getPresentacion().getPresentacion());
+        prod1.getPresentacion().setAbreviatura(prod2.getPresentacion().getAbreviatura());
         prod1.setContenido(prod2.getContenido());
         prod1.getUnidadMedida().setIdUnidadMedida(prod2.getUnidadMedida().getIdUnidadMedida());
         prod1.getUnidadMedida().setUnidadMedida(prod2.getUnidadMedida().getUnidadMedida());
@@ -397,15 +397,15 @@ public class MbProducto implements Serializable {
             Logger.getLogger(MbProducto.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
-
+    /*
     public void cargaUnidades() {
         this.listaUnidades = new ArrayList<SelectItem>();
-        Unidad unid = new Unidad(0, "SELECCIONE", "");
+        Presentacion unid = new Presentacion(0, "SELECCIONE", "");
         this.listaUnidades.add(new SelectItem(unid, unid.toString()));
         try {
-            DAOUnidades daoUnidades = new DAOUnidades();
-            ArrayList<Unidad> lstUnidades = daoUnidades.obtenerUnidades();
-            for (Unidad u : lstUnidades) {
+            DAOPresentaciones daoUnidades = new DAOPresentaciones();
+            ArrayList<Presentacion> lstUnidades = daoUnidades.obtenerUnidades();
+            for (Presentacion u : lstUnidades) {
                 this.listaUnidades.add(new SelectItem(u, u.toString()));
             }
         } catch (NamingException ex) {
@@ -414,7 +414,7 @@ public class MbProducto implements Serializable {
             Logger.getLogger(MbProducto.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
-    /*
+    
      public void cargaMarcas() {
      this.listaMarcas = new ArrayList<SelectItem>();
      Marca mark = new Marca(0, 0, "SELECCIONE UNA MARCA", 0);
@@ -547,7 +547,7 @@ public class MbProducto implements Serializable {
      this.listaMarcas = listaMarcas;
      }
      * */
-
+    /*
     public ArrayList<SelectItem> getListaUnidades() {
         if (this.listaUnidades == null) {
             this.cargaUnidades();
@@ -558,6 +558,7 @@ public class MbProducto implements Serializable {
     public void setListaUnidades(ArrayList<SelectItem> listaUnidades) {
         this.listaUnidades = listaUnidades;
     }
+    * */
 
     public ArrayList<SelectItem> getListaUnidadesMedida() {
         if(this.listaUnidadesMedida==null) {
@@ -642,12 +643,12 @@ public class MbProducto implements Serializable {
         this.mbSubGrupo = mbSubGrupo;
     }
 
-    public MbUnidadProducto getMbUnidadProducto() {
-        return mbUnidadProducto;
+    public MbPresentacion getMbPresentacion() {
+        return mbPresentacion;
     }
 
-    public void setMbUnidadProducto(MbUnidadProducto mbUnidadProducto) {
-        this.mbUnidadProducto = mbUnidadProducto;
+    public void setMbPresentacion(MbPresentacion mbPresentacion) {
+        this.mbPresentacion = mbPresentacion;
     }
 
     public MbTipo getMbTipo() {

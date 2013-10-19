@@ -27,7 +27,7 @@ public class Utilerias {
         return strFecha;
     }
 
-    public static Date string2Date(String strFecha) {
+    public static Date string2Date(String strFecha) throws Exception {
         Date fecha = null;
         if (!strFecha.isEmpty()) {
             String fecha_RegExp = "(0?[1-9]|[12][0-9]|3[01])/(0?[1-9]|1[012])/((19|20)\\d\\d)";
@@ -39,16 +39,18 @@ public class Utilerias {
                 try {
                     fecha = (Date) formatter.parse(strFecha);
                 } catch (ParseException ex) {
-                    JOptionPane.showMessageDialog(null, "Fecha no válida: " + strFecha, "Error !!!", JOptionPane.ERROR_MESSAGE);
+                    throw new Exception("Fecha no válida: " + strFecha + " Error !!!");
+                    //JOptionPane.showMessageDialog(null, "Fecha no válida: " + strFecha, "Error !!!", JOptionPane.ERROR_MESSAGE);
                 }
             } else {
-                JOptionPane.showMessageDialog(null, "Formato de fecha incorrecto (dd/mm/yyyy)", "Error !!!", JOptionPane.ERROR_MESSAGE);
+                throw new Exception("Fecha no válida: " + strFecha + " Error !!!");
+                //JOptionPane.showMessageDialog(null, "Formato de fecha incorrecto (dd/mm/yyyy)", "Error !!!", JOptionPane.ERROR_MESSAGE);
             }
         }
         return fecha;
     }
 
-    public static Date hoy() {
+    public static Date hoy() throws Exception {
         return string2Date(date2String(new Date()));
     }
 
