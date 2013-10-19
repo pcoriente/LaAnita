@@ -27,6 +27,7 @@ public class MiniProveedorConverter implements Converter {
                 proveedor=dao.obtenerProveedor(idProveedor);
             }
         } catch(Throwable ex) {
+            System.err.println(ex);
 //            ResourceBundle bundle = ResourceBundle.getBundle("messages");
 //            FacesMessage msg = new FacesMessage(bundle.getString("Mensaje_conversion_MiniProveedor_getAsObject"));
 //            msg.setSeverity(FacesMessage.SEVERITY_ERROR);

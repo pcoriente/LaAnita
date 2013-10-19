@@ -124,7 +124,6 @@ public class DAORequisiciones {
         to.setIdProducto(rs.getInt("idProducto"));
         to.setCantidad(rs.getInt("cantidadSolicitada"));
         to.setCantidadAutorizada(rs.getInt("cantidadAutorizada"));
-
         return to;
     }
 
@@ -272,7 +271,7 @@ public class DAORequisiciones {
     }
 
     //COTIZACIONES
-    public void grabarCotizacion(int idReq, int idProv, int idMon, double descGral, ArrayList<CotizacionDetalle> cd) throws SQLException {
+    public void grabarCotizacion(int idReq, int idProv, int idMon, double descGral, double descPP, ArrayList<CotizacionDetalle> cd) throws SQLException {
         Connection cn = this.ds.getConnection();
         Statement st = cn.createStatement();
         PreparedStatement ps1, ps2, ps3, ps4;
@@ -280,8 +279,8 @@ public class DAORequisiciones {
         try {
             st.executeUpdate("begin transaction");
             //CABECERO
-            String strSQL1 = "INSERT INTO cotizaciones(idRequisicion, idProveedor, idMoneda, folioProveedor, fechaCotizacion,descuentoCotizacion,observaciones)"
-                    + " VALUES (" + idReq + ", " + idProv +  ", " + idMon + ",'Folio' ,GETDATE(), " + descGral + ",'hola')";
+            String strSQL1 = "INSERT INTO cotizaciones(idRequisicion, idProveedor, idMoneda, folioProveedor, fechaCotizacion, descuentoCotizacion,descuentoProntoPago, observaciones)"
+                    + " VALUES (" + idReq + ", " + idProv +  ", " + idMon + ",'Folio' ,GETDATE(), " + descGral + ", " + descPP + ", 'hola')";
             String strSQLIdentity = "SELECT @@IDENTITY as idCot";
             ps1 = cn.prepareStatement(strSQL1);
             ps1.executeUpdate();
@@ -293,7 +292,7 @@ public class DAORequisiciones {
 
             }
             // DETALLE
-            String strSQL2 = "INSERT INTO cotizacionesDetalle(idCotizacion,idProducto, cantidadCotizada, costoCotizado, descuentoProducto,neto,subtotal) VALUES (?,?,?,?,?,?,?)";
+            String strSQL2 = "INSERT INTO cotizacionesDetalle(idCotizacion,idProducto, cantidadCotizada, costoCotizado, descuentoProducto, descuentoProducto2,neto,subtotal) VALUES (?,?,?,?,?,?,?,?)";
             ps2 = cn.prepareStatement(strSQL2);
 
             for (CotizacionDetalle e : cd) {
@@ -302,8 +301,9 @@ public class DAORequisiciones {
                 ps2.setDouble(3, e.getCantidadCotizada());
                 ps2.setDouble(4, e.getCostoCotizado());
                 ps2.setDouble(5, e.getDescuentoProducto());
-                ps2.setDouble(6, e.getNeto());
-                ps2.setDouble(7, e.getSubtotal());
+                ps2.setDouble(6, e.getDescuentoProducto2());
+                ps2.setDouble(7, e.getNeto());
+                ps2.setDouble(8, e.getSubtotal());
                 ps2.executeUpdate();
             }
 
@@ -312,52 +312,6 @@ public class DAORequisiciones {
             ps4 = cn.prepareStatement(strSQL3);
             ps4.executeUpdate();
 
-            st.executeUpdate("commit transaction");
-        } catch (SQLException e) {
-            st.executeUpdate("rollback transaction");
-            throw (e);
-        } finally {
-            cn.close();
-        }
-
-
-    }
-
-    public void grabarCotizacionInicial(int idReq) throws SQLException {
-        Connection cn = this.ds.getConnection();
-        Statement st = cn.createStatement();
-        PreparedStatement ps1, ps2, ps3;
-        ArrayList<CotizacionDetalle> cd = new ArrayList<CotizacionDetalle>();
-        try {
-            st.executeUpdate("begin transaction");
-            //CABECERO
-            String strSQL1 = "INSERT INTO cotizaciones(idRequisicion, idProveedor, folioProveedor, fechaCotizacion,descuentoCotizacion,observaciones)"
-                    + " VALUES (" + idReq + ", " + 1 + ",'Folio' ,GETDATE(), " + 3 + ",'hola')";
-            String strSQLIdentity = "SELECT @@IDENTITY as idCot";
-            ps1 = cn.prepareStatement(strSQL1);
-            ps1.executeUpdate();
-            ps3 = cn.prepareStatement(strSQLIdentity);
-            ResultSet rs = ps3.executeQuery();
-            int identity = 0;
-            if (rs.next()) {
-                identity = rs.getInt("idCot");
-
-            }
-            // DETALLE
-            String strSQL2 = "INSERT INTO cotizacionesDetalle(idCotizacion,idProducto, cantidadCotizada, costoCotizado, descuentoProducto.neto,subtotal) VALUES (?,?,?,?,?,?,?)";
-            ps2 = cn.prepareStatement(strSQL2);
-
-
-            for (CotizacionDetalle e : cd) {
-                ps2.setInt(1, identity);
-                ps2.setInt(2, e.getProducto().getIdProducto());
-                ps2.setDouble(3, e.getCantidadCotizada());
-                ps2.setDouble(4, e.getCostoCotizado());
-                ps2.setDouble(5, e.getDescuentoProducto());
-                ps2.setDouble(6, e.getNeto());
-                ps2.setDouble(7, e.getSubtotal());
-
-            }
             st.executeUpdate("commit transaction");
         } catch (SQLException e) {
             st.executeUpdate("rollback transaction");

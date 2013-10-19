@@ -1,7 +1,3 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package proveedores;
 
 import cotizaciones.dao.DAOCotizaciones;
@@ -28,13 +24,9 @@ public class MbMiniProveedor implements Serializable {
     private Moneda moneda = new Moneda();
 
     public MbMiniProveedor() {
-        
-        
     }
-    
-    
-    //////////////////////////////M E T O D O S
 
+    //////////////////////////////M E T O D O S
     public ArrayList<SelectItem> obtenerListaMiniProveedor() throws NamingException {
         try {
             MiniProveedor p0 = new MiniProveedor();
@@ -53,15 +45,13 @@ public class MbMiniProveedor implements Serializable {
     }
 
     private ArrayList<SelectItem> obtenerListaMonedas() throws NamingException {
+        Moneda m0 = new Moneda();
         try {
-            Moneda m0 = new Moneda();
             m0.setIdMoneda(0);
             m0.setMoneda("Moneda: ");
             listaMonedas.add(new SelectItem(m0, m0.toString()));
             DAOCotizaciones daoC = new DAOCotizaciones();
-            ArrayList<Moneda> monedas;
-
-            monedas = daoC.obtenerMonedas();
+            ArrayList<Moneda> monedas = daoC.obtenerMonedas();
             for (Moneda e : monedas) {
                 listaMonedas.add(new SelectItem(e, e.toString()));
             }
@@ -72,12 +62,7 @@ public class MbMiniProveedor implements Serializable {
         return listaMonedas;
     }
 
-   
-    
-    
-    
     ///////////////////////////////// GETS Y SETS
-    
     public ArrayList<SelectItem> getListaMiniProveedores() throws SQLException, NamingException {
 
         listaMiniProveedores = this.obtenerListaMiniProveedor();
@@ -97,6 +82,9 @@ public class MbMiniProveedor implements Serializable {
     }
 
     public ArrayList<SelectItem> getListaMonedas() throws NamingException {
+      
+        listaMonedas = new ArrayList<SelectItem>();
+        
         listaMonedas = this.obtenerListaMonedas();
 
         return listaMonedas;

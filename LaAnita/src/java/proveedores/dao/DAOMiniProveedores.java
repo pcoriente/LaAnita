@@ -42,10 +42,10 @@ public class DAOMiniProveedores {
         Connection cn = this.ds.getConnection();
         Statement st = cn.createStatement();
         try {
-            ResultSet rs = st.executeQuery("select p.idProveedor,  c.contribuyente, p.desctoComercial, p.desctoProntoPago from proveedores p\n"
-                    + "inner join contribuyentes c on c.idContribuyente = p.idContribuyente\n"
-                    + "where p.idProveedor" + idProveedor + "\n"
-                    + "order by c.contribuyente"); //MODIFICO DAVID
+            ResultSet rs = st.executeQuery("select p.idProveedor,  c.contribuyente, p.desctoComercial, p.desctoProntoPago from proveedores p\n" +
+"                   inner join contribuyentes c on c.idContribuyente = p.idContribuyente\n" +
+"                    where p.idProveedor =" + idProveedor + "\n" +
+"                    order by c.contribuyente"); //MODIFICO DAVID
             if (rs.next()) {
                 to = construirConverter(rs);
             }
