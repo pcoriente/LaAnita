@@ -1,6 +1,7 @@
 package proveedores.dominio;
 
 import impuestos.dominio.ImpuestoGrupo;
+import java.util.Date;
 import productos.dominio.Marca;
 import productos.dominio.Presentacion;
 import productos.dominio.UnidadEmpaque;
@@ -23,6 +24,9 @@ public class ProveedorProducto {
     private UnidadMedida unidadMedida;
     private UnidadMedida unidadMedida2;
     private ImpuestoGrupo impuestoGrupo;
+    private int idFactura;
+    private Date ultimaCompraFecha;
+    private double ultimaCompraPrecio;
 
     public ProveedorProducto() {
         this.idProducto=0;
@@ -37,6 +41,9 @@ public class ProveedorProducto {
         this.unidadMedida=new UnidadMedida(0, "", "", 0);
         this.unidadMedida2=new UnidadMedida(0, "", "", 0);
         this.impuestoGrupo=new ImpuestoGrupo(0, "");
+        this.idFactura=0;
+        this.ultimaCompraFecha=new Date();
+        this.ultimaCompraPrecio=0.00;
     }
 
     @Override
@@ -164,5 +171,29 @@ public class ProveedorProducto {
 
     public void setDiasEntrega(int diasEntrega) {
         this.diasEntrega = diasEntrega;
+    }
+
+    public int getIdFactura() {
+        return idFactura;
+    }
+
+    public void setIdFactura(int idFactura) {
+        this.idFactura = idFactura;
+    }
+
+    public Date getUltimaCompraFecha() {
+        return ultimaCompraFecha;
+    }
+
+    public void setUltimaCompraFecha(Date ultimaCompraFecha) {
+        this.ultimaCompraFecha = ultimaCompraFecha;
+    }
+
+    public double getUltimaCompraPrecio() {
+        return ultimaCompraPrecio;
+    }
+
+    public void setUltimaCompraPrecio(double ultimaCompraPrecio) {
+        this.ultimaCompraPrecio = ultimaCompraPrecio;
     }
 }

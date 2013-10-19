@@ -96,6 +96,14 @@
                                 </p:column>
                             </p:row>
                             <p:row >
+                                <p:column >
+                                    <h:outputLabel for="txtUltCompFecha" value="ULTIMA COMPRA :" styleClass="colorLetra"/>
+                                </p:column>
+                                <p:column colspan="2" >
+                                    <p:inputText id="txtUltCompFecha" value="#{mbListas.productoLista.producto.ultimaCompraFecha}" readonly="true" maxlength="3" size="5" />
+                                </p:column>
+                            </p:row>
+                            <p:row >
                                 <p:column colspan="2" >
                                     <p:dataTable id="listaPrecios" value="#{mbListas.mbPrecios.precios}"
                                                  widgetVar="preciosTable" var="precio" style="border:solid 1px" 

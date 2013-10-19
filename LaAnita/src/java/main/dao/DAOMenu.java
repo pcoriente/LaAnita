@@ -47,7 +47,7 @@ public class DAOMenu {
         ArrayList<Accion> acciones = new ArrayList<Accion>();
         String strSQL="select a.idAccion, a.accion, a.idBoton\n" +
                         "from usuarioPerfil up\n" +
-                        "inner join systemWeb.dbo.acciones a on a.idAccion=up.idAccion\n" +
+                        "inner join webSystem.dbo.acciones a on a.idAccion=up.idAccion\n" +
                         "where up.idPerfil="+this.idPerfil+" and up.idModulo="+idModulo;
         Connection cn=this.ds.getConnection();
         Statement st=cn.createStatement();
