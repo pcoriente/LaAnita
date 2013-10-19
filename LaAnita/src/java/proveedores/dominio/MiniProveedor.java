@@ -8,6 +8,8 @@ public class MiniProveedor {
     private int idProveedor;
     private String proveedor;
     private String rfc;
+    private double desctoComercial;
+    private double desctoProntoPago;
 
     public MiniProveedor() {
         this.idProveedor=0;
@@ -72,4 +74,22 @@ public class MiniProveedor {
     public void setRfc(String rfc) {
         this.rfc = rfc;
     }
+
+    public double getDesctoComercial() {
+        return desctoComercial;
+    }
+
+    public void setDesctoComercial(double desctoComercial) {
+        this.desctoComercial = desctoComercial;
+    }
+
+    public double getDesctoProntoPago() {
+        return desctoProntoPago;
+    }
+
+    public void setDesctoProntoPago(double desctoProntoPago) {
+        this.desctoProntoPago = desctoProntoPago;
+    }
+    
+    
 }

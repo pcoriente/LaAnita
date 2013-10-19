@@ -20,55 +20,23 @@
                 <h:form id="fc" >
                     <!-- C O T I Z A C I O N E S... -->
 
-                    <p:panel id="panelCapturaCotizacion"   style="text-align: center;  width: 900px; margin:0 auto;  font-size: 12px;" styleClass="quitaCuadro"  >
-                        <p:messages id="messages" showDetail="true" autoUpdate="true" closable="true" />
-                        <label style="color:blueviolet" >COTIZACION DE PRODUCTOS</label>
-                        <p:toolbar  id="tb" style="width: 845px; height: auto; margin:0 auto; " >  
-                            <p:toolbarGroup align="right">  
+                    <p:panel id="panelCapturaCotizacion" header="COTIZACION DE REQUISICIONES"  style="text-align: center;  width: 900px; margin:0 auto;  font-size: 14px;" styleClass="quitaCuadro"  >
+                        <p:messages id="messagesCotizar" showDetail="true" autoUpdate="true" closable="true" />
 
-                               
-                                <p:commandButton
-                                    icon="ui-icon-disk"
-                                    title="Guardar cotización"
-                                    actionListener="#{mbRequisiciones.guardaCotizacion(mbRequisiciones.requisicionEncabezado.idRequisicion,mbRequisiciones.mbMiniProveedor.miniProveedor.desctoComercial,mbRequisiciones.mbMiniProveedor.miniProveedor.desctoProntoPago)}"
-                                    update="detalleCotizacion numCotizacion proveedor moneda desctoComercial dc desctoProntoPago dpp "
-                                    process="@this moneda :fc:detalleCotizacion "
-                                    />
-                                <p:commandButton id="limpiarCotizacion"
-                                                 icon="ui-icon-refresh"
-                                                 title="Cancelar cotización"
-                                                 actionListener="#{mbRequisiciones.limpiaCotizacion()}"
-                                                 update=":fc:detalleCotizacion cabeceroCotizacion proveedor moneda desctoComercial dc desctoProntoPago dpp "
-                                                 />
-                                <p:separator />
 
-                                <p:commandButton id="otraCotizacion"
-                                                 icon="ui-icon-note"
-                                                 title="ir a Menú Requisiciones"
-                                                 action="#{mbRequisiciones.salir()}"
-                                                 update=":fc:detalleCotizacion  cabeceroCotizacion"
-                                                 />
+                        <h:panelGrid id="cabeceroCotizacion" columns="12" width="800" > 
 
-                                <p:commandButton id="salirCotizacion"
-                                                 icon="ui-icon-home"
-                                                 title="Ir a Menú Cotizaciones"
-                                                 action="#{mbRequisiciones.salirCotizacion()}"
-                                                 update=":fc:detalleCotizacion  cabeceroCotizacion"
-                                                 />
-                            </p:toolbarGroup>  
-                        </p:toolbar>  
-                        <h:panelGrid columns="4">
                             <p:column width="25"  >
                                 <h:outputLabel  value="Proveedor :"  styleClass="textoEtiquetas" />
                             </p:column >
                             <p:column  >
                                 <p:selectOneMenu id="proveedor"
-                                                 value="#{mbRequisiciones.mbMiniProveedor.miniProveedor}"  filter="true"  >
+                                                 value="#{mbRequisiciones.mbMiniProveedor.miniProveedor}"   >
                                     <f:converter converterId="converters.miniProveedor" />
                                     <f:selectItems value="#{mbRequisiciones.mbMiniProveedor.listaMiniProveedores}"  />
                                     <p:ajax event="change"
-                                            listener="#{mbRequisiciones.limpiaDetalle()}"
-                                              update="cabeceroCotizacion :fc:detalleCotizacion moneda desctoComercial dc desctoProntoPago dpp "/>
+                                            update="cabeceroCotizacion dg dpp"
+                                            />
 
                                 </p:selectOneMenu>
                             </p:column>
@@ -77,51 +45,41 @@
                             </p:column >
                             <p:column  >
                                 <p:selectOneMenu id="moneda"
-                                                 value="#{mbRequisiciones.mbMiniProveedor.moneda}"
-                                                 >
+                                                 value="#{mbRequisiciones.mbMiniProveedor.moneda}" >
                                     <f:converter converterId="converters.Moneda" />
                                     <f:selectItems value="#{mbRequisiciones.mbMiniProveedor.listaMonedas}"   />
 
                                 </p:selectOneMenu>
                             </p:column>
-                        </h:panelGrid>
-                        <h:panelGrid id="cabeceroCotizacion" columns="12" width="800"  > 
-
-
-                            <!--  DESCUENTOS COMERCIALES -->
                             <p:column width="25">
-                                <h:outputLabel value="Descuento Comercial: *" styleClass="textoEtiquetas" />  
+                                <h:outputLabel value="Descuento General: *" styleClass="textoEtiquetas" />  
                             </p:column>
                             <p:column width="50">
-                                <p:inplace id="desctoComercial" editor="true">
-                                    <pe:inputNumber id="dc" value="#{mbRequisiciones.mbMiniProveedor.miniProveedor.desctoComercial}"   
-                                                    decimalPlaces="2" minValue="0" maxValue="100"
-                                                    >
-                                        <p:ajax event="blur" 
-                                                listener="#{mbRequisiciones.calculoDescuentoGeneral()}"
-                                                update=":fc:detalleCotizacion desctoComercial dc"
-                                                process="@this"/>
-                                    </pe:inputNumber> 
-                                </p:inplace>
-
-                            </p:column>
-                            <p:column width="25" >
-                                <h:outputLabel value="Descuento Pronto Pago: *" styleClass="textoEtiquetas" />  
-                            </p:column>
-                            <p:column width="50">
-                                <p:inplace id="desctoProntoPago" editor="true">
-                                    <pe:inputNumber id="dpp" value="#{mbRequisiciones.mbMiniProveedor.miniProveedor.desctoProntoPago}"   
+                                <p:inplace id="dg" editor="true">
+                                    <pe:inputNumber value="#{mbRequisiciones.descuentoGeneral}"   id="descuentoGeneral"
                                                     decimalPlaces="2" minValue="0" maxValue="100" >
                                         <p:ajax event="blur" 
                                                 listener="#{mbRequisiciones.calculoDescuentoGeneral()}"
-                                                update=":fc:detalleCotizacion desctoProntoPago dpp"
+
+                                                update="detalleCotizacion"
                                                 process="@this"/>
                                     </pe:inputNumber> 
                                 </p:inplace>
                             </p:column>
-
-                            <!--   -->
-
+                            <p:column width="25" >
+                                <h:outputLabel value="Desc. P. Pago: *" styleClass="textoEtiquetas" />  
+                            </p:column>
+                            <p:column width="50">
+                                <p:inplace id="dpp" editor="true">
+                                    <pe:inputNumber id="desctoProntoPago" value="#{mbRequisiciones.mbMiniProveedor.miniProveedor.desctoProntoPago}"   
+                                                    decimalPlaces="2" minValue="0" maxValue="100" >
+                                        <p:ajax event="blur" 
+                                                listener="#{mbRequisiciones.calculoDescuentoGeneral()}"
+                                                update="detalleCotizacion"
+                                                process="@this"/>
+                                    </pe:inputNumber> 
+                                </p:inplace>
+                            </p:column>
                             <p:column width="15">
                                 <h:outputLabel value="Requisición :"  styleClass="textoEtiquetas" />
                             </p:column>
@@ -137,9 +95,46 @@
 
                         </h:panelGrid >
 
+                        <p:toolbar  id="tb" style="width: 845px; height: auto; margin:0 auto; " >  
+                            <p:toolbarGroup align="right">  
+
+                                <p:commandButton  icon="ui-icon-circle-plus" title="Nueva cotización" 
+                                                  process="@this"
+                                                  />
+                                <p:separator />
+                                <p:commandButton
+                                    icon="ui-icon-disk"
+                                    title="Guardar cotización"
+                                    actionListener="#{mbRequisiciones.guardaCotizacion(mbRequisiciones.requisicionEncabezado.idRequisicion,mbRequisiciones.descuentoGeneral)}"
+                                    update="detalleCotizacion numCotizacion proveedor moneda dg dpp"
+                                    process="@this proveedor moneda :fc:detalleCotizacion "
+                                    />
+                                <p:commandButton id="limpiarCotizacion"
+                                                 icon="ui-icon-refresh"
+                                                 title="Cancelar cotización"
+                                                 actionListener="#{mbRequisiciones.limpiaCotizacion()}"
+                                                 update="detalleCotizacion dg dpp cabeceroCotizacion proveedor moneda"
+                                                 />
+                                <p:separator />
+
+                                <p:commandButton id="otraCotizacion"
+                                                 icon="ui-icon-note"
+                                                 title="ir a Menú Requisiciones"
+                                                 action="#{mbRequisiciones.salir()}"
+                                                 update="detalleCotizacion  cabeceroCotizacion"
+                                                 />
+
+                                <p:commandButton id="salirCotizacion"
+                                                 icon="ui-icon-home"
+                                                 title="Ir a Menú Cotizaciones"
+                                                 action="#{mbRequisiciones.salirCotizacion()}"
+                                                 update="detalleCotizacion  cabeceroCotizacion"
+                                                 />
+                            </p:toolbarGroup>  
+                        </p:toolbar>  
 
                         <p:dataTable id="detalleCotizacion" value="#{mbRequisiciones.cotizacionProductos}" 
-                                     var="cot" scrollable="true" scrollHeight="200" style="width: 850px; margin:0 auto; font-size: 12px;" styleClass="sinBorde"
+                                     var="cot" scrollable="true" scrollHeight="200" style="width: 850px; margin:0 auto; font-size: 10px;" styleClass="sinBorde"
                                      rowKey="#{cot.producto.idProducto}" rowIndexVar="fila"
                                      >
                             <p:column  headerText="Num." width="20" >
@@ -154,53 +149,41 @@
                             <p:column headerText="Unidad" width="30" >
                                 <h:outputText value="#{cot.producto.unidad.unidad}" />
                             </p:column>
-                            <p:column headerText="Cant. Aut." width="30" >
+                            <p:column headerText="Ctd Aut." width="30" >
                                 <h:outputText value="#{cot.cantidadAutorizada}" />
                             </p:column>
 
-                            <p:column headerText="Cant. Cot." width="40" >
+                            <p:column headerText="Ctd Cot." width="40" >
                                 <pe:inputNumber  value="#{cot.cantidadCotizada}"  id="cotizada"  
                                                  decimalPlaces="3" maxValue="#{cot.cantidadAutorizada}" minValue="0">
                                     <p:ajax event="blur" 
                                             listener="#{mbRequisiciones.calculaPrecioDescuento(cot.producto.idProducto)}"
                                             process="@this"
-                                            update="neto subtotal importe detalleCotizacion sumaDescuentosTotales "
+                                            update="neto subtotal subtotalGeneral detalleCotizacion sumaDescuentosTotales"
                                             />
                                 </pe:inputNumber>
                             </p:column>
 
-                            <p:column  headerText="P. Lista" width="35" >
+                            <p:column  headerText="Costo" width="35" >
 
                                 <pe:inputNumber value="#{cot.costoCotizado}" id="costo"
                                                 decimalPlaces="2" minValue="0" decimalSeparator="."> 
                                     <p:ajax event="blur" 
                                             listener="#{mbRequisiciones.calculaPrecioDescuento(cot.producto.idProducto)}"
                                             process="@this"
-                                            update="neto subtotal importe detalleCotizacion sumaDescuentosTotales "
+                                            update="neto subtotal subtotalGeneral detalleCotizacion sumaDescuentosTotales"
                                             />
                                 </pe:inputNumber>
 
                             </p:column>
-                            <p:column headerText="% 1Desc." width="35"  >
+                            <p:column headerText="% Descto" width="30"  >
 
                                 <pe:inputNumber value="#{cot.descuentoProducto}"   id="descuento"
                                                 decimalPlaces="2" minValue="0" maxValue="100">
                                     <p:ajax event="blur" 
                                             listener="#{mbRequisiciones.calculaPrecioDescuento(cot.producto.idProducto)}"
 
-                                            update="neto subtotal importe detalleCotizacion sumaDescuentosTotales "
-                                            process="@this"/>
-                                </pe:inputNumber>
-
-                            </p:column>
-                            <p:column headerText="% 2Desc." width="35"  >
-
-                                <pe:inputNumber value="#{cot.descuentoProducto2}"   id="descuento2"
-                                                decimalPlaces="2" minValue="0" maxValue="100">
-                                    <p:ajax event="blur" 
-                                            listener="#{mbRequisiciones.calculaPrecioDescuento(cot.producto.idProducto)}"
-
-                                            update="neto subtotal importe detalleCotizacion sumaDescuentosTotales "
+                                            update="neto subtotal subtotalGeneral detalleCotizacion sumaDescuentosTotales"
                                             process="@this"/>
                                 </pe:inputNumber>
 
@@ -217,33 +200,36 @@
                                     <f:convertNumber type="currency" locale="en-US" />
                                 </h:outputText>
                             </p:column>
+
+                            <p:commandButton
+                                icon="ui-icon-disk"
+                                title="Guardar cotización"
+                                actionListener="#{mbRequisiciones.guardaCotizacion(mbRequisiciones.requisicionEncabezado.idRequisicion)}"
+                                update="detalleCotizacion  numCotizacion"
+                                process="@this :fc:detalleCotizacion"
+                                />
                             <p:columnGroup type="footer" id="pie"   >  
                                 <p:row>
-                                    <p:column colspan="9" style="text-align:right; font-size: 14px;" footerText="Importe:" />
-                                    <p:column colspan="9"  footerText="#{mbRequisiciones.subtotF}" id="importe" />
+                                    <p:column colspan="9" style="text-align:right" footerText="Subtotal General:" />
+                                    <p:column colspan="9"  footerText="#{mbRequisiciones.subtotF}" id="subtotalGeneral" />
 
                                 </p:row>
                                 <p:row>
-                                    <p:column colspan="5" style="text-align:right; background-color: whitesmoke; font-size: 14px; " footerText="Total Descuentos :"   />
+                                    <p:column colspan="5" style="text-align:right; background-color:blueviolet; " footerText="Total Descuentos :"   />
                                     <p:column footerText="#{mbRequisiciones.desctoTotalesF} "  id="sumaDescuentosTotales"/>
 
-                                    <p:column style="text-align:right; font-size: 14px;" footerText="Por Productos :"/>
+                                    <p:column style="text-align:right" footerText="Por Producto :"/>
                                     <p:column footerText="#{mbRequisiciones.descF}" id="sumaDescuentosProductos" />
-                                
 
-                                    <p:column style="text-align:right; font-size: 14px;" footerText="Comercial+Pronto Pago :"/>
+                                    <p:column style="text-align:right" footerText="General :"/>
                                     <p:column footerText="#{mbRequisiciones.descGralAplicF}" id="descuentoGeneralAplicado" />
                                 </p:row>
                                 <p:row>
-                                    <p:column colspan="9" style="text-align:right; font-size: 14px;" footerText="Subtotal :"/>
-                                    <p:column footerText=" #{mbRequisiciones.subtotalBruto}"  id="subtotalBruto"/>
-                                </p:row>
-                                <p:row>
-                                    <p:column colspan="9" style="text-align:right; font-size: 14px;" footerText="IVA :"/>
+                                    <p:column colspan="9" style="text-align:right" footerText="IVA :"/>
                                     <p:column footerText=" #{mbRequisiciones.impF}"  id="impuesto"/>
                                 </p:row>
                                 <p:row>
-                                    <p:column colspan="9" style="text-align:right; font-size: 14px;" footerText="Total :"/>
+                                    <p:column colspan="9" style="text-align:right" footerText="Total :"/>
                                     <p:column footerText=" #{mbRequisiciones.totalF}"  id="total">
                                     </p:column>
                                 </p:row>
@@ -251,7 +237,6 @@
                         </p:dataTable>
                     </p:panel>
                 </h:form>
-
             </div>
             <ui:include src="footer.html" id="piePagina" />
         </div>

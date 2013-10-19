@@ -63,7 +63,7 @@
                             </p:column >
                             <p:column  >
                                 <p:selectOneMenu id="proveedor"
-                                                 value="#{mbRequisiciones.mbMiniProveedor.miniProveedor}"  filter="true"  >
+                                                 value="#{mbRequisiciones.mbMiniProveedor.miniProveedor}"   >
                                     <f:converter converterId="converters.miniProveedor" />
                                     <f:selectItems value="#{mbRequisiciones.mbMiniProveedor.listaMiniProveedores}"  />
                                     <p:ajax event="change"
@@ -154,11 +154,11 @@
                             <p:column headerText="Unidad" width="30" >
                                 <h:outputText value="#{cot.producto.unidad.unidad}" />
                             </p:column>
-                            <p:column headerText="Cant. Aut." width="30" >
+                            <p:column headerText="Ctd Aut." width="30" >
                                 <h:outputText value="#{cot.cantidadAutorizada}" />
                             </p:column>
 
-                            <p:column headerText="Cant. Cot." width="40" >
+                            <p:column headerText="Ctd Cot." width="40" >
                                 <pe:inputNumber  value="#{cot.cantidadCotizada}"  id="cotizada"  
                                                  decimalPlaces="3" maxValue="#{cot.cantidadAutorizada}" minValue="0">
                                     <p:ajax event="blur" 
@@ -169,7 +169,7 @@
                                 </pe:inputNumber>
                             </p:column>
 
-                            <p:column  headerText="P. Lista" width="35" >
+                            <p:column  headerText="Costo" width="35" >
 
                                 <pe:inputNumber value="#{cot.costoCotizado}" id="costo"
                                                 decimalPlaces="2" minValue="0" decimalSeparator="."> 

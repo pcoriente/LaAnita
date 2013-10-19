@@ -11,7 +11,8 @@ public class CotizacionEncabezado {
     private int idProveedor;
     private String folioProveedor;
     private Date fechaCotizacion;
-    private Double descuentoProveedor;
+    private double descuentoCotizacion;
+    private double descuentoProntoPago;
     private String observaciones;
     private String depto;
     private int numCotizaciones;
@@ -74,12 +75,20 @@ public class CotizacionEncabezado {
         this.fechaCotizacion = fechaCotizacion;
     }
 
-    public Double getDescuentoProveedor() {
-        return descuentoProveedor;
+    public double getDescuentoCotizacion() {
+        return descuentoCotizacion;
     }
 
-    public void setDescuentoProveedor(Double descuentoProveedor) {
-        this.descuentoProveedor = descuentoProveedor;
+    public void setDescuentoCotizacion(double descuentoCotizacion) {
+        this.descuentoCotizacion = descuentoCotizacion;
+    }
+
+    public double getDescuentoProntoPago() {
+        return descuentoProntoPago;
+    }
+
+    public void setDescuentoProntoPago(double descuentoProntoPago) {
+        this.descuentoProntoPago = descuentoProntoPago;
     }
 
     public String getObservaciones() {
