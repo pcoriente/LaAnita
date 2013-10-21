@@ -662,6 +662,38 @@
                                          update="msgPrecios panelProductoLista" 
                                          oncomplete="ePrecio.hide();handlePrecios(xhr, status, args);"/>
                     </p:confirmDialog>
+                    <p:dialog header="BUSCADOR DE PRODUCTOS" widgetVar="buscarProductoDlg" resizable="false" style="width: 600px;" modal="true" >
+                        <p:messages id="msgBuscar" showDetail="true" autoUpdate="true" closable="true" />
+                        <p:panelGrid id="buscarProductos" styleClass="sinBorde" >
+                            <p:row >
+                                <p:column >
+                                    <h:outputLabel for="opciones" value="OPCIONES :" style="font-weight: bold; color: red;" />
+                                </p:column>
+                                <p:column >
+                                    <p:selectOneRadio id="opciones" value="#{frmProducto.mbBuscarProd.tipoBuscar}" style="background-color: #ccc" >
+                                        <f:selectItem itemLabel="UPC" itemValue="1" />
+                                        <f:selectItem itemLabel="Genérico" itemValue="2" />
+                                        <p:ajax listener="#{frmProducto.mbBuscarProd.verCambio()}" update="buscarProductos listaProductos" />
+                                    </p:selectOneRadio>
+                                </p:column>
+                                <p:column rendered="#{frmProducto.mbBuscarProd.tipoBuscar=='1'}" >
+                                    <p:inputText id="opcionUPC" value="#{frmProducto.mbBuscarProd.strBuscar}" maxlength="13" size="15" />
+                                    <p:commandButton id="btnBuscarUPC" icon="ui-icon-check" title="Buscar" 
+                                                     process="@this opcionUPC" actionListener="#{frmProducto.buscar()}" 
+                                                     update=":main:mttoProductos" oncomplete="handleBuscar(xhr, status, args)" />
+                                </p:column>
+                                <p:column rendered="#{frmProducto.mbBuscarProd.tipoBuscar=='2'}" >
+                                    <p:autoComplete id="opcionParte" value="#{frmProducto.mbBuscarProd.parte}" maxlength="50" size="30"
+                                                    completeMethod="#{frmProducto.mbBuscarProd.completePartes}" process="@this"
+                                                    var="p" itemLabel="#{p.parte}" itemValue="#{p}" converter="converters.ParteBuscar" 
+                                                    forceSelection="true" />
+                                    <p:commandButton id="btnBuscarLista" icon="ui-icon-check" title="Buscar" 
+                                                     process="@this opcionParte" actionListener="#{frmProducto.buscar()}" 
+                                                     update="listaProductos" oncomplete="handleBuscar(xhr, status, args)" />
+                                </p:column>
+                            </p:row>
+                        </p:panelGrid>
+                    </p:dialog>
                 </h:form>
                 <script type="text/javascript">
                     function handlePrecios(xhr, status, args) {

@@ -38,7 +38,7 @@ public class MbBuscarProd implements Serializable {
     private SelectItem[] arrayTipos;
     private SelectItem[] arrayGrupos;
     private SelectItem[] arraySubGrupos;
-    private int borrarVariable;
+    //private int borrarVariable;
     
     public MbBuscarProd() {
         this.inicializa();

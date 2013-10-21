@@ -99,26 +99,56 @@ public class DAOEmpaques {
         return idEmpaque;
     }
     
-    public ArrayList<Empaque> obtenerEmpaques(int idProducto) throws SQLException, NamingException {
+    public ArrayList<Empaque> obtenerEmpaquesParte(int idParte) throws NamingException, SQLException {
+        Producto p;
+        Empaque epq;
         ArrayList<Empaque> lstEmpaques=new ArrayList<Empaque>();
-        DAOProductos daoProductos;
-        String strSQL=""
-                + "SELECT e.idEmpaque, e.cod_pro, e.idProducto, e.piezas, e.dun14, e.peso, e.volumen"
-                + "     , u.idUnidad as idUnidadEmpaque, u.unidad as unidadEmpaque, u.abreviatura as abreviaturaEmpaque"
-                + "     , isnull(se.idEmpaque, 0) as idSubEmpaque, se.piezas as piezasSubEmpaque"
-                + "     , su.idUnidad as idUnidadSubEmpaque, su.unidad as unidadSubEmpaque, su.abreviatura as abreviaturaSubEmpaque "
-                + "FROM empaques e "
-                + "INNER JOIN empaquesUnidades u ON u.idUnidad=e.idUnidadEmpaque "
-                + "LEFT JOIN empaques se ON se.idEmpaque=e.idSubEmpaque "
-                + "LEFT JOIN empaquesUnidades su ON su.idUnidad=se.idUnidadEmpaque "
-                + "WHERE e.idProducto="+idProducto;
+        DAOProductos daoProductos=new DAOProductos();
+        String strSQL=sqlEmpaque()+" "+
+            "INNER JOIN productos p on p.idProducto=e.idProducto\n" +
+            "LEFT JOIN productosPartes pp on pp.idParte=p.idParte\n" +
+            "WHERE pp.idParte="+idParte+"\n" +
+            "ORDER BY p.idProducto, pp.parte";
         Connection cn=ds.getConnection();
         Statement st=cn.createStatement();
         try {
-            daoProductos=new DAOProductos();
+            p=null;
+            int idProducto=0;
             ResultSet rs=st.executeQuery(strSQL);
             while(rs.next()) {
-                lstEmpaques.add(construir(daoProductos, rs));
+                if(idProducto!=rs.getInt("idProducto")) {
+                    idProducto=rs.getInt("idProducto");
+                    p=daoProductos.obtenerProducto(idProducto);
+                }
+                epq=construir(rs);
+                epq.setProducto(p);
+                lstEmpaques.add(epq);
+            }
+        } finally {
+            cn.close();
+        }
+        return lstEmpaques;
+    }
+    
+    public ArrayList<Empaque> obtenerEmpaques(int idProducto) throws SQLException, NamingException {
+        Producto p;
+        Empaque epq;
+        ArrayList<Empaque> lstEmpaques=new ArrayList<Empaque>();
+        DAOProductos daoProductos=new DAOProductos();
+        String strSQL=sqlEmpaque()+ " WHERE e.idProducto="+idProducto;
+        Connection cn=ds.getConnection();
+        Statement st=cn.createStatement();
+        try {
+            p=null;
+            ResultSet rs=st.executeQuery(strSQL);
+            while(rs.next()) {
+                if(p==null) {
+                    p=daoProductos.obtenerProducto(rs.getInt("idProducto"));
+                }
+                epq=construir(rs);
+                epq.setProducto(p);
+                lstEmpaques.add(epq);
+                
             }
         } finally {
             cn.close();
@@ -129,23 +159,15 @@ public class DAOEmpaques {
     public Empaque obtenerEmpaque(String cod_pro) throws SQLException, NamingException {
         Empaque epq=null;
         DAOProductos daoProductos;
-        String strSQL=""
-                + "SELECT e.idEmpaque, e.cod_pro, e.idProducto, e.piezas, e.dun14, e.peso, e.volumen"
-                + "     , u.idUnidad as idUnidadEmpaque, u.unidad as unidadEmpaque, u.abreviatura as abreviaturaEmpaque"
-                + "     , isnull(se.idEmpaque, 0) as idSubEmpaque, se.piezas as piezasSubEmpaque"
-                + "     , su.idUnidad as idUnidadSubEmpaque, su.unidad as unidadSubEmpaque, su.abreviatura as abreviaturaSubEmpaque "
-                + "FROM empaques e "
-                + "INNER JOIN empaquesUnidades u ON u.idUnidad=e.idUnidadEmpaque "
-                + "LEFT JOIN empaques se ON se.idEmpaque=e.idSubEmpaque "
-                + "LEFT JOIN empaquesUnidades su ON su.idUnidad=se.idUnidadEmpaque "
-                + "WHERE e.cod_pro='"+cod_pro+"'";
+        String strSQL=sqlEmpaque()+" WHERE e.cod_pro='"+cod_pro+"'";
         Connection cn=ds.getConnection();
         Statement st=cn.createStatement();
         try {
             ResultSet rs=st.executeQuery(strSQL);
             if(rs.next()) {
                 daoProductos=new DAOProductos();
-                epq=construir(daoProductos, rs);
+                epq=construir(rs);
+                epq.setProducto(daoProductos.obtenerProducto(rs.getInt("idProducto")));
             }
         } finally {
             cn.close();
@@ -153,11 +175,12 @@ public class DAOEmpaques {
         return epq;
     }
     
-    public Empaque construir(DAOProductos daoProductos, ResultSet rs) throws SQLException, NamingException {
+    public Empaque construir(ResultSet rs) throws SQLException {
         Empaque epq=new Empaque(rs.getInt("idEmpaque"));
         epq.setCod_pro(rs.getString("cod_pro"));
-        epq.setProducto(daoProductos.obtenerProducto(rs.getInt("idProducto")));
-        //epq.setMarca(new Marca(rs.getInt("idMarca"), rs.getString("marca"), false));
+        epq.setProducto(null);
+        //epq.setProducto(daoProductos.obtenerProducto(rs.getInt("idProducto")));
+        ////epq.setMarca(new Marca(rs.getInt("idMarca"), rs.getString("marca"), false));
         epq.setPiezas(rs.getInt("piezas"));
         UnidadEmpaque unidadEmpaque=new UnidadEmpaque(rs.getInt("idUnidadEmpaque"), rs.getString("unidadEmpaque"), rs.getString("abreviaturaEmpaque"));
         epq.setUnidadEmpaque(unidadEmpaque);
@@ -172,6 +195,19 @@ public class DAOEmpaques {
         epq.setPeso(rs.getDouble("peso"));
         epq.setVolumen(rs.getDouble("volumen"));
         return epq;
+    }
+    
+    private String sqlEmpaque() {
+        String strSQL=""
+                + "SELECT e.idEmpaque, e.cod_pro, e.idProducto, e.piezas, e.dun14, e.peso, e.volumen"
+                + "     , u.idUnidad as idUnidadEmpaque, u.unidad as unidadEmpaque, u.abreviatura as abreviaturaEmpaque"
+                + "     , isnull(se.idEmpaque, 0) as idSubEmpaque, se.piezas as piezasSubEmpaque"
+                + "     , su.idUnidad as idUnidadSubEmpaque, su.unidad as unidadSubEmpaque, su.abreviatura as abreviaturaSubEmpaque "
+                + "FROM empaques e "
+                + "INNER JOIN empaquesUnidades u ON u.idUnidad=e.idUnidadEmpaque "
+                + "LEFT JOIN empaques se ON se.idEmpaque=e.idSubEmpaque "
+                + "LEFT JOIN empaquesUnidades su ON su.idUnidad=se.idUnidadEmpaque";
+        return strSQL;
     }
     
     public ArrayList<SubEmpaque> obtenerListaSubEmpaques(int idProducto, int piezas) throws SQLException {
