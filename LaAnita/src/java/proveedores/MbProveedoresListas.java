@@ -5,16 +5,12 @@ import javax.enterprise.context.SessionScoped;
 import java.io.Serializable;
 import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.faces.application.FacesMessage;
 import javax.faces.bean.ManagedProperty;
 import javax.faces.context.FacesContext;
 import javax.naming.NamingException;
-import org.primefaces.context.RequestContext;
+import productos.MbBuscarEmpaqes;
 import proveedores.dao.DAOProveedoresProductos;
-import proveedores.dao.DAOProveedoresProductosOfertas;
-import proveedores.dao.DAOProveedoresProductosPrecios;
 import proveedores.dominio.MiniProveedor;
 import proveedores.dominio.ProveedorProducto;
 import proveedores.dominio.ProveedorProductoLista;
@@ -59,6 +55,9 @@ public class MbProveedoresListas implements Serializable {
     @ManagedProperty(value="#{mbProveedorProductoPrecios}")
     private MbProveedorProductoPrecios mbPrecios;
     
+    @ManagedProperty(value="#{mbBuscarEmpaqes}")
+    private MbBuscarEmpaqes mbBuscar;
+    
     public MbProveedoresListas() {
         this.modoEdicion=false;
         this.productoLista=new ProveedorProductoLista();
@@ -67,6 +66,7 @@ public class MbProveedoresListas implements Serializable {
         this.mbProducto=new MbProveedorProducto(0);
         this.mbOfertas=new MbProveedorProductoOfertas();
         this.mbPrecios=new MbProveedorProductoPrecios();
+        this.mbBuscar=new MbBuscarEmpaqes();
     }
     
     public void eliminarOferta() {
@@ -292,5 +292,13 @@ public class MbProveedoresListas implements Serializable {
 
     public void setMbPrecios(MbProveedorProductoPrecios mbPrecios) {
         this.mbPrecios = mbPrecios;
+    }
+
+    public MbBuscarEmpaqes getMbBuscar() {
+        return mbBuscar;
+    }
+
+    public void setMbBuscar(MbBuscarEmpaqes mbBuscar) {
+        this.mbBuscar = mbBuscar;
     }
 }
