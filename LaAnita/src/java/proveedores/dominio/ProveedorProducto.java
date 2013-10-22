@@ -2,6 +2,7 @@ package proveedores.dominio;
 
 import impuestos.dominio.ImpuestoGrupo;
 import java.util.Date;
+import productos.dominio.Empaque;
 import productos.dominio.Marca;
 import productos.dominio.Presentacion;
 import productos.dominio.UnidadEmpaque;
@@ -27,6 +28,7 @@ public class ProveedorProducto {
     private int idFactura;
     private Date ultimaCompraFecha;
     private double ultimaCompraPrecio;
+    private Empaque equivalencia;
 
     public ProveedorProducto() {
         this.idProducto=0;
@@ -44,6 +46,7 @@ public class ProveedorProducto {
         this.idFactura=0;
         this.ultimaCompraFecha=new Date();
         this.ultimaCompraPrecio=0.00;
+        this.equivalencia=new Empaque(0);
     }
 
     @Override
@@ -195,5 +198,13 @@ public class ProveedorProducto {
 
     public void setUltimaCompraPrecio(double ultimaCompraPrecio) {
         this.ultimaCompraPrecio = ultimaCompraPrecio;
+    }
+
+    public Empaque getEquivalencia() {
+        return equivalencia;
+    }
+
+    public void setEquivalencia(Empaque equivalencia) {
+        this.equivalencia = equivalencia;
     }
 }

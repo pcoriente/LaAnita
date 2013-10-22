@@ -47,11 +47,11 @@
                                      rowKey="#{producto.idProducto}" selectionMode="single" selection="#{mbListas.producto}"
                                      scrollable="true" scrollHeight="300" emptyMessage="No hay elementos que desplegar">
                             <p:ajax event="rowSelect" update=":form:lnkModifProductoProveedor" />
-                            
+
                             <p:column filterBy="#{producto.sku}" filterMatchMode="contains" width="200" >
                                 <f:facet name="header" >
                                     <h:outputText value="SKU" />
-                                    
+
                                 </f:facet>
                                 <h:outputText value="#{producto.sku}" />
                             </p:column>
@@ -92,15 +92,29 @@
                                     <h:outputLabel for="diasEntrega" value="DIAS ENTREGA :" styleClass="colorLetra"/>
                                 </p:column>
                                 <p:column colspan="2" >
-                                        <p:inputText id="diasEntrega" value="#{mbListas.productoLista.producto.diasEntrega}" readonly="true" maxlength="3" size="5" />
+                                    <p:inputText id="diasEntrega" value="#{mbListas.productoLista.producto.diasEntrega}" readonly="true" maxlength="3" size="5" />
                                 </p:column>
                             </p:row>
                             <p:row >
                                 <p:column >
-                                    <h:outputLabel for="txtUltCompFecha" value="ULTIMA COMPRA :" styleClass="colorLetra"/>
+                                    <h:outputLabel for="ultCompFecha" value="ULTIMA COMPRA :" styleClass="colorLetra"/>
                                 </p:column>
                                 <p:column colspan="2" >
-                                    <p:inputText id="txtUltCompFecha" value="#{mbListas.productoLista.producto.ultimaCompraFecha}" readonly="true" maxlength="3" size="5" />
+                                    <p:inputText id="ultCompFecha" value="#{mbListas.productoLista.producto.ultimaCompraFecha}" readonly="true" maxlength="3" size="5" />
+                                </p:column>
+                            </p:row>
+                            <p:row >
+                                <p:column >
+                                    <h:outputLabel for="equivalencia" value="EQUIVALENCIA :" styleClass="colorLetra"/>
+                                </p:column>
+                                <p:column >
+                                    <p:inputText id="equivalencia" value="#{mbListas.productoLista.producto.equivalencia.toString()}" 
+                                                 readonly="true" maxlength="120" size="80" />
+                                </p:column>
+                                <p:column >
+                                    <p:commandButton icon="ui-icon-search" title="Buscar Productos" 
+                                                     process="@this" actionListener="#{mbListas.mbBuscar.inicializar()}" 
+                                                     update="buscarProductos listaProductos" oncomplete="buscarProductoDlg.show()" />
                                 </p:column>
                             </p:row>
                             <p:row >
@@ -110,7 +124,7 @@
                                                  rowKey="#{precio.inicioVigencia}" selection="#{mbListas.precio}" selectionMode="single"
                                                  emptyMessage="No hay elementos que desplegar">
                                         <p:ajax event="rowSelect" update=":form:btnMttoPrecio" />
-                                        
+
                                         <p:column headerText="Precio Lista" >
                                             <h:outputText value="#{precio.precioLista}" />
                                         </p:column>
@@ -155,7 +169,7 @@
                                                  selection="#{mbListas.oferta}" selectionMode="single"
                                                  emptyMessage="No hay elementos que desplegar">
                                         <p:ajax event="rowSelect" update=":form:btnMttoOferta" />
-                                        
+
                                         <p:column headerText="% Oferta" >
                                             <h:outputText value="#{oferta.ptjeOferta}" />
                                         </p:column>
@@ -670,75 +684,106 @@
                                     <h:outputLabel for="opciones" value="OPCIONES :" style="font-weight: bold; color: red;" />
                                 </p:column>
                                 <p:column >
-                                    <p:selectOneRadio id="opciones" value="#{frmProducto.mbBuscarProd.tipoBuscar}" style="background-color: #ccc" >
-                                        <f:selectItem itemLabel="UPC" itemValue="1" />
+                                    <p:selectOneRadio id="opciones" value="#{mbListas.mbBuscar.tipoBuscar}" style="background-color: #ccc" >
+                                        <f:selectItem itemLabel="SKU" itemValue="1" />
                                         <f:selectItem itemLabel="Genérico" itemValue="2" />
-                                        <p:ajax listener="#{frmProducto.mbBuscarProd.verCambio()}" update="buscarProductos listaProductos" />
+                                        <p:ajax listener="#{mbListas.mbBuscar.verCambio()}" update="buscarProductos listaProductos" />
                                     </p:selectOneRadio>
                                 </p:column>
-                                <p:column rendered="#{frmProducto.mbBuscarProd.tipoBuscar=='1'}" >
-                                    <p:inputText id="opcionUPC" value="#{frmProducto.mbBuscarProd.strBuscar}" maxlength="13" size="15" />
-                                    <p:commandButton id="btnBuscarUPC" icon="ui-icon-check" title="Buscar" 
-                                                     process="@this opcionUPC" actionListener="#{frmProducto.buscar()}" 
-                                                     update=":main:mttoProductos" oncomplete="handleBuscar(xhr, status, args)" />
+                                <p:column rendered="#{mbListas.mbBuscar.tipoBuscar=='1'}" >
+                                    <p:inputText id="opcionSKU" value="#{mbListas.mbBuscar.strBuscar}" maxlength="8" size="10" />
+                                    <p:commandButton id="btnBuscarSKU" icon="ui-icon-check" title="Buscar" 
+                                                     process="@this opcionSKU" actionListener="#{mbListas.buscar()}" 
+                                                     oncomplete="handleBuscar(xhr, status, args)" />
+                                    <!--update=":main:mttoProductos"-->
                                 </p:column>
-                                <p:column rendered="#{frmProducto.mbBuscarProd.tipoBuscar=='2'}" >
-                                    <p:autoComplete id="opcionParte" value="#{frmProducto.mbBuscarProd.parte}" maxlength="50" size="30"
-                                                    completeMethod="#{frmProducto.mbBuscarProd.completePartes}" process="@this"
+                                <p:column rendered="#{mbListas.mbBuscar.tipoBuscar=='2'}" >
+                                    <p:autoComplete id="opcionParte" value="#{mbListas.mbBuscar.parte}" maxlength="50" size="30"
+                                                    completeMethod="#{mbListas.mbBuscar.completePartes}" process="@this"
                                                     var="p" itemLabel="#{p.parte}" itemValue="#{p}" converter="converters.ParteBuscar" 
                                                     forceSelection="true" />
                                     <p:commandButton id="btnBuscarLista" icon="ui-icon-check" title="Buscar" 
-                                                     process="@this opcionParte" actionListener="#{frmProducto.buscar()}" 
+                                                     process="@this opcionParte" actionListener="#{mbListas.buscar()}" 
                                                      update="listaProductos" oncomplete="handleBuscar(xhr, status, args)" />
                                 </p:column>
                             </p:row>
                         </p:panelGrid>
+                        <p:dataTable id="listaProductos" value="#{mbListas.mbBuscar.productos}" 
+                                     var="prod" scrollable="true" scrollHeight="200" style="width: 800px;"
+                                     rowKey="#{prod.idEmpaque}" selectionMode="single" selection="#{mbListas.mbBuscar.producto}" >
+                            <p:ajax event = "rowSelect" update="seleccion" />
+
+                            <f:facet name="header">
+                                Seleccione un producto  
+                            </f:facet>
+
+                            <p:column headerText="SKU" style="width: 250px;" >
+                                <h:outputText value="#{prod.cod_pro}" />
+                            </p:column>
+
+                            <p:column headerText="Producto" style="width: 250px;" >
+                                <h:outputText value="#{prod.toString()}" />
+                            </p:column>
+
+                            <f:facet name="footer">
+                                <p:commandButton id="seleccion" value="Seleccionar" 
+                                                 disabled="#{mbListas.mbBuscar.producto==null}"
+                                                 actionListener="#{frmProducto.actualizaProductoSeleccionado()}"
+                                                 update=":main:equivalencia" oncomplete="buscarProductoDlg.hide()" />
+                            </f:facet>
+                        </p:dataTable>
                     </p:dialog>
                 </h:form>
                 <script type="text/javascript">
+                    function handleBuscar(xhr, status, args) {
+                        if (!(args.validationFailed || !args.okBuscar)) {
+                            buscarProductoDlg.hide();
+                        }
+                    }
+
                     function handlePrecios(xhr, status, args) {
-                        if(args.validationFailed || !args.okPrecio) {
-                            mttoPreciosDlg.jq.effect("shake", { times: 5}, 100);
+                        if (args.validationFailed || !args.okPrecio) {
+                            mttoPreciosDlg.jq.effect("shake", {times: 5}, 100);
                         } else {
                             mttoPreciosDlg.hide();
                         }
                     }
-                    
+
                     function handleOfertas(xhr, status, args) {
-                        if(args.validationFailed || !args.okOferta) {
-                            mttoOfertasDlg.jq.effect("shake", { times: 5}, 100);
+                        if (args.validationFailed || !args.okOferta) {
+                            mttoOfertasDlg.jq.effect("shake", {times: 5}, 100);
                         } else {
                             mttoOfertasDlg.hide();
                         }
                     }
-                    
+
                     function handlePresentacion(xhr, status, args) {
-                        if(args.validationFailed || !args.okPresentacion) {
-                            mttoPresentacionDlg.jq.effect("shake", { times: 5}, 100);
+                        if (args.validationFailed || !args.okPresentacion) {
+                            mttoPresentacionDlg.jq.effect("shake", {times: 5}, 100);
                         } else {
                             mttoPresentacionDlg.hide();
                         }
                     }
-                    
+
                     function handleMarca(xhr, status, args) {
-                        if(args.validationFailed || !args.okMarca) {
-                            mttoMarcasDlg.jq.effect("shake", { times: 5}, 100);
+                        if (args.validationFailed || !args.okMarca) {
+                            mttoMarcasDlg.jq.effect("shake", {times: 5}, 100);
                         } else {
                             mttoMarcasDlg.hide();
                         }
                     }
-                    
+
                     function handleUnidadEmpaque(xhr, status, args) {
-                        if(args.validationFailed || !args.okUnidadEmpaque) {
-                            mttoUnidadesEmpaqueDlg.jq.effect("shake", { times: 5}, 100);
+                        if (args.validationFailed || !args.okUnidadEmpaque) {
+                            mttoUnidadesEmpaqueDlg.jq.effect("shake", {times: 5}, 100);
                         } else {
                             mttoUnidadesEmpaqueDlg.hide();
                         }
                     }
-                    
+
                     function handleProveedorProducto(xhr, status, args) {
-                        if(args.validationFailed || !args.okProveedorProducto) {
-                            mttoProdsDlg.jq.effect("shake", { times: 5}, 100);
+                        if (args.validationFailed || !args.okProveedorProducto) {
+                            mttoProdsDlg.jq.effect("shake", {times: 5}, 100);
                         } else {
                             mttoProdsDlg.hide();
                         }
