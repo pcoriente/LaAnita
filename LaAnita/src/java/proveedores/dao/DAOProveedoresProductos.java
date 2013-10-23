@@ -129,7 +129,6 @@ public class DAOProveedoresProductos {
         pp.setIdProducto(rs.getInt("idProducto"));
         pp.setSku(rs.getString("sku"));
         pp.setDiasEntrega(rs.getInt("diasEntrega"));
-        pp.setIdFactura(rs.getInt("idFactura"));
         pp.setUltimaCompraFecha(rs.getDate("ultimaCompraFecha"));
         pp.setUnidadEmpaque(new UnidadEmpaque(rs.getInt("idUnidad"), rs.getString("unidad"), rs.getString("unidAbrev")));
         pp.setPiezas(rs.getInt("piezas"));
@@ -144,7 +143,7 @@ public class DAOProveedoresProductos {
     }
     
     private String sqlProducto() {
-        return "select p.idProducto, p.sku, p.diasEntrega, p.idFactura, p.ultimaCompraFecha, p.ultimaCompraPrecio\n" +
+        return "select p.idProducto, p.sku, p.diasEntrega, p.ultimaCompraFecha, p.ultimaCompraPrecio\n" +
                 "	,u.idUnidad, u.unidad, u.abreviatura as unidAbrev\n" +
                 "       , p.piezas\n" +
                 "	,isnull(m.idMarca, 0) as idMarca, isnull(m.marca, '') as marca\n" +

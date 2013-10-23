@@ -61,7 +61,7 @@ public class DAOMiniProveedores {
 
         Connection cn = ds.getConnection();
         String strSQL = "select p.idProveedor,  c.contribuyente from proveedores p\n" +
-"                    inner join contribuyentes c on c.idContribuyente = p.idContribuyente order by p.idProveedor";  //Modifico DAVID
+"                    inner join contribuyentes c on c.idContribuyente = p.idContribuyente order by c.contribuyente";  //Modifico DAVID
         try {
             Statement sentencia = cn.createStatement();
             rs = sentencia.executeQuery(strSQL);
