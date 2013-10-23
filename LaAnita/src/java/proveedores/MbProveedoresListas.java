@@ -9,7 +9,7 @@ import javax.faces.application.FacesMessage;
 import javax.faces.bean.ManagedProperty;
 import javax.faces.context.FacesContext;
 import javax.naming.NamingException;
-import productos.MbBuscarEmpaqes;
+import productos.MbBuscarEmpaques;
 import proveedores.dao.DAOProveedoresProductos;
 import proveedores.dominio.MiniProveedor;
 import proveedores.dominio.ProveedorProducto;
@@ -55,8 +55,8 @@ public class MbProveedoresListas implements Serializable {
     @ManagedProperty(value="#{mbProveedorProductoPrecios}")
     private MbProveedorProductoPrecios mbPrecios;
     
-    @ManagedProperty(value="#{mbBuscarEmpaqes}")
-    private MbBuscarEmpaqes mbBuscar;
+    @ManagedProperty(value="#{mbBuscarEmpaques}")
+    private MbBuscarEmpaques mbBuscar;
     
     public MbProveedoresListas() {
         this.modoEdicion=false;
@@ -66,7 +66,14 @@ public class MbProveedoresListas implements Serializable {
         this.mbProducto=new MbProveedorProducto(0);
         this.mbOfertas=new MbProveedorProductoOfertas();
         this.mbPrecios=new MbProveedorProductoPrecios();
-        this.mbBuscar=new MbBuscarEmpaqes();
+        this.mbBuscar=new MbBuscarEmpaques();
+    }
+    
+    public void buscar() {
+        this.mbBuscar.buscarLista();
+//        if(this.mbBuscar.getProducto()!=null) {
+//            this.mbProducto.setProducto(this.mbBuscar.getProducto());
+//        }
     }
     
     public void eliminarOferta() {
@@ -294,11 +301,11 @@ public class MbProveedoresListas implements Serializable {
         this.mbPrecios = mbPrecios;
     }
 
-    public MbBuscarEmpaqes getMbBuscar() {
+    public MbBuscarEmpaques getMbBuscar() {
         return mbBuscar;
     }
 
-    public void setMbBuscar(MbBuscarEmpaqes mbBuscar) {
+    public void setMbBuscar(MbBuscarEmpaques mbBuscar) {
         this.mbBuscar = mbBuscar;
     }
 }

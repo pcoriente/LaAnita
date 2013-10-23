@@ -148,7 +148,6 @@ public class DAOEmpaques {
                 epq=construir(rs);
                 epq.setProducto(p);
                 lstEmpaques.add(epq);
-                
             }
         } finally {
             cn.close();
@@ -179,8 +178,6 @@ public class DAOEmpaques {
         Empaque epq=new Empaque(rs.getInt("idEmpaque"));
         epq.setCod_pro(rs.getString("cod_pro"));
         epq.setProducto(null);
-        //epq.setProducto(daoProductos.obtenerProducto(rs.getInt("idProducto")));
-        ////epq.setMarca(new Marca(rs.getInt("idMarca"), rs.getString("marca"), false));
         epq.setPiezas(rs.getInt("piezas"));
         UnidadEmpaque unidadEmpaque=new UnidadEmpaque(rs.getInt("idUnidadEmpaque"), rs.getString("unidadEmpaque"), rs.getString("abreviaturaEmpaque"));
         epq.setUnidadEmpaque(unidadEmpaque);
