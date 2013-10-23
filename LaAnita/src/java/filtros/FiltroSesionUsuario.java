@@ -38,7 +38,7 @@ public class FiltroSesionUsuario implements Filter {
 
         if (usuarioSesion == null) {
             usuarioSesion = new UsuarioSesion();
-            usuarioSesion.setJndi("jdbc/__systemWeb");
+            usuarioSesion.setJndi("jdbc/__webSystem");
             httpSession.setAttribute("usuarioSesion", usuarioSesion);
         }
         if(destino.endsWith("/")) {

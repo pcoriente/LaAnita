@@ -46,7 +46,7 @@ public class MbMain {
         } else if(usuarioSesion.getUsuario()!=null) {
             usuarioSesion.setUsuario(null);
         }
-        usuarioSesion.setJndi("jdbc/__systemWeb");
+        usuarioSesion.setJndi("jdbc/__webSystem");
         httpSession.invalidate();
         return "login.xhtml";
     }

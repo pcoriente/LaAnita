@@ -19,7 +19,7 @@ public class DAODbs {
     public DAODbs() throws NamingException {
         try {
             Context cI = new InitialContext();
-            ds = (DataSource) cI.lookup("java:comp/env/jdbc/__systemWeb");
+            ds = (DataSource) cI.lookup("java:comp/env/jdbc/__webSystem");
         } catch (NamingException ex) {
             throw (ex);
         }

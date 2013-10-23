@@ -191,7 +191,7 @@ public class DAOCotizaciones {
 
     public Moneda obtenerMonedasConverter(int idMoneda) throws SQLException, NamingException {
         Context cI = new InitialContext();
-        DataSource ds1 = (DataSource) cI.lookup("java:comp/env/jdbc/__systemWeb");
+        DataSource ds1 = (DataSource) cI.lookup("java:comp/env/jdbc/__webSystem");
         Moneda mon = null;
         Connection cn = ds1.getConnection();
         Statement st = cn.createStatement();
@@ -217,7 +217,7 @@ public class DAOCotizaciones {
 
     public ArrayList<Moneda> obtenerMonedas() throws NamingException, SQLException {
         Context cI = new InitialContext();
-        DataSource ds2 = (DataSource) cI.lookup("java:comp/env/jdbc/__systemWeb");
+        DataSource ds2 = (DataSource) cI.lookup("java:comp/env/jdbc/__webSystem");
         ArrayList<Moneda> lista = new ArrayList<Moneda>();
         ResultSet rs;
         Connection cn = ds2.getConnection();
