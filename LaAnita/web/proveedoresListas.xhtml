@@ -26,7 +26,8 @@
                                     <p:selectOneMenu id="proveedor" value="#{mbListas.mbProveedor.miniProveedor}" style="width: 300px" >
                                         <f:converter converterId="converters.miniProveedor" />
                                         <f:selectItems value="#{mbListas.mbProveedor.listaMiniProveedores}" />
-                                        <p:ajax event="change" listener="#{mbListas.cargaProductos()}" update="listaProductos lnkNuevoProductoProveedor" />
+                                        <p:ajax event="change" listener="#{mbListas.cargaProductos()}" 
+                                                update="listaProductos lnkNuevoProductoProveedor msgs1" />
                                     </p:selectOneMenu>
                                 </p:column>
                                 <p:column >
@@ -107,14 +108,9 @@
                                 <p:column >
                                     <h:outputLabel for="equivalencia" value="EQUIVALENCIA :" styleClass="colorLetra"/>
                                 </p:column>
-                                <p:column >
+                                <p:column colspan="2" >
                                     <p:inputText id="equivalencia" value="#{mbListas.productoLista.producto.equivalencia.toString()}" 
                                                  readonly="true" maxlength="120" size="80" />
-                                </p:column>
-                                <p:column >
-                                    <p:commandButton icon="ui-icon-search" title="Buscar Productos" 
-                                                     process="@this" actionListener="#{mbListas.mbBuscar.inicializar()}" 
-                                                     update="buscarProductos listaProductos" oncomplete="buscarProductoDlg.show()" />
                                 </p:column>
                             </p:row>
                             <p:row >
@@ -346,6 +342,20 @@
                                     <!--
                                     <p:inputText id="txtDiasEntrega" maxlength="3" size="5" />
                                     -->
+                                </p:column>
+                            </p:row>
+                            <p:row >
+                                <p:column >
+                                    <h:outputLabel for="txtEquivalencia" value="EQUIVALENCIA :" styleClass="colorLetra"/>
+                                </p:column>
+                                <p:column >
+                                    <p:inputText id="txtEquivalencia" value="#{mbListas.productoLista.producto.equivalencia.toString()}" 
+                                                 readonly="true" maxlength="120" size="80" />
+                                </p:column>
+                                <p:column >
+                                    <p:commandButton icon="ui-icon-search" title="Buscar Productos" 
+                                                     process="@this" actionListener="#{mbListas.mbBuscar.inicializar()}" 
+                                                     update="buscarProductos listaBuscarProductos" oncomplete="buscarProductoDlg.show()" />
                                 </p:column>
                             </p:row>
                             <f:facet name="footer" >
@@ -687,7 +697,7 @@
                                     <p:selectOneRadio id="opciones" value="#{mbListas.mbBuscar.tipoBuscar}" style="background-color: #ccc" >
                                         <f:selectItem itemLabel="SKU" itemValue="1" />
                                         <f:selectItem itemLabel="Genérico" itemValue="2" />
-                                        <p:ajax listener="#{mbListas.mbBuscar.verCambio()}" update="buscarProductos listaProductos" />
+                                        <p:ajax listener="#{mbListas.mbBuscar.verCambio()}" update="buscarProductos listaBuscarProductos" />
                                     </p:selectOneRadio>
                                 </p:column>
                                 <p:column rendered="#{mbListas.mbBuscar.tipoBuscar=='1'}" >
@@ -704,11 +714,11 @@
                                                     forceSelection="true" />
                                     <p:commandButton id="btnBuscarLista" icon="ui-icon-check" title="Buscar" 
                                                      process="@this opcionParte" actionListener="#{mbListas.buscar()}" 
-                                                     update="listaProductos" oncomplete="handleBuscar(xhr, status, args)" />
+                                                     update="listaBuscarProductos" oncomplete="handleBuscar(xhr, status, args)" />
                                 </p:column>
                             </p:row>
                         </p:panelGrid>
-                        <p:dataTable id="listaProductos" value="#{mbListas.mbBuscar.productos}" 
+                        <p:dataTable id="listaBuscarProductos" value="#{mbListas.mbBuscar.productos}" 
                                      var="prod" scrollable="true" scrollHeight="200" style="width: 800px;"
                                      rowKey="#{prod.idEmpaque}" selectionMode="single" selection="#{mbListas.mbBuscar.producto}" >
                             <p:ajax event = "rowSelect" update="seleccion" />
@@ -728,8 +738,8 @@
                             <f:facet name="footer">
                                 <p:commandButton id="seleccion" value="Seleccionar" 
                                                  disabled="#{mbListas.mbBuscar.producto==null}"
-                                                 actionListener="#{frmProducto.actualizaProductoSeleccionado()}"
-                                                 update=":main:equivalencia" oncomplete="buscarProductoDlg.hide()" />
+                                                 actionListener="#{mbListas.actualizaProductoSeleccionado()}"
+                                                 update=":form:equivalencia" oncomplete="buscarProductoDlg.hide()" />
                             </f:facet>
                         </p:dataTable>
                     </p:dialog>

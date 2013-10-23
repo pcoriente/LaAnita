@@ -69,6 +69,19 @@ public class MbProveedoresListas implements Serializable {
         this.mbBuscar=new MbBuscarEmpaques();
     }
     
+    public void actualizaProductoSeleccionado() {
+        this.productoLista.getProducto().setEquivalencia(this.mbBuscar.getProducto());
+        // ------------------------------------------------------------------
+        /*
+        this.mbProducto.setProducto(this.mbBuscarProd.obtenerSeleccionado());
+        this.mbProducto.cargaListaUpcs();
+        if(!this.mbProducto.getProducto().getUpcs().isEmpty()) {
+            //Upc upc=this.mbProducto.getProducto().getUpcs().get(0);
+            this.mbProducto.getMbUpc().setUpc(this.mbProducto.getProducto().getUpcs().get(0));
+        }
+        * */
+    }
+    
     public void buscar() {
         this.mbBuscar.buscarLista();
 //        if(this.mbBuscar.getProducto()!=null) {
