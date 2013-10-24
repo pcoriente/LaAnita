@@ -132,6 +132,7 @@ public class DAOProveedoresProductos {
         pp.setSku(rs.getString("sku"));
         pp.setDiasEntrega(rs.getInt("diasEntrega"));
         pp.setUltimaCompraFecha(rs.getDate("ultimaCompraFecha"));
+        pp.setUltimaCompraPrecio(rs.getDouble("ultimaCompraPrecio"));
         pp.setUnidadEmpaque(new UnidadEmpaque(rs.getInt("idUnidad"), rs.getString("unidad"), rs.getString("unidAbrev")));
         pp.setPiezas(rs.getInt("piezas"));
         pp.setMarca(new Marca(rs.getInt("idMarca"), rs.getString("marca"), false));

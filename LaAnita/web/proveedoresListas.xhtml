@@ -71,7 +71,7 @@
                                 <p:column >
                                     <h:outputLabel for="sku" value="SKU :" styleClass="colorLetra"/>
                                 </p:column>
-                                <p:column colspan="2" >
+                                <p:column colspan="4" >
                                     <p:inputText id="sku" value="#{mbListas.productoLista.producto.sku}" readonly="true" maxlength="20" size="25" />
                                 </p:column>
                             </p:row>
@@ -79,7 +79,7 @@
                                 <p:column >
                                     <h:outputLabel for="producto" value="PRODUCTO :" styleClass="colorLetra"/>
                                 </p:column>
-                                <p:column >
+                                <p:column colspan="3" >
                                     <p:inputText id="producto" value="#{mbListas.productoLista.producto.toString()}" readonly="true" maxlength="124" size="80" />
                                 </p:column>
                                 <p:column >
@@ -92,7 +92,7 @@
                                 <p:column >
                                     <h:outputLabel for="diasEntrega" value="DIAS ENTREGA :" styleClass="colorLetra"/>
                                 </p:column>
-                                <p:column colspan="2" >
+                                <p:column colspan="4" >
                                     <p:inputText id="diasEntrega" value="#{mbListas.productoLista.producto.diasEntrega}" readonly="true" maxlength="3" size="5" />
                                 </p:column>
                             </p:row>
@@ -100,21 +100,32 @@
                                 <p:column >
                                     <h:outputLabel for="ultCompFecha" value="ULTIMA COMPRA :" styleClass="colorLetra"/>
                                 </p:column>
-                                <p:column colspan="2" >
-                                    <p:inputText id="ultCompFecha" value="#{mbListas.productoLista.producto.ultimaCompraFecha}" readonly="true" maxlength="3" size="5" />
+                                <p:column >
+                                    <p:inputText id="ultCompFecha" value="#{mbListas.productoLista.producto.ultimaCompraFecha}" readonly="true" 
+                                                 maxlength="10" size="12" >
+                                        <f:convertDateTime pattern="dd/MM/yyyy" />
+                                    </p:inputText>
                                 </p:column>
+                                <p:column >
+                                    <h:outputLabel for="ultCompCosto" value="PRECIO :" styleClass="colorLetra" />
+                                </p:column>
+                                <p:column >
+                                    <p:inputText id="ultCompCosto" value="#{mbListas.productoLista.producto.ultimaCompraPrecio}" readonly="true" 
+                                                 maxlength="9" size="12" />
+                                </p:column>
+                                <p:column ></p:column>
                             </p:row>
                             <p:row >
                                 <p:column >
                                     <h:outputLabel for="equivalencia" value="EQUIVALENCIA :" styleClass="colorLetra"/>
                                 </p:column>
-                                <p:column colspan="2" >
+                                <p:column colspan="4" >
                                     <p:inputText id="equivalencia" value="#{mbListas.productoLista.producto.equivalencia.toString()}" 
                                                  readonly="true" maxlength="120" size="80" />
                                 </p:column>
                             </p:row>
                             <p:row >
-                                <p:column colspan="2" >
+                                <p:column colspan="4" >
                                     <p:dataTable id="listaPrecios" value="#{mbListas.mbPrecios.precios}"
                                                  widgetVar="preciosTable" var="precio" style="border:solid 1px" 
                                                  rowKey="#{precio.inicioVigencia}" selection="#{mbListas.precio}" selectionMode="single"
@@ -159,7 +170,7 @@
                                 </p:column>
                             </p:row>
                             <p:row >
-                                <p:column colspan="2" >
+                                <p:column colspan="4" >
                                     <p:dataTable id="listaOfertas" value="#{mbListas.mbOfertas.ofertas}"
                                                  widgetVar="ofertasTable" var="oferta" style="border:solid 1px" rowKey="#{oferta.inicioVigencia}"
                                                  selection="#{mbListas.oferta}" selectionMode="single"
@@ -202,7 +213,7 @@
                             </p:row>
                             <f:facet name="footer" >
                                 <p:row >
-                                    <p:column colspan="3" style="text-align: right;" >
+                                    <p:column colspan="5" style="text-align: right;" >
                                         <p:commandButton icon="ui-icon-arrowreturnthick-1-w" title="Terminar"
                                                          ajax="false" action="#{mbListas.salir()}" immediate="true" />
                                     </p:column>
@@ -295,8 +306,8 @@
                                     <h:outputLabel for="contenido" value="CONTENIDO :" style="font-weight: bold; color: red; width: 120px;" />
                                 </p:column>
                                 <p:column colspan="2">
-                                    <pe:inputNumber id="contenido" value="#{mbListas.mbProducto.producto.contenido}" immediate="true"
-                                                    decimalPlaces="3" minValue="0" maxlength="7"
+                                    <pe:inputNumber id="contenido" value="#{mbListas.mbProducto.producto.contenido}"
+                                                    decimalPlaces="3" minValue="0" 
                                                     required="true" requiredMessage="Se requiere un número" >
                                     </pe:inputNumber>
                                     <!--

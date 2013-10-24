@@ -73,14 +73,22 @@ public class MbBuscarEmpaques implements Serializable {
     }
     
     public ArrayList<Parte2> completePartes(String query) {
+        boolean ok = false;
         ArrayList<Parte2> partes = null;
+        FacesMessage fMsg = new FacesMessage(FacesMessage.SEVERITY_WARN, "Aviso:", "");
         try {
             DAOPartes dao = new DAOPartes();
             partes = dao.completePartes(query);
-        } catch (SQLException ex) {
-            Logger.getLogger(MbParte.class.getName()).log(Level.SEVERE, null, ex);
+            ok=true;
         } catch (NamingException ex) {
-            Logger.getLogger(MbParte.class.getName()).log(Level.SEVERE, null, ex);
+            fMsg.setSeverity(FacesMessage.SEVERITY_ERROR);
+            fMsg.setDetail(ex.getMessage());
+        } catch (SQLException ex) {
+            fMsg.setSeverity(FacesMessage.SEVERITY_ERROR);
+            fMsg.setDetail(ex.getErrorCode() + " " + ex.getMessage());
+        }
+        if(!ok) {
+            FacesContext.getCurrentInstance().addMessage(null, fMsg);
         }
         return partes;
     }
