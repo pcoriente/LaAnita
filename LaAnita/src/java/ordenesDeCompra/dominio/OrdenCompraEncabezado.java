@@ -7,17 +7,17 @@ import proveedores.dominio.Proveedor;
  *
  * @author jsolis
  */
-public class OrdenCompra {
-    private int idDocto;
+public class OrdenCompraEncabezado {
+    private int idOrdenCompra;
     private Factura factura;
     private Date fecha;
     private int idCotizacion;
-    //private Moneda moneda;
     private double descuento;
     private Proveedor proveedor;
+   
     
-    public OrdenCompra() {
-        this.idDocto=0;
+    public OrdenCompraEncabezado() {
+        this.idOrdenCompra=0;
         this.factura=new Factura();
         this.fecha=new Date();
         this.idCotizacion=0;
@@ -25,12 +25,12 @@ public class OrdenCompra {
         this.proveedor=new Proveedor();
     }
 
-    public int getIdDocto() {
-        return idDocto;
+    public int getIdOrdenCompra() {
+        return idOrdenCompra;
     }
 
-    public void setIdDocto(int idDocto) {
-        this.idDocto = idDocto;
+    public void setIdOrdenCompra(int idOrdenCompra) {
+        this.idOrdenCompra = idOrdenCompra;
     }
 
     public Factura getFactura() {

@@ -2,7 +2,6 @@ package proveedores.dominio;
 
 import contactos.dominio.Contacto;
 import contribuyentes.Contribuyente;
-import contribuyentes.TOContribuyente;
 import direccion.dominio.Direccion;
 import impuestos.dominio.ImpuestoZona;
 import java.util.ArrayList;
