@@ -174,6 +174,25 @@ public class DAOEmpaques {
         return epq;
     }
     
+    public Empaque obtenerEmpaque(int idEmpaque) throws SQLException, NamingException {
+        Empaque epq=null;
+        DAOProductos daoProductos;
+        String strSQL=sqlEmpaque()+" WHERE e.idEmpaque="+idEmpaque;
+        Connection cn=ds.getConnection();
+        Statement st=cn.createStatement();
+        try {
+            ResultSet rs=st.executeQuery(strSQL);
+            if(rs.next()) {
+                daoProductos=new DAOProductos();
+                epq=construir(rs);
+                epq.setProducto(daoProductos.obtenerProducto(rs.getInt("idProducto")));
+            }
+        } finally {
+            cn.close();
+        }
+        return epq;
+    }
+    
     public Empaque construir(ResultSet rs) throws SQLException {
         Empaque epq=new Empaque(rs.getInt("idEmpaque"));
         epq.setCod_pro(rs.getString("cod_pro"));

@@ -3,14 +3,9 @@ package proveedores;
 import javax.inject.Named;
 import javax.enterprise.context.SessionScoped;
 import java.io.Serializable;
-import java.sql.SQLException;
 import java.util.ArrayList;
-import javax.faces.application.FacesMessage;
 import javax.faces.bean.ManagedProperty;
-import javax.faces.context.FacesContext;
-import javax.naming.NamingException;
 import productos.MbBuscarEmpaques;
-import proveedores.dao.DAOProveedoresProductos;
 import proveedores.dominio.MiniProveedor;
 import proveedores.dominio.ProveedorProducto;
 import proveedores.dominio.ProveedorProductoLista;
@@ -31,7 +26,7 @@ public class MbProveedoresListas implements Serializable {
     private ArrayList<ProveedorProducto> listaFiltrados;
     private ProveedorProductoLista productoLista;
     private ProveedorProducto producto;
-    private DAOProveedoresProductos dao;
+    //private DAOProveedoresProductos dao;
     
     private ProveedorProductoPrecio precio;
     //private DAOProveedoresProductosPrecios daoPrecios;
@@ -70,8 +65,9 @@ public class MbProveedoresListas implements Serializable {
     }
     
     public void actualizaProductoSeleccionado() {
-        this.productoLista.getProducto().setEquivalencia(this.mbBuscar.getProducto());
-        // ------------------------------------------------------------------
+        this.mbProducto.getProducto().setEquivalencia(this.mbBuscar.getProducto());
+        //this.productoLista.getProducto().setEquivalencia(this.mbBuscar.getProducto());
+        // ---------------------- ANTERIOR ----------------------------------
         /*
         this.mbProducto.setProducto(this.mbBuscarProd.obtenerSeleccionado());
         this.mbProducto.cargaListaUpcs();
@@ -80,6 +76,7 @@ public class MbProveedoresListas implements Serializable {
             this.mbProducto.getMbUpc().setUpc(this.mbProducto.getProducto().getUpcs().get(0));
         }
         * */
+        // ---------------------- HASTA AQUI --------------------------------
     }
     
     public void buscar() {
@@ -182,26 +179,25 @@ public class MbProveedoresListas implements Serializable {
     }
     
     public void cargaProductos() {
-        boolean ok=false;
-        FacesMessage fMsg = new FacesMessage(FacesMessage.SEVERITY_WARN, "Aviso:", "");
+//        boolean ok=false;
+//        FacesMessage fMsg = new FacesMessage(FacesMessage.SEVERITY_WARN, "Aviso:", "");
         int idProveedor=this.mbProveedor.getMiniProveedor().getIdProveedor();
-        try {
+//        try {
             this.mbProducto.setIdProveedor(idProveedor);
             this.mbOfertas.setIdProveedor(idProveedor);
             this.mbPrecios.setIdProveedor(idProveedor);
-            this.dao=new DAOProveedoresProductos();
-            this.listaProductos=this.dao.obtenerProductos(idProveedor);
-            ok=true;
-        } catch (NamingException ex) {
-            fMsg.setSeverity(FacesMessage.SEVERITY_ERROR);
-            fMsg.setDetail(ex.getMessage());
-        } catch (SQLException ex) {
-            fMsg.setSeverity(FacesMessage.SEVERITY_ERROR);
-            fMsg.setDetail(ex.getErrorCode() + " " + ex.getMessage());
-        }
-        if (!ok) {
-            FacesContext.getCurrentInstance().addMessage(null, fMsg);
-        }
+            this.listaProductos=this.mbProducto.obtenerProductos(idProveedor);
+//            ok=true;
+//        } catch (NamingException ex) {
+//            fMsg.setSeverity(FacesMessage.SEVERITY_ERROR);
+//            fMsg.setDetail(ex.getMessage());
+//        } catch (SQLException ex) {
+//            fMsg.setSeverity(FacesMessage.SEVERITY_ERROR);
+//            fMsg.setDetail(ex.getErrorCode() + " " + ex.getMessage());
+//        }
+//        if (!ok) {
+//            FacesContext.getCurrentInstance().addMessage(null, fMsg);
+//        }
     }
 
     public ProveedorProductoLista getProductoLista() {

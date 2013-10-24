@@ -93,6 +93,7 @@ public class MbBuscarEmpaques implements Serializable {
         this.tipoBuscar = "2";
         this.strBuscar = "";
         this.parte = new Parte2(0, "");
+        this.productos = null;
     }
     
     public void obtenerEmpaquesParte(int idParte) {
