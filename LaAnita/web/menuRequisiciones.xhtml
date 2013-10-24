@@ -142,7 +142,7 @@
                                 <h:outputText value="#{det.producto.toString()}" />
                             </p:column>
                             <p:column headerText="Unidad" width="50">
-                                <h:outputText value="#{det.producto.unidad.unidad}" />
+                                <h:outputText value="#{det.producto.presentacion.toString()}" />
                             </p:column>
 
                             <p:column headerText="Cantidad" width="50" >
@@ -205,7 +205,7 @@
                                 <h:outputText value="#{da.producto.toString()}" />
                             </p:column>
                             <p:column headerText="Unidad" width="50">
-                                <h:outputText value="#{da.producto.unidad.abreviatura}" />
+                                <h:outputText value="#{da.producto.presentacion.presentacion}" />
                             </p:column>
 
                             <p:column headerText="Solicitada" width="50" >

@@ -1,12 +1,12 @@
-package ordenCompra;
+package ordenesDeCompra;
 
 import javax.inject.Named;
 import javax.enterprise.context.SessionScoped;
 import java.io.Serializable;
 import java.util.ArrayList;
 import javax.faces.bean.ManagedProperty;
-import ordenCompra.dominio.OrdenCompra;
-import ordenCompra.dominio.ProductoOC;
+import ordenesDeCompra.dominio.OrdenCompra;
+import ordenesDeCompra.dominio.ProductoOC;
 import proveedores.MbProveedores;
 
 /**

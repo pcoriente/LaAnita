@@ -1,4 +1,4 @@
-package ordenCompra.dominio;
+package ordenesDeCompra.dominio;
 
 import java.io.Serializable;
 import productos.dominio.Producto;

@@ -35,11 +35,11 @@
                     <!-- P A N E L   D E  A D M I N I S T R A C I O N... -->
                     <p:messages id="messagePanel" showDetail="true" autoUpdate="true" closable="true" />
                     <p:panel header="PANEL DE ADMINISTRACION DE ORDENES DE COMPRA" styleClass="quitaCuadro"  >
-                        <h:outputText value="No hay ORDENES DE COMPRA que mostrar !!" rendered="#{empty mbCotizaciones.listaCotizacionEncabezado}" />
+                        <h:outputText value="No hay ORDENES DE COMPRA que mostrar !!" rendered="#{empty mbOrdenCompra.listaOrdenes}" />
                         <p:dataTable id="requisicion"
-                                     value="#{mbCotizaciones.listaCotizacionEncabezado}"
+                                     value="#{mbOrdenCompra.listaOrdenes}"
                                      var="cot" 
-                                     widgetVar="requisicionesTable"
+                                     widgetVar="ordenesTable"
                                      emptyMessage="No existen elementos para desplegar..."
                                      >
                             <p:column sortBy="#{cot.idRequisicion}" filterBy="#{cot.idRequisicion}" headerText="No. Req." filterMatchMode="contains" width="30"  >

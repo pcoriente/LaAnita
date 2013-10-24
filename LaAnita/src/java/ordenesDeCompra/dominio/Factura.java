@@ -1,4 +1,4 @@
-package ordenCompra.dominio;
+package ordenesDeCompra.dominio;
 
 import java.util.Date;
 
