@@ -8,13 +8,13 @@ import java.util.ArrayList;
  */
 public class ProveedorProductoLista {
     private ProveedorProducto producto;
-    private ArrayList<ProveedorProductoPrecio> precios;
-    private ArrayList<ProveedorProductoOferta> ofertas;
+    //private ArrayList<ProveedorProductoPrecio> precios;
+    //private ArrayList<ProveedorProductoOferta> ofertas;
 
     public ProveedorProductoLista() {
         this.producto=new ProveedorProducto();
-        this.precios=new ArrayList<ProveedorProductoPrecio>();
-        this.ofertas=new ArrayList<ProveedorProductoOferta>();
+        //this.precios=new ArrayList<ProveedorProductoPrecio>();
+        //this.ofertas=new ArrayList<ProveedorProductoOferta>();
     }
 
     public ProveedorProducto getProducto() {
@@ -24,7 +24,7 @@ public class ProveedorProductoLista {
     public void setProducto(ProveedorProducto producto) {
         this.producto = producto;
     }
-
+    /*
     public ArrayList<ProveedorProductoPrecio> getPrecios() {
         return precios;
     }
@@ -40,4 +40,5 @@ public class ProveedorProductoLista {
     public void setOfertas(ArrayList<ProveedorProductoOferta> ofertas) {
         this.ofertas = ofertas;
     }
+    * */
 }

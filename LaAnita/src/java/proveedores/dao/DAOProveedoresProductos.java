@@ -13,6 +13,7 @@ import javax.naming.InitialContext;
 import javax.naming.NamingException;
 import javax.servlet.http.HttpSession;
 import javax.sql.DataSource;
+import productos.dominio.Empaque;
 import productos.dominio.Marca;
 import productos.dominio.Presentacion;
 import productos.dominio.UnidadEmpaque;
@@ -57,6 +58,7 @@ public class DAOProveedoresProductos {
                 + ",    idUnidadMedida="+pp.getUnidadMedida().getIdUnidadMedida()
                 + ",    idUnidadMedida2="+pp.getUnidadMedida2().getIdUnidadMedida()
                 + ",    idImpuestosGrupo="+pp.getImpuestoGrupo().getIdGrupo()
+                + ",    idEquivalencia="+pp.getEquivalencia().getIdEmpaque()
                 + " WHERE idProveedor="+idProveedor+" AND idProducto="+pp.getIdProducto();
         try {
             st.executeUpdate(strSQL);
@@ -67,10 +69,10 @@ public class DAOProveedoresProductos {
     
     public int agregar(ProveedorProducto pp, int idProveedor) throws SQLException {
         int idProducto=0;
-        String strSQL="INSERT INTO proveedoresProductos (idProveedor, sku, diasEntrega, idUnidadEmpaque, piezas, idMarca, producto, idPresentacion, contenido, idUnidadMedida, idUnidadMedida2, idImpuestosGrupo) "
+        String strSQL="INSERT INTO proveedoresProductos (idProveedor, sku, diasEntrega, idUnidadEmpaque, piezas, idMarca, producto, idPresentacion, contenido, idUnidadMedida, idUnidadMedida2, idImpuestosGrupo, idEquivalencia) "
                     + "     VALUES ("+idProveedor+", '"+pp.getSku()+"', "+pp.getDiasEntrega()+", "+pp.getUnidadEmpaque().getIdUnidad()+", "+pp.getPiezas()+", "+pp.getMarca().getIdMarca()+""
                     + "             , '"+pp.getProducto()+"', "+pp.getPresentacion().getIdPresentacion()+", "+pp.getContenido()+""
-                    + "             , "+pp.getUnidadMedida().getIdUnidadMedida()+", "+pp.getUnidadMedida2().getIdUnidadMedida()+", "+pp.getImpuestoGrupo().getIdGrupo()+")";
+                    + "             , "+pp.getUnidadMedida().getIdUnidadMedida()+", "+pp.getUnidadMedida2().getIdUnidadMedida()+", "+pp.getImpuestoGrupo().getIdGrupo()+", "+pp.getEquivalencia().getIdEmpaque()+")";
         Connection cn=this.ds.getConnection();
         Statement st=cn.createStatement();
         try {
@@ -139,11 +141,12 @@ public class DAOProveedoresProductos {
         pp.setUnidadMedida(new UnidadMedida(rs.getInt("idUnidadMedida1"), rs.getString("unidadMedida1"), rs.getString("abreviatura1"), 0));
         pp.setUnidadMedida2(new UnidadMedida(rs.getInt("idUnidadMedida2"), rs.getString("unidadMedida2"), rs.getString("abreviatura2"), 0));
         pp.setImpuestoGrupo(new ImpuestoGrupo(rs.getInt("idGrupo"), rs.getString("grupo")));
+        pp.setEquivalencia(new Empaque(rs.getInt("idEquivalencia")));
         return pp;
     }
     
     private String sqlProducto() {
-        return "select p.idProducto, p.sku, p.diasEntrega, p.ultimaCompraFecha, p.ultimaCompraPrecio\n" +
+        return "select p.idProducto, p.sku, p.diasEntrega, p.ultimaCompraFecha, p.ultimaCompraPrecio, p.idEquivalencia\n" +
                 "	,u.idUnidad, u.unidad, u.abreviatura as unidAbrev\n" +
                 "       , p.piezas\n" +
                 "	,isnull(m.idMarca, 0) as idMarca, isnull(m.marca, '') as marca\n" +

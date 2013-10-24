@@ -346,10 +346,10 @@
                             </p:row>
                             <p:row >
                                 <p:column >
-                                    <h:outputLabel for="txtEquivalencia" value="EQUIVALENCIA :" styleClass="colorLetra"/>
+                                    <h:outputLabel for="txtEquivalencia" value="EQUIVALENCIA :" style="font-weight: bold; color: red; width: 120px;" />
                                 </p:column>
                                 <p:column >
-                                    <p:inputText id="txtEquivalencia" value="#{mbListas.productoLista.producto.equivalencia.toString()}" 
+                                    <p:inputText id="txtEquivalencia" value="#{mbListas.mbProducto.producto.equivalencia.toString()}" 
                                                  readonly="true" maxlength="120" size="80" />
                                 </p:column>
                                 <p:column >
@@ -739,7 +739,7 @@
                                 <p:commandButton id="seleccion" value="Seleccionar" 
                                                  disabled="#{mbListas.mbBuscar.producto==null}"
                                                  actionListener="#{mbListas.actualizaProductoSeleccionado()}"
-                                                 update=":form:equivalencia" oncomplete="buscarProductoDlg.hide()" />
+                                                 update=":form:txtEquivalencia" oncomplete="buscarProductoDlg.hide()" />
                             </f:facet>
                         </p:dataTable>
                     </p:dialog>
