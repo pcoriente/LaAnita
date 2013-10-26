@@ -7,7 +7,7 @@ import productos.dominio.Producto;
  *
  * @author jsolis
  */
-public class ProductoOC implements Serializable {
+public class OrdenCompraDetalle implements Serializable {
     private int idDocto;
     private Producto producto;
     private double cantOrdenada;
@@ -18,7 +18,7 @@ public class ProductoOC implements Serializable {
     private double cantSinCargo;
     private double costoNeto;
 
-    public ProductoOC(int idDocto, Producto producto) {
+    public OrdenCompraDetalle(int idDocto, Producto producto) {
         this.idDocto=idDocto;
         this.producto=producto;
         this.cantOrdenada=0.00;

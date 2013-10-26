@@ -7,10 +7,12 @@ import javax.enterprise.context.SessionScoped;
 import java.io.Serializable;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.faces.bean.ManagedProperty;
 import javax.naming.NamingException;
 import ordenesDeCompra.dominio.OrdenCompraEncabezado;
-import ordenesDeCompra.dominio.ProductoOC;
+import ordenesDeCompra.dominio.OrdenCompraDetalle;
 import proveedores.MbProveedores;
 
 /**
@@ -26,16 +28,18 @@ public class MbOrdenCompra implements Serializable {
     @ManagedProperty(value = "#{mbProveedores}")
     private MbProveedores mbProveedores;
     private OrdenCompraEncabezado ordenCompraEncabezado;
-    private ArrayList<ProductoOC> productos;
+    private ArrayList<OrdenCompraDetalle> productos;
     @ManagedProperty(value = "#{mbCotizaciones}")
     private MbCotizaciones mbCotizaciones;
     private ArrayList<OrdenCompraEncabezado> listaOrdenesEncabezado;
+   
+    private OrdenCompraDetalle ordenElegida;
 
     public MbOrdenCompra() {
         this.mbFacturas = new MbFacturas();
         this.mbProveedores = new MbProveedores();
         this.ordenCompraEncabezado = new OrdenCompraEncabezado();
-        this.productos = new ArrayList<ProductoOC>();
+        this.productos = new ArrayList<OrdenCompraDetalle>();
         this.mbCotizaciones = new MbCotizaciones();
     }
 
@@ -67,13 +71,11 @@ public class MbOrdenCompra implements Serializable {
         this.mbProveedores = mbProveedores;
     }
 
-    
-
-    public ArrayList<ProductoOC> getProductos() {
+    public ArrayList<OrdenCompraDetalle> getProductos() {
         return productos;
     }
 
-    public void setProductos(ArrayList<ProductoOC> productos) {
+    public void setProductos(ArrayList<OrdenCompraDetalle> productos) {
         this.productos = productos;
     }
 
@@ -93,13 +95,22 @@ public class MbOrdenCompra implements Serializable {
         this.ordenCompraEncabezado = ordenCompraEncabezado;
     }
 
-    public ArrayList<OrdenCompraEncabezado> getListaOrdenesEncabezado() {
+    public ArrayList<OrdenCompraEncabezado> getListaOrdenesEncabezado() throws NamingException {
+        if (listaOrdenesEncabezado == null) {
+            try {
+                this.cargaOrdenesEncabezado();
+            } catch (SQLException ex) {
+                Logger.getLogger(MbOrdenCompra.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
         return listaOrdenesEncabezado;
     }
 
     public void setListaOrdenesEncabezado(ArrayList<OrdenCompraEncabezado> listaOrdenesEncabezado) {
         this.listaOrdenesEncabezado = listaOrdenesEncabezado;
     }
+
+    
 
     
 }

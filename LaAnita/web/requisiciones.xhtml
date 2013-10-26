@@ -96,7 +96,7 @@
 
                         <p:dataTable id="detalle" value="#{mbRequisiciones.requisicionProductos}" 
                                      var="prod" scrollable="true" scrollHeight="200" style="width: 850px; margin:0 auto;" styleClass="sinBorde"
-                                     rowKey="#{prod.producto.idProducto}"  selection="#{mbRequisiciones.mbBuscarProd.producto}"  >
+                                     rowKey="#{prod.producto.idProducto}"  selection="#{mbRequisiciones.mbBuscarEmpaques.producto}"  >
                             
                             <p:column  headerText="Descripción" style="width: 200px;" >
                                 <h:outputText value="#{prod.producto.toString()}"  />

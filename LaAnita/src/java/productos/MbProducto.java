@@ -16,7 +16,6 @@ import javax.naming.NamingException;
 import productos.dao.DAOMarcas;
 import productos.dao.DAOPartes;
 import productos.dao.DAOProductos;
-import productos.dao.DAOPresentaciones;
 import productos.dominio.Grupo;
 import productos.dominio.Marca;
 import productos.dominio.Parte;

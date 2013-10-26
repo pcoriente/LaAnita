@@ -40,7 +40,7 @@ public class DAOOrdenDeCompra {
         Connection cn = ds.getConnection();
         try {
 
-            String stringSQL = "select oc.idOrdenCompra, c.idCotizacion, c.idRequisicion, eg.nombreComercial,  co.contribuyente, oc.fechaFinalizacion, oc.fechaPuesta, oc.fechaEntrega, oc.estado from ordencompra oc\n"
+            String stringSQL = "select oc.idOrdenCompra, c.idCotizacion, c.idRequisicion, eg.nombreComercial,  co.contribuyente, oc.fechaCreacion, oc.fechaFinalizacion, oc.fechaPuesta, oc.fechaEntrega, oc.estado from ordencompra oc\n"
                     + "inner join cotizaciones c on c.idCotizacion= oc.idCotizacion\n"
                     + "inner join proveedores p on p.idProveedor = c.idProveedor\n"
                     + "inner join contribuyentes co on co.idContribuyente = p.idContribuyente\n"
@@ -59,20 +59,17 @@ public class DAOOrdenDeCompra {
     }
 
     private OrdenCompraEncabezado construir(ResultSet rs) throws SQLException {
-        OrdenCompraEncabezado oc = new OrdenCompraEncabezado();
-        
-        
-//        ce.setIdRequisicion(rs.getInt("idRequisicion"));
-//        ce.setDepto(rs.getString("depto"));
-//        ce.setFechaRequisicion(utilerias.Utilerias.date2String(rs.getDate("fechaRequisicion")));
-//        ce.setFechaAprobacion(utilerias.Utilerias.date2String(rs.getDate("fechaAprobacion")));
-//        ce.setNumCotizaciones(rs.getInt("numCotizaciones"));
-//        ce.setNumProductos(rs.getInt("numProductos"));
-//        ce.setEstado(rs.getInt("estado"));
-
-        return oc;
-
+        OrdenCompraEncabezado oce = new OrdenCompraEncabezado();
+        oce.setIdOrdenCompra(rs.getInt("idOrdenCompra"));
+        oce.setIdCotizacion(rs.getInt("idCotizacion"));
+        oce.setIdRequisicion(rs.getInt("idRequisicion"));
+        oce.setNombreComercial(rs.getString("nombreComercial"));
+        oce.getProveedor().getContribuyente().setContribuyente(rs.getString("contribuyente"));
+        oce.setFechaCreacion(utilerias.Utilerias.date2String(rs.getDate("fechaCreacion")));
+        oce.setFechaFinalizacion(utilerias.Utilerias.date2String(rs.getDate("fechaFinalizacion")));
+        oce.setFechaPuesta(utilerias.Utilerias.date2String(rs.getDate("fechaPuesta")));
+        oce.setFechaEntrega(utilerias.Utilerias.date2String(rs.getDate("fechaEntrega")));
+        oce.setEstado(rs.getInt("estado"));
+        return oce;
     }
-
- 
 }

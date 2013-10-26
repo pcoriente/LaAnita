@@ -18,6 +18,7 @@ import javax.faces.model.SelectItem;
 import javax.naming.NamingException;
 import org.primefaces.event.RowEditEvent;
 import productos.FrmProducto;
+import productos.MbBuscarEmpaques;
 import productos.MbBuscarProd;
 import productos.dao.DAOProductos;
 import productos.dominio.ProdStr;
@@ -50,6 +51,8 @@ public class MbRequisiciones implements Serializable {
     private ArrayList<RequisicionProducto> requisicionProductos = new ArrayList<RequisicionProducto>();
     @ManagedProperty(value = "#{mbBuscarProd}")
     private MbBuscarProd mbBuscarProd;
+    @ManagedProperty(value = "#{mbBuscarEmpaques}")
+    private MbBuscarEmpaques mbBuscarEmpaques;
     private Producto producto;
     private ProdStr prodStr;
     private ArrayList<SelectItem> listaMini = new ArrayList<SelectItem>();
@@ -83,6 +86,7 @@ public class MbRequisiciones implements Serializable {
         this.mbUsuarios = new MbUsuarios();
         this.mbBuscarProd = new MbBuscarProd();
         this.mbMiniProveedor = new MbMiniProveedor();
+        this.mbBuscarEmpaques = new MbBuscarEmpaques();
 
     }
 
@@ -355,6 +359,16 @@ public class MbRequisiciones implements Serializable {
     public void setSubtotalBruto(double subtotalBruto) {
         this.subtotalBruto = subtotalBruto;
     }
+
+    public MbBuscarEmpaques getMbBuscarEmpaques() {
+        return mbBuscarEmpaques;
+    }
+
+    public void setMbBuscarEmpaques(MbBuscarEmpaques mbBuscarEmpaques) {
+        this.mbBuscarEmpaques = mbBuscarEmpaques;
+    }
+    
+    
 
 //------------------------------------------------------------------------------------------------------------------------------------------
 //------------------------------------------------------------------------------------------------------------------------------------------
