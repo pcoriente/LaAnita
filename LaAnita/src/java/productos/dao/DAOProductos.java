@@ -196,7 +196,7 @@ public class DAOProductos {
         //Double d=rs.getDouble("contenido");
         //prod.setContenido(d.toString());
         prod.setContenido(rs.getDouble("contenido"));
-        prod.setUnidadMedida(new UnidadMedida(rs.getInt("idUnidadMedida"), rs.getString("unidadMedida"), rs.getString("medAbrev"), rs.getInt("idTipo")));
+        prod.setUnidadMedida(new UnidadMedida(rs.getInt("idUnidadMedida"), rs.getString("unidadMedida"), rs.getString("medAbrev")));
         prod.setImpuesto(new ImpuestoGrupo(rs.getInt("idImpuestoGrupo"), rs.getString("impuestoGrupo")));
         return prod;
     }

@@ -8,13 +8,14 @@ public class UnidadMedida {
     private int idUnidadMedida;
     private String unidadMedida;
     private String abreviatura;
-    private int idTipo;
+    private int idTipo; // Para cuando se requierea inplementar los tipod de unidad de Medida: Longitud, volumen, peso
+                        // Tambien abria que pensar en las conversiones de metrico decimal a ingles.
 
-    public UnidadMedida(int idUnidadMedida, String unidadMedida, String abreviatura, int idTipo) {
+    public UnidadMedida(int idUnidadMedida, String unidadMedida, String abreviatura) {
         this.idUnidadMedida = idUnidadMedida;
         this.unidadMedida = unidadMedida;
         this.abreviatura = abreviatura;
-        this.idTipo = idTipo;
+        this.idTipo = 0;
     }
 
     @Override

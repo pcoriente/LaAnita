@@ -36,7 +36,7 @@ public class Producto implements Serializable {
         this.presentacion=new Presentacion(0, "", "");
         //this.contenido="0.0";
         this.contenido=0;
-        this.unidadMedida=new UnidadMedida(0, "", "", 0);
+        this.unidadMedida=new UnidadMedida(0, "", "");
         this.impuesto=new ImpuestoGrupo(0, "");
     }
     

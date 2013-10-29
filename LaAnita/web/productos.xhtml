@@ -36,7 +36,7 @@
                             </f:facet>
                             <p:row rendered="#{frmProducto.mbProducto.producto.idProducto>0}" >
                                 <p:column >
-                                    <h:outputLabel for="upc" value="UPC :" style="font-weight: bold; color: red; width: 105px;" />
+                                    <h:outputLabel for="upc" value="UPC :" style="font-weight: bold; color: red; width: 120px;" />
                                 </p:column>
                                 <p:column style="width: 150px;" >
                                     <p:selectOneMenu id="upc" value="#{frmProducto.mbProducto.mbUpc.upc}" style="width: 140px;" >
@@ -53,7 +53,7 @@
                             </p:row>
                             <p:row >
                                 <p:column >
-                                    <h:outputLabel value="GENERICO :" style="font-weight: bold; color: red; width: 105px;" />
+                                    <h:outputLabel value="GENERICO :" style="font-weight: bold; color: red; width: 120px;" />
                                 </p:column>
                                 <p:column >
                                     <p:autoComplete id="basicPojo1" value="#{frmProducto.mbProducto.producto.parte2}"
@@ -67,7 +67,7 @@
                             </p:row>
                             <p:row >
                                 <p:column >
-                                    <h:outputLabel for="descripcion" value="DESCRIPCION :" style="font-weight: bold; color: red; width: 105px;" />
+                                    <h:outputLabel for="descripcion" value="DESCRIPCION :" style="font-weight: bold; color: red; width: 120px;" />
                                 </p:column>
                                 <p:column colspan="2">
                                     <p:inputText id="descripcion" value="#{frmProducto.mbProducto.producto.descripcion}" maxlength="50" size="55" />
@@ -75,7 +75,7 @@
                             </p:row>
                             <p:row>
                                 <p:column >
-                                    <h:outputLabel for="tipo" value="TIPO :"  style="font-weight: bold; color: red; width: 105px;" />
+                                    <h:outputLabel for="tipo" value="TIPO :"  style="font-weight: bold; color: red; width: 120px;" />
                                 </p:column>
                                 <p:column colspan="2" >
                                     <p:selectOneMenu id="tipo" value="#{frmProducto.mbProducto.producto.tipo}" style="width: 300px" >
@@ -86,7 +86,7 @@
                             </p:row>
                             <p:row >
                                 <p:column >
-                                    <h:outputLabel for="grupo" value="GRUPO :"  style="font-weight: bold; color: red; width: 105px;" />
+                                    <h:outputLabel for="grupo" value="GRUPO :"  style="font-weight: bold; color: red; width: 120px;" />
                                 </p:column>
                                 <p:column >
                                     <p:selectOneMenu id="grupo" value="#{frmProducto.mbProducto.producto.grupo}" style="width: 300px" >
@@ -104,7 +104,7 @@
                             </p:row>
                             <p:row >
                                 <p:column >
-                                    <h:outputLabel for="subGrupo" value="SUBGRUPO :"  style="font-weight: bold; color: red; width: 105px;" />
+                                    <h:outputLabel for="subGrupo" value="SUBGRUPO :"  style="font-weight: bold; color: red; width: 120px;" />
                                 </p:column>
                                 <p:column >
                                     <p:selectOneMenu id="subGrupo" value="#{frmProducto.mbProducto.producto.subGrupo}" style="width: 300px;" >
@@ -121,7 +121,7 @@
                             </p:row>
                             <p:row >
                                 <p:column >
-                                    <h:outputLabel for="marca" value="MARCA :" style="font-weight: bold; color: red; width: 105px;" />
+                                    <h:outputLabel for="marca" value="MARCA :" style="font-weight: bold; color: red; width: 120px;" />
                                 </p:column>
                                 <p:column >
                                     <p:selectOneMenu id="marca" value="#{frmProducto.mbProducto.producto.marca}" style="width: 300px;" >
@@ -137,11 +137,11 @@
                             </p:row>
                             <p:row >
                                 <p:column >
-                                    <h:outputLabel for="unidad" value="EMPAQUE :" style="font-weight: bold; color: red; width: 105px;" />
+                                    <h:outputLabel for="unidad" value="PRESENTACION :" style="font-weight: bold; color: red; width: 120px;" />
                                 </p:column>
                                 <p:column >
                                     <p:selectOneMenu id="unidad" value="#{frmProducto.mbProducto.producto.presentacion}" style="width: 300px;" >
-                                        <f:converter converterId="converters.Unidad" />
+                                        <f:converter converterId="converters.Presentacion" />
                                         <f:selectItems value="#{frmProducto.mbProducto.mbPresentacion.listaPresentaciones}" />
                                         <p:ajax event="change" listener="#{frmProducto.mbProducto.actualizarContenido()}" 
                                                 update="contenido unimed" />
@@ -155,7 +155,7 @@
                             </p:row>
                             <p:row >
                                 <p:column >
-                                    <h:outputLabel for="contenido" value="CONTENIDO :" style="font-weight: bold; color: red; width: 105px;" />
+                                    <h:outputLabel for="contenido" value="CONTENIDO :" style="font-weight: bold; color: red; width: 120px;" />
                                 </p:column>
                                 <p:column colspan="2">
                                     <p:inputText id="contenido" immediate="true" maxlength="7" size="10"
@@ -168,7 +168,7 @@
                             </p:row>
                             <p:row >
                                 <p:column >
-                                    <h:outputLabel for="unimed" value="UNID.MEDIDA :"  style="font-weight: bold; color: red; width: 105px;" />
+                                    <h:outputLabel for="unimed" value="UNIDAD MEDIDA :"  style="font-weight: bold; color: red; width: 120px;" />
                                 </p:column>
                                 <p:column colspan="2" >
                                     <p:selectOneMenu id="unimed" value="#{frmProducto.mbProducto.producto.unidadMedida}" style="width: 300px" 
@@ -180,7 +180,7 @@
                             </p:row>
                             <p:row >
                                 <p:column >
-                                    <h:outputLabel for="impuesto" value="IMPUESTO :"  style="font-weight: bold; color: red; width: 105px;" />
+                                    <h:outputLabel for="impuesto" value="IMPUESTO :"  style="font-weight: bold; color: red; width: 120px;" />
                                 </p:column>
                                 <p:column colspan="2" >
                                     <p:selectOneMenu id="impuesto" value="#{frmProducto.mbProducto.producto.impuesto}" style="width: 300px" >
@@ -199,7 +199,7 @@
                                                          process="@this mttoProductos" actionListener="#{frmProducto.mbProducto.grabar()}" 
                                                          update="messages mttoProductos" />
                                         <p:commandButton id="btnEliminarProducto" icon="ui-icon-trash" title="Eliminar Producto" 
-                                                         process="@this mttoProductos" 
+                                                         process="@this mttoProductos" disabled="#{frmProducto.mbProducto.producto.idProducto==0}" 
                                                          update="messages mttoProductos" />
                                     </p:column>
                                 </p:row>
@@ -253,7 +253,7 @@
                                                          process="@this txtGrupo" actionListener="#{frmProducto.mbProducto.grabarGrupo()}" 
                                                          update="grupo btnMttoSubGrupos" oncomplete="handleGrupo(xhr, status, args)" />
                                         <p:commandButton id="btnEliminarGrupo" value="Eliminar"
-                                                         disabled="#{frmProducto.mbProducto.mbGrupo.grupo.codigo>0}"
+                                                         disabled="#{frmProducto.mbProducto.mbGrupo.grupo.idGrupo==0 or not frmProducto.mbProducto.mbGrupo.grupo.codigo==0}"
                                                          process="@this" actionListener="#{frmProducto.mbProducto.eliminarGrupo()}"
                                                          update="grupo" oncomplete="handleGrupo(xhr, status, args)" />
                                     </p:column>

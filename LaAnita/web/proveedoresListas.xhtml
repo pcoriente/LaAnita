@@ -43,16 +43,15 @@
                                 </p:column>
                             </p:row>
                         </p:panelGrid>
-                        <p:dataTable id="listaProductos" value="#{mbListas.listaProductos}" filteredValue="#{mbListas.listaFiltrados}"
-                                     widgetVar="productosTable" var="producto" style="border:solid 1px" 
-                                     rowKey="#{producto.idProducto}" selectionMode="single" selection="#{mbListas.producto}"
-                                     scrollable="true" scrollHeight="300" emptyMessage="No hay elementos que desplegar">
+                        <p:dataTable id="listaProductos" widgetVar="productosTable" style="border:solid 1px"
+                                     value="#{mbListas.listaProductos}" filteredValue="#{mbListas.listaFiltrados}" emptyMessage="No hay elementos que desplegar"
+                                     var="producto" rowKey="#{producto.idProducto}" selectionMode="single" selection="#{mbListas.producto}"
+                                     scrollable="true" scrollHeight="300" >
                             <p:ajax event="rowSelect" update=":form:lnkModifProductoProveedor" />
 
                             <p:column filterBy="#{producto.sku}" filterMatchMode="contains" width="200" >
                                 <f:facet name="header" >
                                     <h:outputText value="SKU" />
-
                                 </f:facet>
                                 <h:outputText value="#{producto.sku}" />
                             </p:column>
@@ -93,7 +92,8 @@
                                     <h:outputLabel for="diasEntrega" value="DIAS ENTREGA :" styleClass="colorLetra"/>
                                 </p:column>
                                 <p:column colspan="4" >
-                                    <p:inputText id="diasEntrega" value="#{mbListas.productoLista.producto.diasEntrega}" readonly="true" maxlength="3" size="5" />
+                                    <p:inputText id="diasEntrega" value="#{mbListas.productoLista.producto.diasEntrega}" readonly="true" 
+                                                 maxlength="3" size="5" />
                                 </p:column>
                             </p:row>
                             <p:row >
@@ -162,9 +162,10 @@
                                 <p:column >
                                     <p:commandButton id="btnNuevoPrecio" icon="ui-icon-document" title="Nuevo cambio de precio" 
                                                      process="@this" actionListener="#{mbListas.mantenimientoPrecio(true)}" 
+                                                     disabled="#{not mbListas.mbAcciones.validarAccion('btnNuevoPrecio')}"
                                                      update="msgs2 mttoPrecios" oncomplete="mttoPreciosDlg.show()" />
                                     <p:commandButton id="btnMttoPrecio" icon="ui-icon-pencil" title="Modificar cambio de precio" 
-                                                     disabled="#{mbListas.precio==null}"
+                                                     disabled="#{not mbListas.mbAcciones.validarAccion('btnMttoPrecio') or mbListas.precio==null}"
                                                      process="@this" actionListener="#{mbListas.mantenimientoPrecio(false)}" 
                                                      update="msgs2 mttoPrecios" oncomplete="mttoPreciosDlg.show()" />
                                 </p:column>
@@ -204,9 +205,10 @@
                                 <p:column >
                                     <p:commandButton id="btnNuevaOferta" icon="ui-icon-document" title="Nueva Oferta" 
                                                      process="@this" actionListener="#{mbListas.mantenimientoOferta(true)}" 
+                                                     disabled="#{not mbListas.mbAcciones.validarAccion('btnNuevaOferta')}"
                                                      update="msgs2 mttoOfertas" oncomplete="mttoOfertasDlg.show()" />
                                     <p:commandButton id="btnMttoOferta" icon="ui-icon-pencil" title="Modificar Oferta" 
-                                                     disabled="#{mbListas.oferta==null}"
+                                                     disabled="#{not mbListas.mbAcciones.validarAccion('btnMttoOferta') or mbListas.oferta==null}"
                                                      process="@this" actionListener="#{mbListas.mantenimientoOferta(false)}" 
                                                      update="msgs2 mttoOfertas" oncomplete="mttoOfertasDlg.show()" />
                                 </p:column>
@@ -228,7 +230,7 @@
                                 <p:column >
                                     <h:outputLabel for="txtSKU" value="SKU :" style="font-weight: bold; color: red; width: 120px;" />
                                 </p:column>
-                                <p:column colspan="2">
+                                <p:column colspan="3">
                                     <p:inputText id="txtSKU" value="#{mbListas.mbProducto.producto.sku}" maxlength="20" size="25" />
                                 </p:column>
                             </p:row>
@@ -236,16 +238,17 @@
                                 <p:column >
                                     <h:outputLabel for="empaque" value="EMPAQUE :" style="font-weight: bold; color: red; width: 120px;" />
                                 </p:column>
-                                <p:column >
+                                <p:column style="width: 150px;" >
                                     <p:selectOneMenu id="empaque" value="#{mbListas.mbProducto.producto.unidadEmpaque}" >
                                         <f:converter converterId="converters.UnidadEmpaque" />
                                         <f:selectItems value="#{mbListas.mbProducto.listaEmpaques}" />
                                         <p:ajax event="change" listener="#{mbListas.mbProducto.actualizarPiezas()}" process="@this" update="txtPiezas" />
                                     </p:selectOneMenu>
                                 </p:column>
-                                <p:column >
+                                <p:column colspan="2" >
                                     <p:commandButton id="btnMttoEmpaques" icon="ui-icon-pencil" title="Mantenimiento de Empaques"
                                                      actionListener="#{mbListas.mbProducto.mttoUnidadesEmpaque()}" 
+                                                     disabled="#{not mbListas.mbAcciones.validarAccion('btnMttoEmpaques')}"
                                                      process="@this empaque" update="mttoUnidadesEmpaque" oncomplete="mttoUnidadesEmpaqueDlg.show()" />
                                 </p:column>
                             </p:row>
@@ -253,7 +256,7 @@
                                 <p:column >
                                     <h:outputLabel for="txtPiezas" value="PIEZAS :" style="font-weight: bold; color: red; width: 120px;" />
                                 </p:column>
-                                <p:column colspan="2">
+                                <p:column colspan="3">
                                     <pe:inputNumber id="txtPiezas" value="#{mbListas.mbProducto.producto.piezas}"
                                                     disabled="#{mbListas.mbProducto.producto.unidadEmpaque.idUnidad==0 || mbListas.mbProducto.producto.unidadEmpaque.idUnidad==1}"
                                                     decimalPlaces="0" minValue="0" maxlength="6" >
@@ -264,7 +267,7 @@
                                 <p:column >
                                     <h:outputLabel for="txtProducto" value="PRODUCTO :" style="font-weight: bold; color: red; width: 120px;" />
                                 </p:column>
-                                <p:column colspan="2">
+                                <p:column colspan="3">
                                     <p:inputText id="txtProducto" value="#{mbListas.mbProducto.producto.producto}" maxlength="80" size="85" />
                                 </p:column>
                             </p:row>
@@ -272,15 +275,16 @@
                                 <p:column >
                                     <h:outputLabel for="marca" value="MARCA :" style="font-weight: bold; color: red; width: 120px;" />
                                 </p:column>
-                                <p:column >
+                                <p:column style="width: 150px;" >
                                     <p:selectOneMenu id="marca" value="#{mbListas.mbProducto.producto.marca}" >
                                         <f:converter converterId="converters.Marca" />
                                         <f:selectItems value="#{mbListas.mbProducto.listaMarcas}" />
                                     </p:selectOneMenu>
                                 </p:column>
-                                <p:column >
+                                <p:column colspan="2" >
                                     <p:commandButton id="btnMttoMarcas" icon="ui-icon-pencil" title="Mantenimiento de Marcas" 
                                                      actionListener="#{mbListas.mbProducto.mttoMarcas()}" 
+                                                     disabled="#{not mbListas.mbAcciones.validarAccion('btnMttoMarcas')}"
                                                      process="@this marca" update="mttoMarcas" oncomplete="mttoMarcasDlg.show()" />
                                 </p:column>
                             </p:row>
@@ -288,16 +292,17 @@
                                 <p:column >
                                     <h:outputLabel for="presentacion" value="PRESENTACION :" style="font-weight: bold; color: red; width: 120px;" />
                                 </p:column>
-                                <p:column >
+                                <p:column style="width: 150px;" >
                                     <p:selectOneMenu id="presentacion" value="#{mbListas.mbProducto.producto.presentacion}" >
                                         <f:converter converterId="converters.Presentacion" />
                                         <f:selectItems value="#{mbListas.mbProducto.mbPresentacion.listaPresentaciones}" />
                                         <p:ajax event="change" listener="#{mbListas.mbProducto.actualizarContenido()}" process="@this" update="contenido unimed" />
                                     </p:selectOneMenu>
                                 </p:column>
-                                <p:column >
+                                <p:column colspan="2" >
                                     <p:commandButton id="btnMttoPresentacion" icon="ui-icon-pencil" title="Mantenimiento de Presentaciones" 
                                                      process="@this presentacion" actionListener="#{mbListas.mbProducto.mttoPresentacion()}" 
+                                                     disabled="#{not mbListas.mbAcciones.validarAccion('btnMttoPresentacion')}"
                                                      update="mttoPresentaciones" oncomplete="mttoPresentacionDlg.show()" />
                                 </p:column>
                             </p:row>
@@ -305,24 +310,18 @@
                                 <p:column >
                                     <h:outputLabel for="contenido" value="CONTENIDO :" style="font-weight: bold; color: red; width: 120px;" />
                                 </p:column>
-                                <p:column colspan="2">
+                                <p:column colspan="3">
                                     <pe:inputNumber id="contenido" value="#{mbListas.mbProducto.producto.contenido}"
                                                     decimalPlaces="3" minValue="0" 
                                                     required="true" requiredMessage="Se requiere un número" >
                                     </pe:inputNumber>
-                                    <!--
-                                    <p:inputText id="contenido" immediate="true" maxlength="7" size="10"
-                                                 required="true" requiredMessage="Se requiere un número" >
-                                        <f:convertNumber maxIntegerDigits="3" maxFractionDigits="3" pattern="##0.###" />
-                                    </p:inputText>
-                                    -->
                                 </p:column>
                             </p:row>
                             <p:row >
                                 <p:column >
                                     <h:outputLabel for="unimed" value="UNIDAD MEDIDA :"  style="font-weight: bold; color: red; width: 120px;" />
                                 </p:column>
-                                <p:column colspan="2" >
+                                <p:column colspan="3" >
                                     <p:selectOneMenu id="unimed" value="#{mbListas.mbProducto.producto.unidadMedida}" 
                                                      disabled="#{mbListas.mbProducto.producto.presentacion.idPresentacion==0 || mbListas.mbProducto.producto.presentacion.idPresentacion==1}" >
                                         <f:converter converterId="converters.UnidadMedida" />
@@ -334,7 +333,7 @@
                                 <p:column >
                                     <h:outputLabel for="impuesto" value="IMPUESTO :"  style="font-weight: bold; color: red; width: 120px;" />
                                 </p:column>
-                                <p:column colspan="2" >
+                                <p:column colspan="3" >
                                     <p:selectOneMenu id="impuesto" value="#{mbListas.mbProducto.producto.impuestoGrupo}" >
                                         <f:converter converterId="converters.ImpuestoGrupo" />
                                         <f:selectItems value="#{mbListas.mbProducto.mbImpuestoGrupo.listaGrupos}" />
@@ -345,33 +344,31 @@
                                 <p:column >
                                     <h:outputLabel for="txtDiasEntrega" value="DIAS ENTREGA :" style="font-weight: bold; color: red; width: 120px;" />
                                 </p:column>
-                                <p:column colspan="2">
+                                <p:column colspan="3">
                                     <pe:inputNumber id="txtDiasEntrega" value="#{mbListas.mbProducto.producto.diasEntrega}"
                                                     decimalPlaces="0" minValue="0" maxValue="999"
                                                     required="true" requiredMessage="Se requiere un número" >
                                     </pe:inputNumber>
-                                    <!--
-                                    <p:inputText id="txtDiasEntrega" maxlength="3" size="5" />
-                                    -->
                                 </p:column>
                             </p:row>
                             <p:row >
                                 <p:column >
                                     <h:outputLabel for="txtEquivalencia" value="EQUIVALENCIA :" style="font-weight: bold; color: red; width: 120px;" />
                                 </p:column>
-                                <p:column >
+                                <p:column colspan="2" >
                                     <p:inputText id="txtEquivalencia" value="#{mbListas.mbProducto.producto.equivalencia.toString()}" 
                                                  readonly="true" maxlength="120" size="80" />
                                 </p:column>
                                 <p:column >
-                                    <p:commandButton icon="ui-icon-search" title="Buscar Productos" 
+                                    <p:commandButton id="btnEquivalencias" icon="ui-icon-search" title="Buscar Productos" 
                                                      process="@this" actionListener="#{mbListas.mbBuscar.inicializar()}" 
+                                                     disabled="#{not mbListas.mbAcciones.validarAccion('btnEquivalencias')}"
                                                      update="buscarProductos listaBuscarProductos" oncomplete="buscarProductoDlg.show()" />
                                 </p:column>
                             </p:row>
                             <f:facet name="footer" >
                                 <p:row >
-                                    <p:column colspan="3" style="text-align: right;" >
+                                    <p:column colspan="4" style="text-align: right;" >
                                         <p:commandButton icon="ui-icon-disk" title="Grabar"
                                                          actionListener="#{mbListas.grabarProducto()}" 
                                                          update="messages0 panelProductoLista" oncomplete="handleProveedorProducto(xhr, status, args)" />
@@ -406,19 +403,23 @@
                             <f:facet name="footer" >
                                 <p:row >
                                     <p:column colspan="2" >
-                                        <p:commandButton id="btnGrabarUnidadEmpaque" value="Grabar" 
+                                        <p:commandButton id="btnGrabarUnidadEmpaque" icon="ui-icon-disk" title="Grabar Unidad de Empaque"
                                                          process="@this txtUnidadEmpaque txtUnidadEmpaqueAbrev" 
                                                          actionListener="#{mbListas.mbProducto.grabarUnidadEmpaque()}"
-                                                         update="empaque" oncomplete="handleUnidadEmpaque(xhr, status, args)" />
-                                        <p:commandButton id="btnEliminarUnidadEmpaque" value="Eliminar" 
-                                                         disabled="#{frmProducto.mbEmpaque.mbUnidadEmpaque.unidad.idUnidad==0}" 
-                                                         process="@this" actionListener="#{mbListas.mbProducto.eliminarUnidadEmpaque()}" 
-                                                         update="empaque" oncomplete="handleUnidadEmpaque(xhr, status, args)" />
+                                                         update="msgEmpaques empaque txtPiezas" oncomplete="handleUnidadEmpaque(xhr, status, args)" />
+                                        <p:commandButton id="btnEliminarUnidadEmpaque" icon="ui-icon-trash" title="Eliminar Unidad de Empaque" 
+                                                         disabled="#{not mbListas.mbAcciones.validarAccion('btnEliminarUnidadEmpaque') or mbListas.mbProducto.mbUnidadEmpaque.unidad.idUnidad==0}" 
+                                                         onclick="eUnidadEmpaque.show();" />
                                     </p:column>
                                 </p:row>
                             </f:facet>
                         </p:panelGrid>
                     </p:dialog>
+                    <p:confirmDialog  message="Está seguro ?" header="Eliminar unidad de empaque ?" widgetVar="eUnidadEmpaque" >
+                        <p:commandButton value="No, cancelar" onclick="eUnidadEmpaque.hide();" type="button" />
+                        <p:commandButton value="Si, seguro" actionListener="#{mbListas.mbProducto.eliminarUnidadEmpaque()}" 
+                                         update="msgEmpaques empaque txtPiezas" oncomplete="eUnidadEmpaque.hide();handleUnidadEmpaque(xhr, status, args);" />
+                    </p:confirmDialog>
                     <p:dialog header="MANTENIMIENTO DE MARCAS" widgetVar="mttoMarcasDlg" resizable="false" style="width: 500px;" modal="true" >
                         <p:messages id="msgMarcas" showDetail="true" autoUpdate="true" closable="true" />
                         <p:panelGrid id="mttoMarcas" styleClass="sinBorde" >
@@ -446,18 +447,22 @@
                             <f:facet name="footer" >
                                 <p:row >
                                     <p:column colspan="2" >
-                                        <p:commandButton id="btnGrabarMarca" value="Grabar" 
+                                        <p:commandButton id="btnGrabarMarca" icon="ui-icon-disk" title="Grabar Marca"
                                                          process="@this fabricante txtMarca" actionListener="#{mbListas.mbProducto.grabarMarca()}" 
-                                                         update="marca" oncomplete="handleMarca(xhr, status, args)" />
-                                        <p:commandButton id="btnEliminarMarca" value="Eliminar" 
-                                                         disabled="#{mbListas.mbProducto.mbMarca.marca.idMarca==0}"
-                                                         process="@this" actionListener="#{frmProducto.mbProducto.eliminarMarca()}" 
-                                                         update="marca" oncomplete="handleMarca(xhr, status, args)" />
+                                                         update="msgMarcas marca" oncomplete="handleMarca(xhr, status, args)" />
+                                        <p:commandButton id="btnEliminarMarca" icon="ui-icon-trash" title="Eliminar Marca" 
+                                                         disabled="#{not mbListas.mbAcciones.validarAccion('btnEliminarMarca') or mbListas.mbProducto.mbMarca.marca.idMarca==0}"
+                                                         onclick="eMarca.show();" />
                                     </p:column>
                                 </p:row>
                             </f:facet>
                         </p:panelGrid>
                     </p:dialog>
+                    <p:confirmDialog  message="Está seguro ?" header="Eliminar marca ?" widgetVar="eMarca" >
+                        <p:commandButton value="No, cancelar" onclick="eMarca.hide();" type="button" />
+                        <p:commandButton value="Si, seguro" actionListener="#{mbListas.mbProducto.eliminarMarca()}" 
+                                         update="msgMarcas marca" oncomplete="eMarca.hide();handleMarca(xhr, status, args);" />
+                    </p:confirmDialog>
                     <p:dialog header="MANTENIMIENTO DE PRESENTACIONES" widgetVar="mttoPresentacionDlg" resizable="false" style="width: 500px;" modal="true" >
                         <p:messages id="msgPresentaciones" showDetail="true" autoUpdate="true" closable="true" />
                         <p:panelGrid id="mttoPresentaciones" styleClass="sinBorde">
@@ -482,19 +487,24 @@
                             <f:facet name="footer" >
                                 <p:row >
                                     <p:column colspan="2" >
-                                        <p:commandButton id="btnGrabarPresentacion" value="Grabar" 
+                                        <p:commandButton id="btnGrabarPresentacion" icon="ui-icon-disk" title="Grabar Presentación"
                                                          process="@this txtPresentacion txtPresentacionAbrev" 
                                                          actionListener="#{mbListas.mbProducto.grabarPresentacion()}"
-                                                         update="presentacion contenido unimed" oncomplete="handlePresentacion(xhr, status, args)" />
-                                        <p:commandButton id="btnEliminarPresentacion" value="Eliminar" 
-                                                         disabled="#{mbListas.mbProducto.mbPresentacion.presentacion.idPresentacion==0}" 
-                                                         process="@this" actionListener="#{mbListas.mbProducto.eliminarPresentacion()}"
-                                                         update="presentacion contenido unimed" oncomplete="handlePresentacion(xhr, status, args)" />
+                                                         update="msgPresentaciones presentacion contenido unimed" oncomplete="handlePresentacion(xhr, status, args)" />
+                                        <p:commandButton id="btnEliminarPresentacion" icon="ui-icon-trash" title="Eliminar Presentacion" 
+                                                         disabled="#{not mbListas.mbAcciones.validarAccion('btnEliminarPresentacion') or mbListas.mbProducto.mbPresentacion.presentacion.idPresentacion==0}" 
+                                                         onclick="ePresentacion.show();" />
                                     </p:column>
                                 </p:row>
                             </f:facet>
                         </p:panelGrid>
                     </p:dialog>
+                    <p:confirmDialog  message="Está seguro ?" header="Eliminar presentación ?" widgetVar="ePresentacion" >
+                        <p:commandButton value="No, cancelar" onclick="ePresentacion.hide();" type="button" />
+                        <p:commandButton value="Si, seguro" actionListener="#{mbListas.mbProducto.eliminarPresentacion()}" 
+                                         update="msgPresentaciones presentacion contenido unimed" 
+                                         oncomplete="ePresentacion.hide();handlePresentacion(xhr, status, args);" />
+                    </p:confirmDialog>
                     <p:dialog header="MANTENIMIENTO DE OFERTA" widgetVar="mttoOfertasDlg" resizable="false" style="width: 500px;" modal="true" >
                         <p:messages id="msgOfertas" showDetail="true" closable="true" />
                         <p:panelGrid id="mttoOfertas" >
@@ -587,6 +597,7 @@
                                                          actionListener="#{mbListas.grabarOferta()}" 
                                                          update="msgOfertas panelProductoLista" oncomplete="handleOfertas(xhr, status, args)" />
                                         <p:commandButton id="btnEliminarOferta" icon="ui-icon-trash" title="Eliminar Oferta" 
+                                                         disabled="#{not mbListas.mbAcciones.validarAccion('btnEliminarOferta') or mbListas.mbOfertas.oferta.nuevo}" 
                                                          onclick="eOferta.show();" />
                                     </p:column>
                                 </p:row>
@@ -685,13 +696,14 @@
                                                          actionListener="#{mbListas.grabarPrecio()}" 
                                                          update="msgPrecios panelProductoLista" oncomplete="handlePrecios(xhr, status, args)" />
                                         <p:commandButton id="btnEliminarPrecio" icon="ui-icon-trash" title="Eliminar Precio" 
+                                                         disabled="#{not mbListas.mbAcciones.validarAccion('btnEliminarPrecio') or mbListas.mbPrecios.precio.nuevo}"
                                                          onclick="ePrecio.show();" />
                                     </p:column>
                                 </p:row>
                             </f:facet>
                         </p:panelGrid>
                     </p:dialog>
-                    <p:confirmDialog message="Esta seguro de eliminar el cambio de precio ?" header="Eliminar cambio de precio" widgetVar="ePrecio" >
+                    <p:confirmDialog  message="Esta seguro de eliminar el cambio de precio ?" header="Eliminar cambio de precio" widgetVar="ePrecio" >
                         <p:commandButton value="No, cancelar" onclick="ePrecio.hide();" type="button" />
                         <p:commandButton value="Si, seguro" actionListener="#{mbListas.eliminarPrecio()}" 
                                          update="msgPrecios panelProductoLista" 

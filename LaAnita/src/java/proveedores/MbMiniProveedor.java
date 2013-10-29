@@ -29,10 +29,13 @@ public class MbMiniProveedor implements Serializable {
     //////////////////////////////M E T O D O S
     public ArrayList<SelectItem> obtenerListaMiniProveedor() throws NamingException {
         try {
+            this.listaMiniProveedores=new ArrayList<SelectItem>();
+            
             MiniProveedor p0 = new MiniProveedor();
             p0.setIdProveedor(0);
             p0.setProveedor("Proveedor....");
             listaMiniProveedores.add(new SelectItem(p0, p0.toString()));
+            
             DAOMiniProveedores daoP = new DAOMiniProveedores();
             ArrayList<MiniProveedor> proveedores = daoP.obtenerProveedores();
             for (MiniProveedor e : proveedores) {

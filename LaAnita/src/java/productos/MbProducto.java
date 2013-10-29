@@ -286,7 +286,7 @@ public class MbProducto implements Serializable {
         } else if(this.producto.getContenido()==0) {
             this.producto.setContenido(1);
         }
-        this.producto.setUnidadMedida(new UnidadMedida(0, "", "", 0));
+        this.producto.setUnidadMedida(new UnidadMedida(0, "", ""));
     }
 
     public void nuevo() {
@@ -383,7 +383,7 @@ public class MbProducto implements Serializable {
 
     public void cargaUnidadesMedida() {
         this.listaUnidadesMedida = new ArrayList<SelectItem>();
-        UnidadMedida unid = new UnidadMedida(0, "SELECCIONE", "", 0);
+        UnidadMedida unid = new UnidadMedida(0, "SELECCIONE", "");
         this.listaUnidadesMedida.add(new SelectItem(unid, unid.toString()));
         try {
             DAOUnidadesMedida daoUnidades = new DAOUnidadesMedida();

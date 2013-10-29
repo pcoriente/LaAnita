@@ -139,8 +139,8 @@ public class DAOProveedoresProductos {
         pp.setProducto(rs.getString("producto"));
         pp.setPresentacion(new Presentacion(rs.getInt("idPresentacion"), rs.getString("presentacion"), rs.getString("presAbrev")));
         pp.setContenido(rs.getDouble("contenido"));
-        pp.setUnidadMedida(new UnidadMedida(rs.getInt("idUnidadMedida1"), rs.getString("unidadMedida1"), rs.getString("abreviatura1"), 0));
-        pp.setUnidadMedida2(new UnidadMedida(rs.getInt("idUnidadMedida2"), rs.getString("unidadMedida2"), rs.getString("abreviatura2"), 0));
+        pp.setUnidadMedida(new UnidadMedida(rs.getInt("idUnidadMedida1"), rs.getString("unidadMedida1"), rs.getString("abreviatura1")));
+        pp.setUnidadMedida2(new UnidadMedida(rs.getInt("idUnidadMedida2"), rs.getString("unidadMedida2"), rs.getString("abreviatura2")));
         pp.setImpuestoGrupo(new ImpuestoGrupo(rs.getInt("idGrupo"), rs.getString("grupo")));
         pp.setEquivalencia(new Empaque(rs.getInt("idEquivalencia")));
         return pp;

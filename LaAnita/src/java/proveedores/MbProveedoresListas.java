@@ -165,6 +165,7 @@ public class MbProveedoresListas implements Serializable {
         this.listaFiltrados=null;
         this.producto=null;
         this.mbOfertas.setOfertas(null);
+        this.mbPrecios.setPrecios(null);
         return "proveedoresListas.xhtml";
     }
     

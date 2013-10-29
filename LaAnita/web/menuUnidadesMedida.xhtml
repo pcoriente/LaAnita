@@ -17,7 +17,7 @@
             <div id="content" align="left" >
                 <h:form id="main" >
                     <div align="right">
-                        <p:commandButton icon="ui-icon-document" title="Nueva Unidad de Medida" 
+                        <p:commandButton id="btnNuevaUnidadMedida" icon="ui-icon-document" title="Nueva Unidad de Medida" 
                                          action="#{mbUnidadMedida.mantenimiento(0)}" 
                                          ajax="false" immediate="true" />
                         <p:commandButton icon="ui-icon-home" title="Terminar" 
@@ -48,7 +48,8 @@
                             </p:column>
                             
                             <p:column  headerText="Procesos" style="width: 5px; height: 10px" >
-                                <h:commandLink action="#{mbUnidadMedida.mantenimiento(unid.idUnidadMedida)}" >
+                                <h:commandLink id="lnkMttoUnidadMedida" action="#{mbUnidadMedida.mantenimiento(unid.idUnidadMedida)}" 
+                                               disabled="" >
                                     <h:graphicImage  library="images" name="build.png" style="width: 15px; " /> 
                                 </h:commandLink>
                             </p:column>

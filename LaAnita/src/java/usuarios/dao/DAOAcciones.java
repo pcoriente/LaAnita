@@ -42,7 +42,7 @@ public class DAOAcciones {
         try {
             String strSQL="SELECT a.idAccion, a.accion, a.idBoton "
                     + "FROM usuarioPerfil up "
-                    + "INNER JOIN systemWeb.dbo.acciones a ON a.idAccion=up.idAccion "
+                    + "INNER JOIN webSystem.dbo.acciones a ON a.idAccion=up.idAccion "
                     + "WHERE up.idPerfil="+this.idPerfil+" AND up.idModulo="+idModulo;
             ResultSet rs=st.executeQuery(strSQL);
             while(rs.next()) {
