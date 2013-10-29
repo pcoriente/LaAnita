@@ -32,8 +32,9 @@ public class MbOrdenCompra implements Serializable {
     @ManagedProperty(value = "#{mbCotizaciones}")
     private MbCotizaciones mbCotizaciones;
     private ArrayList<OrdenCompraEncabezado> listaOrdenesEncabezado;
-   
     private OrdenCompraDetalle ordenElegida;
+    private ArrayList<OrdenCompraDetalle> listaOrdenDetalle;
+    private OrdenCompraDetalle ordenCompraDetalle;
 
     public MbOrdenCompra() {
         this.mbFacturas = new MbFacturas();
@@ -41,6 +42,7 @@ public class MbOrdenCompra implements Serializable {
         this.ordenCompraEncabezado = new OrdenCompraEncabezado();
         this.productos = new ArrayList<OrdenCompraDetalle>();
         this.mbCotizaciones = new MbCotizaciones();
+
     }
 
     //M E T O D O S 
@@ -53,8 +55,26 @@ public class MbOrdenCompra implements Serializable {
             listaOrdenesEncabezado.add(d);
         }
     }
-    // GET Y SETS
 
+    public void dameProductos(String idOrden) throws SQLException {
+
+        listaOrdenesEncabezado = new ArrayList<OrdenCompraEncabezado>();
+        try {
+            int idOC = ordenElegida.getIdOrdenCompra();
+            DAOOrdenDeCompra daoOC = new DAOOrdenDeCompra();
+            listaOrdenDetalle = daoOC.consultaOrdenCompra(idOC);
+
+            for (OrdenCompraDetalle d : listaOrdenDetalle) {
+              //  this.setNombreProduc(d.getProducto().toString());
+            }
+
+        } catch (NamingException ex) {
+            Logger.getLogger(MbCotizaciones.class.getName()).log(Level.SEVERE, null, ex);
+        } 
+
+    }
+
+    // GET Y SETS
     public MbFacturas getMbFacturas() {
         return mbFacturas;
     }
@@ -110,7 +130,27 @@ public class MbOrdenCompra implements Serializable {
         this.listaOrdenesEncabezado = listaOrdenesEncabezado;
     }
 
-    
+    public OrdenCompraDetalle getOrdenElegida() {
+        return ordenElegida;
+    }
 
-    
+    public void setOrdenElegida(OrdenCompraDetalle ordenElegida) {
+        this.ordenElegida = ordenElegida;
+    }
+
+    public ArrayList<OrdenCompraDetalle> getListaOrdenDetalle() {
+        return listaOrdenDetalle;
+    }
+
+    public void setListaOrdenDetalle(ArrayList<OrdenCompraDetalle> listaOrdenDetalle) {
+        this.listaOrdenDetalle = listaOrdenDetalle;
+    }
+
+    public OrdenCompraDetalle getOrdenCompraDetalle() {
+        return ordenCompraDetalle;
+    }
+
+    public void setOrdenCompraDetalle(OrdenCompraDetalle ordenCompraDetalle) {
+        this.ordenCompraDetalle = ordenCompraDetalle;
+    }
 }

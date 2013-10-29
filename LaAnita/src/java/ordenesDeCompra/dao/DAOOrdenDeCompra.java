@@ -12,6 +12,7 @@ import javax.naming.InitialContext;
 import javax.naming.NamingException;
 import javax.servlet.http.HttpSession;
 import javax.sql.DataSource;
+import ordenesDeCompra.dominio.OrdenCompraDetalle;
 import ordenesDeCompra.dominio.OrdenCompraEncabezado;
 import usuarios.UsuarioSesion;
 
@@ -50,7 +51,7 @@ public class DAOOrdenDeCompra {
             Statement sentencia = cn.createStatement();
             rs = sentencia.executeQuery(stringSQL);
             while (rs.next()) {
-                lista.add(construir(rs));
+                lista.add(construirOCEncabezado(rs));
             }
         } finally {
             cn.close();
@@ -58,7 +59,7 @@ public class DAOOrdenDeCompra {
         return lista;
     }
 
-    private OrdenCompraEncabezado construir(ResultSet rs) throws SQLException {
+    private OrdenCompraEncabezado construirOCEncabezado(ResultSet rs) throws SQLException {
         OrdenCompraEncabezado oce = new OrdenCompraEncabezado();
         oce.setIdOrdenCompra(rs.getInt("idOrdenCompra"));
         oce.setIdCotizacion(rs.getInt("idCotizacion"));
@@ -71,5 +72,34 @@ public class DAOOrdenDeCompra {
         oce.setFechaEntrega(utilerias.Utilerias.date2String(rs.getDate("fechaEntrega")));
         oce.setEstado(rs.getInt("estado"));
         return oce;
+    }
+
+    public ArrayList<OrdenCompraDetalle> consultaOrdenCompra(int idOC) throws SQLException {
+        ArrayList<OrdenCompraDetalle> lista = new ArrayList<OrdenCompraDetalle>();
+        ResultSet rs;
+        Connection cn = ds.getConnection();
+        try {
+
+            String stringSQL = "select oc.idOrdenCompra, oc.idCotizacion, cd.idProducto, cd.cantidadCotizada, cd.costoCotizado,cd.descuentoProducto, cd.descuentoProducto2\n"
+                    + "from ordencompra oc\n"
+                    + "inner join cotizacionesDetalle cd on cd.idCotizacion = oc.idCotizacion\n"
+                    + "where oc.idOrdenCompra= 1";
+
+            Statement sentencia = cn.createStatement();
+            rs = sentencia.executeQuery(stringSQL);
+            while (rs.next()) {
+                lista.add(construirOCDetalle(rs));
+            }
+        } finally {
+            cn.close();
+        }
+        return lista;
+    }
+
+    private OrdenCompraDetalle construirOCDetalle(ResultSet rs)  {
+        OrdenCompraDetalle ocd = new OrdenCompraDetalle();
+        
+
+        return ocd;
     }
 }

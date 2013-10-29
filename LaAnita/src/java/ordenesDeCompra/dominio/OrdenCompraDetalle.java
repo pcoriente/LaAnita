@@ -1,42 +1,54 @@
 package ordenesDeCompra.dominio;
 
+import cotizaciones.dominio.CotizacionDetalle;
 import java.io.Serializable;
 import productos.dominio.Producto;
 
-/**
- *
- * @author jsolis
- */
+
 public class OrdenCompraDetalle implements Serializable {
-    private int idDocto;
+
+   
     private Producto producto;
-    private double cantOrdenada;
-    private double cantFacturada;
-    private double cantRecibida;
-    private double costo;
-    private double descuento;
-    private double cantSinCargo;
-    private double costoNeto;
+   
+    private CotizacionDetalle cotizacionDetalle;
+    
+    private int idOrdenCompra;
+    private int idEmpaque;
+    private String sku;
+    private double cantidadSolicitada;
+    private double desctoProducto;
+    private double desctoProducto2;
+    private double desctoConfidencial;
+    private int sinCargoBase;
+    private int sinCargoCant;
+    private double ptjeOferte;
+    private double margen;
+    private int IdImpuestosGrupo;
+    private int idMarca;
+            
 
-    public OrdenCompraDetalle(int idDocto, Producto producto) {
-        this.idDocto=idDocto;
-        this.producto=producto;
-        this.cantOrdenada=0.00;
-        this.cantFacturada=0.00;
-        this.cantRecibida=0.00;
-        this.costo=0.00;
-        this.descuento=0.00;
-        this.cantSinCargo=0.00;
-        this.costoNeto=0.00;
+    public OrdenCompraDetalle() {
     }
 
-    public int getIdDocto() {
-        return idDocto;
+    public OrdenCompraDetalle(Producto producto, CotizacionDetalle cotizacionDetalle, int idOrdenCompra, int idEmpaque, String sku, double cantidadSolicitada, double desctoProducto, double desctoProducto2, double desctoConfidencial, int sinCargoBase, int sinCargoCant, double ptjeOferte, double margen, int IdImpuestosGrupo, int idMarca) {
+        this.producto = producto;
+        this.cotizacionDetalle = cotizacionDetalle;
+        this.idOrdenCompra = 0;
+        this.idEmpaque = 0;
+        this.sku ="";
+        this.cantidadSolicitada =0.00;
+        this.desctoProducto = 0.00;
+        this.desctoProducto2 = 0.00;
+        this.desctoConfidencial = 0.00;
+        this.sinCargoBase = 0;
+        this.sinCargoCant = 0;
+        this.ptjeOferte = 0.00;
+        this.margen = 0.00;
+        this.IdImpuestosGrupo = 0;
+        this.idMarca = 0;
     }
-
-    public void setIdDocto(int idDocto) {
-        this.idDocto = idDocto;
-    }
+    
+    
 
     public Producto getProducto() {
         return producto;
@@ -46,59 +58,117 @@ public class OrdenCompraDetalle implements Serializable {
         this.producto = producto;
     }
 
-    public double getCantOrdenada() {
-        return cantOrdenada;
+    public CotizacionDetalle getCotizacionDetalle() {
+        return cotizacionDetalle;
     }
 
-    public void setCantOrdenada(double cantOrdenada) {
-        this.cantOrdenada = cantOrdenada;
+    public void setCotizacionDetalle(CotizacionDetalle cotizacionDetalle) {
+        this.cotizacionDetalle = cotizacionDetalle;
     }
 
-    public double getCantFacturada() {
-        return cantFacturada;
+    public int getIdOrdenCompra() {
+        return idOrdenCompra;
     }
 
-    public void setCantFacturada(double cantFacturada) {
-        this.cantFacturada = cantFacturada;
+    public void setIdOrdenCompra(int idOrdenCompra) {
+        this.idOrdenCompra = idOrdenCompra;
     }
 
-    public double getCantRecibida() {
-        return cantRecibida;
+    public int getIdEmpaque() {
+        return idEmpaque;
     }
 
-    public void setCantRecibida(double cantRecibida) {
-        this.cantRecibida = cantRecibida;
+    public void setIdEmpaque(int idEmpaque) {
+        this.idEmpaque = idEmpaque;
     }
 
-    public double getCosto() {
-        return costo;
+    public String getSku() {
+        return sku;
     }
 
-    public void setCosto(double costo) {
-        this.costo = costo;
+    public void setSku(String sku) {
+        this.sku = sku;
     }
 
-    public double getDescuento() {
-        return descuento;
+    public double getCantidadSolicitada() {
+        return cantidadSolicitada;
     }
 
-    public void setDescuento(double descuento) {
-        this.descuento = descuento;
+    public void setCantidadSolicitada(double cantidadSolicitada) {
+        this.cantidadSolicitada = cantidadSolicitada;
     }
 
-    public double getCantSinCargo() {
-        return cantSinCargo;
+    public double getDesctoProducto() {
+        return desctoProducto;
     }
 
-    public void setCantSinCargo(double cantSinCargo) {
-        this.cantSinCargo = cantSinCargo;
+    public void setDesctoProducto(double desctoProducto) {
+        this.desctoProducto = desctoProducto;
     }
 
-    public double getCostoNeto() {
-        return costoNeto;
+    public double getDesctoProducto2() {
+        return desctoProducto2;
     }
 
-    public void setCostoNeto(double costoNeto) {
-        this.costoNeto = costoNeto;
+    public void setDesctoProducto2(double desctoProducto2) {
+        this.desctoProducto2 = desctoProducto2;
     }
+
+    public double getDesctoConfidencial() {
+        return desctoConfidencial;
+    }
+
+    public void setDesctoConfidencial(double desctoConfidencial) {
+        this.desctoConfidencial = desctoConfidencial;
+    }
+
+    public int getSinCargoBase() {
+        return sinCargoBase;
+    }
+
+    public void setSinCargoBase(int sinCargoBase) {
+        this.sinCargoBase = sinCargoBase;
+    }
+
+    public int getSinCargoCant() {
+        return sinCargoCant;
+    }
+
+    public void setSinCargoCant(int sinCargoCant) {
+        this.sinCargoCant = sinCargoCant;
+    }
+
+    public double getPtjeOferte() {
+        return ptjeOferte;
+    }
+
+    public void setPtjeOferte(double ptjeOferte) {
+        this.ptjeOferte = ptjeOferte;
+    }
+
+    public double getMargen() {
+        return margen;
+    }
+
+    public void setMargen(double margen) {
+        this.margen = margen;
+    }
+
+    public int getIdImpuestosGrupo() {
+        return IdImpuestosGrupo;
+    }
+
+    public void setIdImpuestosGrupo(int IdImpuestosGrupo) {
+        this.IdImpuestosGrupo = IdImpuestosGrupo;
+    }
+
+    public int getIdMarca() {
+        return idMarca;
+    }
+
+    public void setIdMarca(int idMarca) {
+        this.idMarca = idMarca;
+    }
+
+   
 }

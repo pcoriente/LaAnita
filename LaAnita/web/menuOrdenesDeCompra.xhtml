@@ -39,13 +39,13 @@
                                      value="#{mbOrdenCompra.listaOrdenesEncabezado}"
                                      var="oc" 
                                      rowKey="#{oc}"
-                                     selection="#{mbOrdenCompra.ordenSeleccionada}"
+                                     selection="#{mbOrdenCompra.ordenElegida}"
                                      selectionMode="single"
                                      >
                             <p:ajax event="rowSelect" 
-                                    listener="#{mbCotizaciones.dameProductos(prov.producto.toString())}"
+                                    listener="#{mbCotizaciones.dameProductos(oc.idOrdenCompra)}"
                                     update=":form:productos :form:producto"
-                                    oncomplete="cotizaciones.show();"/>
+                                    oncomplete="odec.show();"/>
                             <p:column sortBy="#{oc.idOrdenCompra}" filterBy="#{oc.idOrdenCompra}" headerText="OC" filterMatchMode="contains" width="30"  >
                                 <h:outputText value="#{oc.idOrdenCompra}"   />
                             </p:column>
@@ -91,7 +91,7 @@
 
 
                     <!-- SELECCION DE PRODUCTOS POR PROVEEDOR PARA LA ORDEN DE COMPRA -->
-                    <p:dialog widgetVar="ocDialog">
+                    <p:dialog widgetVar="odec">
                         <p:panelGrid>
                             <p:row>
                                 <p:column style="color: blueviolet; background-color: #999999 " >
