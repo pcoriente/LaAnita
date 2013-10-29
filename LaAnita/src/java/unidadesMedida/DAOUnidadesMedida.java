@@ -76,7 +76,7 @@ public class DAOUnidadesMedida {
         try {
             ResultSet rs=st.executeQuery(strSQL);
             while(rs.next()) {
-                unidades.add(new UnidadMedida(rs.getInt("idUnidadMedida"), rs.getString("unidadMedida"), rs.getString("abreviatura"), 0));
+                unidades.add(new UnidadMedida(rs.getInt("idUnidadMedida"), rs.getString("unidadMedida"), rs.getString("abreviatura")));
             }
         } finally {
             cn.close();
@@ -92,7 +92,7 @@ public class DAOUnidadesMedida {
         try {
             ResultSet rs=st.executeQuery(strSQL);
             if(rs.next()) {
-                unidad=new UnidadMedida(rs.getInt("idUnidadMedida"), rs.getString("unidadMedida"), rs.getString("abreviatura"), 0);
+                unidad=new UnidadMedida(rs.getInt("idUnidadMedida"), rs.getString("unidadMedida"), rs.getString("abreviatura"));
             }
         } finally {
             cn.close();

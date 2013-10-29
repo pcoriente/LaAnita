@@ -153,7 +153,7 @@ public class MbProveedorProducto implements Serializable {
         if (this.mbPresentacion.eliminar()) {
             this.producto.setPresentacion(new Presentacion());
             this.producto.setContenido(0);
-            this.producto.setUnidadMedida(new UnidadMedida(0, "", "", 0));
+            this.producto.setUnidadMedida(new UnidadMedida(0, "", ""));
             this.mbPresentacion.setListaPresentaciones(null);
         }
     }
@@ -225,7 +225,7 @@ public class MbProveedorProducto implements Serializable {
         } else if (this.producto.getContenido() == 0) {
             this.producto.setContenido(1);
         }
-        this.producto.setUnidadMedida(new UnidadMedida(0, "", "", 0));
+        this.producto.setUnidadMedida(new UnidadMedida(0, "", ""));
     }
 
     public void actualizarPiezas() {
@@ -268,7 +268,7 @@ public class MbProveedorProducto implements Serializable {
 
     public void cargaUnidadesMedida() {
         this.listaUnidadesMedida = new ArrayList<SelectItem>();
-        UnidadMedida unid = new UnidadMedida(0, "SELECCIONE", "", 0);
+        UnidadMedida unid = new UnidadMedida(0, "SELECCIONE", "");
         this.listaUnidadesMedida.add(new SelectItem(unid, unid.toString()));
         try {
             DAOUnidadesMedida daoUnidades = new DAOUnidadesMedida();
@@ -346,9 +346,9 @@ public class MbProveedorProducto implements Serializable {
         unidadEmpaque.setUnidad(producto.getUnidadEmpaque().getUnidad());
         unidadEmpaque.setAbreviatura(producto.getUnidadEmpaque().getAbreviatura());
         this.producto.setUnidadEmpaque(unidadEmpaque);
-        UnidadMedida unidadMedida = new UnidadMedida(producto.getUnidadMedida().getIdUnidadMedida(), producto.getUnidadMedida().getUnidadMedida(), producto.getUnidadMedida().getAbreviatura(), producto.getUnidadMedida().getIdTipo());
+        UnidadMedida unidadMedida = new UnidadMedida(producto.getUnidadMedida().getIdUnidadMedida(), producto.getUnidadMedida().getUnidadMedida(), producto.getUnidadMedida().getAbreviatura());
         this.producto.setUnidadMedida(unidadMedida);
-        UnidadMedida unidadMedida2 = new UnidadMedida(producto.getUnidadMedida2().getIdUnidadMedida(), producto.getUnidadMedida2().getUnidadMedida(), producto.getUnidadMedida2().getAbreviatura(), producto.getUnidadMedida2().getIdTipo());
+        UnidadMedida unidadMedida2 = new UnidadMedida(producto.getUnidadMedida2().getIdUnidadMedida(), producto.getUnidadMedida2().getUnidadMedida(), producto.getUnidadMedida2().getAbreviatura());
         this.producto.setUnidadMedida2(unidadMedida2);
         this.producto.setPresentacion(new Presentacion(producto.getPresentacion().getIdPresentacion(), producto.getPresentacion().getPresentacion(), producto.getPresentacion().getAbreviatura()));
         this.producto.setImpuestoGrupo(new ImpuestoGrupo(producto.getImpuestoGrupo().getIdGrupo(), producto.getImpuestoGrupo().getGrupo()));

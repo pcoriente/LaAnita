@@ -19,7 +19,7 @@ public class UnidadMedidaConverter implements Converter{
         try {
             int idUnidad=Integer.parseInt(value);
             if(idUnidad==0) {
-                unidad=new UnidadMedida(0, "", "", 0);
+                unidad=new UnidadMedida(0, "", "");
             } else {
                 DAOUnidadesMedida dao=new DAOUnidadesMedida();
                 unidad=dao.obtenerUnidad(idUnidad);

@@ -40,8 +40,8 @@ public class ProveedorProducto {
         this.producto="";
         this.presentacion=new Presentacion();
         this.contenido=0;
-        this.unidadMedida=new UnidadMedida(0, "", "", 0);
-        this.unidadMedida2=new UnidadMedida(0, "", "", 0);
+        this.unidadMedida=new UnidadMedida(0, "", "");
+        this.unidadMedida2=new UnidadMedida(0, "", "");
         this.impuestoGrupo=new ImpuestoGrupo(0, "");
         this.idFactura=0;
         this.ultimaCompraFecha=null;
