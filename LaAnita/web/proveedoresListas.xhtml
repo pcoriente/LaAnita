@@ -162,7 +162,7 @@
                                 <p:column >
                                     <p:commandButton id="btnNuevoPrecio" icon="ui-icon-document" title="Nuevo cambio de precio" 
                                                      process="@this" actionListener="#{mbListas.mantenimientoPrecio(true)}" 
-                                                     disabled="#{not mbListas.mbAcciones.validarAccion('btnNuevoPrecio')}"
+                                                     disabled="#{not mbListas.mbAcciones.validarAccion('btnNuevoPrecio') or mbListas.productoLista.producto.idProducto==0}"
                                                      update="msgs2 mttoPrecios" oncomplete="mttoPreciosDlg.show()" />
                                     <p:commandButton id="btnMttoPrecio" icon="ui-icon-pencil" title="Modificar cambio de precio" 
                                                      disabled="#{not mbListas.mbAcciones.validarAccion('btnMttoPrecio') or mbListas.precio==null}"
@@ -205,7 +205,7 @@
                                 <p:column >
                                     <p:commandButton id="btnNuevaOferta" icon="ui-icon-document" title="Nueva Oferta" 
                                                      process="@this" actionListener="#{mbListas.mantenimientoOferta(true)}" 
-                                                     disabled="#{not mbListas.mbAcciones.validarAccion('btnNuevaOferta')}"
+                                                     disabled="#{not mbListas.mbAcciones.validarAccion('btnNuevaOferta') or mbListas.productoLista.producto.idProducto==0}"
                                                      update="msgs2 mttoOfertas" oncomplete="mttoOfertasDlg.show()" />
                                     <p:commandButton id="btnMttoOferta" icon="ui-icon-pencil" title="Modificar Oferta" 
                                                      disabled="#{not mbListas.mbAcciones.validarAccion('btnMttoOferta') or mbListas.oferta==null}"

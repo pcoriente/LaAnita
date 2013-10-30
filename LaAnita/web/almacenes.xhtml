@@ -13,15 +13,30 @@
     <body>
         <div id="wrapper" align="center">
             <ui:include src="wrapper.xhtml"></ui:include>
-            <div id="content" align="center"> 
-                <br></br>
+            <div id="content" align="left">
                 <h:form>
-                    <div align="right" >
-                        |<p:commandLink styleClass="nueva"  action="menuAlmacenes1" value="Salir" ajax="false"/>
-                    </div>
-                </h:form>
-                <h:form>
-                    
+                    <p:panelGrid id="cboCedis">
+                        <p:row>
+                            <p:column >
+                                <h:outputLabel for="cedis" value="CEDIS :" style="font-weight: bold; color: red; width: 50px;" />
+                            </p:column>
+                            <p:column>
+                                <p:selectOneMenu id="cedis" value="#{frmAlmacenes.mbCedis}" style="width: 250px" >
+                                    <f:converter converterId="converters.MiniCedis" />
+                                    <f:selectItems value="#{frmAlmacenes.listaCedis}" />
+                                </p:selectOneMenu>
+                            </p:column>
+                            <p:column>
+                                <h:outputLabel for="empresa" value="EMPRESA :" style="font-weight: bold; color: red; width: 70px" />
+                            </p:column>
+                            <p:column>
+                                <p:selectOneMenu id="empresa" value="#{frmAlmacenes.empresa}" style="width: 270px" >
+                                    <f:converter converterId="converters.MiniEmpresa" />
+                                    <f:selectItems value="#{frmAlmacenes.listaEmpresas}" />
+                                </p:selectOneMenu>
+                            </p:column>
+                        </p:row>
+                    </p:panelGrid>
                 </h:form>
             </div>>
         </div>

@@ -21,7 +21,7 @@
                              rendered="#{not empty mbUnidadMedida.acciones and not mbUnidadMedida.modoEdicion}" >
                         
                         <div align="right" >
-                            <p:commandLink id="lnkNuevaUnidadMedida" styleClass="nueva" value="Nueva" 
+                             <p:commandLink id="lnkNuevaUnidadMedida" styleClass="nueva" value="Nueva" 
                                             disabled="#{not mbUnidadMedida.mbAcciones.validarAccion('lnkNuevaUnidadMedida')}"
                                             ajax="false" action="#{mbUnidadMedida.nuevaUnidadMedida()}" immediate="true" update="edicionUniadesMedida" />|
                              <p:commandLink id="lnkModifUnidadMedida" styleClass="nueva" value="Modificar" 
