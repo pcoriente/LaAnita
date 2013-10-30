@@ -3,7 +3,6 @@ package cedis;
 import cedis.dao.DAOCedis;
 import direccion.MbDireccion;
 import cedis.dominio.Cedis;
-import cedis.dominio.MiniCedis;
 import cedis.to.TOCedis;
 import java.io.Serializable;
 import java.sql.SQLException;
@@ -13,7 +12,6 @@ import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ManagedProperty;
 import javax.faces.bean.SessionScoped;
 import javax.faces.context.FacesContext;
-import javax.faces.model.SelectItem;
 import javax.naming.NamingException;
 import usuarios.MbAcciones;
 import utilerias.Utilerias;
@@ -109,8 +107,9 @@ public class MbCedis implements Serializable {
                 this.cedis=nuevoCedis();
             } else {
                 TOCedis toCedis=this.dao.obtenerUnCedis(idCedis);
-                if(toCedis == null) destino=null;
-                else this.cedis=convertir(toCedis);
+                if(toCedis != null) { 
+                    this.cedis=convertir(toCedis);
+                }
             }
             destino="cedis.mantenimiento";
         } catch (NamingException ex) {
@@ -170,8 +169,7 @@ public class MbCedis implements Serializable {
     }
     
     public Cedis obtenerCedis(int idCedis) throws SQLException {
-        Cedis xCedis=null;
-        xCedis=convertir(this.dao.obtenerUnCedis(idCedis));
+        Cedis xCedis=convertir(this.dao.obtenerUnCedis(idCedis));
         return xCedis;
     }
     
@@ -186,35 +184,6 @@ public class MbCedis implements Serializable {
         c.setCorreo(to.getCorreo());
         c.setRepresentante(to.getRepresentante());
         return c;
-    }
-    
-    public ArrayList<SelectItem> obtenerListaMiniCedis() throws SQLException {
-        boolean ok=false;
-        FacesMessage fMsg = new FacesMessage(FacesMessage.SEVERITY_WARN, "Aviso:", "");
-        
-        ArrayList<SelectItem> listaMiniCedis=new ArrayList<SelectItem>();
-        try {
-            MiniCedis p0 = new MiniCedis();
-            p0.setIdCedis(0);
-            p0.setCedis("Seleccione un CEDIS");
-            SelectItem cero = new SelectItem(p0, p0.toString());
-            listaMiniCedis.add(cero);
-            this.dao=new DAOCedis();
-            ArrayList<MiniCedis> lstMiniCedis=this.dao.obtenerListaMiniCedis();
-            for (MiniCedis m : lstMiniCedis) {
-                listaMiniCedis.add(new SelectItem(m, m.toString()));
-            }
-        } catch (NamingException ex) {
-            fMsg.setSeverity(FacesMessage.SEVERITY_ERROR);
-            fMsg.setDetail(ex.getMessage());
-        } catch (SQLException ex) {
-            fMsg.setSeverity(FacesMessage.SEVERITY_ERROR);
-            fMsg.setDetail(ex.getErrorCode() + " " + ex.getMessage());
-        }
-        if (!ok) {
-            FacesContext.getCurrentInstance().addMessage(null, fMsg);
-        }
-        return listaMiniCedis;
     }
 
     public Cedis getCedis() {

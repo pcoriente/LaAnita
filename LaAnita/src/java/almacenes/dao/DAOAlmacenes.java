@@ -1,9 +1,6 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package almacenes.dao;
-import almacenes.to.TOAlmacen;
+import almacenes.dominio.Almacen;
+import direccion.dominio.Direccion;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -20,7 +17,7 @@ import usuarios.UsuarioSesion;
 
 /**
  *
- * @author carlosp
+ * @author julios
  */
 public class DAOAlmacenes {
 
@@ -39,21 +36,21 @@ public class DAOAlmacenes {
             throw (ex);
         }
     }
-    public TOAlmacen obtenerUnAlmacen(int idAlmacen) throws SQLException {
-        TOAlmacen to=null;
+    public Almacen obtenerAlmacen(int idAlmacen) throws SQLException {
+        Almacen almacen=null;
         Connection cn=this.ds.getConnection();
         Statement st=cn.createStatement();
         try {
             ResultSet rs=st.executeQuery("SELECT * FROM almacenes WHERE idAlmacen="+idAlmacen);
-            if(rs.next()) to=construir(rs);
+            if(rs.next()) almacen=construir(rs);
         } finally {
             cn.close();
         }
-        return to;
+        return almacen;
     }
 
-    public ArrayList<TOAlmacen> obtenerAlmacenes() throws SQLException {
-        ArrayList<TOAlmacen> lista = new ArrayList<TOAlmacen>();
+    public ArrayList<Almacen> obtenerAlmacenes() throws SQLException {
+        ArrayList<Almacen> lista = new ArrayList<Almacen>();
         ResultSet rs;
         Connection cn = ds.getConnection();
         try {
@@ -69,14 +66,15 @@ public class DAOAlmacenes {
         return lista;
     }
 
-    private TOAlmacen construir(ResultSet rs) throws SQLException {
-        TOAlmacen to = new TOAlmacen();
-        to.setIdAlmacen(rs.getInt("idAlmacen"));
-        to.setAlmacen(rs.getString("almacen"));
-        to.setIdCedis(rs.getInt("idCedis"));
-        to.setIdEmpresa(rs.getInt("idEmpresa"));
-        to.setIdDireccion(rs.getInt("idDireccion"));
-        to.setEncargado(rs.getString("encargado"));
-        return to;
+    private Almacen construir(ResultSet rs) throws SQLException {
+        Almacen almacen = new Almacen();
+        almacen.setIdAlmacen(rs.getInt("idAlmacen"));
+        almacen.setAlmacen(rs.getString("almacen"));
+        almacen.setIdCedis(rs.getInt("idCedis"));
+        almacen.setIdEmpresa(rs.getInt("idEmpresa"));
+        almacen.setDireccion(new Direccion());
+        almacen.getDireccion().setIdDireccion(rs.getInt("idDireccion"));
+        almacen.setEncargado(rs.getString("encargado"));
+        return almacen;
     }
 }

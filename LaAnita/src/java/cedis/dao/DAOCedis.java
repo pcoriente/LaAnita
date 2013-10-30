@@ -1,6 +1,5 @@
 package cedis.dao;
 
-import cedis.dominio.MiniCedis;
 import cedis.to.TOCedis;
 import java.sql.Connection;
 import java.sql.ResultSet;
@@ -126,13 +125,11 @@ public class DAOCedis {
     */
     public ArrayList<TOCedis> obtenerCedis() throws SQLException {
         ArrayList<TOCedis> lista=new ArrayList<TOCedis>();
-        ResultSet rs=null;
-        
         Connection cn=ds.getConnection();
         String strSQL="SELECT * FROM cedis ORDER BY idCedis";
         try {
             Statement sentencia = cn.createStatement();
-            rs = sentencia.executeQuery(strSQL);
+            ResultSet rs = sentencia.executeQuery(strSQL);
             while(rs.next()) {
                 lista.add(construir(rs));
             }
@@ -152,45 +149,6 @@ public class DAOCedis {
         to.setFax(rs.getString("fax"));
         to.setCorreo(rs.getString("eMail"));
         to.setRepresentante(rs.getString("representante"));
-        return to;
-    }
-    
-    public MiniCedis obtenerMiniCedis(int idCedis) throws SQLException {
-        MiniCedis to=null;
-        Connection cn=this.ds.getConnection();
-        Statement st=cn.createStatement();
-        try {
-            ResultSet rs=st.executeQuery("SELECT idCedis, cedis FROM cedis WHERE idCedis="+idCedis);
-            if(rs.next()) to=construirMini(rs);
-        } finally {
-            cn.close();
-        }
-        return to;
-    }
-    
-    public ArrayList<MiniCedis> obtenerListaMiniCedis() throws SQLException {
-        ArrayList<MiniCedis> lstMiniCedis=new ArrayList<MiniCedis>();
-        ResultSet rs=null;
-        
-        Connection cn=ds.getConnection();
-        Statement sentencia = cn.createStatement();
-        String strSQL="SELECT idCedis, cedis FROM cedis ORDER BY idCedis";
-        try {
-            rs = sentencia.executeQuery(strSQL);
-            while(rs.next()) {
-                lstMiniCedis.add(construirMini(rs));
-            }
-        } finally {
-            cn.close();
-        }
-        return lstMiniCedis;
-    }
-    
-    private MiniCedis construirMini(ResultSet rs) throws SQLException {
-        MiniCedis to=new MiniCedis();
-        to.setIdCedis(rs.getInt("idCedis"));
-        //to.setCodigo(String.format("%02d", rs.getInt("codigo")));
-        to.setCedis(rs.getString("cedis"));
         return to;
     }
 }

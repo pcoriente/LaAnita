@@ -1,6 +1,7 @@
 package pedidos;
 
 import cedis.MbCedis;
+import cedis.MbMiniCedis;
 import cedis.dominio.Cedis;
 import cedis.dominio.MiniCedis;
 import java.io.Serializable;
@@ -48,6 +49,8 @@ public class MbPedido implements Serializable {
     private Pedido pedido;
     @ManagedProperty(value = "#{mbBuscar}")
     private MbBuscarOld mbBuscar;
+    @ManagedProperty(value = "#{mbMiniCedis}")
+    private MbMiniCedis mbMiniCedis;
     @ManagedProperty(value = "#{mbCedis}")
     private MbCedis mbCedis;
     //private int xDiasInventario;
@@ -530,7 +533,7 @@ public String Salir(){
 
     public List<SelectItem> getListaMiniCedis() throws SQLException {
         if (this.listaMiniCedis == null) {
-            this.listaMiniCedis=mbCedis.obtenerListaMiniCedis();
+            this.listaMiniCedis=this.mbMiniCedis.obtenerListaMiniCedis();
             this.pedido = new Pedido();
             this.pedido.setCod_bod("00");
             this.pedido.setCod_env("000000");
@@ -624,6 +627,14 @@ public String Salir(){
 
     public void setMbBuscar(MbBuscarOld mbBuscar) {
         this.mbBuscar = mbBuscar;
+    }
+
+    public MbMiniCedis getMbMiniCedis() {
+        return mbMiniCedis;
+    }
+
+    public void setMbMiniCedis(MbMiniCedis mbMiniCedis) {
+        this.mbMiniCedis = mbMiniCedis;
     }
 
     public MbCedis getMbCedis() {

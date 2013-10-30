@@ -1,7 +1,3 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package almacenes.dominio;
 import cedis.dominio.MiniCedis;
 import empresas.dominio.MiniEmpresa;
@@ -11,7 +7,7 @@ import direccion.dominio.Direccion;
  *
  * @author carlosp
  */
-public class Almacenes {
+public class Almacen {
 
     private int idAlmacen;
     private String almacen;
@@ -20,7 +16,7 @@ public class Almacenes {
     private Direccion direccion;
     private String encargado;
 
-    public Almacenes() {
+    public Almacen() {
         idAlmacen = 0;
         almacen = "";
         idCedis = 0;

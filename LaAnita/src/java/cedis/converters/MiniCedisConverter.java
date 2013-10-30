@@ -1,6 +1,6 @@
 package cedis.converters;
 
-import cedis.dao.DAOCedis;
+import cedis.dao.DAOMiniCedis;
 import cedis.dominio.MiniCedis;
 import java.util.ResourceBundle;
 import javax.faces.application.FacesMessage;
@@ -25,7 +25,7 @@ public class MiniCedisConverter implements Converter {
                 //cedis.setCodigo("00");
                 cedis.setCedis("Seleccione una bodega");
             } else {
-                DAOCedis dao=new DAOCedis();
+                DAOMiniCedis dao=new DAOMiniCedis();
                 cedis=dao.obtenerMiniCedis(idCedis);
             }
         } catch(Throwable ex) {
