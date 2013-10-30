@@ -260,6 +260,7 @@ public class DAOCotizaciones {
 
             int idCot = c.getIdCotizacion();
             int idProv = c.getCotizacionEncabezado().getIdProveedor();
+            double cantAutorizada= c.getCantidadAutorizada();
             double dC = c.getCotizacionEncabezado().getDescuentoCotizacion();
             double dPP = c.getCotizacionEncabezado().getDescuentoProntoPago();
 
@@ -282,23 +283,25 @@ public class DAOCotizaciones {
 
             }
             // DETALLE
-            String stringSQL2 = "INSERT INTO ordenCompraDetalle (idOrdenCompra,interno, idProducto, sku, descuentoProducto, descuentoProducto2, desctoConfidencial, sinCargoBase, sinCargoCant, ptjeOferta, margen, idImpuestosGrupo, idMarca)"
-                    + "VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?)";
+            String stringSQL2 = "INSERT INTO ordenCompraDetalle (idOrdenCompra,interno, idProducto, sku, cantOrdenada, costoOrdenado, descuentoProducto, descuentoProducto2, desctoConfidencial, sinCargoBase, sinCargoCant, ptjeOferta, margen, idImpuestosGrupo, idMarca)"
+                    + "VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
             PreparedStatement ps = cn.prepareStatement(stringSQL2);
 
             ps.setInt(1, ident);
             ps.setInt(2, 1);
             ps.setInt(3, c.getProducto().getIdProducto());
             ps.setString(4, "null");
-            ps.setDouble(5, c.getDescuentoProducto());
-            ps.setDouble(6, c.getDescuentoProducto2());
-            ps.setDouble(7, 0.00);
-            ps.setInt(8, 0);
-            ps.setInt(9, 0);
-            ps.setDouble(10, 0.00);
-            ps.setDouble(11, 0.00);
-            ps.setInt(12, 0);
-            ps.setInt(13, 0);
+            ps.setDouble(5, c.getCantidadCotizada());
+            ps.setDouble(6, c.getCostoCotizado());
+            ps.setDouble(7, c.getDescuentoProducto());
+            ps.setDouble(8, c.getDescuentoProducto2());
+            ps.setDouble(9, 0.00);
+            ps.setInt(10, 0);
+            ps.setInt(11, 0);
+            ps.setDouble(12, 0.00);
+            ps.setDouble(13, 0.00);
+            ps.setInt(14, 0);
+            ps.setInt(15, 0);
             try {
                 ps.executeUpdate();
             } catch (Exception e) {

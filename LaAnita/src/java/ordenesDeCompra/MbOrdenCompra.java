@@ -56,20 +56,21 @@ public class MbOrdenCompra implements Serializable {
         }
     }
 
-    public void dameProductos(String idOrden) throws SQLException {
+    public void dameOrdenCompra(int idOC ) throws SQLException {
 
-        listaOrdenesEncabezado = new ArrayList<OrdenCompraEncabezado>();
+        this.listaOrdenDetalle = new ArrayList<OrdenCompraDetalle>();
         try {
-            int idOC = ordenElegida.getIdOrdenCompra();
+      //      int idOC = ordenElegida.getIdOrdenCompra();
             DAOOrdenDeCompra daoOC = new DAOOrdenDeCompra();
-            listaOrdenDetalle = daoOC.consultaOrdenCompra(idOC);
+            ArrayList<OrdenCompraDetalle> lista = daoOC.consultaOrdenCompra(idOC);
 
-            for (OrdenCompraDetalle d : listaOrdenDetalle) {
-              //  this.setNombreProduc(d.getProducto().toString());
+            for (OrdenCompraDetalle d : lista) {
+             listaOrdenDetalle.add(d);
+                
             }
 
         } catch (NamingException ex) {
-            Logger.getLogger(MbCotizaciones.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(MbOrdenCompra.class.getName()).log(Level.SEVERE, null, ex);
         } 
 
     }

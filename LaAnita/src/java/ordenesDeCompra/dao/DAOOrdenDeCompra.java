@@ -14,6 +14,7 @@ import javax.servlet.http.HttpSession;
 import javax.sql.DataSource;
 import ordenesDeCompra.dominio.OrdenCompraDetalle;
 import ordenesDeCompra.dominio.OrdenCompraEncabezado;
+import productos.dominio.Producto;
 import usuarios.UsuarioSesion;
 
 public class DAOOrdenDeCompra {
@@ -80,10 +81,10 @@ public class DAOOrdenDeCompra {
         Connection cn = ds.getConnection();
         try {
 
-            String stringSQL = "select oc.idOrdenCompra, oc.idCotizacion, cd.idProducto, cd.cantidadCotizada, cd.costoCotizado,cd.descuentoProducto, cd.descuentoProducto2\n"
-                    + "from ordencompra oc\n"
-                    + "inner join cotizacionesDetalle cd on cd.idCotizacion = oc.idCotizacion\n"
-                    + "where oc.idOrdenCompra= 1";
+            String stringSQL = "select oc.idOrdenCompra, oc.idCotizacion, ocd.idProducto, ocd.cantOrdenada, ocd.costoOrdenado, ocd.descuentoProducto, ocd.descuentoProducto2\n"
+                    + "                    from ordencompra oc\n"
+                    + "                    inner join ordenCompraDetalle ocd on ocd.idOrdenCompra = oc.idOrdenCompra\n"
+                    + "                    where oc.idOrdenCompra="+idOC;
 
             Statement sentencia = cn.createStatement();
             rs = sentencia.executeQuery(stringSQL);
@@ -96,10 +97,16 @@ public class DAOOrdenDeCompra {
         return lista;
     }
 
-    private OrdenCompraDetalle construirOCDetalle(ResultSet rs)  {
+    private OrdenCompraDetalle construirOCDetalle(ResultSet rs) throws SQLException {
         OrdenCompraDetalle ocd = new OrdenCompraDetalle();
-        
 
+        ocd.setIdOrdenCompra(rs.getInt("idOrdenCompra"));
+        ocd.getCotizacionDetalle().setIdCotizacion(rs.getInt("idCotizacion"));
+        ocd.getProducto().setIdProducto(rs.getInt("idProducto"));
+        ocd.setCantOrdenada(rs.getDouble("cantOrdenada"));
+        ocd.setCostoOrdenado(rs.getDouble("costoOrdenado"));
+        ocd.setDescuentoProducto(rs.getDouble("descuentoProducto"));
+        ocd.setDescuentoProducto2(rs.getDouble("descuentoProducto2"));
         return ocd;
     }
 }

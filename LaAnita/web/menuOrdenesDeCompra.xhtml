@@ -38,14 +38,9 @@
                         <p:dataTable id="ordenCompra"
                                      value="#{mbOrdenCompra.listaOrdenesEncabezado}"
                                      var="oc" 
-                                     rowKey="#{oc}"
-                                     selection="#{mbOrdenCompra.ordenElegida}"
-                                     selectionMode="single"
+                                     
                                      >
-                            <p:ajax event="rowSelect" 
-                                    listener="#{mbCotizaciones.dameProductos(oc.idOrdenCompra)}"
-                                    update=":form:productos :form:producto"
-                                    oncomplete="odec.show();"/>
+                            
                             <p:column sortBy="#{oc.idOrdenCompra}" filterBy="#{oc.idOrdenCompra}" headerText="OC" filterMatchMode="contains" width="30"  >
                                 <h:outputText value="#{oc.idOrdenCompra}"   />
                             </p:column>
@@ -79,9 +74,12 @@
                                 </f:facet>
                                 <p:commandButton id="verProveedores"
                                                  icon="ui-icon-note"
-                                                 title="Procedimiento de cotización"
-                                                 action="cotizacionProveedores.xhtml"
+                                                 title="Visualizar...."
+                                                 actionListener="#{mbOrdenCompra.dameOrdenCompra(oc.idOrdenCompra)}"
                                                  style="margin:0 auto;"
+                                                 update=":form:OCDetalle"
+                                                 oncomplete="odec.show()"
+                                                 
                                                  >
                                 </p:commandButton>
 
@@ -95,57 +93,36 @@
                         <p:panelGrid>
                             <p:row>
                                 <p:column style="color: blueviolet; background-color: #999999 " >
-                                    <h:outputLabel id="producto" value="#{mbCotizaciones.nombreProduc}"/> 
+                                    <h:outputLabel id="producto" value="PROVEEDOR"/> 
                                 </p:column>
                             </p:row>
                         </p:panelGrid>
-                        <p:dataTable id="productos"
-                                     value="#{mbCotizaciones.listaCotizacionDetalleProductos}"
-                                     var="producto"
-                                     rowKey="#{producto}"
-                                     selection="#{mbCotizaciones.productoElegido}"
-                                     selectionMode="single"
+                        <p:dataTable id="OCDetalle"
+                                     value="#{mbOrdenCompra.listaOrdenDetalle}"
+                                     var="det"
                                      >
-
-                            <p:ajax event="rowSelect" 
-                                    listener="#{mbCotizaciones.ordCompra()}"
-                                    update=":form:ordenDeCompra :form:listaProveedores"
-                                    oncomplete="cotizaciones.hide();"/>
-                            <p:column headerText="Nombre Comercial">
-                                #{producto.proveedor.nombreComercial}
+                            <p:column headerText="IdProducto">
+                                #{det.producto.idProducto}
                             </p:column>
-                            <p:column headerText="Descto. Comercial">
-                                #{producto.cotizacionEncabezado.descuentoCotizacion}
+                            <p:column headerText="Producto">
+                                #{det.producto.toString()}
                             </p:column>
                             <p:column headerText="Descto. Pronto Pago">
                                 #{producto.cotizacionEncabezado.descuentoProntoPago}
                             </p:column>
 
                             <p:column headerText="Cantidad Cotizada">  
-                                #{producto.cantidadCotizada}  
+                                #{det.cantOrdenada}  
                             </p:column> 
                             <p:column headerText="Costo Cotizado">  
-                                #{producto.costoCotizadoF}  
+                                #{det.costoOrdenado}  
                             </p:column> 
                             <p:column headerText="1 Descuento">  
-                                #{producto.descuentoProducto}  
+                                #{det.descuentoProducto}  
                             </p:column>
                             <p:column headerText="2 Descuento">  
-                                #{producto.descuentoProducto2}  
+                                #{det.descuentoProducto2}  
                             </p:column>
-                            <p:column headerText="Neto">  
-                                #{producto.netoF}  
-                            </p:column>
-                            <p:column headerText="Subtotal">  
-                                #{producto.subtotalF}  
-                            </p:column>
-                            <p:column headerText="IVA">  
-                                #{producto.ivaF}  
-                            </p:column>
-                            <p:column headerText="Total">  
-                                #{producto.totalF}  
-                            </p:column>
-
                         </p:dataTable>
                     </p:dialog>
 
