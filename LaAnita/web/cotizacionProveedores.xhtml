@@ -25,7 +25,8 @@
                     <!-- P A N E L   D E  A D M I N I S T R A C I ON... -->
                     <p:messages id="messagePanel" showDetail="true" autoUpdate="true" closable="true" />
                     <p:panel header="PANEL DE ADMINISTRACION DE ORDENES DE COMPRA" styleClass="quitaCuadro"   >
-                        <p:dataTable id="listaProveedores" var="prov"
+                        <p:dataTable id="listaProveedores"
+                                     var="prov"
                                      value="#{mbCotizaciones.listaCotizacionDetalle}"
                                      rowKey="#{prov}"
                                      selection="#{mbCotizaciones.cotizacionDeta}"
@@ -33,7 +34,7 @@
                                      emptyMessage="No hay PRODUCTOS en la cotización..."
                                      > 
                             <p:ajax event="rowSelect" 
-                                    listener="#{mbCotizaciones.dameProductos(prov.producto.toString())}"
+                                    listener="#{mbCotizaciones.dameProductos()}"
                                     update=":form:productos :form:producto"
                                     oncomplete="cotizaciones.show();"/>
                             <p:column headerText="Cotizacion: ">  

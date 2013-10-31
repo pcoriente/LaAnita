@@ -87,7 +87,7 @@ public class MbCotizaciones implements Serializable {
     }
 //    Pablo
 
-    public void dameProductos(String nombreProducto) {
+    public void dameProductos() {
 
         listaCotizacionDetalleProductos = new ArrayList<CotizacionDetalle>();
         try {

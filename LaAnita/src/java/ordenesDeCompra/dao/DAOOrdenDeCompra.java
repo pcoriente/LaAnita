@@ -14,6 +14,7 @@ import javax.servlet.http.HttpSession;
 import javax.sql.DataSource;
 import ordenesDeCompra.dominio.OrdenCompraDetalle;
 import ordenesDeCompra.dominio.OrdenCompraEncabezado;
+import productos.dao.DAOProductos;
 import productos.dominio.Producto;
 import usuarios.UsuarioSesion;
 
@@ -75,7 +76,7 @@ public class DAOOrdenDeCompra {
         return oce;
     }
 
-    public ArrayList<OrdenCompraDetalle> consultaOrdenCompra(int idOC) throws SQLException {
+    public ArrayList<OrdenCompraDetalle> consultaOrdenCompra(int idOC) throws SQLException, NamingException {
         ArrayList<OrdenCompraDetalle> lista = new ArrayList<OrdenCompraDetalle>();
         ResultSet rs;
         Connection cn = ds.getConnection();
@@ -84,7 +85,7 @@ public class DAOOrdenDeCompra {
             String stringSQL = "select oc.idOrdenCompra, oc.idCotizacion, ocd.idProducto, ocd.cantOrdenada, ocd.costoOrdenado, ocd.descuentoProducto, ocd.descuentoProducto2\n"
                     + "                    from ordencompra oc\n"
                     + "                    inner join ordenCompraDetalle ocd on ocd.idOrdenCompra = oc.idOrdenCompra\n"
-                    + "                    where oc.idOrdenCompra="+idOC;
+                    + "                    where oc.idOrdenCompra=" + idOC;
 
             Statement sentencia = cn.createStatement();
             rs = sentencia.executeQuery(stringSQL);
@@ -97,12 +98,14 @@ public class DAOOrdenDeCompra {
         return lista;
     }
 
-    private OrdenCompraDetalle construirOCDetalle(ResultSet rs) throws SQLException {
+    private OrdenCompraDetalle construirOCDetalle(ResultSet rs) throws SQLException, NamingException {
         OrdenCompraDetalle ocd = new OrdenCompraDetalle();
 
+        DAOCotizaciones daoC = new DAOCotizaciones();
+        DAOProductos daoP = new DAOProductos();
+        ocd.setCotizacionDetalle(daoC.dameCotizacion(rs.getInt("idCotizacion")));
+        ocd.setProducto(daoP.obtenerProducto(rs.getInt("idProducto")));
         ocd.setIdOrdenCompra(rs.getInt("idOrdenCompra"));
-        ocd.getCotizacionDetalle().setIdCotizacion(rs.getInt("idCotizacion"));
-        ocd.getProducto().setIdProducto(rs.getInt("idProducto"));
         ocd.setCantOrdenada(rs.getDouble("cantOrdenada"));
         ocd.setCostoOrdenado(rs.getDouble("costoOrdenado"));
         ocd.setDescuentoProducto(rs.getDouble("descuentoProducto"));

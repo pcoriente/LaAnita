@@ -13,6 +13,7 @@ import javax.faces.bean.ManagedProperty;
 import javax.naming.NamingException;
 import ordenesDeCompra.dominio.OrdenCompraEncabezado;
 import ordenesDeCompra.dominio.OrdenCompraDetalle;
+import org.primefaces.event.SelectEvent;
 import proveedores.MbProveedores;
 
 /**
@@ -28,11 +29,10 @@ public class MbOrdenCompra implements Serializable {
     @ManagedProperty(value = "#{mbProveedores}")
     private MbProveedores mbProveedores;
     private OrdenCompraEncabezado ordenCompraEncabezado;
-    private ArrayList<OrdenCompraDetalle> productos;
     @ManagedProperty(value = "#{mbCotizaciones}")
     private MbCotizaciones mbCotizaciones;
     private ArrayList<OrdenCompraEncabezado> listaOrdenesEncabezado;
-    private OrdenCompraDetalle ordenElegida;
+    private OrdenCompraEncabezado ordenElegida = new OrdenCompraEncabezado();
     private ArrayList<OrdenCompraDetalle> listaOrdenDetalle;
     private OrdenCompraDetalle ordenCompraDetalle;
 
@@ -40,7 +40,6 @@ public class MbOrdenCompra implements Serializable {
         this.mbFacturas = new MbFacturas();
         this.mbProveedores = new MbProveedores();
         this.ordenCompraEncabezado = new OrdenCompraEncabezado();
-        this.productos = new ArrayList<OrdenCompraDetalle>();
         this.mbCotizaciones = new MbCotizaciones();
 
     }
@@ -56,23 +55,24 @@ public class MbOrdenCompra implements Serializable {
         }
     }
 
-    public void dameOrdenCompra(int idOC ) throws SQLException {
-
-        this.listaOrdenDetalle = new ArrayList<OrdenCompraDetalle>();
+    public void dameOrdenCompra(SelectEvent event) throws SQLException {
+       this.ordenElegida=(OrdenCompraEncabezado) event.getObject();
+        
+        listaOrdenDetalle = new ArrayList<OrdenCompraDetalle>();
         try {
-      //      int idOC = ordenElegida.getIdOrdenCompra();
+            
+            int idOC =  ordenElegida.getIdOrdenCompra();
             DAOOrdenDeCompra daoOC = new DAOOrdenDeCompra();
             ArrayList<OrdenCompraDetalle> lista = daoOC.consultaOrdenCompra(idOC);
 
             for (OrdenCompraDetalle d : lista) {
-             listaOrdenDetalle.add(d);
-                
+                listaOrdenDetalle.add(d);
+
             }
 
         } catch (NamingException ex) {
             Logger.getLogger(MbOrdenCompra.class.getName()).log(Level.SEVERE, null, ex);
-        } 
-
+        }
     }
 
     // GET Y SETS
@@ -90,14 +90,6 @@ public class MbOrdenCompra implements Serializable {
 
     public void setMbProveedores(MbProveedores mbProveedores) {
         this.mbProveedores = mbProveedores;
-    }
-
-    public ArrayList<OrdenCompraDetalle> getProductos() {
-        return productos;
-    }
-
-    public void setProductos(ArrayList<OrdenCompraDetalle> productos) {
-        this.productos = productos;
     }
 
     public MbCotizaciones getMbCotizaciones() {
@@ -131,13 +123,15 @@ public class MbOrdenCompra implements Serializable {
         this.listaOrdenesEncabezado = listaOrdenesEncabezado;
     }
 
-    public OrdenCompraDetalle getOrdenElegida() {
+    public OrdenCompraEncabezado getOrdenElegida() {
         return ordenElegida;
     }
 
-    public void setOrdenElegida(OrdenCompraDetalle ordenElegida) {
+    public void setOrdenElegida(OrdenCompraEncabezado ordenElegida) {
         this.ordenElegida = ordenElegida;
     }
+
+    
 
     public ArrayList<OrdenCompraDetalle> getListaOrdenDetalle() {
         return listaOrdenDetalle;

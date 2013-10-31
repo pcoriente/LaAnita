@@ -17,10 +17,20 @@
             <div id="content" align="center"  >
                 <h:form id="form" >
                     <div align="right">
+
                         <p:commandButton id="Nuevo"
                                          icon="ui-icon-circle-plus"
                                          title="Nueva requisición"
                                          action="index.xhtml"
+
+                                         />
+                        <p:commandButton id="verProveedores"
+                                         icon="ui-icon-note"
+                                         title="Visualizar...."
+                                         actionListener="#{mbOrdenCompra.dameOrdenCompra()}"
+                                         style="margin:0 auto;"
+                                         update=":form:OCDetalle"
+                                         oncomplete="odec.show()"
 
                                          />
 
@@ -37,10 +47,14 @@
                         <h:outputText value="No hay ORDENES DE COMPRA que mostrar !!" rendered="#{empty mbOrdenCompra.listaOrdenesEncabezado}" />
                         <p:dataTable id="ordenCompra"
                                      value="#{mbOrdenCompra.listaOrdenesEncabezado}"
-                                     var="oc" 
-                                     
+                                     var="oc"
+                                     rowKey="#{oc.idOrdenCompra}"
+                                     selectionMode="single"
+                                     selection="#{mbOrdenCompra.ordenElegida}"
                                      >
-                            
+                            <p:ajax event="rowSelect" listener="#{mbOrdenCompra.dameOrdenCompra}"   
+                                    update=":form:OCDetalle" oncomplete="odec.show()" /> 
+
                             <p:column sortBy="#{oc.idOrdenCompra}" filterBy="#{oc.idOrdenCompra}" headerText="OC" filterMatchMode="contains" width="30"  >
                                 <h:outputText value="#{oc.idOrdenCompra}"   />
                             </p:column>
@@ -68,22 +82,7 @@
                             <p:column headerText="Status">
                                 <h:outputText value="#{oc.estado}"    />
                             </p:column>
-                            <p:column width="30" >
-                                <f:facet name="header">
-                                    <h:outputText value="Procesos"/>
-                                </f:facet>
-                                <p:commandButton id="verProveedores"
-                                                 icon="ui-icon-note"
-                                                 title="Visualizar...."
-                                                 actionListener="#{mbOrdenCompra.dameOrdenCompra(oc.idOrdenCompra)}"
-                                                 style="margin:0 auto;"
-                                                 update=":form:OCDetalle"
-                                                 oncomplete="odec.show()"
-                                                 
-                                                 >
-                                </p:commandButton>
 
-                            </p:column>
                         </p:dataTable>
                     </p:panel>
 

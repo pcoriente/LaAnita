@@ -96,6 +96,7 @@ public class DAOCotizaciones {
         return lista;
     }
 
+    
     public ArrayList<CotizacionDetalle> consultaCotizacionesProveedores(int idReq, int idProducto) throws SQLException, NamingException {
         ArrayList<CotizacionDetalle> lista = new ArrayList<CotizacionDetalle>();
         ResultSet rs;
@@ -260,7 +261,7 @@ public class DAOCotizaciones {
 
             int idCot = c.getIdCotizacion();
             int idProv = c.getCotizacionEncabezado().getIdProveedor();
-            double cantAutorizada= c.getCantidadAutorizada();
+            double cantAutorizada = c.getCantidadAutorizada();
             double dC = c.getCotizacionEncabezado().getDescuentoCotizacion();
             double dPP = c.getCotizacionEncabezado().getDescuentoProntoPago();
 
@@ -310,4 +311,34 @@ public class DAOCotizaciones {
         } //FOR DETALLE
         cn.close();
     }// FOR CABECERO
+    
+    public CotizacionDetalle dameCotizacion(int idCot) throws SQLException, NamingException {
+        CotizacionDetalle cd = new CotizacionDetalle();
+        Connection cn = ds.getConnection();
+        Statement st = cn.createStatement();
+        try {
+            ResultSet rs = st.executeQuery("SELECT * FROM cotizacionesDetalle WHERE idCotizacion=" + idCot);
+            if (rs.next()) {
+                cd = construirCD(rs);
+            }
+        } finally {
+            cn.close();
+        }
+        return cd;
+    }
+
+    public CotizacionDetalle construirCD(ResultSet rs) throws NamingException, SQLException {
+        CotizacionDetalle cd = new CotizacionDetalle();
+        DAOProductos daoP = new DAOProductos();
+        cd.setIdCotizacion(rs.getInt("idCotizacion"));
+        cd.setProducto(daoP.obtenerProducto(rs.getInt("idProducto")));
+        cd.setCantidadCotizada(rs.getDouble("cantidadCotizada"));
+        cd.setCostoCotizado(rs.getDouble("costoCotizado"));
+        cd.setDescuentoProducto(rs.getDouble("descuentoProducto"));
+        cd.setDescuentoProducto2(rs.getDouble("descuentoProducto2"));
+        cd.setNeto(rs.getDouble("neto"));
+        cd.setSubtotal(rs.getDouble("subtotal"));
+        return cd;
+    }
+
 }
