@@ -35,11 +35,33 @@ public class DAOMenu {
             } else {
                 idPerfil=usuarioSesion.getUsuario().getIdPerfil();
             }
-            
             Context cI = new InitialContext();
             ds = (DataSource) cI.lookup("java:comp/env/"+usuarioSesion.getJndi());
         } catch (NamingException ex) {
             throw(ex);
+        }
+    }
+    
+    public void cargarUsuarioConfig() throws SQLException {
+        FacesContext context = FacesContext.getCurrentInstance();
+        ExternalContext externalContext = context.getExternalContext();
+        HttpSession httpSession = (HttpSession) externalContext.getSession(false);
+        UsuarioSesion usuarioSesion = (UsuarioSesion) httpSession.getAttribute("usuarioSesion");
+        if(usuarioSesion.getUsuario()!=null) {
+            String strSQL="select idCedis, idCedisZona "
+                        + "from usuarioConfig "
+                        + "where idUsuario="+usuarioSesion.getUsuario().getId();
+            Connection cn=this.ds.getConnection();
+            Statement st=cn.createStatement();
+            try {
+                ResultSet rs=st.executeQuery(strSQL);
+                while(rs.next()) {
+                    usuarioSesion.getUsuario().setIdCedis(rs.getInt("idCedis"));
+                    usuarioSesion.getUsuario().setIdCedisZona(rs.getInt("idCedisZona"));
+                }
+            } finally {
+                cn.close();
+            }
         }
     }
     

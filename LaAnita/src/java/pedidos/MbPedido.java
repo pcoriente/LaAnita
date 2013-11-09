@@ -57,7 +57,7 @@ public class MbPedido implements Serializable {
     private double capacidadCamion;
     private double pesoDirectos;
     private double pesoBodega;
-    private ArrayList<SelectItem> listaMiniCedis;
+    //private ArrayList<SelectItem> listaMiniCedis;
     private ArrayList<SelectItem> listaPedidos;
     private ArrayList<PedidoDetalle> listaPedidoDetalle;
     private ArrayList<FincadoDetalle> listaFincadoDetalle;
@@ -80,7 +80,8 @@ public String Salir(){
     String str="index.xhtml";
     this.pedido = null;
     this.miniCedis = null;
-    this.listaMiniCedis = null;
+    //this.listaMiniCedis = null;
+    this.mbMiniCedis.setListaMiniCedis(null);
     this.listaPedidos = new ArrayList<SelectItem>();
     this.listaFincados = new ArrayList<Fincado>();
     this.listaPedidoDetalle = new ArrayList<PedidoDetalle>();
@@ -530,8 +531,8 @@ public String Salir(){
     public void setMiniCedis(MiniCedis miniCedis) {
         this.miniCedis = miniCedis;
     }
-
-    public List<SelectItem> getListaMiniCedis() throws SQLException {
+    /*
+    public ArrayList<SelectItem> getListaMiniCedis() throws SQLException {
         if (this.listaMiniCedis == null) {
             this.listaMiniCedis=this.mbMiniCedis.obtenerListaMiniCedis();
             this.pedido = new Pedido();
@@ -545,7 +546,7 @@ public String Salir(){
     public void setListaCedis(ArrayList<SelectItem> listaMiniCedis) {
         this.listaMiniCedis = listaMiniCedis;
     }
-
+    * */
     public ArrayList<SelectItem> getListaPedidos() {
         return listaPedidos;
     }

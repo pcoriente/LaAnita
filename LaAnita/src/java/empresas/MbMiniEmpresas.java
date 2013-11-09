@@ -5,10 +5,10 @@ import empresas.dominio.MiniEmpresa;
 import java.io.Serializable;
 import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import javax.faces.application.FacesMessage;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.SessionScoped;
+import javax.faces.context.FacesContext;
 import javax.faces.model.SelectItem;
 import javax.naming.NamingException;
 
@@ -20,41 +20,39 @@ import javax.naming.NamingException;
 @SessionScoped
 public class MbMiniEmpresas implements Serializable {
     private MiniEmpresa empresa;
-    private ArrayList<MiniEmpresa> lstEmpresas;
+    private ArrayList<SelectItem> listaEmpresas;
     private DAOMiniEmpresas dao;
     
     public MbMiniEmpresas() throws NamingException {
-        this.dao = new DAOMiniEmpresas();
+        this.empresa=new MiniEmpresa();
     }
     
-//    private ArrayList<SelectItem> listaMini = new ArrayList<SelectItem>();
-//
-//    public ArrayList<SelectItem> getListaMini() throws SQLException {
-//          listaMini = obtenerListaMiniEmpresas();
-//        return listaMini;
-//    }
-//
-//    public void setListaMini(ArrayList<SelectItem> listaMini) {
-//        this.listaMini = listaMini;
-//    }
-//    
-    public ArrayList<SelectItem> obtenerListaMiniEmpresas() throws SQLException {
-        ArrayList<SelectItem> listaEmpresas=new ArrayList<SelectItem>();
+    private void cargaListaMiniEmpresas() {
+        boolean ok=false;
+        FacesMessage fMsg = new FacesMessage(FacesMessage.SEVERITY_WARN, "Aviso:", "");
+        this.listaEmpresas=new ArrayList<SelectItem>();
         try {
             MiniEmpresa e0=new MiniEmpresa();
             e0.setIdEmpresa(0);
             e0.setCodigoEmpresa("0");
             e0.setNombreComercial("Seleccione una empresa");
-            listaEmpresas.add(new SelectItem(e0, e0.toString()));
-
-            ArrayList<MiniEmpresa> empresas=this.dao.obtenerMiniEmpresas();
-            for (MiniEmpresa e : empresas) {
+            this.listaEmpresas.add(new SelectItem(e0, e0.toString()));
+            
+            this.dao = new DAOMiniEmpresas();
+            for (MiniEmpresa e : this.dao.obtenerMiniEmpresas()) {
                 listaEmpresas.add(new SelectItem(e, e.toString()));
             }
-        } catch (SQLException e) {
-            Logger.getLogger(MbMiniEmpresas.class.getName()).log(Level.SEVERE, null, e);
+            ok=true;
+        } catch (NamingException ex) {
+            fMsg.setSeverity(FacesMessage.SEVERITY_ERROR);
+            fMsg.setDetail(ex.getMessage());
+        } catch (SQLException ex) {
+            fMsg.setSeverity(FacesMessage.SEVERITY_ERROR);
+            fMsg.setDetail(ex.getErrorCode() + " " + ex.getMessage());
         }
-        return listaEmpresas;
+        if (!ok) {
+            FacesContext.getCurrentInstance().addMessage(null, fMsg);
+        }
     }
 
     public MiniEmpresa getEmpresa() {
@@ -65,15 +63,15 @@ public class MbMiniEmpresas implements Serializable {
         this.empresa = empresa;
     }
 
-    public ArrayList<MiniEmpresa> getLstEmpresas() throws SQLException {
-        if(lstEmpresas==null) {
-            this.obtenerListaMiniEmpresas();
+    public ArrayList<SelectItem> getListaEmpresas() {
+        if(this.listaEmpresas==null) {
+            this.cargaListaMiniEmpresas();
         }
-        return lstEmpresas;
+        return listaEmpresas;
     }
 
-    public void setLstEmpresas(ArrayList<MiniEmpresa> lstEmpresas) {
-        this.lstEmpresas = lstEmpresas;
+    public void setListaEmpresas(ArrayList<SelectItem> listaEmpresas) {
+        this.listaEmpresas = listaEmpresas;
     }
 
     public DAOMiniEmpresas getDao() {

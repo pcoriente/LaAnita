@@ -11,12 +11,16 @@ public class Usuario implements Serializable {
     private String usuario;
     private String correo;
     private int idPerfil;
+    private int idCedis;
+    private int idCedisZona;
     
     public Usuario() {
         this.id=0;
         this.usuario="";
         this.correo="";
         this.idPerfil=0;
+        this.idCedis=0;
+        this.idCedisZona=0;
     }
     
     public Usuario(int id, String usuario) {
@@ -81,5 +85,21 @@ public class Usuario implements Serializable {
      @Override
     public String toString() {
         return  usuario;
+    }
+
+    public int getIdCedis() {
+        return idCedis;
+    }
+
+    public void setIdCedis(int idCedis) {
+        this.idCedis = idCedis;
+    }
+
+    public int getIdCedisZona() {
+        return idCedisZona;
+    }
+
+    public void setIdCedisZona(int idCedisZona) {
+        this.idCedisZona = idCedisZona;
     }
 }

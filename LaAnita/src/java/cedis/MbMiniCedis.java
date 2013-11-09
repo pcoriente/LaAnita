@@ -20,29 +20,29 @@ import javax.naming.NamingException;
 @SessionScoped
 public class MbMiniCedis implements Serializable {
     private MiniCedis cedis;
-    private ArrayList<SelectItem> listaCedis;
+    private ArrayList<SelectItem> listaMiniCedis;
     private DAOMiniCedis dao;
     
     public MbMiniCedis() {
         this.cedis=new MiniCedis();
     }
     
-    public ArrayList<SelectItem> obtenerListaMiniCedis() throws SQLException {
+    private void obtenerListaMiniCedis() {
         boolean ok=false;
         FacesMessage fMsg = new FacesMessage(FacesMessage.SEVERITY_WARN, "Aviso:", "");
-        
-        ArrayList<SelectItem> listaMiniCedis=new ArrayList<SelectItem>();
+        this.listaMiniCedis=new ArrayList<SelectItem>();
         try {
             MiniCedis p0 = new MiniCedis();
             p0.setIdCedis(0);
             p0.setCedis("Seleccione un CEDIS");
             SelectItem cero = new SelectItem(p0, p0.toString());
             listaMiniCedis.add(cero);
+            
             this.dao=new DAOMiniCedis();
-            ArrayList<MiniCedis> lstMiniCedis=this.dao.obtenerListaMiniCedis();
-            for (MiniCedis m : lstMiniCedis) {
+            for (MiniCedis m : this.dao.obtenerListaMiniCedis()) {
                 listaMiniCedis.add(new SelectItem(m, m.toString()));
             }
+            ok=true;
         } catch (NamingException ex) {
             fMsg.setSeverity(FacesMessage.SEVERITY_ERROR);
             fMsg.setDetail(ex.getMessage());
@@ -53,7 +53,6 @@ public class MbMiniCedis implements Serializable {
         if (!ok) {
             FacesContext.getCurrentInstance().addMessage(null, fMsg);
         }
-        return listaMiniCedis;
     }
 
     public MiniCedis getCedis() {
@@ -64,11 +63,14 @@ public class MbMiniCedis implements Serializable {
         this.cedis = cedis;
     }
 
-    public ArrayList<SelectItem> getListaCedis() {
-        return listaCedis;
+    public ArrayList<SelectItem> getListaMiniCedis() {
+        if(this.listaMiniCedis==null) {
+            this.obtenerListaMiniCedis();
+        }
+        return listaMiniCedis;
     }
 
-    public void setListaCedis(ArrayList<SelectItem> listaCedis) {
-        this.listaCedis = listaCedis;
+    public void setListaMiniCedis(ArrayList<SelectItem> listaMiniCedis) {
+        this.listaMiniCedis = listaMiniCedis;
     }
 }

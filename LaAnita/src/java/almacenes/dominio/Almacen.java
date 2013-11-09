@@ -1,11 +1,9 @@
 package almacenes.dominio;
-import cedis.dominio.MiniCedis;
-import empresas.dominio.MiniEmpresa;
 import direccion.dominio.Direccion;
 
 /**
  *
- * @author carlosp
+ * @author julios
  */
 public class Almacen {
 
@@ -14,15 +12,21 @@ public class Almacen {
     private int idCedis;
     private int idEmpresa;
     private Direccion direccion;
-    private String encargado;
-
+    
     public Almacen() {
-        idAlmacen = 0;
-        almacen = "";
-        idCedis = 0;
-        idEmpresa = 0;
-        direccion = new Direccion();
-        encargado = "";
+        this.idAlmacen=0;
+        this.almacen="";
+        this.idCedis=0;
+        this.idEmpresa=0;
+        this.direccion=new Direccion();
+    }
+    
+    public Almacen(int idCedis, int idEmpresa) {
+        this.idAlmacen = 0;
+        this.almacen = "";
+        this.idCedis = idCedis;
+        this.idEmpresa = idEmpresa;
+        this.direccion = new Direccion();
     }
 
     public int getIdAlmacen() {
@@ -63,13 +67,5 @@ public class Almacen {
 
     public void setDireccion(Direccion direccion) {
         this.direccion = direccion;
-    }
-
-    public String getEncargado() {
-        return encargado;
-    }
-
-    public void setEncargado(String encargado) {
-        this.encargado = encargado;
     }
 }

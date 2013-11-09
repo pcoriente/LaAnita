@@ -46,6 +46,7 @@ public class MbProveedores implements Serializable {
     
     @ManagedProperty(value="#{mbDireccion}")
     private MbDireccion mbDireccion;
+    
     @ManagedProperty(value="#{mbContribuyentes}")
     private MbContribuyentes mbContribuyentes;
     private ArrayList<SelectItem> listaContribuyentes;
@@ -65,6 +66,7 @@ public class MbProveedores implements Serializable {
     private MbZonas mbImpuestoZona;
     @ManagedProperty(value="#{mbContactos}")
     private MbContactos mbContactos;
+    
     private ArrayList<Accion> acciones;
     @ManagedProperty(value="#{mbAcciones}")
     private MbAcciones mbAcciones;
@@ -469,7 +471,7 @@ public class MbProveedores implements Serializable {
                 this.cargaSubClasificaciones();
             }
             this.contacto=new Contacto();
-            this.mbContactos.cargaContactos(1, this.proveedor.getIdProveedor());
+            this.mbContactos.cargaContactos(this.idTipo, this.proveedor.getIdProveedor());
             this.cargarTelefonos();
             ok=true;
         } catch (SQLException ex) {

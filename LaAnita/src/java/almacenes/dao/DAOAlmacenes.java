@@ -36,6 +36,43 @@ public class DAOAlmacenes {
             throw (ex);
         }
     }
+    
+    public void modificar(Almacen almacen) throws SQLException {
+        Connection cn=this.ds.getConnection();
+        Statement st=cn.createStatement();
+        try {
+            String strSQL="UPDATE almacenes "
+                    + "SET almacen='"+almacen.getAlmacen()+"', idDireccion="+almacen.getDireccion().getIdDireccion()+" "
+                    + "WHERE idAlmacen="+almacen.getIdAlmacen();
+            st.executeUpdate(strSQL);
+        } finally {
+            cn.close();
+        } 
+    }
+    
+    public int agregar(Almacen almacen) throws SQLException {
+        int idAlmacen=0;
+        Connection cn=this.ds.getConnection();
+        Statement st=cn.createStatement();
+        try {
+            String strSQL="INSERT INTO almacenes (almacen, idDireccion, idEmpresa, idCedis) "
+                    + "VALUES ('"+almacen.getAlmacen()+"', "+almacen.getDireccion().getIdDireccion()+", "+almacen.getIdEmpresa()+", "+almacen.getIdCedis()+")";
+            st.executeUpdate("begin Transaction");
+            st.executeUpdate(strSQL);
+            ResultSet rs=st.executeQuery("SELECT @@IDENTITY AS idAlmacen");
+            if(rs.next()) {
+                idAlmacen=rs.getInt("idAlmacen");
+            }
+            st.executeUpdate("commit Transaction");
+        } catch(SQLException ex) {
+            st.executeUpdate("rollback transaction");
+            throw(ex);
+        } finally {
+            cn.close();
+        }
+        return idAlmacen;
+    }
+    
     public Almacen obtenerAlmacen(int idAlmacen) throws SQLException {
         Almacen almacen=null;
         Connection cn=this.ds.getConnection();
@@ -49,12 +86,12 @@ public class DAOAlmacenes {
         return almacen;
     }
 
-    public ArrayList<Almacen> obtenerAlmacenes() throws SQLException {
+    public ArrayList<Almacen> obtenerAlmacenes(int idCedis, int idEmpresa) throws SQLException {
         ArrayList<Almacen> lista = new ArrayList<Almacen>();
         ResultSet rs;
         Connection cn = ds.getConnection();
         try {
-            String stringSQL = "SELECT * FROM almacenes";
+            String stringSQL = "SELECT * FROM almacenes WHERE idCedis="+idCedis+" AND idEmpresa="+idEmpresa;
             Statement sentencia = cn.createStatement();
             rs = sentencia.executeQuery(stringSQL);
             while (rs.next()) {
@@ -67,14 +104,11 @@ public class DAOAlmacenes {
     }
 
     private Almacen construir(ResultSet rs) throws SQLException {
-        Almacen almacen = new Almacen();
+        Almacen almacen = new Almacen(rs.getInt("idCedis"), rs.getInt("idEmpresa"));
         almacen.setIdAlmacen(rs.getInt("idAlmacen"));
         almacen.setAlmacen(rs.getString("almacen"));
-        almacen.setIdCedis(rs.getInt("idCedis"));
-        almacen.setIdEmpresa(rs.getInt("idEmpresa"));
         almacen.setDireccion(new Direccion());
         almacen.getDireccion().setIdDireccion(rs.getInt("idDireccion"));
-        almacen.setEncargado(rs.getString("encargado"));
         return almacen;
     }
 }

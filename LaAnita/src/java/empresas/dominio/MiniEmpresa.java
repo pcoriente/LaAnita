@@ -9,6 +9,12 @@ public class MiniEmpresa {
     private String codigoEmpresa;
     private String nombreComercial;
 
+    public MiniEmpresa() {
+        this.idEmpresa=0;
+        this.codigoEmpresa="0";
+        this.nombreComercial="";
+    }
+
     @Override
     public String toString() {
         return nombreComercial;

@@ -19,6 +19,7 @@ import javax.faces.bean.SessionScoped;
 import javax.faces.context.FacesContext;
 import javax.faces.model.SelectItem;
 import javax.naming.NamingException;
+import org.primefaces.context.RequestContext;
 import utilerias.Utilerias;
 
 /**
@@ -30,15 +31,17 @@ import utilerias.Utilerias;
 public class MbDireccion implements Serializable {
     private Direccion direccion;
     private Direccion respaldo;
-    private List<SelectItem> listaPaises;
-    private List<SelectItem> listaAsentamientos;
+    private ArrayList<SelectItem> listaPaises;
+    private ArrayList<SelectItem> listaAsentamientos;
     private boolean editarAsentamiento;
+    private Asentamiento selAsentamiento;
     private DAODireccion dao;
     private String llama;
     
     public MbDireccion() {
+        this.direccion=new Direccion();
         this.editarAsentamiento=true;
-//        this.direccion = new Direccion();
+        // this.direccion = new Direccion();
         try {
             this.dao = new DAODireccion();
         } catch (NamingException ex) {
@@ -47,6 +50,8 @@ public class MbDireccion implements Serializable {
     }
     
     public void grabar() {
+        boolean ok=false;
+        RequestContext context = RequestContext.getCurrentInstance();
         FacesMessage fMsg = new FacesMessage(FacesMessage.SEVERITY_WARN, "Aviso:", "");
         
 //        String destino=null;
@@ -82,14 +87,66 @@ public class MbDireccion implements Serializable {
                 fMsg.setSeverity(FacesMessage.SEVERITY_INFO);
                 fMsg.setDetail("La dirección se grabó correctamente !!");
 //                destino="cedis.mantenimiento";
+                ok=true;
             } catch (SQLException ex) {
                 fMsg.setSeverity(FacesMessage.SEVERITY_ERROR);
                 fMsg.setDetail(ex.getErrorCode() + " " + ex.getMessage());
                 Logger.getLogger(MbDireccion.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
-        FacesContext.getCurrentInstance().addMessage(null, fMsg);
+        if (!ok) {
+            FacesContext.getCurrentInstance().addMessage(null, fMsg);
+        }
+        context.addCallbackParam("okContribuyente", ok);
 //        return destino;
+    }
+    
+    public boolean grabar2() {
+        boolean ok=false;
+        RequestContext context = RequestContext.getCurrentInstance();
+        FacesMessage fMsg = new FacesMessage(FacesMessage.SEVERITY_WARN, "Aviso:", "");
+        
+        String calle=Utilerias.Acentos(this.direccion.getCalle().trim());
+        String numeroExterior=Utilerias.Acentos(this.direccion.getNumeroExterior().trim());
+        String numeroInterior=Utilerias.Acentos(this.direccion.getNumeroInterior().trim());
+        String referencia=Utilerias.Acentos(this.direccion.getReferencia().trim());
+        int idPais=this.direccion.getPais().getIdPais();
+        String codigoPostal=this.direccion.getCodigoPostal().trim();
+        String estado=Utilerias.Acentos(this.direccion.getEstado().trim());
+        String municipio=Utilerias.Acentos(this.direccion.getMunicipio().trim());
+        String localidad=Utilerias.Acentos(this.direccion.getLocalidad().trim());
+        String colonia=Utilerias.Acentos(this.direccion.getColonia().trim());
+        String numeroLocalizacion=this.direccion.getNumeroLocalizacion().trim();
+        
+        if(calle.isEmpty()) fMsg.setDetail("Se requiere la calle !!");
+        else if(numeroExterior.isEmpty()) fMsg.setDetail("Se requiere el número exterior !!");
+        else if(referencia.isEmpty()) fMsg.setDetail("Se requiere la referencia !!");
+        else if(idPais == 0) fMsg.setDetail("Se requiere el pais !!");
+        else if(codigoPostal.isEmpty()) fMsg.setDetail("Se requiere el códigoPostal");
+        else if(estado.isEmpty()) fMsg.setDetail("Se requiere el estado");
+        else if(municipio.isEmpty()) fMsg.setDetail("Se requiere el municipio");
+        else {
+            try {
+                int idDireccion=this.direccion.getIdDireccion();
+                if (idDireccion == 0) {
+                    idDireccion=this.dao.agregar(calle, numeroExterior, numeroInterior, referencia, idPais, codigoPostal, estado, municipio, localidad, colonia, numeroLocalizacion);
+                } else {
+                    this.dao.modificar(this.direccion.getIdDireccion(), calle, numeroExterior, numeroInterior, referencia, idPais, codigoPostal, estado, municipio, localidad, colonia, numeroLocalizacion);
+                }
+                this.direccion=this.obtener(idDireccion);
+                //actualizaDireccion();
+                ok=true;
+            } catch (SQLException ex) {
+                fMsg.setSeverity(FacesMessage.SEVERITY_ERROR);
+                fMsg.setDetail(ex.getErrorCode() + " " + ex.getMessage());
+                Logger.getLogger(MbDireccion.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+        if (!ok) {
+            FacesContext.getCurrentInstance().addMessage(null, fMsg);
+        }
+        context.addCallbackParam("okDireccion", ok);
+        return ok;
     }
     
     public void eliminar(int idDireccion) {
@@ -104,6 +161,7 @@ public class MbDireccion implements Serializable {
         this.listaPaises=null;
 //        restauraDireccion();
         return this.llama+".mantenimiento";
+        //return this.llama+".xhtml";
     }
     
 //    public void cambioAsentamiento() {
@@ -118,11 +176,17 @@ public class MbDireccion implements Serializable {
 //        this.editarAsentamiento = true;
 //    }
     
+    public void mttoDireccion(Direccion direccion) {
+        this.copiaDireccion(direccion);
+        this.respaldo=direccion;
+    }
+    
     public String mttoDireccion(Direccion direccion, String llama) {
         copiaDireccion(direccion);
         this.respaldo=direccion;
         this.llama=llama;
         return "direccion.mantenimiento";
+        //return "direccion.xhtml";
     }
     
     private void copiaDireccion(Direccion direccion) {
@@ -161,8 +225,7 @@ public class MbDireccion implements Serializable {
         p.setIdPais(0);
         p.setPais("");
         
-        Direccion dir=new Direccion();
-        dir=new Direccion();
+        Direccion dir = new Direccion();
         dir.setIdDireccion(0);
         dir.setCalle("");
         dir.setNumeroExterior("");
@@ -222,8 +285,8 @@ public class MbDireccion implements Serializable {
         return dir;
     }
     
-    private List<SelectItem> obtenerAsentamientos(String codigoPostal) throws NamingException, SQLException {
-        List<SelectItem> asentamientos = new ArrayList<SelectItem>();
+    private ArrayList<SelectItem> obtenerAsentamientos(String codigoPostal) throws NamingException, SQLException {
+        ArrayList<SelectItem> asentamientos = new ArrayList<SelectItem>();
         
         Asentamiento a0=new Asentamiento();
         a0.setCodAsentamiento("0");
@@ -266,13 +329,48 @@ public class MbDireccion implements Serializable {
         return listaAsentamientos;
     }
 
-    public void setListaAsentamientos(List<SelectItem> listaAsentamientos) {
+    public void setListaAsentamientos(ArrayList<SelectItem> listaAsentamientos) {
         this.listaAsentamientos = listaAsentamientos;
     }
     
     public void actualizaAsentamiento() {
         Asentamiento nuevo=this.direccion.getSelAsentamiento();
 //        this.direccion.setSelAsentamiento(nuevo);
+        String[] localidades={"08", "15", "18", "20", "23", "24", "25", "26", "27", "28", "29", "32"};
+        
+        if(nuevo.getCodAsentamiento().equals("0")) {
+            this.direccion.setEstado("");
+            this.direccion.setMunicipio("");
+            this.direccion.setLocalidad("");
+            this.direccion.setColonia("");
+        } else {
+            this.direccion.setEstado(nuevo.getEstado());
+            this.direccion.setMunicipio(nuevo.getMunicipio());
+            if(nuevo.getCiudad().trim().isEmpty()) {
+                boolean flag=false;
+                for(String s:localidades) {
+                    if(s.equals(nuevo.getcTipo())) {
+                        flag=true;
+                        break;
+                    }
+                }
+                if(flag) {
+                    this.direccion.setLocalidad(nuevo.toString());
+                    this.direccion.setColonia("");
+                } else {
+                    this.direccion.setLocalidad("");
+                    this.direccion.setColonia(nuevo.toString());
+                }
+            } else {
+                this.direccion.setLocalidad(nuevo.getCiudad().trim());
+                this.direccion.setColonia(nuevo.toString());
+            }
+        }
+        this.editarAsentamiento = true;
+    }
+    
+    public void actualizaAsentamiento2() {
+        Asentamiento nuevo=this.getSelAsentamiento();
         String[] localidades={"08", "15", "18", "20", "23", "24", "25", "26", "27", "28", "29", "32"};
         
         if(nuevo.getCodAsentamiento().equals("0")) {
@@ -384,37 +482,36 @@ public class MbDireccion implements Serializable {
         this.editarAsentamiento = editarAsentamiento;
     }
 
-    public List<SelectItem> getListaPaises() {
+    public ArrayList<SelectItem> getListaPaises() {
         if(this.listaPaises == null) {
-            try {
-                this.listaPaises=obtenerPaises();
-            } catch (NamingException ex) {
-                Logger.getLogger(MbDireccion.class.getName()).log(Level.SEVERE, null, ex);
-            }catch (SQLException ex) {
-                Logger.getLogger(MbDireccion.class.getName()).log(Level.SEVERE, null, ex);
-            }
+            this.obtenerPaises();
         }
-        return listaPaises;
+        return this.listaPaises;
     }
     
-    private List<SelectItem> obtenerPaises() throws NamingException, SQLException {
-        List<SelectItem> paises = new ArrayList<SelectItem>();
+    private void obtenerPaises() {
+        this.listaPaises = new ArrayList<SelectItem>();
         
         Pais p0=new Pais();
         p0.setIdPais(0);
         p0.setPais("Seleccione un país");
         SelectItem cero=new SelectItem(p0, p0.getPais());
-        paises.add(cero);
+        this.listaPaises.add(cero);
         
-        DAOPais daoPais=new DAOPais();
-        Pais[] aPaises=daoPais.obtenerPaises();
-        for (Pais p : aPaises) {
-            paises.add(new SelectItem(p, p.getPais()));
+        DAOPais daoPais;
+        try {
+            daoPais = new DAOPais();
+            for (Pais p : daoPais.obtenerPaises()) {
+                this.listaPaises.add(new SelectItem(p, p.getPais()));
+            }
+        } catch (NamingException ex) {
+            Logger.getLogger(MbDireccion.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (SQLException ex) {
+            Logger.getLogger(MbDireccion.class.getName()).log(Level.SEVERE, null, ex);
         }
-        return paises;
     }
 
-    public void setListaPaises(List<SelectItem> listaPaises) {
+    public void setListaPaises(ArrayList<SelectItem> listaPaises) {
         this.listaPaises = listaPaises;
     }
 
@@ -424,5 +521,13 @@ public class MbDireccion implements Serializable {
 
     public void setDireccion(Direccion direccion) {
         this.direccion = direccion;
+    }
+
+    public Asentamiento getSelAsentamiento() {
+        return selAsentamiento;
+    }
+
+    public void setSelAsentamiento(Asentamiento selAsentamiento) {
+        this.selAsentamiento = selAsentamiento;
     }
 }

@@ -16,7 +16,7 @@ import javax.faces.convert.ConverterException;
 public class PaisConverter implements Converter {
     @Override
     public Object getAsObject(FacesContext context, UIComponent component, String value) {
-        Pais pais = null;
+        Pais pais;
         try {
             int idPais=Integer.parseInt(value);
             if(idPais == 0) {

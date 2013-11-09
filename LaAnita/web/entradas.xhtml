@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://java.sun.com/jsf/core">
+    <h:head>
+        <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1"></meta>
+        <title>Entradas a Almacen</title>
+        <h:outputStylesheet library="css" name="main.css"/>
+    </h:head>
+    <body>
+        <div id="wrapper" align="center">
+            <ui:include src="wrapper.xhtml"></ui:include>
+            <div id="content" align="left">
+                <h:form id="main"  onkeypress="return event.keyCode !== 13;">
+                    <p:messages id="msgs" showDetail="true" showSummary="false" closable="true" />
+                    <p:panel header="CONSULTA DE ALMACENES" styleClass="quitaCuadro" 
+                             rendered="#{not empty mbEntradas.acciones and not mbEntradas.modoEdicion}">
+                        <p:panelGrid >
+                            <p:row>
+                                <p:column >
+                                    <h:outputLabel for="cedis" value="CEDIS :" style="font-weight: bold; color: red; width: 50px;" />
+                                </p:column>
+                                <p:column>
+                                    <p:selectOneMenu id="cedis" value="#{mbEntradas.mbCedis.cedis}" >
+                                        <f:converter converterId="converters.MiniCedis" />
+                                        <f:selectItems value="#{mbEntradas.mbCedis.listaMiniCedis}" />
+                                        <p:ajax event="change" listener="#{mbEntradas.cargaAlmacenes()}" update="listaAlmacenes" />
+                                    </p:selectOneMenu>
+                                </p:column>
+                                <p:column >
+                                    <h:outputLabel for="empresa" value="EMPRESA :" style="font-weight: bold; color: red; width: 80px" />
+                                </p:column>
+                                <p:column >
+                                    <p:selectOneMenu id="empresa" value="#{mbEntradas.mbEmpresas.empresa}" >
+                                        <f:converter converterId="converters.MiniEmpresa" />
+                                        <f:selectItems value="#{mbEntradas.mbEmpresas.listaEmpresas}" />
+                                        <p:ajax event="change" listener="#{mbEntradas.cargaAlmacenes()}" update="listaAlmacenes" />
+                                    </p:selectOneMenu>
+                                </p:column>
+                                <p:column >
+                                    <p:outputPanel >
+                                         <p:commandLink styleClass="nueva" action="#{mbEntradas.terminar()}" value="Salir" ajax="false" />
+                                    </p:outputPanel>
+                                </p:column>
+                            </p:row>
+                        </p:panelGrid>
+                        <p:dataTable id="listaAlmacenes" widgetVar="listaAlmacenes" value="#{mbEntradas.almacenes}" style="border:solid 1px"
+                                     var="alm" rowKey="#{alm.idAlmacen}" selection="#{mbEntradas.almacen}" selectionMode="single" 
+                                     emptyMessage="No hay elementos que desplegar" >
+                            <p:ajax event="rowSelect" update="btnSelAlmacen" />
+
+                            <p:column headerText="Almacén" >
+                                <h:outputText value="#{alm.almacen}" />
+                            </p:column>
+                            
+                            <f:facet name="footer" >
+                                <p:row >
+                                    <p:column style="text-align: center" >
+                                        <p:commandButton id="btnSelAlmacen" value="Seleccionar" 
+                                                         disabled="#{mbEntradas.almacen==null}"
+                                                         ajax="false" action="#{mbEntradas.inicializarEntrada()}"
+                                                         process="@this" update="mttoEntradas" />
+                                    </p:column>
+                                </p:row>
+                            </f:facet>
+                        </p:dataTable>
+                    </p:panel>
+                    <p:panel header="ENTRADAS AL INVENTARIO" styleClass="quitaCuadro" rendered="#{mbEntradas.modoEdicion}" >
+                        <p:panelGrid id="mttoEntradas" >
+                            <p:row >
+                                <p:column style="font-weight: bold; color: red; width: 120px;" >Empresa :</p:column>
+                                <p:column colspan="3" >
+                                    <p:inputText value="#{mbEntradas.mbEmpresas.empresa.nombreComercial}" readonly="true" />
+                                </p:column>
+                            </p:row>
+                            <p:row >
+                                <p:column style="font-weight: bold; color: red; width: 120px;" >Cedis :</p:column>
+                                <p:column >
+                                    <p:inputText value="#{mbEntradas.mbCedis.cedis.cedis}" readonly="true" />
+                                </p:column>
+                                <p:column style="font-weight: bold; color: red; width: 120px;" >Almacen :</p:column>
+                                <p:column >
+                                    <p:inputText value="#{mbEntradas.almacen.almacen}" readonly="true" />
+                                </p:column>
+                            </p:row>
+                            <p:row >
+                                <p:column style="font-weight: bold; color: red; width: 120px;" >Orden de Compra :</p:column>
+                                <p:column >
+                                    <p:inputText id="txtOrdenCompra" value="#{mbEntradas.ordenCompra.idOrdenCompra}" readonly="true" />
+                                    <p:commandButton icon="ui-icon-arrowreturnthick-1-w" title="Cargar Orden de Compra"
+                                                         action="#{mbEntradas.salir()}" process="@this" />
+                                </p:column>
+                            </p:row>
+                            <p:row >
+                                <p:column style="font-weight: bold; color: red; width: 120px;" >Proveedor :</p:column>
+                                <p:column >
+                                    <p:selectOneMenu id="proveedor" value="#{mbEntradas.mbProveedores.miniProveedor}" >
+                                        <f:converter converterId="converters.miniProveedor" />
+                                        <f:selectItems value="#{mbEntradas.mbProveedores.listaMiniProveedores}" />
+                                        <p:ajax event="change" />
+                                    </p:selectOneMenu>
+                                </p:column>
+                                <p:column style="font-weight: bold; color: red; width: 120px;" >Serie :</p:column>
+                                <p:column >
+                                    <p:inputText value="#{mbEntradas.factura.numero}" readonly="true" />
+                                </p:column>
+                            </p:row>
+                            <f:facet name="footer" >
+                                <p:row >
+                                    <p:column colspan="4" style="text-align: right;" >
+                                        <p:commandButton icon="ui-icon-arrowreturnthick-1-w" title="Terminar"
+                                                         ajax="false" action="#{mbEntradas.salir()}" process="@this" />
+                                    </p:column>
+                                </p:row>
+                            </f:facet>
+                        </p:panelGrid>
+                    </p:panel>
+                </h:form>
+            </div>>
+        </div>
+    </body>
+</html>

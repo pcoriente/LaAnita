@@ -20,6 +20,7 @@ import usuarios.UsuarioSesion;
  * @author jsolis
  */
 public class DAOMiniCedis {
+    private int idZona;
     private DataSource ds;
     
     public DAOMiniCedis() throws NamingException {
@@ -28,6 +29,7 @@ public class DAOMiniCedis {
             ExternalContext externalContext = context.getExternalContext();
             HttpSession httpSession = (HttpSession) externalContext.getSession(false);
             UsuarioSesion usuarioSesion = (UsuarioSesion) httpSession.getAttribute("usuarioSesion");
+            this.idZona=usuarioSesion.getUsuario().getIdCedisZona();
             
             Context cI = new InitialContext();
             ds = (DataSource) cI.lookup("java:comp/env/"+usuarioSesion.getJndi());
@@ -42,7 +44,9 @@ public class DAOMiniCedis {
         Statement st=cn.createStatement();
         try {
             ResultSet rs=st.executeQuery("SELECT idCedis, cedis FROM cedis WHERE idCedis="+idCedis);
-            if(rs.next()) to=construirMini(rs);
+            if(rs.next()) {
+                to=construirMini(rs);
+            }
         } finally {
             cn.close();
         }
@@ -51,13 +55,15 @@ public class DAOMiniCedis {
     
     public ArrayList<MiniCedis> obtenerListaMiniCedis() throws SQLException {
         ArrayList<MiniCedis> lstMiniCedis=new ArrayList<MiniCedis>();
-        ResultSet rs=null;
         
         Connection cn=ds.getConnection();
         Statement sentencia = cn.createStatement();
-        String strSQL="SELECT idCedis, cedis FROM cedis ORDER BY idCedis";
+        String strSQL="select * \n" +
+                        "from cedisZonasDetalle z\n" +
+                        "inner join cedis c on c.idCedis=z.idCedis\n" +
+                        "where z.idZona="+this.idZona;
         try {
-            rs = sentencia.executeQuery(strSQL);
+            ResultSet rs = sentencia.executeQuery(strSQL);
             while(rs.next()) {
                 lstMiniCedis.add(construirMini(rs));
             }

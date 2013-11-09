@@ -13,7 +13,6 @@ import org.primefaces.component.menuitem.MenuItem;
 import org.primefaces.component.submenu.Submenu;
 import org.primefaces.model.DefaultMenuModel;
 import org.primefaces.model.MenuModel;
-import usuarios.dominio.Accion;
 
 /**
  *
@@ -146,6 +145,7 @@ public class MbMenu implements Serializable {
         try {
             this.dao=new DAOMenu();
             menuItems=this.dao.obtenermenu();
+            this.dao.cargarUsuarioConfig();
         } catch (NamingException ex) {
             fMsg.setSeverity(FacesMessage.SEVERITY_ERROR);
             fMsg.setDetail(ex.getMessage());

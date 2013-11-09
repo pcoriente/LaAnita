@@ -32,7 +32,7 @@
                                 <h:outputLabel for="cedis" value="CEDIS :"  style="font-weight: bold; color: red; width: 60px;" />
                                 <p:selectOneMenu id="cedis" value="#{mbPedido.miniCedis}" >
                                     <f:converter converterId="converters.MiniCedis" />
-                                    <f:selectItems value="#{mbPedido.listaMiniCedis}" />
+                                    <f:selectItems value="#{mbPedido.mbMiniCedis.listaMiniCedis}" />
                                     <p:ajax event="change" listener="#{mbPedido.actualizaListaPedidos}" 
                                             update="growl nuevoPedido pedidos fechaGen diasInv btnCalcularDias listaProductos listaFincados btnBuscarProducto btnGrabar btnCancelar btnPrioridad pesoDirectos pesoBodega pesoTotal" />
                                 </p:selectOneMenu>
@@ -123,8 +123,10 @@
                                 </p:column>
                             </p:dataTable>
                             <p:separator id="separator"/>
-                            <p:commandButton id="btnEditarFincado" disabled="#{not mbPedido.fincado.agregado}" value="Editar" update=":main:lstFincadoDetalle"
-                                             actionListener="#{mbPedido.obtenerFincadoProductos()}" onclick="editarFincadoDlg.show()" />
+                            <p:commandButton id="btnEditarFincado" value="Editar" 
+                                             disabled="#{not mbPedido.fincado.agregado}" 
+                                             actionListener="#{mbPedido.obtenerFincadoProductos()}" onclick="editarFincadoDlg.show();" 
+                                             update=":main:lstFincadoDetalle" />
                         </p:panel>
                         <br />
                         <p:panel header="DETALLE DEL PEDIDO">
@@ -133,7 +135,7 @@
                                 <p:inputText id="diasInv" value="#{mbPedido.pedido.diasInventario}" readonly="#{mbPedido.pedido.soloLectura}" maxlength="3" size="3" >
                                     <p:ajax event="change" listener="#{mbPedido.actualizaDiasInventarioGeneral}" update="listaProductos pesoDirectos pesoBodega pesoTotal" />
                                 </p:inputText>
-                                <p:commandButton id="btnCalcularDias" disabled="#{mbPedido.pedido.estado!='A'}" type="button" value="Calcular Dias Inventario" onclick="calcularDiasInvDlg.show()" />
+                                <p:commandButton id="btnCalcularDias" disabled="#{mbPedido.pedido.estado!='A'}" type="button" value="Calcular Dias Inventario" onclick="calcularDiasInvDlg.show();" />
                             </h:panelGrid>
                             <p:dataTable var="producto" value="#{mbPedido.listaPedidoDetalle}" id="listaProductos" 
                                          scrollable="true" scrollHeight="340" scrollWidth="850" editable="true" >
@@ -209,7 +211,7 @@
                                 <p:column colspan="3" style="border: none" >
                                     <p:commandButton id="btnBuscarProducto" actionListener="#{mbPedido.mbBuscar.limpiaBuscar}" 
                                                      update="listaEncontrados" value="Buscar Producto" disabled="#{mbPedido.pedido.estado!='A'}" 
-                                                     onclick="buscarProductoDlg.show()" />
+                                                     onclick="buscarProductoDlg.show();" />
                                 </p:column>
                                 <p:column style="border: none" ><h:outputText value="Peso Bodega :" /></p:column>
                                 <p:column style="border: none" ><h:outputText id="pesoBodega" value="#{mbPedido.Round(mbPedido.pesoBodega, 3)}" /></p:column>
@@ -230,7 +232,7 @@
                                                      update="growl pedidos nuevoPedido fechaGen diasInv listaFincados listaProductos pesoBodega pesoDirectos pesoTotal" />
                                 </p:column>
                                 <p:column style="border: none; width: 200px" >
-                                    <p:commandButton id="btnPrioridad" disabled="#{mbPedido.pedido==null || mbPedido.pedido.cod_bod=='00' || mbPedido.pedido.estado!='A'}" value="Prioridad" update="listaEnvios" onclick="prioridadEnviosDlg.show()" />
+                                    <p:commandButton id="btnPrioridad" disabled="#{mbPedido.pedido==null || mbPedido.pedido.cod_bod=='00' || mbPedido.pedido.estado!='A'}" value="Prioridad" update="listaEnvios" onclick="prioridadEnviosDlg.show();" />
                                 </p:column>
                                 <p:column style="border: none" ><h:outputText value="Peso Total :" /></p:column>
                                 <p:column style="border: none" ><h:outputText id="pesoTotal" value="#{mbPedido.Round(mbPedido.pesoDirectos+mbPedido.pesoBodega,3)}" /></p:column>
@@ -434,7 +436,7 @@
                             if(!e) e = document.getElementById(countDownDiv);
                             e.innerHTML = wCounter;
                             handleDialog = setInterval(function() {
-                                if(wCounter == 0) {
+                                if(wCounter === 0) {
                                     clearInterval(handleDialog);
                                     window.location.href = timeOutPage;
                                 } else {
@@ -447,7 +449,7 @@
                         function startPageTimer(wFrom, wReach) {
                             var handle = null;
                             handle = setInterval(function() {
-                                if(wFrom == wReach) {
+                                if(wFrom === wReach) {
                                     clearInterval(handle);
                                     timeoutDialog.show();
                                     startDialogTimer(loopTill, redirectPage);

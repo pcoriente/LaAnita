@@ -73,7 +73,7 @@ public class DAOCedis {
             
             st.executeUpdate("UPDATE cedis SET cedis='"+cedis+"', idDireccion="+idDireccion+", telefono='"+telefono+"', fax='"+fax+"', eMail='"+correo+"', representante='"+representante+"' "
                     + "WHERE idCedis="+idCedis);
-            st.executeUpdate("UPDATE cedisZonas SET cedis='"+cedis+"'");
+            st.executeUpdate("UPDATE cedisZonas SET zona='"+cedis+"'");
             
             st.executeUpdate("commit Transaction");
         } catch (SQLException ex) {

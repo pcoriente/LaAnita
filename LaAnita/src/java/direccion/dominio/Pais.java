@@ -34,8 +34,6 @@ public class Pais {
         hash = 31 * hash + this.idPais;
         return hash;
     }
-    
-    
 
     public int getIdPais() {
         return idPais;

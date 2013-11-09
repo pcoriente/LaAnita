@@ -129,6 +129,30 @@
     </navigation-rule>
     
     <navigation-rule>
+        <from-view-id>/menuAlmacenes.xhtml</from-view-id>
+        <navigation-case>
+            <from-outcome>almacen.mantenimiento</from-outcome>
+            <to-view-id>/almacenes.xhtml</to-view-id>
+        </navigation-case>
+        <navigation-case>
+            <from-outcome>menuAlmacenes.terminar</from-outcome>
+            <to-view-id>/index.xhtml</to-view-id>
+        </navigation-case>
+    </navigation-rule>
+    
+    <navigation-rule>
+        <from-view-id>/almacenes.xhtml</from-view-id>
+        <navigation-case>
+            <from-outcome>almacen.salir</from-outcome>
+            <to-view-id>/menuAlmacenes.xhtml</to-view-id>
+        </navigation-case>
+        <navigation-case>
+            <from-outcome>direccion.mantenimiento</from-outcome>
+            <to-view-id>/direccion.xhtml</to-view-id>
+        </navigation-case>
+    </navigation-rule>
+    
+    <navigation-rule>
         <from-view-id>/menuClientes.xhtml</from-view-id>
         <navigation-case>
             <from-outcome>clientes.mantenimiento</from-outcome>
@@ -165,6 +189,10 @@
         <navigation-case>
             <from-outcome>proveedor.mantenimiento</from-outcome>
             <to-view-id>/proveedor.xhtml</to-view-id>
+        </navigation-case>
+        <navigation-case>
+            <from-outcome>almacenes.mantenimiento</from-outcome>
+            <to-view-id>/almacenes.xhtml</to-view-id>
         </navigation-case>
         <navigation-case>
             <from-outcome>clientes.mantenimiento</from-outcome>

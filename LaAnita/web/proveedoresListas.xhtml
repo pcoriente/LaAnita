@@ -38,7 +38,7 @@
                                         <p:commandLink id="lnkModifProductoProveedor" styleClass="nueva" value="Modificar" 
                                                        disabled="#{not mbListas.mbAcciones.validarAccion('lnkModifProductoProveedor') or mbListas.mbProveedor.miniProveedor.idProveedor==0 or mbListas.producto==null}"
                                                        ajax="false" action="#{mbListas.modificarProductoLista()}" immediate="true" update="mttoProductoLista" />|
-                                        <p:commandLink styleClass="nueva" action="#{mbListas.terminar()}" value="Salir" ajax="false" />|
+                                        <p:commandLink styleClass="nueva" action="#{mbListas.terminar()}" value="Salir" ajax="false" />
                                     </p:outputPanel>
                                 </p:column>
                             </p:row>

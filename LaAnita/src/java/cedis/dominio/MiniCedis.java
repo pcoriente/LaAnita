@@ -9,6 +9,11 @@ public class MiniCedis {
     //private String codigo;
     private String cedis;
 
+    public MiniCedis() {
+        this.idCedis=0;
+        this.cedis="";
+    }
+
     @Override
     public String toString() {
         return "("+ idCedis +") "+cedis;

@@ -5,6 +5,7 @@ import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.ArrayList;
 import javax.faces.context.ExternalContext;
 import javax.faces.context.FacesContext;
 import javax.naming.Context;
@@ -47,24 +48,16 @@ public class DAOPais {
         return pais;
     }
     
-    public Pais[] obtenerPaises() throws SQLException {
-        Pais[] paises=null;
-        ResultSet rs=null;
-        
+    public ArrayList<Pais> obtenerPaises() throws SQLException {
+        ArrayList<Pais> paises=new ArrayList<Pais>();
         Connection cn=ds.getConnection();
+        Statement st=cn.createStatement();
         String strSQL="SELECT * FROM paises";
         try {
-            Statement sentencia = cn.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
-            rs = sentencia.executeQuery(strSQL);
-            if(rs.next()) {
-                int i=0;
-                rs.last();
-                paises=new Pais[rs.getRow()];
-                
-                rs.beforeFirst();
-                while(rs.next()) {
-                    paises[i++]=construir(rs);
-                }
+            //Statement sentencia = cn.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
+            ResultSet rs = st.executeQuery(strSQL);
+            while(rs.next()) {
+                paises.add(construir(rs));
             }
         } finally {
             cn.close();
