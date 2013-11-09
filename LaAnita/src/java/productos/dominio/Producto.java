@@ -39,6 +39,8 @@ public class Producto implements Serializable {
         this.unidadMedida=new UnidadMedida(0, "", "");
         this.impuesto=new ImpuestoGrupo(0, "");
     }
+
+     
     
     @Override
     public String toString() {

@@ -99,7 +99,7 @@ a.nueva{ display:  inline;}
 
 .textoEtiquetas{
     font-weight: bold;
-    color: red;
+    color: blue;
     font-size: 12px;
 }
 
@@ -111,3 +111,24 @@ a.nueva{ display:  inline;}
 .ui-selectonemenu, ui-widget, ui-state-default, ui-corner-all, ui-helper-clearfix{
     width: 250px!important;
 }
+
+.textoContenido{
+    font-size: 10px;
+}
+
+.fondoCelda{
+    background-color: #ccc;
+}
+
+.alineacionD
+{
+  text-align:right;
+  
+}
+
+.alineacionFooter{
+    text-align:right;
+    background-color: whitesmoke;
+    font-size: 14px; 
+}
+
