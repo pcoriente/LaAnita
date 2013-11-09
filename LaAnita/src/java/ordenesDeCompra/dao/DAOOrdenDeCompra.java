@@ -1,6 +1,8 @@
 package cotizaciones.dao;
 
+import direccion.dominio.Direccion;
 import java.sql.Connection;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -15,7 +17,7 @@ import javax.sql.DataSource;
 import ordenesDeCompra.dominio.OrdenCompraDetalle;
 import ordenesDeCompra.dominio.OrdenCompraEncabezado;
 import productos.dao.DAOProductos;
-import productos.dominio.Producto;
+import proveedores.dao.DAOProveedores;
 import usuarios.UsuarioSesion;
 
 public class DAOOrdenDeCompra {
@@ -37,18 +39,19 @@ public class DAOOrdenDeCompra {
         }
     }
 
-    public ArrayList<OrdenCompraEncabezado> listaOrdenes() throws SQLException {
+    public ArrayList<OrdenCompraEncabezado> listaOrdenes() throws SQLException, NamingException {
         ArrayList<OrdenCompraEncabezado> lista = new ArrayList<OrdenCompraEncabezado>();
         ResultSet rs;
         Connection cn = ds.getConnection();
         try {
 
-            String stringSQL = "select oc.idOrdenCompra, c.idCotizacion, c.idRequisicion, eg.nombreComercial,  co.contribuyente, oc.fechaCreacion, oc.fechaFinalizacion, oc.fechaPuesta, oc.fechaEntrega, oc.estado from ordencompra oc\n"
-                    + "inner join cotizaciones c on c.idCotizacion= oc.idCotizacion\n"
-                    + "inner join proveedores p on p.idProveedor = c.idProveedor\n"
-                    + "inner join contribuyentes co on co.idContribuyente = p.idContribuyente\n"
-                    + "inner join requisiciones r on r.idRequisicion = c.idRequisicion\n"
-                    + "inner join empresasGrupo eg on eg.idEmpresa =r.idEmpresa";
+            String stringSQL = "select oc.idOrdenCompra, c.idCotizacion, c.idRequisicion, eg.nombreComercial,  p.idProveedor, c.descuentoCotizacion, c.descuentoProntoPago, d.idDireccion, p.idDireccionEntrega, oc.fechaCreacion, oc.fechaFinalizacion, oc.fechaPuesta, oc.fechaEntrega, oc.estado from ordencompra oc\n" +
+"                    inner join cotizaciones c on c.idCotizacion= oc.idCotizacion\n" +
+"                    inner join proveedores p on p.idProveedor = c.idProveedor\n" +
+"                    inner join contribuyentes co on co.idContribuyente = p.idContribuyente\n" +
+"                    inner join requisiciones r on r.idRequisicion = c.idRequisicion\n" +
+"                   inner join empresasGrupo eg on eg.idEmpresa =r.idEmpresa\n" +
+"                    inner join direcciones d on d.idDireccion = co.idDireccion";
 
             Statement sentencia = cn.createStatement();
             rs = sentencia.executeQuery(stringSQL);
@@ -61,13 +64,23 @@ public class DAOOrdenDeCompra {
         return lista;
     }
 
-    private OrdenCompraEncabezado construirOCEncabezado(ResultSet rs) throws SQLException {
+    private OrdenCompraEncabezado construirOCEncabezado(ResultSet rs) throws SQLException, NamingException {
         OrdenCompraEncabezado oce = new OrdenCompraEncabezado();
+
+        DAOProveedores daoP = new DAOProveedores();
+        
+      
+
         oce.setIdOrdenCompra(rs.getInt("idOrdenCompra"));
         oce.setIdCotizacion(rs.getInt("idCotizacion"));
         oce.setIdRequisicion(rs.getInt("idRequisicion"));
         oce.setNombreComercial(rs.getString("nombreComercial"));
-        oce.getProveedor().getContribuyente().setContribuyente(rs.getString("contribuyente"));
+        oce.setProveedor(daoP.obtenerProveedor(rs.getInt("idProveedor")));
+        oce.setDesctoComercial(rs.getDouble("descuentoCotizacion"));
+        oce.setDesctoProntoPago(rs.getDouble("descuentoProntoPago"));
+        oce.getProveedor().getContribuyente().setDireccion( this.obtenerDireccion(rs.getInt("idDireccion")));
+        oce.getProveedor().setDireccionEntrega(this.obtenerDireccion(rs.getInt("idDireccionEntrega")));
+
         oce.setFechaCreacion(utilerias.Utilerias.date2String(rs.getDate("fechaCreacion")));
         oce.setFechaFinalizacion(utilerias.Utilerias.date2String(rs.getDate("fechaFinalizacion")));
         oce.setFechaPuesta(utilerias.Utilerias.date2String(rs.getDate("fechaPuesta")));
@@ -107,9 +120,62 @@ public class DAOOrdenDeCompra {
         ocd.setProducto(daoP.obtenerProducto(rs.getInt("idProducto")));
         ocd.setIdOrdenCompra(rs.getInt("idOrdenCompra"));
         ocd.setCantOrdenada(rs.getDouble("cantOrdenada"));
+        ocd.setCantidadSolicitada(rs.getDouble("cantOrdenada"));
         ocd.setCostoOrdenado(rs.getDouble("costoOrdenado"));
         ocd.setDescuentoProducto(rs.getDouble("descuentoProducto"));
         ocd.setDescuentoProducto2(rs.getDouble("descuentoProducto2"));
         return ocd;
     }
+    
+    public Direccion obtenerDireccion(int idDireccion) throws SQLException {
+        Direccion toDir=null;
+        Connection cn=this.ds.getConnection();
+        Statement st=cn.createStatement();
+        try {
+            ResultSet rs=st.executeQuery("SELECT * FROM direcciones WHERE idDireccion="+idDireccion);
+            if(rs.next()) toDir=construir(rs);
+        } finally {
+            cn.close();
+        }
+        return toDir;
+    }
+    
+    private Direccion construir(ResultSet rs) throws SQLException {
+        Direccion toDir=new Direccion();
+        toDir.setIdDireccion(rs.getInt("idDireccion"));
+        toDir.setCalle(rs.getString("calle"));
+        toDir.setNumeroExterior(rs.getString("numeroExterior"));
+        toDir.setNumeroInterior(rs.getString("numeroInterior"));
+        toDir.setReferencia(rs.getString("referencia"));
+        toDir.getPais().setIdPais(rs.getInt("idPais"));
+    //    toDir.setIdPais(rs.getInt("idPais"));
+        toDir.setCodigoPostal(rs.getString("codigoPostal"));
+        toDir.setEstado(rs.getString("estado"));
+        toDir.setMunicipio(rs.getString("municipio"));
+        toDir.setLocalidad(rs.getString("localidad"));
+        toDir.setColonia(rs.getString("colonia"));
+        toDir.setNumeroLocalizacion(rs.getString("numeroLocalizacion"));
+        return toDir;
+    }
+
+    public void actualizarCantidadOrdenada(int idOrden, int idProd, double cc) throws SQLException {
+
+        Connection cn = this.ds.getConnection();
+        Statement st = cn.createStatement();
+        PreparedStatement ps2;
+        try {
+
+            //CABECERO
+            String strSQL2 = "UPDATE ordenCompraDetalle SET cantOrdenada=" + cc + "  WHERE idOrdenCompra=" + idOrden + " and idProducto=" + idProd + "";
+            ps2 = cn.prepareStatement(strSQL2);
+            ps2.executeUpdate();
+        } catch (SQLException e) {
+            throw (e);
+        } finally {
+            cn.close();
+        }
+
+    }
+    
+    
 }

@@ -1,6 +1,7 @@
 package contribuyentes;
 
 import direccion.dominio.Direccion;
+import direccion.to.TODireccion;
 
 /**
  *

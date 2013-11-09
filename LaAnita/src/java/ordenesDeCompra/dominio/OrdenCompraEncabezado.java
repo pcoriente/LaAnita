@@ -13,7 +13,6 @@ public class OrdenCompraEncabezado {
     private int idCotizacion;
     private int idRequisicion;
     private String nombreComercial;
-    private Factura factura;
     private Date fecha;
     private double descuento;
     private Proveedor proveedor;
@@ -30,7 +29,6 @@ public class OrdenCompraEncabezado {
         this.idCotizacion = 0;
         this.idRequisicion = 0;
         this.nombreComercial = "";
-        this.factura = new Factura();
         this.fecha = new Date();
         this.descuento = 0.00;
         this.proveedor = new Proveedor();
@@ -50,14 +48,6 @@ public class OrdenCompraEncabezado {
 
     public void setIdOrdenCompra(int idOrdenCompra) {
         this.idOrdenCompra = idOrdenCompra;
-    }
-
-    public Factura getFactura() {
-        return factura;
-    }
-
-    public void setFactura(Factura factura) {
-        this.factura = factura;
     }
 
     public Date getFecha() {

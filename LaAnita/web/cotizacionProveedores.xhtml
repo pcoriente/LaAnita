@@ -97,38 +97,38 @@
                                     listener="#{mbCotizaciones.ordCompra()}"
                                     update=":form:ordenDeCompra :form:listaProveedores"
                                     oncomplete="cotizaciones.hide();"/>
-                            <p:column headerText="Nombre Comercial">
+                            <p:column headerText="Nombre Comercial" styleClass="anchoCol">
                                 #{producto.proveedor.nombreComercial}
                             </p:column>
-                            <p:column headerText="Descto. Comercial">
+                            <p:column headerText="Descto. Comercial" styleClass="anchoCol">
                                 #{producto.cotizacionEncabezado.descuentoCotizacion}
                             </p:column>
-                            <p:column headerText="Descto. Pronto Pago">
+                            <p:column headerText="Descto. Pronto Pago" styleClass="anchoCol">
                                 #{producto.cotizacionEncabezado.descuentoProntoPago}
                             </p:column>
 
-                            <p:column headerText="Cantidad Cotizada">  
+                            <p:column headerText="Cantidad Cotizada" styleClass="anchoCol">  
                                 #{producto.cantidadCotizada}  
                             </p:column> 
-                            <p:column headerText="Costo Cotizado">  
+                            <p:column headerText="Costo Cotizado" styleClass="anchoCol">  
                                 #{producto.costoCotizadoF}  
                             </p:column> 
-                            <p:column headerText="1 Descuento">  
+                            <p:column headerText="1 Descuento" styleClass="anchoCol">  
                                 #{producto.descuentoProducto}  
                             </p:column>
-                            <p:column headerText="2 Descuento">  
+                            <p:column headerText="2 Descuento" styleClass="anchoCol">  
                                 #{producto.descuentoProducto2}  
                             </p:column>
-                            <p:column headerText="Neto">  
+                            <p:column headerText="Neto" styleClass="anchoCol">  
                                 #{producto.netoF}  
                             </p:column>
-                            <p:column headerText="Subtotal">  
+                            <p:column headerText="Subtotal" styleClass="anchoCol">  
                                 #{producto.subtotalF}  
                             </p:column>
-                            <p:column headerText="IVA">  
+                            <p:column headerText="IVA" styleClass="anchoCol">  
                                 #{producto.ivaF}  
                             </p:column>
-                            <p:column headerText="Total">  
+                            <p:column headerText="Total" styleClass="anchoCol">  
                                 #{producto.totalF}  
                             </p:column>
 

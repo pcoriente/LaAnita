@@ -3,13 +3,13 @@
 <html xmlns="http://www.w3.org/1999/xhtml"
       xmlns:ui="http://java.sun.com/jsf/facelets"
       xmlns:h="http://java.sun.com/jsf/html"
-      xmlns:f="http://java.sun.com/jsf/core"
-      xmlns:p="http://primefaces.org/ui">
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:pe="http://primefaces.org/ui/extensions"
+      xmlns:f="http://java.sun.com/jsf/core">
     <h:head>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"></meta>
         <title>Menu de Ordenes de Compra</title>
         <h:outputStylesheet library="css" name="main.css"/>
-
     </h:head>
     <body>
         <div id="wrapper" align="center">
@@ -22,15 +22,6 @@
                                          icon="ui-icon-circle-plus"
                                          title="Nueva requisición"
                                          action="index.xhtml"
-
-                                         />
-                        <p:commandButton id="verProveedores"
-                                         icon="ui-icon-note"
-                                         title="Visualizar...."
-                                         actionListener="#{mbOrdenCompra.dameOrdenCompra()}"
-                                         style="margin:0 auto;"
-                                         update=":form:OCDetalle"
-                                         oncomplete="odec.show()"
 
                                          />
 
@@ -48,13 +39,16 @@
                         <p:dataTable id="ordenCompra"
                                      value="#{mbOrdenCompra.listaOrdenesEncabezado}"
                                      var="oc"
-                                     rowKey="#{oc.idOrdenCompra}"
+                                     rowKey="#{oc}"
                                      selectionMode="single"
                                      selection="#{mbOrdenCompra.ordenElegida}"
                                      >
                             <p:ajax event="rowSelect" listener="#{mbOrdenCompra.dameOrdenCompra}"   
-                                    update=":form:OCDetalle" oncomplete="odec.show()" /> 
-
+                                    oncomplete="odec.show()" 
+                                    update=":form:dialogoOC "
+                                    process="@this"
+                                    > 
+                            </p:ajax>
                             <p:column sortBy="#{oc.idOrdenCompra}" filterBy="#{oc.idOrdenCompra}" headerText="OC" filterMatchMode="contains" width="30"  >
                                 <h:outputText value="#{oc.idOrdenCompra}"   />
                             </p:column>
@@ -86,45 +80,169 @@
                         </p:dataTable>
                     </p:panel>
 
-
                     <!-- SELECCION DE PRODUCTOS POR PROVEEDOR PARA LA ORDEN DE COMPRA -->
-                    <p:dialog widgetVar="odec">
-                        <p:panelGrid>
+                    <p:dialog widgetVar="odec" width="950" header="MANTENIMIENTO DE ORDEN DE COMPRA" id="dialogoOC" modal="true">
+                        <p:toolbar  id="tb" style="width: 900px; height: auto; margin:0 auto; " >  
+                            <p:toolbarGroup align="right">  
+                                <p:commandButton
+                                    icon="ui-icon-disk"
+                                    title="Guardar orden de compra"
+                                    />
+                              
+                                <p:separator />
+
+                                <p:commandButton id="otraCotizacion"
+                                                 icon="ui-icon-note"
+                                                 title="ir a Menú Requisiciones"
+                                                 action="menu"
+                                                 />
+
+                                <p:commandButton id="salirCotizacion"
+                                                 icon="ui-icon-home"
+                                                 title="Ir a Menú Cotizaciones"
+                                                 />
+                            </p:toolbarGroup>  
+                        </p:toolbar>
+                          <p:separator style="width:900px;height:0.5px" />
+                        <p:panelGrid id="OCEncabezado" style="width: 900px; height: auto; margin:0 auto; "  >
                             <p:row>
-                                <p:column style="color: blueviolet; background-color: #999999 " >
-                                    <h:outputLabel id="producto" value="PROVEEDOR"/> 
+                                <p:column styleClass="fondoCelda"    >
+                                    <h:outputLabel value="Orden de Compra: " styleClass="textoEtiquetas"/> 
+                                </p:column>
+                                <p:column  styleClass="fondoCelda"  >
+                                    <h:outputLabel  value="#{mbOrdenCompra.ordenElegida.idOrdenCompra}" />
+                                </p:column>
+                                <p:column styleClass="fondoCelda" >
+                                    <h:outputLabel value="Fechas: " styleClass="textoEtiquetas" /> 
+                                </p:column>
+                                <p:column styleClass="fondoCelda"  >
+                                    <h:outputLabel value="Emision: " styleClass="textoEtiquetas"/> 
+                                </p:column>
+                                <p:column styleClass="fondoCelda"  >
+                                    <h:outputLabel  value="#{mbOrdenCompra.ordenElegida.fechaCreacion}" />
+                                </p:column>
+
+                                <p:column styleClass="fondoCelda"  >
+                                    <h:outputLabel value="Entrega: " styleClass="textoEtiquetas"/> 
+                                </p:column>
+                                <p:column styleClass="fondoCelda"  >
+                                    <h:outputLabel  value="#{mbOrdenCompra.ordenElegida.fechaEntrega}" />
+                                </p:column>
+                            </p:row>
+                            <p:row>
+                                <p:column styleClass="fondoCelda"  >
+                                    <h:outputLabel value="Empresa: " styleClass="textoEtiquetas"/> 
+                                </p:column>
+                                <p:column styleClass="fondoCelda"  >
+                                    <h:outputLabel  value="#{mbOrdenCompra.ordenElegida.nombreComercial}" styleClass="textoContenido" /> 
+                                </p:column>
+                                <p:column styleClass="fondoCelda"   >
+                                    <h:outputLabel value="Dirección entrega: " styleClass="textoEtiquetas" /> 
+                                </p:column>
+                                <p:column styleClass="fondoCelda"  colspan="4" >
+                                    <h:outputLabel  value="#{mbOrdenCompra.ordenElegida.proveedor.direccionEntrega.toString()}" styleClass="textoContenido"  /> 
+                                </p:column>
+                            </p:row>
+                            <p:row>
+                                <p:column styleClass="fondoCelda"  rowspan="2" >
+                                    <h:outputLabel value="Proveedor: " styleClass="textoEtiquetas" /> 
+                                </p:column>
+                                <p:column  styleClass="fondoCelda" rowspan="2" >
+                                    <h:outputLabel  value="#{mbOrdenCompra.ordenElegida.proveedor.contribuyente.contribuyente}" styleClass="textoContenido"  />
+                                </p:column>
+                                <p:column styleClass="fondoCelda" >
+                                    <h:outputLabel value="Dirección: " styleClass="textoEtiquetas"    /> 
+                                </p:column>
+                                <p:column styleClass="fondoCelda" colspan="4">
+                                    <h:outputLabel  value="#{mbOrdenCompra.ordenElegida.proveedor.contribuyente.direccion.toString()}" styleClass="textoContenido" /> 
+                                </p:column>
+                            </p:row>
+                            <p:row>
+                                <p:column styleClass="fondoCelda" >
+                                    <h:outputLabel value="Descuentos: " styleClass="textoEtiquetas" /> 
+                                </p:column>
+                                <p:column styleClass="fondoCelda"   >
+                                    <h:outputLabel value="Comercial (%): " styleClass="textoEtiquetas" /> 
+                                </p:column>
+                                <p:column  styleClass="fondoCelda"  >
+                                    <h:outputLabel  value="#{mbOrdenCompra.ordenElegida.desctoComercial}" styleClass="textoContenido"  />
+                                </p:column>
+                                <p:column styleClass="fondoCelda" >
+                                    <h:outputLabel value="Pronto Pago (%): " styleClass="textoEtiquetas" /> 
+                                </p:column>
+                                <p:column  styleClass="fondoCelda" >
+                                    <h:outputLabel  value="#{mbOrdenCompra.ordenElegida.desctoProntoPago}" styleClass="textoContenido"  />
                                 </p:column>
                             </p:row>
                         </p:panelGrid>
+                        <p:separator style="width:900px;height:0.5px" />
                         <p:dataTable id="OCDetalle"
                                      value="#{mbOrdenCompra.listaOrdenDetalle}"
                                      var="det"
+
                                      >
-                            <p:column headerText="IdProducto">
-                                #{det.producto.idProducto}
-                            </p:column>
-                            <p:column headerText="Producto">
+                            <p:column headerText="Producto"  >
                                 #{det.producto.toString()}
                             </p:column>
-                            <p:column headerText="Descto. Pronto Pago">
-                                #{producto.cotizacionEncabezado.descuentoProntoPago}
+                            <p:column headerText="Cant. Ordenada" styleClass="alineacionD" >
+                                #{det.cantOrdenada}
                             </p:column>
-
-                            <p:column headerText="Cantidad Cotizada">  
-                                #{det.cantOrdenada}  
+                            <p:column headerText="Nueva Cant." width="60" styleClass="alineacionD" >
+                                <pe:inputNumber  value="#{det.cantidadSolicitada}"  id="ordenada"  
+                                                 decimalPlaces="3"  minValue="0">
+                                    <p:ajax event="change" 
+                                            listener="#{mbOrdenCompra.calculosOrdenCompra(det.producto.idProducto)}"
+                                            process="@this"
+                                            update="OCDetalle"
+                                            />
+                                </pe:inputNumber>
+                            </p:column>
+                            <p:column headerText="Costo Cotizado" styleClass="alineacionD">  
+                                #{det.costoOrdenadoF}  
                             </p:column> 
-                            <p:column headerText="Costo Cotizado">  
-                                #{det.costoOrdenado}  
-                            </p:column> 
-                            <p:column headerText="1 Descuento">  
+                            <p:column headerText="1 Descuento (%)" styleClass="alineacionD">  
                                 #{det.descuentoProducto}  
                             </p:column>
-                            <p:column headerText="2 Descuento">  
+                            <p:column headerText="2 Descuento (%)" styleClass="alineacionD">  
                                 #{det.descuentoProducto2}  
                             </p:column>
+
+                            <p:column headerText="Subtotal" styleClass="alineacionD">  
+                                <h:outputText value="#{det.subtotalF}" id="subtotal" >
+                                    <f:convertNumber type="currency" locale="en-US"   />
+                                </h:outputText>
+                            </p:column>
+                            <p:columnGroup type="footer" >  
+                                <p:row >
+                                    <p:column colspan="6"  style="text-align:right; font-size: 14px;" footerText="Importe:" />
+                                    <p:column colspan="6"  id="general" footerText="#{mbOrdenCompra.subtotF}"  styleClass="alineacionD"  />
+                                </p:row>
+                                <p:row>
+                                    <p:column colspan="2" style="text-align:right; background-color: whitesmoke; font-size: 14px; " footerText="Generales:"   />
+                                    <p:column    id="sumaDescuentosTotales" footerText="#{mbOrdenCompra.sumaDescuentosGeneralesF}" styleClass="alineacionD" />
+
+                                    <p:column style="text-align:right; font-size: 14px;" footerText="Por Productos:"/>
+                                    <p:column  id="sumaDescuentosProductos" footerText="#{mbOrdenCompra.sumaDescuentosProductosF}" />
+
+                                    <p:column style="text-align:right; font-size: 14px;" footerText="Desc. Totales:"/>
+                                    <p:column  id="descuentoGeneralAplicado" footerText="#{mbOrdenCompra.sumaDescuentosTotalesF}" styleClass="alineacionD" />
+                                </p:row>
+                                <p:row>
+                                    <p:column colspan="6" style="text-align:right; font-size: 14px;" footerText="Subtotal:"/>
+                                    <p:column   id="subtotalBruto" footerText="#{mbOrdenCompra.subtotalBrutoF}" styleClass="alineacionD"/>
+                                </p:row>
+                                <p:row>
+                                    <p:column colspan="6" style="text-align:right; font-size: 14px;" footerText="IVA:"/>
+                                    <p:column  id="impuesto" footerText="#{mbOrdenCompra.impF}" styleClass="alineacionD"/>
+                                </p:row>
+                                <p:row>
+                                    <p:column colspan="6" style="text-align:right; font-size: 14px;" footerText="Total :"/>
+                                    <p:column   id="total" footerText="#{mbOrdenCompra.totalF}" styleClass="alineacionD">
+                                    </p:column>
+                                </p:row>
+                            </p:columnGroup> 
                         </p:dataTable>
                     </p:dialog>
-
                 </h:form>
             </div>
             <!-- FIN DE CONTENIDO -->
