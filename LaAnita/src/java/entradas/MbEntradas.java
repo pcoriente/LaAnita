@@ -53,6 +53,7 @@ public class MbEntradas implements Serializable {
         this.mbAcciones = new MbAcciones();
         this.mbCedis = new MbMiniCedis();
         this.mbEmpresas = new MbMiniEmpresas();
+        this.mbProveedores = new MbMiniProveedor();
     }
     
     public String inicializarEntrada() {

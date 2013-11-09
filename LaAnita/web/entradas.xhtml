@@ -71,31 +71,23 @@
                     <p:panel header="ENTRADAS AL INVENTARIO" styleClass="quitaCuadro" rendered="#{mbEntradas.modoEdicion}" >
                         <p:panelGrid id="mttoEntradas" >
                             <p:row >
-                                <p:column style="font-weight: bold; color: red; width: 120px;" >Empresa :</p:column>
+                                <p:column style="font-weight: bold; color: red; width: 70px;" >Empresa :</p:column>
                                 <p:column colspan="3" >
                                     <p:inputText value="#{mbEntradas.mbEmpresas.empresa.nombreComercial}" readonly="true" />
                                 </p:column>
                             </p:row>
                             <p:row >
-                                <p:column style="font-weight: bold; color: red; width: 120px;" >Cedis :</p:column>
+                                <p:column style="font-weight: bold; color: red; width: 70px;" >Cedis :</p:column>
                                 <p:column >
                                     <p:inputText value="#{mbEntradas.mbCedis.cedis.cedis}" readonly="true" />
                                 </p:column>
-                                <p:column style="font-weight: bold; color: red; width: 120px;" >Almacen :</p:column>
+                                <p:column style="font-weight: bold; color: red; width: 60px;" >Almacen :</p:column>
                                 <p:column >
                                     <p:inputText value="#{mbEntradas.almacen.almacen}" readonly="true" />
                                 </p:column>
                             </p:row>
                             <p:row >
-                                <p:column style="font-weight: bold; color: red; width: 120px;" >Orden de Compra :</p:column>
-                                <p:column >
-                                    <p:inputText id="txtOrdenCompra" value="#{mbEntradas.ordenCompra.idOrdenCompra}" readonly="true" />
-                                    <p:commandButton icon="ui-icon-arrowreturnthick-1-w" title="Cargar Orden de Compra"
-                                                         action="#{mbEntradas.salir()}" process="@this" />
-                                </p:column>
-                            </p:row>
-                            <p:row >
-                                <p:column style="font-weight: bold; color: red; width: 120px;" >Proveedor :</p:column>
+                                <p:column style="font-weight: bold; color: red; width: 70px;" >Proveedor :</p:column>
                                 <p:column >
                                     <p:selectOneMenu id="proveedor" value="#{mbEntradas.mbProveedores.miniProveedor}" >
                                         <f:converter converterId="converters.miniProveedor" />
@@ -103,9 +95,24 @@
                                         <p:ajax event="change" />
                                     </p:selectOneMenu>
                                 </p:column>
-                                <p:column style="font-weight: bold; color: red; width: 120px;" >Serie :</p:column>
+                                <p:column style="font-weight: bold; color: red; width: 120px;" >Orden de Compra :</p:column>
                                 <p:column >
-                                    <p:inputText value="#{mbEntradas.factura.numero}" readonly="true" />
+                                    <p:inputText id="txtOrdenCompra" value="#{mbEntradas.ordenCompra.idOrdenCompra}" readonly="true" />
+                                    <p:commandButton icon="ui-icon-search" title="Buscar Orden de Compra"
+                                                         action="#{mbEntradas.salir()}" process="@this" />
+                                </p:column>
+                            </p:row>
+                            <p:row >
+                                <p:column style="font-weight: bold; color: red; width: 70px;" >Factura :</p:column>
+                                <p:column >
+                                    <p:inputText value="#{mbEntradas.factura.serie}" maxlength="3" size="5" />
+                                    <p:inputText value="#{mbEntradas.factura.numero}" maxlength="8" size="10" />
+                                </p:column>
+                                <p:column style="font-weight: bold; color: red; width: 60px;" >Fecha :</p:column>
+                                <p:column >
+                                    <p:inputText value="#{mbEntradas.factura.fecha}" maxlength="10" size="12" >
+                                        <f:convertDateTime pattern="dd/MM/yyyy" />
+                                    </p:inputText>
                                 </p:column>
                             </p:row>
                             <f:facet name="footer" >
@@ -119,7 +126,7 @@
                         </p:panelGrid>
                     </p:panel>
                 </h:form>
-            </div>>
+            </div>
         </div>
     </body>
 </html>
