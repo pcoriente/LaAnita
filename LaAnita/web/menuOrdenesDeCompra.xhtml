@@ -18,22 +18,22 @@
                 <h:form id="form" >
                     <div align="right">
 
-                        <p:commandButton id="Nuevo"
-                                         icon="ui-icon-circle-plus"
-                                         title="Nueva requisición"
-                                         action="index.xhtml"
-
-                                         />
-
+                        <p:commandButton 
+                            icon="ui-icon-note"
+                            title="ir a Menú a Cotizaciones"
+                            action="menuCotizaciones.xhtml"
+                            
+                            />
                         <p:commandButton id="salir"
                                          icon="ui-icon-home"
                                          title="Salir de Listado de Requisiciones"
+                                         action="index.xhtml"
 
                                          />
                     </div>
 
                     <!-- P A N E L   D E  A D M I N I S T R A C I O N... -->
-                    <p:messages id="messagePanel" showDetail="true" autoUpdate="true" closable="true" />
+                    <p:messages id="messagePanel" showDetail="true" closable="true" />
                     <p:panel header="PANEL DE ADMINISTRACION DE ORDENES DE COMPRA" styleClass="quitaCuadro"  >
                         <h:outputText value="No hay ORDENES DE COMPRA que mostrar !!" rendered="#{empty mbOrdenCompra.listaOrdenesEncabezado}" />
                         <p:dataTable id="ordenCompra"
@@ -74,7 +74,7 @@
                                 <h:outputText value="#{oc.fechaEntrega}"    />
                             </p:column>
                             <p:column headerText="Status">
-                                <h:outputText value="#{oc.estado}"    />
+                                <h:outputText value="#{oc.status}"    />
                             </p:column>
 
                         </p:dataTable>
@@ -82,28 +82,46 @@
 
                     <!-- SELECCION DE PRODUCTOS POR PROVEEDOR PARA LA ORDEN DE COMPRA -->
                     <p:dialog widgetVar="odec" width="950" header="MANTENIMIENTO DE ORDEN DE COMPRA" id="dialogoOC" modal="true">
+                        <p:messages id="messageDialog" showDetail="true" autoUpdate="true" closable="true" />
                         <p:toolbar  id="tb" style="width: 900px; height: auto; margin:0 auto; " >  
                             <p:toolbarGroup align="right">  
                                 <p:commandButton
                                     icon="ui-icon-disk"
                                     title="Guardar orden de compra"
+                                    actionListener="#{mbOrdenCompra.guardarOrden(mbOrdenCompra.ordenElegida.idOrdenCompra,mbOrdenCompra.ordenElegida.estado)}"
+                                    oncomplete="odec.hide()"
+                                    disabled="#{mbOrdenCompra.ordenElegida.estado eq 2 }"
+                                    update=":form:ordenCompra"
                                     />
-                              
-                                <p:separator />
+                                <p:commandButton
+                                    icon="ui-icon-cancel"
+                                    title="Cancelar orden de compra"
+                                    actionListener="#{mbOrdenCompra.cancelarOrden(mbOrdenCompra.ordenElegida.idOrdenCompra,0)}"
+                                     update=":form:ordenCompra"
+                                    />
+                                 <p:separator />
+                                <p:commandButton
+                                    icon="ui-icon-mail-closed"
+                                    title="Enviar orden de compra"
+                                  
+                                    />
+                                 <p:commandButton
+                                    icon="ui-icon-print"
+                                    title="Imprimir orden de compra"
+                                    actionListener="#{mbOrdenCompra.generarReporte()}"
+                                    ajax="false"
+                                    />
 
-                                <p:commandButton id="otraCotizacion"
-                                                 icon="ui-icon-note"
-                                                 title="ir a Menú Requisiciones"
-                                                 action="menu"
-                                                 />
+                                <p:separator />
 
                                 <p:commandButton id="salirCotizacion"
                                                  icon="ui-icon-home"
                                                  title="Ir a Menú Cotizaciones"
+                                                 action="index.xhtml"
                                                  />
                             </p:toolbarGroup>  
                         </p:toolbar>
-                          <p:separator style="width:900px;height:0.5px" />
+                        <p:separator style="width:900px;height:0.5px" />
                         <p:panelGrid id="OCEncabezado" style="width: 900px; height: auto; margin:0 auto; "  >
                             <p:row>
                                 <p:column styleClass="fondoCelda"    >

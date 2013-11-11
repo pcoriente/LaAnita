@@ -47,11 +47,14 @@ public class DAOOrdenDeCompra {
 
             String stringSQL = "select oc.idOrdenCompra, c.idCotizacion, c.idRequisicion, eg.nombreComercial,  p.idProveedor, c.descuentoCotizacion, c.descuentoProntoPago, d.idDireccion, p.idDireccionEntrega, oc.fechaCreacion, oc.fechaFinalizacion, oc.fechaPuesta, oc.fechaEntrega, oc.estado from ordencompra oc\n" +
 "                    inner join cotizaciones c on c.idCotizacion= oc.idCotizacion\n" +
-"                    inner join proveedores p on p.idProveedor = c.idProveedor\n" +
-"                    inner join contribuyentes co on co.idContribuyente = p.idContribuyente\n" +
+"                   inner join proveedores p on p.idProveedor = c.idProveedor\n" +
+"                  inner join contribuyentes co on co.idContribuyente = p.idContribuyente\n" +
 "                    inner join requisiciones r on r.idRequisicion = c.idRequisicion\n" +
 "                   inner join empresasGrupo eg on eg.idEmpresa =r.idEmpresa\n" +
-"                    inner join direcciones d on d.idDireccion = co.idDireccion";
+"                    inner join direcciones d on d.idDireccion = co.idDireccion\n" +
+"                    where oc.estado >0\n" +
+"                    order by oc.idOrdenCompra desc\n" +
+"                    ";
 
             Statement sentencia = cn.createStatement();
             rs = sentencia.executeQuery(stringSQL);
@@ -86,6 +89,23 @@ public class DAOOrdenDeCompra {
         oce.setFechaPuesta(utilerias.Utilerias.date2String(rs.getDate("fechaPuesta")));
         oce.setFechaEntrega(utilerias.Utilerias.date2String(rs.getDate("fechaEntrega")));
         oce.setEstado(rs.getInt("estado"));
+        switch (rs.getInt("estado")) {
+            case 0:
+                oce.setStatus("Rechazado");
+               
+                break;
+            case 1:
+                oce.setStatus("Activado");
+                break;
+            case 2:
+                oce.setStatus("Ordenado");
+                break;
+            default:
+                String noAprobado = "No Aprobado";
+
+        }
+
+       
         return oce;
     }
 
@@ -175,6 +195,44 @@ public class DAOOrdenDeCompra {
             cn.close();
         }
 
+    }
+
+    public void procesarOrdenCompra(int idOrden) throws SQLException {
+        Connection cn = this.ds.getConnection();
+        Statement st = cn.createStatement();
+        PreparedStatement ps2;
+        try {
+
+            //CABECERO
+            String strSQL2 = "UPDATE ordenCompra SET estado=2  WHERE idOrdenCompra=" + idOrden ;
+            ps2 = cn.prepareStatement(strSQL2);
+            ps2.executeUpdate();
+        } catch (SQLException e) {
+            throw (e);
+        } finally {
+            cn.close();
+        }
+        
+       
+    }
+
+    public void cancelarOrdenCompra(int idOrden) throws SQLException {
+       Connection cn = this.ds.getConnection();
+        Statement st = cn.createStatement();
+        PreparedStatement ps2;
+        try {
+
+            //CABECERO
+            String strSQL2 = "UPDATE ordenCompra SET estado=0  WHERE idOrdenCompra=" + idOrden ;
+            ps2 = cn.prepareStatement(strSQL2);
+            ps2.executeUpdate();
+        } catch (SQLException e) {
+            throw (e);
+        } finally {
+            cn.close();
+        }
+        
+       
     }
     
     

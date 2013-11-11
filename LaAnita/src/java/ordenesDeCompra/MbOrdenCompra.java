@@ -9,18 +9,22 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.faces.application.FacesMessage;
 import javax.faces.bean.ManagedProperty;
+import javax.faces.context.FacesContext;
 import javax.naming.NamingException;
+import ordenDeCompra.Reporte.OrdenCompraReporte;
 import ordenesDeCompra.dominio.OrdenCompraEncabezado;
 import ordenesDeCompra.dominio.OrdenCompraDetalle;
 import org.primefaces.event.SelectEvent;
 import proveedores.MbProveedores;
+import utilerias.Numero_a_Letra;
+import utilerias.Utilerias;
 
 @Named(value = "mbOrdenCompra")
 @SessionScoped
 public class MbOrdenCompra implements Serializable {
 
-   
     @ManagedProperty(value = "#{mbProveedores}")
     private MbProveedores mbProveedores;
     private OrdenCompraEncabezado ordenCompraEncabezado;
@@ -46,6 +50,7 @@ public class MbOrdenCompra implements Serializable {
     private double iva = 0.16;
     private double sumaDescuentoTotales;
     private String sumaDescuentosTotalesF;
+    DAOOrdenDeCompra daoO = new DAOOrdenDeCompra();
 
     public MbOrdenCompra() throws NamingException {
         this.mbProveedores = new MbProveedores();
@@ -67,7 +72,7 @@ public class MbOrdenCompra implements Serializable {
         }
     }
 
-    public void dameOrdenCompra(SelectEvent event) throws SQLException {
+    public void dameOrdenCompra(SelectEvent event) {
         this.ordenElegida = (OrdenCompraEncabezado) event.getObject();
 
         listaOrdenDetalle = new ArrayList<OrdenCompraDetalle>();
@@ -83,13 +88,15 @@ public class MbOrdenCompra implements Serializable {
             }
         } catch (NamingException ex) {
             Logger.getLogger(MbOrdenCompra.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (SQLException ex) {
+            Logger.getLogger(MbOrdenCompra.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 
     public void calculosOrdenCompra(int idProd) {
-       
+
         try {
-            DAOOrdenDeCompra daoO= new DAOOrdenDeCompra();
+
             for (OrdenCompraDetalle e : listaOrdenDetalle) {
                 int idProducto = e.getProducto().getIdProducto();
                 if (idProd == idProducto) {
@@ -97,8 +104,8 @@ public class MbOrdenCompra implements Serializable {
                     double neto2 = neto - neto * (e.getDescuentoProducto2() / 100);
                     e.setNeto(neto2);
 //                    e.setSubtotal(e.getNeto() * e.getCantidadSolicitada());
-                    e.setSubtotal(e.getCantidadSolicitada()*e.getCostoOrdenado());
-                    daoO.actualizarCantidadOrdenada(e.getIdOrdenCompra(), idProd,  e.getCantidadSolicitada());
+                    e.setSubtotal(e.getCantidadSolicitada() * e.getCostoOrdenado());
+                    daoO.actualizarCantidadOrdenada(e.getIdOrdenCompra(), idProd, e.getCantidadSolicitada());
                     break;
                 }
             }
@@ -114,7 +121,7 @@ public class MbOrdenCompra implements Serializable {
         double descProds = 0;
         double descuentoC = 0;
         double descuentoPP = 0;
-        double subt=0;
+        double subt = 0;
 
         if (this.listaOrdenDetalle != null) {
             for (OrdenCompraDetalle oc : listaOrdenDetalle) {
@@ -124,17 +131,17 @@ public class MbOrdenCompra implements Serializable {
             setSumaDescuentosProductos(descProds);
             double dc = this.ordenElegida.getDesctoComercial();
             double dpp = this.ordenElegida.getDesctoProntoPago();
-            subt=subtotalGeneral;
+            subt = subtotalGeneral;
             descuentoC = subt * (dc / 100);
-            
-            subt=subt-descuentoC;
-            
+
+            subt = subt - descuentoC;
+
             descuentoPP = subt * (dpp / 100);
-            double descuentosGenerales=descuentoC+descuentoPP;
+            double descuentosGenerales = descuentoC + descuentoPP;
 
             setSumaDescuentosGenerales(descuentosGenerales);
 
-        //    setSumaDescuentoTotales(sumaDescuentosProductos + sumaDescuentosGenerales);
+            //    setSumaDescuentoTotales(sumaDescuentosProductos + sumaDescuentosGenerales);
 
         } else {
             System.out.println("No hay valores en el arraylist");
@@ -148,7 +155,7 @@ public class MbOrdenCompra implements Serializable {
 
     public void calcularSubtotalBruto() {
         subtotalBruto = 0;
-      //  subtotalBruto = this.subtotalGeneral - this.sumaDescuentosGenerales;
+        //  subtotalBruto = this.subtotalGeneral - this.sumaDescuentosGenerales;
         subtotalBruto = this.subtotalGeneral - this.sumaDescuentoTotales;
     }
 
@@ -172,8 +179,52 @@ public class MbOrdenCompra implements Serializable {
         }
     }
 
-    // GET Y SETS
+    public void guardarOrden(int idOrden, int estado) throws NamingException {
+        FacesMessage msg = null;
+        try {
+            if (estado == 1) {
+                daoO.procesarOrdenCompra(idOrden);
+                this.setListaOrdenesEncabezado(null);
+                this.cargaOrdenesEncabezado();
 
+                msg = new FacesMessage(FacesMessage.SEVERITY_INFO, "Aviso: ", "Se ha guardado con satisfactoriamente...");
+            } else if (estado == 2) {
+                msg = new FacesMessage(FacesMessage.SEVERITY_INFO, "Aviso: ", "La orden se ha registrado con anterioridad");
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(MbOrdenCompra.class.getName()).log(Level.SEVERE, null, ex);
+            msg = new FacesMessage(FacesMessage.SEVERITY_INFO, "Aviso: ", "No se realizó el registro de la orden de compra..");
+        }
+        FacesContext.getCurrentInstance().addMessage(null, msg);
+
+    }
+
+    public void cancelarOrden(int idOrden, int estado) throws NamingException {
+        FacesMessage msg = null;
+        try {
+            if (estado == 0) {
+                daoO.cancelarOrdenCompra(idOrden);
+                this.setListaOrdenesEncabezado(null);
+                this.cargaOrdenesEncabezado();
+
+                msg = new FacesMessage(FacesMessage.SEVERITY_INFO, "Aviso: ", "Se ha CANCELADO");
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(MbOrdenCompra.class.getName()).log(Level.SEVERE, null, ex);
+            msg = new FacesMessage(FacesMessage.SEVERITY_INFO, "Aviso: ", "No se realizó la cancelación de la orden de compra..");
+        }
+        FacesContext.getCurrentInstance().addMessage(null, msg);
+
+
+    }
+
+    public String irMenu() throws NamingException {
+        // this.limpiaRequisicion();
+        String navega = "menuOrdenesDeCompra.xhtml";
+        return navega;
+    }
+
+    // GET Y SETS
     public MbProveedores getMbProveedores() {
         return mbProveedores;
     }
@@ -238,7 +289,7 @@ public class MbOrdenCompra implements Serializable {
     }
 
     public double getSubtotalGeneral() {
-        this.calculoSubtotalGeneral();
+        calculoSubtotalGeneral();
         return subtotalGeneral;
     }
 
@@ -273,7 +324,12 @@ public class MbOrdenCompra implements Serializable {
     }
 
     public String getSubtotF() {
+        //     Utilerias u = new Utilerias();
+        //       Numero_a_Letra num = new Numero_a_Letra();
         subtotF = utilerias.Utilerias.formatoMonedas(this.getSubtotalGeneral());
+        //     String letra = u.quitarComasNumero(subtotF);
+        //      letra = num.Convertir(letra, true);
+        //    System.out.println("Letras: " + letra);
         return subtotF;
     }
 
@@ -335,6 +391,13 @@ public class MbOrdenCompra implements Serializable {
 
     public String getSumaDescuentosTotalesF() {
         sumaDescuentosTotalesF = utilerias.Utilerias.formatoMonedas(this.getSumaDescuentoTotales());
+
         return sumaDescuentosTotalesF;
+    }
+
+    public void generarReporte() {
+        OrdenCompraReporte reporte = new OrdenCompraReporte();
+        reporte.generarReporte(listaOrdenDetalle);
+
     }
 }

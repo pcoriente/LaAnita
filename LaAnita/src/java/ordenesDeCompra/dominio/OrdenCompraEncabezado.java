@@ -23,6 +23,7 @@ public class OrdenCompraEncabezado {
     private double desctoComercial;
     private double desctoProntoPago;
     private String fechaEntrega;
+    private String status;
 
     public OrdenCompraEncabezado() {
         this.idOrdenCompra = 0;
@@ -153,4 +154,14 @@ public class OrdenCompraEncabezado {
     public void setFechaEntrega(String fechaEntrega) {
         this.fechaEntrega = fechaEntrega;
     }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
+    }
+    
+    
 }
