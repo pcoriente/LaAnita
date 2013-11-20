@@ -19,6 +19,7 @@ import java.util.ArrayList;
 import javax.faces.application.FacesMessage;
 import javax.faces.bean.ManagedProperty;
 import javax.faces.context.FacesContext;
+import javax.faces.model.SelectItem;
 import javax.naming.NamingException;
 import usuarios.MbAcciones;
 import usuarios.dominio.Accion;
@@ -38,6 +39,7 @@ public class MbAlmacenes implements Serializable {
     private Almacen almacen;
     private Almacen almacenSeleccionado;
     private ArrayList<Almacen> almacenes;
+    private ArrayList<SelectItem> listaAlmacenes;
     private DAOAlmacenes dao;
     
     private Contacto contacto;  // Contacto Seleccionado del SelectOne
@@ -64,6 +66,34 @@ public class MbAlmacenes implements Serializable {
         this.mbDireccion = new MbDireccion();
         this.mbAcciones = new MbAcciones();
         this.mbContactos=new MbContactos();
+    }
+    
+    public void obtenerListaAlmacenes() {
+        boolean ok=false;
+        FacesMessage fMsg = new FacesMessage(FacesMessage.SEVERITY_WARN, "Aviso:", "");
+        this.listaAlmacenes=new ArrayList<SelectItem>();
+        try {
+            Almacen a0 = new Almacen();
+            a0.setIdAlmacen(0);
+            a0.setAlmacen("Seleccione un almacén");
+            SelectItem cero = new SelectItem(a0, a0.toString());
+            listaAlmacenes.add(cero);
+            
+            this.dao=new DAOAlmacenes();
+            for (Almacen a : this.dao.obtenerAlmacenes(this.mbCedis.getCedis().getIdCedis(), this.mbEmpresas.getEmpresa().getIdEmpresa())) {
+                listaAlmacenes.add(new SelectItem(a, a.toString()));
+            }
+            ok=true;
+        } catch (NamingException ex) {
+            fMsg.setSeverity(FacesMessage.SEVERITY_ERROR);
+            fMsg.setDetail(ex.getMessage());
+        } catch (SQLException ex) {
+            fMsg.setSeverity(FacesMessage.SEVERITY_ERROR);
+            fMsg.setDetail(ex.getErrorCode() + " " + ex.getMessage());
+        }
+        if (!ok) {
+            FacesContext.getCurrentInstance().addMessage(null, fMsg);
+        }
     }
     
     public void eliminarTelefonoTipo() {
@@ -421,5 +451,16 @@ public class MbAlmacenes implements Serializable {
 
     public void setTelefono(Telefono telefono) {
         this.telefono = telefono;
+    }
+
+    public ArrayList<SelectItem> getListaAlmacenes() {
+        if(this.listaAlmacenes==null) {
+            this.obtenerListaAlmacenes();
+        }
+        return listaAlmacenes;
+    }
+
+    public void setListaAlmacenes(ArrayList<SelectItem> listaAlmacenes) {
+        this.listaAlmacenes = listaAlmacenes;
     }
 }

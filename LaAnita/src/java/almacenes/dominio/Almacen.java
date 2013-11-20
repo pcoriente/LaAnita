@@ -29,6 +29,33 @@ public class Almacen {
         this.direccion = new Direccion();
     }
 
+    @Override
+    public String toString() {
+        return this.almacen;
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 7;
+        hash = 97 * hash + this.idAlmacen;
+        return hash;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final Almacen other = (Almacen) obj;
+        if (this.idAlmacen != other.idAlmacen) {
+            return false;
+        }
+        return true;
+    }
+
     public int getIdAlmacen() {
         return idAlmacen;
     }

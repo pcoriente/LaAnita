@@ -305,6 +305,15 @@
     </converter>
     
     <converter>
+        <converter-id>converters.AlmacenConverter</converter-id>
+        <converter-class>almacenes.converters.AlmacenConverter</converter-class>
+    </converter>
+    
+    <converter>
+        <converter-id>converters.FacturaConverter</converter-id>
+        <converter-class>entradas.converters.FacturaConverter</converter-class>
+    </converter>
+    <converter>
         <converter-id>converters.Pedido</converter-id>
         <converter-class>pedidos.converters.PedidoConverter</converter-class>
     </converter>

@@ -23,7 +23,7 @@ public class Factura {
 
     @Override
     public String toString() {
-        return "Factura{" + "serie=" + serie + ", numero=" + numero + '}';
+        return (this.serie.isEmpty()?"":this.serie+"-")+this.numero;
     }
 
     @Override

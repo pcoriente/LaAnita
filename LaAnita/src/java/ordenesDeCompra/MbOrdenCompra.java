@@ -57,19 +57,18 @@ public class MbOrdenCompra implements Serializable {
     }
 
     //M E T O D O S 
-    private void cargaOrdenesEncabezado() throws NamingException, SQLException {
-
-        this.listaOrdenesEncabezado = new ArrayList<OrdenCompraEncabezado>();
-        DAOOrdenDeCompra daoOC = new DAOOrdenDeCompra();
-        ArrayList<OrdenCompraEncabezado> lista = daoOC.listaOrdenes();
-        for (OrdenCompraEncabezado d : lista) {
-            listaOrdenesEncabezado.add(d);
+    private void cargaOrdenesEncabezado() {
+        try {
+            DAOOrdenDeCompra daoOC = new DAOOrdenDeCompra();
+            this.listaOrdenesEncabezado = daoOC.listaOrdenes();
+        } catch (NamingException ex) {
+            Logger.getLogger(MbOrdenCompra.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (SQLException ex) {
+            Logger.getLogger(MbOrdenCompra.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
-
-    public void dameOrdenCompra(SelectEvent event) throws SQLException {
-        this.ordenElegida = (OrdenCompraEncabezado) event.getObject();
-
+    
+    public void obtenerDetalleOrdenCompra() throws SQLException {
         listaOrdenDetalle = new ArrayList<OrdenCompraDetalle>();
         this.subtotalGeneral = 0;
 
@@ -84,6 +83,11 @@ public class MbOrdenCompra implements Serializable {
         } catch (NamingException ex) {
             Logger.getLogger(MbOrdenCompra.class.getName()).log(Level.SEVERE, null, ex);
         }
+    }
+
+    public void dameOrdenCompra(SelectEvent event) throws SQLException {
+        this.ordenElegida = (OrdenCompraEncabezado) event.getObject();
+        obtenerDetalleOrdenCompra();
     }
 
     public void calculosOrdenCompra(int idProd) {
@@ -200,11 +204,7 @@ public class MbOrdenCompra implements Serializable {
 
     public ArrayList<OrdenCompraEncabezado> getListaOrdenesEncabezado() throws NamingException {
         if (listaOrdenesEncabezado == null) {
-            try {
-                this.cargaOrdenesEncabezado();
-            } catch (SQLException ex) {
-                Logger.getLogger(MbOrdenCompra.class.getName()).log(Level.SEVERE, null, ex);
-            }
+            this.cargaOrdenesEncabezado();
         }
         return listaOrdenesEncabezado;
     }
