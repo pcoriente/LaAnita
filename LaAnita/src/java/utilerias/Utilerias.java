@@ -100,4 +100,11 @@ public class Utilerias {
         String cantidad = formatoImporte.format(importe);
         return cantidad;
     }
+
+    public String quitarComasNumero(String numero) {
+        String num = "";
+        num = numero.replace(",", "");
+        num = num.replace("$", "");
+        return num;
+    }
 }

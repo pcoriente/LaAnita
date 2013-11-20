@@ -18,17 +18,19 @@
                 <h:form id="form" >
                     <div align="right">
                         <p:commandButton id="Nuevo"
-                                         icon="ui-icon-circle-plus"
-                                         title="Nueva requisición"
+                                         icon="ui-icon-note"
+                                         title="Ir al Menu de Requisiciones"
                                          action="menuRequisiciones.xhtml"
-
                                          />
-                        
+                        <p:commandButton id="Menu"
+                                         icon="ui-icon-document"
+                                         title="Ir a menu cotizaciones"
+                                         action="menuOrdenesDeCompra.xhtml"
+                                         />
                         <p:commandButton id="salir"
                                        icon="ui-icon-home"
                                          title="Salir de Listado de Requisiciones"
-                                         action="#{mbCotizaciones.salirMenuCotizaciones()}"
-
+                                         action="index.xhtml"
                                          />
                     </div>
 
