@@ -45,16 +45,21 @@ public class DAOOrdenDeCompra {
         Statement sentencia = cn.createStatement();
         try {
 
-            String stringSQL = "select oc.idOrdenCompra, c.idCotizacion, c.idRequisicion, eg.nombreComercial,  p.idProveedor, c.descuentoCotizacion, c.descuentoProntoPago, d.idDireccion, p.idDireccionEntrega, oc.fechaCreacion, oc.fechaFinalizacion, oc.fechaPuesta, oc.fechaEntrega, oc.estado from ordencompra oc\n" +
-"                    inner join cotizaciones c on c.idCotizacion= oc.idCotizacion\n" +
-"                   inner join proveedores p on p.idProveedor = c.idProveedor\n" +
-"                  inner join contribuyentes co on co.idContribuyente = p.idContribuyente\n" +
-"                    inner join requisiciones r on r.idRequisicion = c.idRequisicion\n" +
-"                   inner join empresasGrupo eg on eg.idEmpresa =r.idEmpresa\n" +
-"                    inner join direcciones d on d.idDireccion = co.idDireccion\n" +
-"                    where oc.estado >0\n" +
-"                    order by oc.idOrdenCompra desc\n" +
-"                    ";
+            String stringSQL = "select oc.idOrdenCompra, oc.fechaCreacion, oc.fechaFinalizacion, oc.fechaPuesta, oc.fechaEntrega, oc.estado \n" +
+"                                       , isnull(c.idCotizacion, 0) as idCotizacion, isnull(c.idRequisicion,0) as idRequisicion, isnull(c.descuentoCotizacion,0.00) as descuentoCotizacion, isnull(c.descuentoProntoPago,0.00) as descuentoProntoPago\n" +
+"                                       , isnull(c.idProveedor,0) as idProveedor, isnull(c.idDireccionEntrega,0) as idDireccionEntrega\n" +
+"                                       , isnull(c.nombreComercial,'') as nombreComercial, isnull(c.idDireccion, 0) as idDireccion\n" +
+"                               from ordencompra oc\n" +
+"                               left join (select c.idCotizacion, c.idRequisicion, c.descuentoCotizacion, c.descuentoProntoPago\n" +
+"                                               , p.idProveedor, p.idDireccionEntrega, eg.nombreComercial, d.idDireccion\n" +
+"                                           from cotizaciones c\n" +
+"                                           inner join proveedores p on p.idProveedor = c.idProveedor\n" +
+"                                           inner join contribuyentes co on co.idContribuyente = p.idContribuyente\n" +
+"                                           inner join requisiciones r on r.idRequisicion = c.idRequisicion\n" +
+"                                           inner join empresasGrupo eg on eg.idEmpresa = r.idEmpresa\n" +
+"                                           inner join direcciones d on d.idDireccion = co.idDireccion) c on c.idCotizacion=oc.idCotizacion\n" +
+"                               where oc.estado >0\n" +
+"                               order by oc.idOrdenCompra desc";
 
             //Statement sentencia = cn.createStatement();
             ResultSet rs = sentencia.executeQuery(stringSQL);
@@ -71,19 +76,15 @@ public class DAOOrdenDeCompra {
         OrdenCompraEncabezado oce = new OrdenCompraEncabezado();
 
         DAOProveedores daoP = new DAOProveedores();
-        
-      
-
         oce.setIdOrdenCompra(rs.getInt("idOrdenCompra"));
         oce.setIdCotizacion(rs.getInt("idCotizacion"));
-        //oce.setIdRequisicion(rs.getInt("idRequisicion"));
-        //oce.setNombreComercial(rs.getString("nombreComercial"));
-        //oce.setProveedor(daoP.obtenerProveedor(rs.getInt("idProveedor")));
+        oce.setIdRequisicion(rs.getInt("idRequisicion"));
+        oce.setNombreComercial(rs.getString("nombreComercial"));
+        oce.setProveedor(daoP.obtenerProveedor(rs.getInt("idProveedor")));
         oce.setDesctoComercial(rs.getDouble("desctoComercial"));
         oce.setDesctoProntoPago(rs.getDouble("desctoProntoPago"));
-        //oce.getProveedor().getContribuyente().setDireccion( this.obtenerDireccion(rs.getInt("idDireccion")));
-        //oce.getProveedor().setDireccionEntrega(this.obtenerDireccion(rs.getInt("idDireccionEntrega")));
-
+        oce.getProveedor().getContribuyente().setDireccion( this.obtenerDireccion(rs.getInt("idDireccion")));
+        oce.getProveedor().setDireccionEntrega(this.obtenerDireccion(rs.getInt("idDireccionEntrega")));
         oce.setFechaCreacion(utilerias.Utilerias.date2String(rs.getDate("fechaCreacion")));
         oce.setFechaFinalizacion(utilerias.Utilerias.date2String(rs.getDate("fechaFinalizacion")));
         oce.setFechaPuesta(utilerias.Utilerias.date2String(rs.getDate("fechaPuesta")));
