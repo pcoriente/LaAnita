@@ -7,8 +7,6 @@ import javax.enterprise.context.SessionScoped;
 import java.io.Serializable;
 import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.faces.application.FacesMessage;
 import javax.faces.context.FacesContext;
 import javax.faces.model.SelectItem;
@@ -35,6 +33,15 @@ public class MbFacturas implements Serializable {
     public void buscarFacturas(int idProveedor, String serie, String numero) {
     }
     
+    public void copia(Factura factura) {
+        this.factura=new Factura();
+        this.factura.setFecha(factura.getFecha());
+        this.factura.setIdFactura(factura.getIdFactura());
+        this.factura.setIdProveedor(factura.getIdProveedor());
+        this.factura.setNumero(factura.getNumero());
+        this.factura.setSerie(factura.getSerie());
+    }
+    
     public boolean cerrada() {
         boolean ok = false;
         boolean cerrada=false;
@@ -56,16 +63,18 @@ public class MbFacturas implements Serializable {
         return cerrada;
     }
 
-    public boolean grabarFactura(Factura factura) {
+    public boolean grabarFactura() {
         boolean ok = false;
         RequestContext context = RequestContext.getCurrentInstance();
         FacesMessage fMsg = new FacesMessage(FacesMessage.SEVERITY_WARN, "Aviso:", "");
         try {
             this.dao=new DAOFacturas();
-            if (factura.getIdFactura() == 0) {
-                factura.setIdFactura(this.dao.agregarFactura(factura));
+            if (this.factura.getIdFactura() == 0) {
+                this.factura.setIdFactura(this.dao.agregar(this.factura));
+            } else {
+                this.dao.modificar(this.factura);
             }
-            this.obtenerListaFacturas(factura.getIdProveedor());
+            this.obtenerListaFacturas(this.factura.getIdProveedor());
             ok=true;
         } catch (NamingException ex) {
             fMsg.setSeverity(FacesMessage.SEVERITY_ERROR);
@@ -87,10 +96,10 @@ public class MbFacturas implements Serializable {
         FacesMessage fMsg = new FacesMessage(FacesMessage.SEVERITY_WARN, "Aviso:", "");
         this.listaFacturas = new ArrayList<SelectItem>();
         try {
-            Factura f0 = new Factura();
+            Factura f0 = new Factura(idProveedor);
             f0.setIdFactura(0);
             f0.setSerie("");
-            f0.setNumero("Seleccione una factura");
+            f0.setNumero("Seleccione");
             SelectItem cero = new SelectItem(f0, f0.toString());
             listaFacturas.add(cero);
 

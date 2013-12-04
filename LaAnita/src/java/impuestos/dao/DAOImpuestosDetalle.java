@@ -121,7 +121,7 @@ public class DAOImpuestosDetalle {
     private String sqlDetalles(int idZona, int idGrupo, String periodo) {
         String strPeriodo;
         String strSQL="";
-        Date fecha;
+        java.sql.Date fecha;
         try {
             strSQL="";
             fecha = new java.sql.Date(Utilerias.hoy().getTime());
@@ -138,7 +138,8 @@ public class DAOImpuestosDetalle {
                     + "INNER JOIN impuestosZonas z ON z.idZona=id.idZona "
                     + "INNER JOIN impuestosGrupos g ON g.idGrupo=id.idGrupo "
                     + "INNER JOIN impuestos i ON i.idImpuesto=id.idImpuesto "
-                    + "LEFT JOIN (SELECT idGrupo, idImpuesto, idZona, fechaInicial FROM impuestosDetalle "
+                    + "LEFT JOIN (SELECT idGrupo, idImpuesto, idZona, fechaInicial "
+                    + "             FROM impuestosDetalle "
                     + "             WHERE idZona="+idZona+" AND idGrupo="+idGrupo+" AND fechaInicial > '"+fecha.toString()+"') ids "
                     + "                 ON ids.idGrupo=id.idGrupo AND ids.idImpuesto=id.idImpuesto AND ids.idZona=ids.idZona "
                     + "WHERE id.idZona="+idZona+" AND id.idGrupo="+idGrupo+" "+strPeriodo+" "

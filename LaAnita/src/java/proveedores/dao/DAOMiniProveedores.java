@@ -42,12 +42,13 @@ public class DAOMiniProveedores {
         Connection cn = this.ds.getConnection();
         Statement st = cn.createStatement();
         try {
-            ResultSet rs = st.executeQuery("select p.idProveedor,  c.contribuyente, p.desctoComercial, p.desctoProntoPago from proveedores p\n" +
-"                   inner join contribuyentes c on c.idContribuyente = p.idContribuyente\n" +
-"                    where p.idProveedor =" + idProveedor + "\n" +
-"                    order by c.contribuyente"); //MODIFICO DAVID
+            ResultSet rs = st.executeQuery("select p.idProveedor,  c.contribuyente, p.desctoComercial, p.desctoProntoPago, p.idImpuestoZona " +
+                    "from proveedores p " +
+                    "inner join contribuyentes c on c.idContribuyente = p.idContribuyente " +
+                    "where p.idProveedor=" + idProveedor + "" +
+                    "order by c.contribuyente");
             if (rs.next()) {
-                to = construirConverter(rs);
+                to = construir(rs);
             }
         } finally {
             cn.close();
@@ -57,14 +58,15 @@ public class DAOMiniProveedores {
 
     public ArrayList<MiniProveedor> obtenerProveedores() throws SQLException {
         ArrayList<MiniProveedor> lista = new ArrayList<MiniProveedor>();
-        ResultSet rs = null;
 
         Connection cn = ds.getConnection();
-        String strSQL = "select p.idProveedor,  c.contribuyente from proveedores p\n" +
-"                    inner join contribuyentes c on c.idContribuyente = p.idContribuyente order by c.contribuyente";  //Modifico DAVID
+        String strSQL = "select p.idProveedor,  c.contribuyente, p.desctoComercial, p.desctoProntoPago, p.idImpuestoZona " +
+                        "from proveedores p " +
+                        "inner join contribuyentes c on c.idContribuyente = p.idContribuyente " +
+                        "order by c.contribuyente";
         try {
             Statement sentencia = cn.createStatement();
-            rs = sentencia.executeQuery(strSQL);
+            ResultSet rs = sentencia.executeQuery(strSQL);
             while (rs.next()) {
                 lista.add(construir(rs));
             }
@@ -73,10 +75,9 @@ public class DAOMiniProveedores {
         }
         return lista;
     }
-
+    /*
     public ArrayList<MiniProveedor> obtenerProveedores(String cadena) throws SQLException {
         ArrayList<MiniProveedor> lista = new ArrayList<MiniProveedor>();
-        ResultSet rs = null;
 
         Connection cn = ds.getConnection();
         String strSQL = "SELECT * "
@@ -85,7 +86,7 @@ public class DAOMiniProveedores {
                 + "ORDER BY proveedor";
         try {
             Statement sentencia = cn.createStatement();
-            rs = sentencia.executeQuery(strSQL);
+            ResultSet rs = sentencia.executeQuery(strSQL);
             while (rs.next()) {
                 lista.add(construir(rs));
             }
@@ -94,21 +95,27 @@ public class DAOMiniProveedores {
         }
         return lista;
     }
+    * */
 
     private MiniProveedor construir(ResultSet rs) throws SQLException {
         MiniProveedor to = new MiniProveedor();
         to.setIdProveedor(rs.getInt("idProveedor"));
         to.setProveedor(rs.getString("contribuyente"));
+        to.setDesctoComercial(rs.getDouble("desctoComercial"));
+        to.setDesctoProntoPago(rs.getDouble("desctoProntoPago"));
+        to.setIdImpuestoZona(rs.getInt("idImpuestoZona"));
     //    to.setRfc(rs.getString("rfc"));
         return to;
     }
-
+    /*
     private MiniProveedor construirConverter(ResultSet rs) throws SQLException {
         MiniProveedor to = new MiniProveedor();
         to.setIdProveedor(rs.getInt("idProveedor"));
         to.setProveedor(rs.getString("contribuyente"));
         to.setDesctoComercial(rs.getDouble("desctoComercial"));
         to.setDesctoProntoPago(rs.getDouble("desctoProntoPago"));
+        to.setIdImpuestoZona(rs.getInt("idImpuestoZona"));
         return to;
     }
+    * */
 }

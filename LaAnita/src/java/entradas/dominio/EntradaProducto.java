@@ -1,5 +1,7 @@
 package entradas.dominio;
 
+import impuestos.dominio.ImpuestosProducto;
+import java.util.ArrayList;
 import productos.dominio.Empaque;
 
 /**
@@ -7,7 +9,6 @@ import productos.dominio.Empaque;
  * @author jsolis
  */
 public class EntradaProducto {
-    private int idOC;
     private Empaque empaque;
     private double cantOrdenada;
     private double cantRecibida;
@@ -16,11 +17,11 @@ public class EntradaProducto {
     private double desctoProducto2;
     private double desctoConfidencial;
     private double unitario;
+    private ArrayList<ImpuestosProducto> impuestos;
     private double neto;
     private double importe;
 
     public EntradaProducto() {
-        this.idOC=0;
         this.empaque=new Empaque(0);
         this.cantOrdenada=0.00;
         this.cantRecibida=0.00;
@@ -116,14 +117,6 @@ public class EntradaProducto {
         this.desctoConfidencial = desctoConfidencial;
     }
 
-    public int getIdOC() {
-        return idOC;
-    }
-
-    public void setIdOC(int idOC) {
-        this.idOC = idOC;
-    }
-
     public double getImporte() {
         return importe;
     }
@@ -146,5 +139,13 @@ public class EntradaProducto {
 
     public void setNeto(double neto) {
         this.neto = neto;
+    }
+
+    public ArrayList<ImpuestosProducto> getImpuestos() {
+        return impuestos;
+    }
+
+    public void setImpuestos(ArrayList<ImpuestosProducto> impuestos) {
+        this.impuestos = impuestos;
     }
 }

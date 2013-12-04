@@ -20,6 +20,14 @@ public class Factura {
         this.fecha=new Date();
         this.idProveedor=0;
     }
+    
+    public Factura(int idProveedor) {
+        this.idFactura=0;
+        this.serie="";
+        this.numero="";
+        this.fecha=new Date();
+        this.idProveedor=idProveedor;
+    }
 
     @Override
     public String toString() {

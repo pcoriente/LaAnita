@@ -1,5 +1,6 @@
 package productos.dao;
 
+import impuestos.dao.DAOImpuestosProducto;
 import impuestos.dominio.ImpuestoGrupo;
 import java.sql.Connection;
 import java.sql.ResultSet;
@@ -57,7 +58,7 @@ public class DAOProductos {
                     + "idTipo="+p.getTipo().getIdTipo()+", idSubGrupo="+p.getSubGrupo().getIdSubGrupo()+", "
                     + "idGrupo="+p.getGrupo().getIdGrupo() + ", "
                     + "idPresentacion="+p.getPresentacion().getIdPresentacion()+", idMarca=" + p.getMarca().getIdMarca() + ", "
-                    + "contenido="+p.getContenido()+", idUnidadMedida="+p.getUnidadMedida().getIdUnidadMedida()+", idImpuesto= "+p.getImpuesto().getIdGrupo()+ " "
+                    + "contenido="+p.getContenido()+", idUnidadMedida="+p.getUnidadMedida().getIdUnidadMedida()+", idImpuesto= "+p.getImpuestoGrupo().getIdGrupo()+ " "
                     + "WHERE idProducto="+p.getIdProducto());
             for(Upc u: p.getUpcs()) {
                 if(u.getIdUpc()==0) {
@@ -80,7 +81,7 @@ public class DAOProductos {
                 + "VALUES ("+ p.getParte2().getIdParte() + ", '" + p.getDescripcion() + "', "
                 + p.getTipo().getIdTipo() + ", " + p.getGrupo().getIdGrupo() + ", " + p.getSubGrupo().getIdSubGrupo() + ", " + p.getMarca().getIdMarca() + ", "
                 + p.getPresentacion().getIdPresentacion() + ", " + p.getContenido() + ", " + p.getUnidadMedida().getIdUnidadMedida() + ","
-                + p.getImpuesto().getIdGrupo() + ")";
+                + p.getImpuestoGrupo().getIdGrupo() + ")";
         Connection cn=this.ds.getConnection();
         Statement st=cn.createStatement();
         try {
@@ -197,7 +198,7 @@ public class DAOProductos {
         //prod.setContenido(d.toString());
         prod.setContenido(rs.getDouble("contenido"));
         prod.setUnidadMedida(new UnidadMedida(rs.getInt("idUnidadMedida"), rs.getString("unidadMedida"), rs.getString("medAbrev")));
-        prod.setImpuesto(new ImpuestoGrupo(rs.getInt("idImpuestoGrupo"), rs.getString("impuestoGrupo")));
+        prod.setImpuestoGrupo(new ImpuestoGrupo(rs.getInt("idImpuestoGrupo"), rs.getString("impuestoGrupo")));
         return prod;
     }
     

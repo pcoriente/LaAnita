@@ -10,12 +10,13 @@ public class MiniProveedor {
     private String rfc;
     private double desctoComercial;
     private double desctoProntoPago;
+    private int idImpuestoZona;
 
     public MiniProveedor() {
         this.idProveedor=0;
         this.proveedor="";
         this.rfc="";
-       
+        this.idImpuestoZona=0;
     }
 
     public MiniProveedor(int idProveedor, String proveedor, String rfc) {
@@ -90,6 +91,12 @@ public class MiniProveedor {
     public void setDesctoProntoPago(double desctoProntoPago) {
         this.desctoProntoPago = desctoProntoPago;
     }
-    
-    
+
+    public int getIdImpuestoZona() {
+        return idImpuestoZona;
+    }
+
+    public void setIdImpuestoZona(int idImpuestoZona) {
+        this.idImpuestoZona = idImpuestoZona;
+    }
 }

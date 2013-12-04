@@ -23,7 +23,7 @@ public class FacturaConverter implements Converter {
             if (idFactura == 0) {
                 factura = new Factura();
                 factura.setSerie("");
-                factura.setNumero("Seleccione una factura");
+                factura.setNumero("Seleccione");
             } else {
                 DAOFacturas dao = new DAOFacturas();
                 factura = dao.obtenerFactura(idFactura);

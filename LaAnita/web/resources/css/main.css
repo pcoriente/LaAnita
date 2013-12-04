@@ -109,7 +109,11 @@ a.nueva{ display:  inline;}
 }
 
 .ui-selectonemenu, ui-widget, ui-state-default, ui-corner-all, ui-helper-clearfix{
-    width: 250px!important;
+    width: 250px;
+}
+
+.classFactura {
+    width: 150px;
 }
 
 .textoContenido{

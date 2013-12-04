@@ -54,7 +54,21 @@ public class DAOFacturas {
         return cerrada;
     }
     
-    public int agregarFactura(Factura factura) throws SQLException {
+    public void modificar(Factura factura) throws SQLException {
+        Connection cn=this.ds.getConnection();
+        Statement st=cn.createStatement();
+        try {
+            Date fechaFactura=new java.sql.Date(factura.getFecha().getTime());
+            String strSQL="UPDATE facturas "
+                    + "SET serie='"+factura.getSerie()+"', numero='"+factura.getNumero()+"', fecha='"+fechaFactura.toString()+"' "
+                    + "WHERE idFactura="+factura.getIdFactura();
+            st.executeUpdate(strSQL);
+        } finally {
+            cn.close();
+        }
+    }
+    
+    public int agregar(Factura factura) throws SQLException {
         int idFactura=0;
         Connection cn=this.ds.getConnection();
         Statement st=cn.createStatement();

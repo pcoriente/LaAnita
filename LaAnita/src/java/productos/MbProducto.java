@@ -310,7 +310,7 @@ public class MbProducto implements Serializable {
                 fMsg.setDetail("Se requiere un número mayor que cero y menor a 1000");
             } else if (this.producto.getPresentacion().getIdPresentacion() > 1 && this.producto.getUnidadMedida().getIdUnidadMedida() == 0) {
                 fMsg.setDetail("Se requiere la unidad de medida !!");
-            } else if (this.producto.getImpuesto().getIdGrupo() == 0) {
+            } else if (this.producto.getImpuestoGrupo().getIdGrupo() == 0) {
                 fMsg.setDetail("Se requiere un impuesto !!");
             } else {
                 try {
@@ -375,8 +375,8 @@ public class MbProducto implements Serializable {
         prod1.getUnidadMedida().setUnidadMedida(prod2.getUnidadMedida().getUnidadMedida());
         prod1.getUnidadMedida().setAbreviatura(prod2.getUnidadMedida().getAbreviatura());
         prod1.getUnidadMedida().setIdTipo(prod2.getUnidadMedida().getIdTipo());
-        prod1.getImpuesto().setIdGrupo(prod2.getImpuesto().getIdGrupo());
-        prod1.getImpuesto().setGrupo(prod2.getImpuesto().getGrupo());
+        prod1.getImpuestoGrupo().setIdGrupo(prod2.getImpuestoGrupo().getIdGrupo());
+        prod1.getImpuestoGrupo().setGrupo(prod2.getImpuestoGrupo().getGrupo());
         return prod1;
     }
 

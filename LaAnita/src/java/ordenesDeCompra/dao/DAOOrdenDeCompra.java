@@ -1,5 +1,7 @@
-package cotizaciones.dao;
+package ordenesDeCompra.dao;
 
+import contribuyentes.Contribuyente;
+import cotizaciones.dao.DAOCotizaciones;
 import direccion.dominio.Direccion;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -18,6 +20,7 @@ import ordenesDeCompra.dominio.OrdenCompraDetalle;
 import ordenesDeCompra.dominio.OrdenCompraEncabezado;
 import productos.dao.DAOProductos;
 import proveedores.dao.DAOProveedores;
+import proveedores.dominio.Proveedor;
 import usuarios.UsuarioSesion;
 
 public class DAOOrdenDeCompra {
@@ -46,11 +49,11 @@ public class DAOOrdenDeCompra {
         try {
 
             String stringSQL = "select oc.idOrdenCompra, oc.fechaCreacion, oc.fechaFinalizacion, oc.fechaPuesta, oc.fechaEntrega, oc.estado \n" +
-"                                       , isnull(c.idCotizacion, 0) as idCotizacion, isnull(c.idRequisicion,0) as idRequisicion, isnull(c.descuentoCotizacion,0.00) as descuentoCotizacion, isnull(c.descuentoProntoPago,0.00) as descuentoProntoPago\n" +
+"                                       , isnull(c.idCotizacion, 0) as idCotizacion, isnull(c.idRequisicion,0) as idRequisicion, isnull(c.desctoComercial,0.00) as desctoComercial, isnull(c.desctoProntoPago,0.00) as desctoProntoPago\n" +
 "                                       , isnull(c.idProveedor,0) as idProveedor, isnull(c.idDireccionEntrega,0) as idDireccionEntrega\n" +
 "                                       , isnull(c.nombreComercial,'') as nombreComercial, isnull(c.idDireccion, 0) as idDireccion\n" +
-"                               from ordencompra oc\n" +
-"                               left join (select c.idCotizacion, c.idRequisicion, c.descuentoCotizacion, c.descuentoProntoPago\n" +
+"                               from ordenCompra oc\n" +
+"                               left join (select c.idCotizacion, c.idRequisicion, c.descuentoCotizacion as desctoComercial, c.descuentoProntoPago as desctoProntoPago\n" +
 "                                               , p.idProveedor, p.idDireccionEntrega, eg.nombreComercial, d.idDireccion\n" +
 "                                           from cotizaciones c\n" +
 "                                           inner join proveedores p on p.idProveedor = c.idProveedor\n" +
@@ -80,11 +83,23 @@ public class DAOOrdenDeCompra {
         oce.setIdCotizacion(rs.getInt("idCotizacion"));
         oce.setIdRequisicion(rs.getInt("idRequisicion"));
         oce.setNombreComercial(rs.getString("nombreComercial"));
-        oce.setProveedor(daoP.obtenerProveedor(rs.getInt("idProveedor")));
         oce.setDesctoComercial(rs.getDouble("desctoComercial"));
         oce.setDesctoProntoPago(rs.getDouble("desctoProntoPago"));
-        oce.getProveedor().getContribuyente().setDireccion( this.obtenerDireccion(rs.getInt("idDireccion")));
-        oce.getProveedor().setDireccionEntrega(this.obtenerDireccion(rs.getInt("idDireccionEntrega")));
+        
+        int idProveedor=rs.getInt("idProveedor");
+        if(idProveedor==0) {
+            oce.setProveedor(new Proveedor());
+        } else {
+            oce.setProveedor(daoP.obtenerProveedor(idProveedor));
+        }
+        int idDireccion=oce.getProveedor().getContribuyente().getIdContribuyente();
+        if(idDireccion!=0) {
+            oce.getProveedor().getContribuyente().setDireccion(this.obtenerDireccion(idDireccion));
+        }
+        int idDireccionEntrega=oce.getProveedor().getDireccionEntrega().getIdDireccion();
+        if(idDireccionEntrega!=0) {
+            oce.getProveedor().setDireccionEntrega(this.obtenerDireccion(idDireccionEntrega));
+        }
         oce.setFechaCreacion(utilerias.Utilerias.date2String(rs.getDate("fechaCreacion")));
         oce.setFechaFinalizacion(utilerias.Utilerias.date2String(rs.getDate("fechaFinalizacion")));
         oce.setFechaPuesta(utilerias.Utilerias.date2String(rs.getDate("fechaPuesta")));
@@ -93,7 +108,6 @@ public class DAOOrdenDeCompra {
         switch (rs.getInt("estado")) {
             case 0:
                 oce.setStatus("Rechazado");
-               
                 break;
             case 1:
                 oce.setStatus("Activado");
@@ -103,10 +117,7 @@ public class DAOOrdenDeCompra {
                 break;
             default:
                 String noAprobado = "No Aprobado";
-
         }
-
-       
         return oce;
     }
 
@@ -116,10 +127,11 @@ public class DAOOrdenDeCompra {
         Connection cn = ds.getConnection();
         try {
 
-            String stringSQL = "select oc.idOrdenCompra, oc.idCotizacion, ocd.idProducto, ocd.cantOrdenada, ocd.costoOrdenado, ocd.descuentoProducto, ocd.descuentoProducto2\n"
-                    + "                    from ordencompra oc\n"
-                    + "                    inner join ordenCompraDetalle ocd on ocd.idOrdenCompra = oc.idOrdenCompra\n"
-                    + "                    where oc.idOrdenCompra=" + idOC;
+            String stringSQL = "select oc.idOrdenCompra, oc.idCotizacion"
+                    + "             , ocd.idProducto, ocd.cantOrdenada, ocd.costoOrdenado, ocd.descuentoProducto, ocd.descuentoProducto2, ocd.sku\n"
+                    + "         from ordencompra oc\n"
+                    + "         inner join ordenCompraDetalle ocd on ocd.idOrdenCompra = oc.idOrdenCompra\n"
+                    + "         where oc.idOrdenCompra=" + idOC;
 
             Statement sentencia = cn.createStatement();
             rs = sentencia.executeQuery(stringSQL);
@@ -139,6 +151,7 @@ public class DAOOrdenDeCompra {
         DAOProductos daoP = new DAOProductos();
         ocd.setCotizacionDetalle(daoC.dameCotizacion(rs.getInt("idCotizacion")));
         ocd.setProducto(daoP.obtenerProducto(rs.getInt("idProducto")));
+        ocd.setSku(rs.getString("sku"));
         ocd.setIdOrdenCompra(rs.getInt("idOrdenCompra"));
         ocd.setCantOrdenada(rs.getDouble("cantOrdenada"));
         ocd.setCantidadSolicitada(rs.getDouble("cantOrdenada"));

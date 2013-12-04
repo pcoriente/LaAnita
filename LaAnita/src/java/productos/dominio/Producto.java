@@ -1,6 +1,7 @@
 package productos.dominio;
 
 import impuestos.dominio.ImpuestoGrupo;
+import impuestos.dominio.ImpuestosProducto;
 import java.io.Serializable;
 import java.util.ArrayList;
 import unidadesMedida.UnidadMedida;
@@ -22,7 +23,7 @@ public class Producto implements Serializable {
     //private String contenido;
     private double contenido;
     private UnidadMedida unidadMedida;
-    private ImpuestoGrupo impuesto;
+    private ImpuestoGrupo impuestoGrupo;
 
     public Producto(int idProducto) {
         this.idProducto = idProducto;
@@ -37,7 +38,7 @@ public class Producto implements Serializable {
         //this.contenido="0.0";
         this.contenido=0;
         this.unidadMedida=new UnidadMedida(0, "", "");
-        this.impuesto=new ImpuestoGrupo(0, "");
+        this.impuestoGrupo=new ImpuestoGrupo(0, "");
     }
 
      
@@ -126,12 +127,12 @@ public class Producto implements Serializable {
         this.unidadMedida = unidadMedida;
     }
 
-    public ImpuestoGrupo getImpuesto() {
-        return impuesto;
+    public ImpuestoGrupo getImpuestoGrupo() {
+        return impuestoGrupo;
     }
 
-    public void setImpuesto(ImpuestoGrupo impuesto) {
-        this.impuesto = impuesto;
+    public void setImpuestoGrupo(ImpuestoGrupo impuestoGrupo) {
+        this.impuestoGrupo = impuestoGrupo;
     }
 
     public Marca getMarca() {

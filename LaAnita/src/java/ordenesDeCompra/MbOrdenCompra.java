@@ -1,7 +1,6 @@
 package ordenesDeCompra;
 
 import cotizaciones.MbCotizaciones;
-import cotizaciones.dao.DAOOrdenDeCompra;
 import javax.inject.Named;
 import javax.enterprise.context.SessionScoped;
 import java.io.Serializable;
@@ -14,6 +13,7 @@ import javax.faces.bean.ManagedProperty;
 import javax.faces.context.FacesContext;
 import javax.naming.NamingException;
 import ordenDeCompra.Reporte.OrdenCompraReporte;
+import ordenesDeCompra.dao.DAOOrdenDeCompra;
 import ordenesDeCompra.dominio.OrdenCompraEncabezado;
 import ordenesDeCompra.dominio.OrdenCompraDetalle;
 import org.primefaces.event.SelectEvent;

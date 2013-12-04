@@ -1,5 +1,7 @@
 package entradas.dominio;
 
+import java.util.Date;
+
 /**
  *
  * @author jsolis
@@ -7,21 +9,27 @@ package entradas.dominio;
 public class Entrada {
     private int idEntrada;
     private int idProveedor;
+    private int idImpuestoZona;
     private int idEmpresa;
     private int idAlmacen;
+    private int idFactura;
+    private int idOrdenCompra;
     private double desctoComercial;
     private double desctoProntoPago;
+    private Date fecha;
+    private int idUsuario;
     private double subTotal;
     private double descuento;
     private double impuesto;
     private double total;
-    private int idUsuario;
 
     public Entrada() {
         this.idEntrada=0;
         this.idProveedor=0;
+        this.idImpuestoZona=0;
         this.desctoComercial=0.00;
         this.desctoProntoPago=0.00;
+        this.fecha=new Date();
         this.subTotal=0.00;
         this.descuento=0.00;
         this.impuesto=0.00;
@@ -115,5 +123,37 @@ public class Entrada {
 
     public void setIdUsuario(int idUsuario) {
         this.idUsuario = idUsuario;
+    }
+
+    public Date getFecha() {
+        return fecha;
+    }
+
+    public void setFecha(Date fecha) {
+        this.fecha = fecha;
+    }
+
+    public int getIdFactura() {
+        return idFactura;
+    }
+
+    public void setIdFactura(int idFactura) {
+        this.idFactura = idFactura;
+    }
+
+    public int getIdOrdenCompra() {
+        return idOrdenCompra;
+    }
+
+    public void setIdOrdenCompra(int idOrdenCompra) {
+        this.idOrdenCompra = idOrdenCompra;
+    }
+
+    public int getIdImpuestoZona() {
+        return idImpuestoZona;
+    }
+
+    public void setIdImpuestoZona(int idImpuestoZona) {
+        this.idImpuestoZona = idImpuestoZona;
     }
 }
