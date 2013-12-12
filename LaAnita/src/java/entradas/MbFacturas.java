@@ -40,6 +40,7 @@ public class MbFacturas implements Serializable {
         this.factura.setIdProveedor(factura.getIdProveedor());
         this.factura.setNumero(factura.getNumero());
         this.factura.setSerie(factura.getSerie());
+        this.factura.setCerrada(factura.isCerrada());
     }
     
     public boolean cerrada() {

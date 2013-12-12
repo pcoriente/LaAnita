@@ -91,14 +91,17 @@
                                                      filter="true" filterMatchMode="contains" style="width: 100px;" >
                                         <f:converter converterId="converters.FacturaConverter" />
                                         <f:selectItems value="#{mbEntradas.mbFacturas.listaFacturas}" />
-                                        <p:ajax event="change" />
+                                        <p:ajax event="change" update="lnkEditarFactura btnMttoFactura btnImprimirFactura" />
                                     </p:selectOneMenu>
                                 </p:column>
                                 <p:column >
-                                    <p:commandButton icon="ui-icon-pencil" title="Mantenimiento de Facturas" 
+                                    <p:commandButton id="btnMttoFactura" icon="ui-icon-pencil" title="Mantenimiento de Facturas" 
+                                                     disabled="#{mbEntradas.factura.cerrada}"
                                                      actionListener="#{mbEntradas.mttoFacturas()}" process="@this factura" 
-                                                     oncomplete="nuevaFacturaDlg.show();" update=":main:msgs nuevaFacturaDlg" />
-                                    <p:commandButton icon="ui-icon-pencil" title="Buscar entradas" 
+                                                     oncomplete="handleAbrirFactura(xhr, status, args);" 
+                                                     update=":main:msgs nuevaFacturaDlg btnImprimirFactura" />
+                                    <p:commandButton id="btnImprimirFactura" icon="ui-icon-print" title="Imprimir Factura" 
+                                                     disabled="#{not mbEntradas.factura.cerrada}"
                                                      actionListener="#{mbEntradas.mttoFacturas()}" process="@this factura" 
                                                      oncomplete="listaEntradasDlg.show();" update=":main:msgs listaEntradasDlg" />
                                 </p:column>
@@ -106,7 +109,8 @@
                             <f:facet name="footer" >
                                 <p:row >
                                     <p:column colspan="7" style="text-align: right;" >
-                                        <p:commandLink styleClass="nueva" value="Editar" 
+                                        <p:commandLink id="lnkEditarFactura" styleClass="nueva" value="Editar" 
+                                                       disabled="#{mbEntradas.factura.cerrada or mbEntradas.factura.idFactura==0}"
                                                        ajax="false" action="#{mbEntradas.entradas()}" process="@this" />|
                                         <p:commandLink styleClass="nueva" action="#{mbEntradas.terminar()}" value="Salir" ajax="false" />
                                     </p:column>
@@ -179,6 +183,10 @@
                             <f:facet name="footer" >
                                 <p:row >
                                     <p:column colspan="9" style="text-align: right;" >
+                                        <p:commandButton id="btnGrabarEntrada" icon="ui-icon-disk" title="Grabar Entrada" 
+                                                         disabled="#{mbEntradas.factura.cerrada}"
+                                                         process="@this" actionListener="#{mbEntradas.grabarEntrada()}" 
+                                                         update="@this" />
                                         <p:commandButton id="btnEquivalencias" icon="ui-icon-search" title="Buscar Productos" 
                                                          disabled="#{not mbEntradas.sinOrden}"
                                                          process="@this" actionListener="#{mbEntradas.mbBuscar.inicializar()}" 
@@ -192,7 +200,7 @@
                         <p:dataTable id="detalleEntrada" widgetVar="detalleEntrada" value="#{mbEntradas.entradaDetalle}" style="border:solid 1px"
                                      var="prod" rowKey="#{prod.empaque.idEmpaque}" selection="#{mbEntradas.entradaProducto}" selectionMode="single" 
                                      emptyMessage="No hay elementos que desplegar" scrollable="true" scrollHeight="220" >
-                            <p:ajax event="rowSelect" listener="#{mbEntradas.respaldaFila()}" />
+                            <p:ajax event="rowSelect" listener="#{mbEntradas.respaldaFila()}" update="detalleEntrada" />
 
                             <p:column headerText="SKU" width="64"  >
                                 <h:outputText value="#{prod.empaque.cod_pro}" />
@@ -206,9 +214,9 @@
                                 </h:outputText>
                             </p:column>
                             <p:column headerText="Recibida" width="64" >
-                                <pe:inputNumber value="#{prod.cantRecibida}" decimalPlaces="3"  minValue="0" 
+                                <pe:inputNumber value="#{prod.cantFacturada}" decimalPlaces="3"  minValue="0" 
                                                 disabled="#{prod.empaque.idEmpaque!=mbEntradas.entradaProducto.empaque.idEmpaque}" >
-                                    <p:ajax event="change" listener="#{mbEntradas.cambiaCantRecibida()}" 
+                                    <p:ajax event="change" listener="#{mbEntradas.cambiaCantFacturada()}" 
                                             process="@this" update="detalleEntrada :main:mttoEntradasTotales" />
                                 </pe:inputNumber>
                             </p:column>
@@ -242,7 +250,7 @@
                             </p:column>
                             <p:column headerText="P.Unitario" width="64" >
                                 <h:outputText value="#{prod.unitario}" >
-                                    <f:convertNumber type="currency" locale="en-US"   />
+                                    <f:convertNumber type="currency" locale="en-US" />
                                 </h:outputText>
                             </p:column>
                             <p:column headerText="SubTotal" width="64" >
@@ -417,6 +425,12 @@
                     </p:dialog>
                 </h:form>
                 <script type="text/javascript">
+                    function handleAbrirFactura(xhr, status, args) {
+                        if (!(args.validationFailed || !args.okFactura)) {
+                            nuevaFacturaDlg.show();
+                        }
+                    }
+                    
                     function handleFactura(xhr, status, args) {
                         if (!(args.validationFailed || !args.okFactura)) {
                             nuevaFacturaDlg.hide();

@@ -81,6 +81,8 @@ public class MbEntradas implements Serializable {
     public MbEntradas() throws NamingException {
         this.modoEdicion = false;
         this.factura=new Factura();
+        this.almacen=new Almacen();
+        this.entrada=new Entrada();
         this.resEntradaProducto=new EntradaProducto();
         this.ordenCompra=new OrdenCompraEncabezado();
         
@@ -91,6 +93,31 @@ public class MbEntradas implements Serializable {
         this.mbBuscar=new MbBuscarEmpaques();
         this.mbFacturas=new MbFacturas();
         this.mbOrdenCompra=new MbOrdenCompra();
+    }
+    
+    public void grabarEntrada() {
+        //boolean ok = false;
+        //String outcome=null;
+        FacesMessage fMsg = new FacesMessage(FacesMessage.SEVERITY_WARN, "Aviso:", "");
+        try {
+            this.dao=new DAOEntradas();
+            if(this.dao.grabarEntrada(this.entrada.getIdAlmacen(), this.entrada.getIdEntrada(), this.factura.getIdFactura(), this.entradaDetalle)) {
+                fMsg.setSeverity(FacesMessage.SEVERITY_INFO);
+                fMsg.setDetail("La entrada se grabo correctamente !!!");
+                //outcome="entradas.xhtml";
+                //ok=true;
+            }
+        } catch (SQLException ex) {
+            fMsg.setSeverity(FacesMessage.SEVERITY_ERROR);
+            fMsg.setDetail(ex.getErrorCode() + " " + ex.getMessage());
+        } catch (NamingException ex) {
+            fMsg.setSeverity(FacesMessage.SEVERITY_ERROR);
+            fMsg.setDetail(ex.getMessage());
+        }
+//        if (!ok) {
+//            FacesContext.getCurrentInstance().addMessage(null, fMsg);
+//        }
+        //return outcome;
     }
     
     public void cargaDetalleOrdenCompra(SelectEvent event) {
@@ -138,16 +165,16 @@ public class MbEntradas implements Serializable {
                     this.entradaDetalle.add(prod);
                 }
                 this.entrada.setIdEntrada(this.dao.agregarEntrada(this.entrada, this.entradaDetalle, this.mbProveedores.getMiniProveedor().getIdImpuestoZona()));
-            } //else {
-                this.daoImps=new DAOImpuestosProducto();
-                this.entradaDetalle=this.dao.obtenerDetalleEntrada(this.entrada.getIdEntrada());
-                for(EntradaProducto p:this.entradaDetalle) {
-                    p.setEmpaque(this.daoEmpaques.obtenerEmpaque(p.getEmpaque().getIdEmpaque()));
-                    p.setImpuestos(this.daoImps.obtenerImpuestosProducto(this.entrada.getIdEntrada(), p.getEmpaque().getIdEmpaque()));
-                }
-            //}
+            }
+            this.daoImps=new DAOImpuestosProducto();
+            this.entradaDetalle=this.dao.obtenerDetalleEntrada(this.entrada.getIdEntrada());
+            for(EntradaProducto p:this.entradaDetalle) {
+                p.setEmpaque(this.daoEmpaques.obtenerEmpaque(p.getEmpaque().getIdEmpaque()));
+                p.setImpuestos(this.daoImps.obtenerImpuestosProducto(this.entrada.getIdEntrada(), p.getEmpaque().getIdEmpaque()));
+            }
             this.sinOrden=false;
             this.cambiaPrecios();
+            this.entradaProducto=null;
             ok=true;
         } catch (SQLException ex) {
             fMsg.setSeverity(FacesMessage.SEVERITY_ERROR);
@@ -244,29 +271,32 @@ public class MbEntradas implements Serializable {
     
     private void sumaTotales() {
         double suma;
-        suma=this.entradaProducto.getPrecio()*this.entradaProducto.getCantRecibida();
-        this.entrada.setSubTotal(this.entrada.getSubTotal()+Math.round(suma*100.00)/100.00);
-        suma=this.entradaProducto.getPrecio()-this.entradaProducto.getUnitario();
-        suma=suma*this.entradaProducto.getCantRecibida();
-        this.entrada.setDescuento(this.entrada.getDescuento()+Math.round(suma*100.00)/100.00);
-        suma=this.entradaProducto.getNeto()-this.entradaProducto.getUnitario();
-        suma=suma*this.entradaProducto.getCantRecibida();
-        this.entrada.setImpuesto(this.entrada.getImpuesto()+Math.round(suma*100.00)/100.00);
-        suma=this.entradaProducto.getNeto()*this.entradaProducto.getCantRecibida();
-        this.entrada.setTotal(this.entrada.getTotal()+Math.round(suma*100.00)/100.00);
+        suma=this.entradaProducto.getPrecio()*this.entradaProducto.getCantFacturada();   // Calcula el subTotal
+        this.entrada.setSubTotal(this.entrada.getSubTotal()+Math.round(suma*100.00)/100.00);    // Suma el importe el subtotal
+        
+        suma=this.entradaProducto.getPrecio()-this.entradaProducto.getUnitario();   // Obtine el descuento por diferencia.
+        suma=suma*this.entradaProducto.getCantFacturada();                           // Calcula el importe de descuento
+        this.entrada.setDescuento(this.entrada.getDescuento()+Math.round(suma*100.00)/100.00);  // Suma el descuento
+        
+        suma=this.entradaProducto.getNeto()-this.entradaProducto.getUnitario();     // Obtiene el impuesto por diferencia
+        suma=suma*this.entradaProducto.getCantFacturada();                           // Calcula el importe de impuestos
+        this.entrada.setImpuesto(this.entrada.getImpuesto()+Math.round(suma*100.00)/100.00);    // Suma los impuestos
+        
+        suma=this.entradaProducto.getNeto()*this.entradaProducto.getCantFacturada(); // Calcula el importe total
+        this.entrada.setTotal(this.entrada.getTotal()+Math.round(suma*100.00)/100.00);          // Suma el importe al total
     }
     
     private void restaTotales() {
         double resta;
-        resta=this.resEntradaProducto.getPrecio()*this.resEntradaProducto.getCantRecibida();
+        resta=this.resEntradaProducto.getPrecio()*this.resEntradaProducto.getCantFacturada();
         this.entrada.setSubTotal(this.entrada.getSubTotal()-Math.round(resta*100.00)/100.00);
         resta=this.resEntradaProducto.getPrecio()-this.resEntradaProducto.getUnitario();
-        resta=resta*this.resEntradaProducto.getCantRecibida();
+        resta=resta*this.resEntradaProducto.getCantFacturada();
         this.entrada.setDescuento(this.entrada.getDescuento()-Math.round(resta*100.00)/100.00);
         resta=this.resEntradaProducto.getNeto()-this.resEntradaProducto.getUnitario();
-        resta=resta*this.entradaProducto.getCantRecibida();
+        resta=resta*this.resEntradaProducto.getCantFacturada();
         this.entrada.setImpuesto(this.entrada.getImpuesto()-Math.round(resta*100.00)/100.00);
-        resta=this.resEntradaProducto.getNeto()*this.resEntradaProducto.getCantRecibida();
+        resta=this.resEntradaProducto.getNeto()*this.resEntradaProducto.getCantFacturada();
         this.entrada.setTotal(this.entrada.getTotal()-Math.round(resta*100.00)/100.00);
     }
     
@@ -277,7 +307,7 @@ public class MbEntradas implements Serializable {
         sumaTotales();
     }
     
-    public void cambiaCantRecibida() {
+    public void cambiaCantFacturada() {
         restaTotales();
         calculaProducto();
         sumaTotales();
@@ -285,6 +315,7 @@ public class MbEntradas implements Serializable {
     
     public void respaldaFila() {
         this.resEntradaProducto.setCantOrdenada(this.entradaProducto.getCantOrdenada());
+        this.resEntradaProducto.setCantFacturada(this.entradaProducto.getCantFacturada());
         this.resEntradaProducto.setCantRecibida(this.entradaProducto.getCantRecibida());
         this.resEntradaProducto.setDesctoConfidencial(this.entradaProducto.getDesctoConfidencial());
         this.resEntradaProducto.setDesctoProducto1(this.entradaProducto.getDesctoProducto1());
@@ -307,7 +338,7 @@ public class MbEntradas implements Serializable {
         this.entradaProducto.setUnitario(unitario);
         double neto=Math.round((this.entradaProducto.getUnitario()+calculaImpuestos())*100.00)/100.00;
         this.entradaProducto.setNeto(neto);
-        double subTotal=Math.round(this.entradaProducto.getUnitario()*this.entradaProducto.getCantRecibida()*100.00)/100.00;
+        double subTotal=Math.round(this.entradaProducto.getUnitario()*this.entradaProducto.getCantFacturada()*100.00)/100.00;
         this.entradaProducto.setImporte(subTotal);
         this.respaldaFila();
     }
@@ -339,44 +370,38 @@ public class MbEntradas implements Serializable {
     }
     
     public void entradas() {
-//        boolean ok = false;
-//        FacesMessage fMsg = new FacesMessage(FacesMessage.SEVERITY_WARN, "Aviso:", "");
-//        if(this.mbFacturas.cerrada()) {
-//            fMsg.setDetail("La factura ya se encuentra cerrada, no puede ser modificada");
-//        } else {
-//            try {
-//                this.dao=new DAOEntradas();
-                this.entrada=new Entrada();
-//                this.entrada=this.dao.modificarEntrada(this.almacen.getIdAlmacen(), this.mbFacturas.getFactura().getIdFactura(), this.ordenCompra.getIdOrdenCompra());
-                this.entrada.setIdEmpresa(this.mbEmpresas.getEmpresa().getIdEmpresa());
-                this.entrada.setIdProveedor(this.mbProveedores.getMiniProveedor().getIdProveedor());
-                this.entrada.setIdAlmacen(this.almacen.getIdAlmacen());
-                this.entrada.setDesctoComercial(0);
-                this.entrada.setDesctoProntoPago(0);
-                this.entradaDetalle=new ArrayList<EntradaProducto>();
-                this.ordenCompra=new OrdenCompraEncabezado();
-                this.sinOrden=false;
-                this.modoEdicion=true;
-//                ok=true;
-//            } catch (SQLException ex) {
-//                fMsg.setSeverity(FacesMessage.SEVERITY_ERROR);
-//                fMsg.setDetail(ex.getErrorCode() + " " + ex.getMessage());
-//            } catch (NamingException ex) {
-//                fMsg.setSeverity(FacesMessage.SEVERITY_ERROR);
-//                fMsg.setDetail(ex.getMessage());
-//            }
-//        }
-//        if (!ok) {
-//            FacesContext.getCurrentInstance().addMessage(null, fMsg);
-//        }
+        this.entrada=new Entrada();
+        this.entrada.setIdEntrada(0);
+        this.entrada.setIdEmpresa(this.mbEmpresas.getEmpresa().getIdEmpresa());
+        this.entrada.setIdProveedor(this.mbProveedores.getMiniProveedor().getIdProveedor());
+        this.entrada.setIdAlmacen(this.almacen.getIdAlmacen());
+        this.entrada.setDesctoComercial(0);
+        this.entrada.setDesctoProntoPago(0);
+        this.entradaDetalle=new ArrayList<EntradaProducto>();
+        this.ordenCompra=new OrdenCompraEncabezado();
+        this.sinOrden=false;
+        this.modoEdicion=true;
     }
     
     public void mttoFacturas() {
-        if(this.factura.getIdFactura()==0) {
+        boolean ok = false;
+        RequestContext context = RequestContext.getCurrentInstance();
+        FacesMessage fMsg = new FacesMessage(FacesMessage.SEVERITY_WARN, "Aviso:", "");
+        if(this.almacen.getIdAlmacen()==0) {
+            fMsg.setDetail("Se requiere seleccionar un almacen !!");
+        } else if(this.mbProveedores.getMiniProveedor().getIdProveedor()==0) {
+            fMsg.setDetail("Se requiere seleccionar un proveedor !!");
+        } else if(this.factura.getIdFactura()==0) {
             this.mbFacturas.setFactura(new Factura(this.mbProveedores.getMiniProveedor().getIdProveedor()));
+            ok=true;
          } else {
             this.mbFacturas.copia(this.factura);
+            ok=true;
         }
+        if(!ok) {
+            FacesContext.getCurrentInstance().addMessage(null, fMsg);
+        }
+        context.addCallbackParam("okFactura", ok);
 //        this.entrada=new Entrada();
 //        this.entrada.setIdEmpresa(this.mbEmpresas.getEmpresa().getIdEmpresa());
 //        this.entrada.setIdProveedor(this.mbProveedores.getMiniProveedor().getIdProveedor());
@@ -384,7 +409,7 @@ public class MbEntradas implements Serializable {
 //        this.entradaDetalle=new ArrayList<EntradaProducto>();
     }
     
-    // Este metodo se ejecutaba al seleccionar un alacen de la lista
+    // Este metodo se ejecutaba al seleccionar un almacen de la lista
     public String inicializarEntrada() {
         this.modoEdicion=true;
         this.entrada=new Entrada();
@@ -405,6 +430,7 @@ public class MbEntradas implements Serializable {
         this.modoEdicion = false;
         this.almacen=null;
         this.acciones = null;
+        this.factura=new Factura();
         this.mbCedis.setCedis(new MiniCedis());
         this.mbCedis.setListaMiniCedis(null);
         this.mbEmpresas.setEmpresa(new MiniEmpresa());

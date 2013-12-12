@@ -75,8 +75,8 @@ public class DAOFacturas {
         try {
             st.executeUpdate("BEGIN TRANSACTION");
             Date fechaFactura=new java.sql.Date(factura.getFecha().getTime());
-            st.executeUpdate("INSERT INTO facturas (idProveedor, serie, numero, fecha, idUsuario) "
-                            + "VALUES ("+factura.getIdProveedor()+", '"+factura.getSerie()+"', '"+factura.getNumero()+"', '"+fechaFactura.toString()+"', "+this.idUsuario+")");
+            st.executeUpdate("INSERT INTO facturas (idProveedor, serie, numero, fecha, idUsuario, cerrada) "
+                            + "VALUES ("+factura.getIdProveedor()+", '"+factura.getSerie()+"', '"+factura.getNumero()+"', '"+fechaFactura.toString()+"', "+this.idUsuario+", 0)");
             ResultSet rs=st.executeQuery("SELECT @@IDENTITY AS idFactura");
             if(rs.next()) {
                 idFactura=rs.getInt("idFactura");
@@ -123,6 +123,23 @@ public class DAOFacturas {
         return f;
     }
     
+    public ArrayList<Factura> obtenerFacturas(int idProveedor, Date fechaInicial, Date fechaFinal) throws SQLException {
+        Connection cn=this.ds.getConnection();
+        Statement st=cn.createStatement();
+        ArrayList<Factura> facturas=new ArrayList<Factura>();
+        try {
+            ResultSet rs=st.executeQuery("SELECT * FROM facturas " +
+                    "WHERE idProveedor=" + idProveedor + " AND FECHA BETWEEN '"+fechaInicial+"' AND '"+fechaFinal+"' " +
+                    "ORDER BY FECHA DESC");
+            while(rs.next()) {
+                facturas.add(construir(rs));
+            }
+        } finally {
+            cn.close();
+        }
+        return facturas;
+    }
+    
     public ArrayList<Factura> obtenerFacturas(int idProveedor) throws SQLException {
         Connection cn=this.ds.getConnection();
         Statement st=cn.createStatement();
@@ -146,6 +163,7 @@ public class DAOFacturas {
         f.setSerie(rs.getString("serie"));
         f.setNumero(rs.getString("numero"));
         f.setFecha(new java.util.Date(rs.getDate("fecha").getTime()));
+        f.setCerrada(rs.getBoolean("cerrada"));
         return f;
     }
 }

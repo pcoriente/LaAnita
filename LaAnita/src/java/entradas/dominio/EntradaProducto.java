@@ -11,6 +11,7 @@ import productos.dominio.Empaque;
 public class EntradaProducto {
     private Empaque empaque;
     private double cantOrdenada;
+    private double cantFacturada;
     private double cantRecibida;
     private double precio;
     private double desctoProducto1;
@@ -24,6 +25,7 @@ public class EntradaProducto {
     public EntradaProducto() {
         this.empaque=new Empaque(0);
         this.cantOrdenada=0.00;
+        this.cantFacturada=0.00;
         this.cantRecibida=0.00;
         this.precio=0.00;
         this.desctoProducto1=0.00;
@@ -147,5 +149,13 @@ public class EntradaProducto {
 
     public void setImpuestos(ArrayList<ImpuestosProducto> impuestos) {
         this.impuestos = impuestos;
+    }
+
+    public double getCantFacturada() {
+        return cantFacturada;
+    }
+
+    public void setCantFacturada(double cantFacturada) {
+        this.cantFacturada = cantFacturada;
     }
 }
