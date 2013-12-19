@@ -170,6 +170,8 @@ public class MbCotizaciones implements Serializable {
                     daoCot.guardarOrdenCompraTotal(ordenCompra);
                     msg = new FacesMessage(FacesMessage.SEVERITY_INFO, "Aviso:", "La orden de compra ha sido generada...");
                     //      this.salirMenuCotizaciones();
+                    this.listaCotizacionEncabezado=null;
+                    this.cargaCotizaciones();
                 } else {
                     msg = new FacesMessage(FacesMessage.SEVERITY_INFO, "Aviso:", "La orden de compra está incompleta, faltan productos por integrar...");
                 }

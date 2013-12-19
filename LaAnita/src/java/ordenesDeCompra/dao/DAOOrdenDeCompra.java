@@ -1,5 +1,6 @@
 package ordenesDeCompra.dao;
 
+import contactos.dominio.Contacto;
 import contribuyentes.Contribuyente;
 import cotizaciones.dao.DAOCotizaciones;
 import direccion.dominio.Direccion;
@@ -249,5 +250,35 @@ public class DAOOrdenDeCompra {
        
     }
     
-    
+    public ArrayList<Contacto> obtenerContactos(int idOC) throws SQLException {
+        ArrayList<Contacto> lista = new ArrayList<Contacto>();
+        ResultSet rs;
+        Connection cn = ds.getConnection();
+        try {
+
+            String stringSQL = "select * from ordenCompra oc\n"
+                    + "inner join cotizaciones c on c.idCotizacion=oc.idCotizacion\n"
+                    + "inner join contactos con on con.idPadre=c.idProveedor\n"
+                    + "where oc.idOrdenCompra="+idOC;
+
+            Statement sentencia = cn.createStatement();
+            rs = sentencia.executeQuery(stringSQL);
+            while (rs.next()) {
+                lista.add(construirContactos(rs));
+            }
+        } finally {
+            cn.close();
+        }
+        return lista;
+
+    }
+
+    private Contacto construirContactos(ResultSet rs) throws SQLException {
+        Contacto cont = new Contacto();
+
+      
+        cont.setCorreo(rs.getString("correo"));
+        return cont;
+    }
+
 }

@@ -2,7 +2,7 @@ package cotizaciones.dao;
 
 import cotizaciones.dominio.CotizacionDetalle;
 import cotizaciones.dominio.CotizacionEncabezado;
-import dominios.Moneda;
+import cotizaciones.dominio.Moneda;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -44,12 +44,13 @@ public class DAOCotizaciones {
         Connection cn = ds.getConnection();
         try {
 
-            String stringSQL = "SELECT c.idRequisicion,  ed.depto, r.fechaRequisicion, r.fechaAprobacion,  COUNT(distinct cd.idProducto) as numProductos, COUNT(distinct cd.idCotizacion)as numCotizaciones,c.estado\n"
-                    + "FROM cotizaciones c\n"
-                    + "INNER JOIN cotizacionesDetalle cd ON cd.idCotizacion= c.idCotizacion\n"
-                    + "INNER JOIN requisiciones r ON r.idRequisicion = c.idRequisicion\n"
-                    + "INNER JOIN empleadosDeptos ed ON ed.idDepto = r.idDepto\n"
-                    + "GROUP BY c.idRequisicion,  ed.depto, r.fechaRequisicion, r.fechaAprobacion, c.estado";
+            String stringSQL = "SELECT c.idRequisicion,  ed.depto, r.fechaRequisicion, r.fechaAprobacion,  COUNT(distinct cd.idProducto) as numProductos, COUNT(distinct cd.idCotizacion)as numCotizaciones,c.estado\n" +
+"                    FROM cotizaciones c\n" +
+"                    INNER JOIN cotizacionesDetalle cd ON cd.idCotizacion= c.idCotizacion\n" +
+"                    INNER JOIN requisiciones r ON r.idRequisicion = c.idRequisicion\n" +
+"                    INNER JOIN empleadosDeptos ed ON ed.idDepto = r.idDepto\n" +
+"                    where c.estado =1\n" +
+"                    GROUP BY c.idRequisicion,  ed.depto, r.fechaRequisicion, r.fechaAprobacion, c.estado";
 
             Statement sentencia = cn.createStatement();
             rs = sentencia.executeQuery(stringSQL);
@@ -148,6 +149,7 @@ public class DAOCotizaciones {
 //        cd.getProducto().setIdProducto(rs.getInt("idProducto"));
         cd.setProducto(daoP.obtenerProducto(rs.getInt("idProducto")));
         cd.setIdCotizacion(rs.getInt("idRequisicion"));
+       // cd.setRequisicionProducto(rs.getInt("idRequisicion"));
         return cd;
 
     }
@@ -254,6 +256,7 @@ public class DAOCotizaciones {
         Statement st = cn.createStatement();
         PreparedStatement ps1;
         PreparedStatement ps2;
+        PreparedStatement ps3;
         int idProveedor = 0;
         int idCotizacion = 0;
         int ident = 0;
@@ -265,6 +268,7 @@ public class DAOCotizaciones {
             double dC = c.getCotizacionEncabezado().getDescuentoCotizacion();
             double dPP = c.getCotizacionEncabezado().getDescuentoProntoPago();
 
+           this.cambiaEstadoCotizacion(idCot);
             int identity = 0;
             //CABECERO
             if (idProv != idProveedor) {
@@ -281,8 +285,10 @@ public class DAOCotizaciones {
                     identity = rs.getInt("idOrd");
                 }
                 ident = identity;
-
+                
             }
+            
+            
             // DETALLE
             String stringSQL2 = "INSERT INTO ordenCompraDetalle (idOrdenCompra,interno, idProducto, sku, cantOrdenada, costoOrdenado, descuentoProducto, descuentoProducto2, desctoConfidencial, sinCargoBase, sinCargoCant, ptjeOferta, margen, idImpuestosGrupo, idMarca)"
                     + "VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
@@ -303,12 +309,18 @@ public class DAOCotizaciones {
             ps.setDouble(13, 0.00);
             ps.setInt(14, 0);
             ps.setInt(15, 0);
+            
             try {
                 ps.executeUpdate();
+                
             } catch (Exception e) {
                 System.err.println(e);
             }
+            
+            
         } //FOR DETALLE
+       
+        
         cn.close();
     }// FOR CABECERO
     
@@ -339,6 +351,25 @@ public class DAOCotizaciones {
         cd.setNeto(rs.getDouble("neto"));
         cd.setSubtotal(rs.getDouble("subtotal"));
         return cd;
+    }
+    
+    public void cambiaEstadoCotizacion(int idCot) throws SQLException {
+       Connection cn = this.ds.getConnection();
+        Statement st = cn.createStatement();
+        PreparedStatement ps2;
+        try {
+
+            //CABECERO
+            String strSQL2 = "UPDATE cotizaciones SET estado=2  WHERE idCotizacion=" + idCot ;
+            ps2 = cn.prepareStatement(strSQL2);
+            ps2.executeUpdate();
+        } catch (SQLException e) {
+            throw (e);
+        } finally {
+            cn.close();
+        }
+        
+       
     }
 
 }

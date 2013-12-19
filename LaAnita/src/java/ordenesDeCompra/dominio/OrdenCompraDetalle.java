@@ -28,6 +28,7 @@ public class OrdenCompraDetalle implements Serializable {
     private String netoF;
     private String subtotalF;
     private String costoOrdenadoF;
+    private String nombreProducto;
 
     public OrdenCompraDetalle() {
     }
@@ -228,10 +229,12 @@ public class OrdenCompraDetalle implements Serializable {
         return subtotalF;
     }
 
-    
+    public String getNombreProducto() {
+        return nombreProducto;
+    }
 
-    
-    
-    
+    public void setNombreProducto(String nombreProducto) {
+        this.nombreProducto = nombreProducto;
+    }
     
 }

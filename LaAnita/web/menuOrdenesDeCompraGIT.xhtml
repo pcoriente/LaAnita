@@ -21,7 +21,7 @@
                         <p:commandButton 
                             icon="ui-icon-plus"
                             title="Crear orden de compra directa"
-                            
+                         
                             oncomplete="odecD.show();"
                             />
                         <p:commandButton 
@@ -49,7 +49,7 @@
                                      selection="#{mbOrdenCompra.ordenElegida}"
                                      >
                             <p:ajax event="rowSelect" listener="#{mbOrdenCompra.dameOrdenCompra}"   
-                                    oncomplete="odec.show()" 
+                                    oncomplete="odec.show();" 
                                     update=":form:dialogoOC "
                                     process="@this"
                                     > 
@@ -310,7 +310,9 @@
                                 </p:column>
                                 <p:column styleClass="fondoCelda"  >
                                     <h:outputLabel   styleClass="textoContenido" />
+                                   
                                 </p:column>
+
                                 <p:column styleClass="fondoCelda"   >
                                     <h:outputLabel value="Dirección entrega: " styleClass="textoEtiquetas" /> 
                                 </p:column>
@@ -401,6 +403,8 @@
                                 <p:commandButton
                                     icon="ui-icon-print"
                                     title="Imprimir orden de compra directa"
+                                    process="@this"
+                                    actionListener="#{mbOrdenCompra.generarReporte()}"
                                     />
 
                                 <p:separator />
@@ -535,12 +539,14 @@
                         </p:panelGrid>
                         <p:commandButton id="grabar" value="Enviar"  actionListener="#{mbOrdenCompra.enviarCorreo(mbOrdenCompra.correo.para)}" 
                                          update="para asunto mensaje"
+
                                          />
                         <p:commandButton value="Cancelar"
                                          actionListener="#{mbOrdenCompra.limpiarFormulario()}"
                                          update="para asunto mensaje"
-                                         process="@this"/>
-                        <p:blockUI  block="formCorreo" trigger="grabar">
+                                         process="@this"
+                                         />
+                        <p:blockUI  block="formCorreo" trigger="grabar"   >
                             <p:graphicImage value="/resources/images/big-roller.gif" />
                         </p:blockUI>
                     </p:dialog> 

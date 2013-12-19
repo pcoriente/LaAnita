@@ -45,8 +45,4 @@ public class TORequisicionProducto {
     public void setCantidadAutorizada(int cantidadAutorizada) {
         this.cantidadAutorizada = cantidadAutorizada;
     }
-
-    
-   
-    
 }

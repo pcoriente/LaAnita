@@ -521,6 +521,7 @@ public class MbRequisiciones implements Serializable {
 
     public String salirCotizacion() throws NamingException {
         this.limpiaRequisicion();
+        
         String navega = "menuCotizaciones.xhtml";
         return navega;
     }
@@ -869,5 +870,9 @@ public class MbRequisiciones implements Serializable {
     public void calcularSubtotalBruto() {
         subtotalBruto = this.subtotalGeneral - this.descuentoGeneralAplicado;
 
+    }
+    public void irMenuCotizaciones(){
+    
+        
     }
 }

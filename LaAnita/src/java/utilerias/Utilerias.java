@@ -107,4 +107,14 @@ public class Utilerias {
         num = num.replace("$", "");
         return num;
     }
+    
+    
+     public String quitarSigno$(String cantidad) {
+        String canti = "";
+        canti = cantidad.replace("$", " ");
+        return canti;
+    }
+    
+    
+    
 }

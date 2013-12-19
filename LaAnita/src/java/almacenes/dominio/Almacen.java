@@ -1,11 +1,12 @@
 package almacenes.dominio;
 import direccion.dominio.Direccion;
+import java.io.Serializable;
 
 /**
  *
  * @author julios
  */
-public class Almacen {
+public class Almacen implements Serializable{
 
     private int idAlmacen;
     private String almacen;

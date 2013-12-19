@@ -1,10 +1,12 @@
 package direccion.dominio;
 
+import java.io.Serializable;
+
 /**
  *
  * @author Julio
  */
-public class Direccion {
+public class Direccion implements Serializable {
     private int idDireccion;
     private String calle;
     private String numeroExterior;

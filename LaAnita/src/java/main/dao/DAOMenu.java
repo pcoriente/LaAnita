@@ -1,5 +1,6 @@
 package main.dao;
 
+import java.io.Serializable;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -20,7 +21,7 @@ import usuarios.dominio.Accion;
  *
  * @author JULIOS
  */
-public class DAOMenu {
+public class DAOMenu implements Serializable{
     private DataSource ds;
     private int idPerfil=0;
     

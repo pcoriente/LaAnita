@@ -1,10 +1,12 @@
 package main.dominio;
 
+import java.io.Serializable;
+
 /**
  *
  * @author JULIOS
  */
-public class Menu {
+public class Menu implements Serializable{
     private int idMenu;
     private String menu;
     private int idSubMenu;

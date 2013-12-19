@@ -1,25 +1,58 @@
 package ordenesDeCompra;
 
+import almacenes.MbAlmacenes;
+import almacenes.dao.DAOAlmacenes;
+import almacenes.dominio.Almacen;
+import cedis.MbCedis;
+import cedis.MbMiniCedis;
+import cedis.dominio.Cedis;
+import contactos.dominio.Contacto;
 import cotizaciones.MbCotizaciones;
+import empresas.MbEmpresas;
+import empresas.MbMiniEmpresas;
+import empresas.dominio.Empresa;
+import entradas.MbEntradas;
+import java.io.File;
 import javax.inject.Named;
 import javax.enterprise.context.SessionScoped;
 import java.io.Serializable;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Properties;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+import javax.activation.DataHandler;
+import javax.activation.FileDataSource;
 import javax.faces.application.FacesMessage;
 import javax.faces.bean.ManagedProperty;
 import javax.faces.context.FacesContext;
+import javax.faces.model.SelectItem;
+import javax.mail.BodyPart;
+import javax.mail.Message;
+import javax.mail.MessagingException;
+import javax.mail.NoSuchProviderException;
+import javax.mail.Session;
+import javax.mail.Transport;
+import javax.mail.internet.InternetAddress;
+import javax.mail.internet.MimeBodyPart;
+import javax.mail.internet.MimeMessage;
+import javax.mail.internet.MimeMultipart;
 import javax.naming.NamingException;
-import ordenDeCompra.Reporte.OrdenCompraReporte;
+import net.sf.jasperreports.engine.JRException;
+import ordenDeCompra.Report.OrdenCompraReporte;
+import ordenesDeCompra.Reporte.Reportes;
 import ordenesDeCompra.dao.DAOOrdenDeCompra;
+import ordenesDeCompra.dominio.Correo;
 import ordenesDeCompra.dominio.OrdenCompraEncabezado;
 import ordenesDeCompra.dominio.OrdenCompraDetalle;
+import ordenesDeCompra.dominio.TotalesOrdenCompra;
 import org.primefaces.event.SelectEvent;
+import productos.MbBuscarEmpaques;
+import productos.dominio.Empaque;
+import proveedores.MbMiniProveedor;
 import proveedores.MbProveedores;
-import utilerias.Numero_a_Letra;
-import utilerias.Utilerias;
 
 @Named(value = "mbOrdenCompra")
 @SessionScoped
@@ -51,6 +84,30 @@ public class MbOrdenCompra implements Serializable {
     private double sumaDescuentoTotales;
     private String sumaDescuentosTotalesF;
     DAOOrdenDeCompra daoO = new DAOOrdenDeCompra();
+    private transient Correo correo;
+    private ArrayList<Contacto> listaContactos;
+    private transient Contacto contactoElegido;
+    private String cadena;
+    private transient OrdenCompraReporte ocr;
+    //pablo
+    @ManagedProperty(value = "#{mbBuscarEmpaques}")
+    private MbBuscarEmpaques mbBuscar;
+    private ArrayList<Empaque> listaEmpaque = new ArrayList<Empaque>();
+    private Empaque empaque;
+//    @ManagedProperty(value = "#{mbEntradas}")
+//    private MbEntradas mbEntradas;
+    @ManagedProperty(value = "#{mbMiniProveedor}")
+    private MbMiniProveedor mbMiniProveedor;
+    private Almacen almacen = new Almacen();
+//    -------------CosasPablo-----------------
+    private Empresa empresa = new Empresa();
+    private Cedis cedis = new Cedis();
+    private ArrayList<SelectItem> listaAlmacenes = new ArrayList();
+    private ArrayList<Almacen> almacenes = new ArrayList<Almacen>();
+    @ManagedProperty(value = "#{mbEmpresas}")
+    private MbEmpresas mbEmpresas = new MbEmpresas();
+    @ManagedProperty(value = "#{mbCedis}")
+    private MbMiniCedis mbCedis = new MbMiniCedis();
 
     public MbOrdenCompra() throws NamingException {
         this.mbProveedores = new MbProveedores();
@@ -58,21 +115,70 @@ public class MbOrdenCompra implements Serializable {
         this.mbCotizaciones = new MbCotizaciones();
         this.ordenCompraDetalle = new OrdenCompraDetalle();
         this.ordenElegida = new OrdenCompraEncabezado();
-
+        this.correo = new Correo();
+        this.contactoElegido = new Contacto();
+        this.listaContactos = new ArrayList<Contacto>();
+        this.ocr = new OrdenCompraReporte();
+        this.mbBuscar = new MbBuscarEmpaques();
+        this.empaque = new Empaque();
+//        this.mbEntradas = new MbEntradas();
+        this.mbMiniProveedor = new MbMiniProveedor();
     }
 
-    //M E T O D O S 
-    private void cargaOrdenesEncabezado() {
-        try {
-            DAOOrdenDeCompra daoOC = new DAOOrdenDeCompra();
-            this.listaOrdenesEncabezado = daoOC.listaOrdenes();
-        } catch (NamingException ex) {
-            Logger.getLogger(MbOrdenCompra.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (SQLException ex) {
-            Logger.getLogger(MbOrdenCompra.class.getName()).log(Level.SEVERE, null, ex);
+    //M E T O D O S  ////////////////////////////////////////////////////////////////////////////////////////////
+    public void cargaOrdenesEncabezado() throws NamingException, SQLException {
+        this.listaOrdenesEncabezado = new ArrayList<OrdenCompraEncabezado>();
+        DAOOrdenDeCompra daoOC = new DAOOrdenDeCompra();
+        ArrayList<OrdenCompraEncabezado> lista = daoOC.listaOrdenes();
+        for (OrdenCompraEncabezado d : lista) {
+            listaOrdenesEncabezado.add(d);
         }
     }
-    
+
+    public void dameEmpaqueSeleccionado() {
+//         listaEmpaque.add(mbBuscar.getProducto());
+        Boolean ok = false;
+        FacesMessage fMsg = new FacesMessage(FacesMessage.SEVERITY_WARN, "Aviso:", null);
+        boolean verifi = verificacion(mbBuscar.getProducto());
+        if (verifi == false) {
+            listaEmpaque.add(mbBuscar.getProducto());
+            mbBuscar.getProductos().remove(mbBuscar.getProducto());
+            ok = true;
+        } else {
+            fMsg.setDetail("Este Empaque ya esta en la lista");
+            ok = false;
+        }
+        if (!ok) {
+            FacesContext.getCurrentInstance().addMessage(null, fMsg);
+        }
+
+    }
+
+    public void eliminarEmpaqueSeleccionado() {
+//      mbBuscar.getProductos().add(empaque);
+        listaEmpaque.remove(empaque);
+    }
+
+    public boolean verificacion(Empaque e) {
+        boolean verificar = false;
+
+        for (Empaque em : listaEmpaque) {
+            if (em.equals(e)) {
+                verificar = true;
+                break;
+            } else {
+                verificar = false;
+            }
+        }
+        return verificar;
+    }
+
+    public void limpiarCamposBusqueda() {
+        mbBuscar.setParte(null);
+        mbBuscar.setStrBuscar("");
+        mbBuscar.setProductos(null);
+    }
+
     public void obtenerDetalleOrdenCompra() throws SQLException {
         listaOrdenDetalle = new ArrayList<OrdenCompraDetalle>();
         this.subtotalGeneral = 0;
@@ -92,9 +198,26 @@ public class MbOrdenCompra implements Serializable {
         }
     }
 
-    public void dameOrdenCompra(SelectEvent event) throws SQLException {
+    public void dameOrdenCompra(SelectEvent event) {
         this.ordenElegida = (OrdenCompraEncabezado) event.getObject();
-        obtenerDetalleOrdenCompra();
+
+        listaOrdenDetalle = new ArrayList<OrdenCompraDetalle>();
+        this.subtotalGeneral = 0;
+
+        try {
+            int idOC = ordenElegida.getIdOrdenCompra();
+            DAOOrdenDeCompra daoOC = new DAOOrdenDeCompra();
+            ArrayList<OrdenCompraDetalle> lista = daoOC.consultaOrdenCompra(idOC);
+            for (OrdenCompraDetalle d : lista) {
+                listaOrdenDetalle.add(d);
+                this.calculosOrdenCompra(d.getProducto().getIdProducto());
+                d.setNombreProducto(d.getProducto().toString());
+            }
+        } catch (NamingException ex) {
+            Logger.getLogger(MbOrdenCompra.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (SQLException ex) {
+            Logger.getLogger(MbOrdenCompra.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
 
     public void calculosOrdenCompra(int idProd) {
@@ -204,6 +327,7 @@ public class MbOrdenCompra implements Serializable {
     }
 
     public void cancelarOrden(int idOrden, int estado) throws NamingException {
+        Boolean correcto = false;
         FacesMessage msg = null;
         try {
             if (estado == 0) {
@@ -212,14 +336,16 @@ public class MbOrdenCompra implements Serializable {
                 this.cargaOrdenesEncabezado();
 
                 msg = new FacesMessage(FacesMessage.SEVERITY_INFO, "Aviso: ", "Se ha CANCELADO");
+                correcto = true;
             }
         } catch (SQLException ex) {
             Logger.getLogger(MbOrdenCompra.class.getName()).log(Level.SEVERE, null, ex);
             msg = new FacesMessage(FacesMessage.SEVERITY_INFO, "Aviso: ", "No se realizó la cancelación de la orden de compra..");
         }
-        FacesContext.getCurrentInstance().addMessage(null, msg);
 
-
+        if (correcto) {
+            FacesContext.getCurrentInstance().addMessage(null, msg);
+        }
     }
 
     public String irMenu() throws NamingException {
@@ -228,7 +354,196 @@ public class MbOrdenCompra implements Serializable {
         return navega;
     }
 
-    // GET Y SETS
+    public void generarReporte() {
+        try {
+            TotalesOrdenCompra totalOrdenCompra = new TotalesOrdenCompra();
+            totalOrdenCompra.setImpF(impF);
+            totalOrdenCompra.setSubTotalBrutoF(subtotalBrutoF);
+            totalOrdenCompra.setSubtoF(subtotF);
+            totalOrdenCompra.setSumaDescuentosGeneralesF(sumaDescuentosGeneralesF);
+            totalOrdenCompra.setSumaDescuentosTotalesF(sumaDescuentosTotalesF);
+            totalOrdenCompra.setSumaDescuentsoProductosF(sumaDescuentosProductosF);
+            totalOrdenCompra.setTotalF(totalF);
+            ocr.generarReporte(listaOrdenDetalle, ordenElegida, totalOrdenCompra, 0);
+        } catch (JRException ex) {
+            Logger.getLogger(MbOrdenCompra.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+
+    public void enviarCorreo(String emails) {
+        String asunto = correo.getAsunto();
+        String contenido = correo.getMensaje();
+        String ruta = "";
+        Boolean ok = false;
+        FacesMessage fMsg = new FacesMessage(FacesMessage.SEVERITY_WARN, "Aviso:", null);
+        if (emails.equals("")) {
+            fMsg.setSeverity(FacesMessage.SEVERITY_WARN);
+            fMsg.setDetail("Se requiere un correo !!");
+        } else if (asunto.equals("")) {
+            fMsg.setSeverity(FacesMessage.SEVERITY_WARN);
+            fMsg.setDetail("Se requiere un ASUNTO !!");
+        } else if (contenido.equals("")) {
+            fMsg.setSeverity(FacesMessage.SEVERITY_WARN);
+            fMsg.setDetail("Se requiere un MENSAJE !!");
+        } else {
+            String verifica = this.validarCadenaCorreos(emails);
+            if (verifica != "") {
+                fMsg.setSeverity(FacesMessage.SEVERITY_WARN);
+                fMsg.setDetail("Es incorrecto el correo " + verifica);
+            } else {
+                try {
+                    TotalesOrdenCompra totalOrdenCompra = new TotalesOrdenCompra();
+                    totalOrdenCompra.setImpF(impF);
+                    totalOrdenCompra.setSubTotalBrutoF(subtotalBrutoF);
+                    totalOrdenCompra.setSubtoF(subtotF);
+                    totalOrdenCompra.setSumaDescuentosGeneralesF(sumaDescuentosGeneralesF);
+                    totalOrdenCompra.setSumaDescuentosTotalesF(sumaDescuentosTotalesF);
+                    totalOrdenCompra.setSumaDescuentsoProductosF(sumaDescuentosProductosF);
+                    totalOrdenCompra.setTotalF(totalF);
+                    //DATOS FIJOS
+                    String servidorCorreos = "mail.laanita.com";
+                    String user = "carlos.pat";
+                    String remitente = "carlos.pat@laanita.com";
+                    String passRemitente = "Usuario1";
+                    int puerto = 587;
+                    String protocolo = "smtp";
+                    Properties props = new Properties();
+                    props.setProperty("mail.transport.protocol", protocolo);
+                    props.setProperty("mail.smtp.host", servidorCorreos);
+                    props.setProperty("mail.smtp.auth", "true");
+                    props.setProperty("mail.smtp.user", user);
+                    props.setProperty("mail.smtp.pass", passRemitente);
+                    Session mailSession;
+                    mailSession = Session.getDefaultInstance(props);
+                    MimeMessage mensaje = new MimeMessage(mailSession);
+                    try {
+                        mensaje.setFrom(new InternetAddress(remitente));
+                        mensaje.setSender(new InternetAddress(remitente));
+                        BodyPart texto = new MimeBodyPart();
+                        texto.setText(contenido);
+                        MimeMultipart multiparte = new MimeMultipart();
+                        multiparte.addBodyPart(texto);
+                        BodyPart adjunto = new MimeBodyPart();
+                        Reportes reportes = new Reportes();
+                        ruta = reportes.generarReporteCorreo(listaOrdenDetalle, ordenCompraEncabezado, totalOrdenCompra);
+//                      ruta = ocr.generarReporte(listaOrdenDetalle, ordenCompraEncabezado, totalOrdenCompra, 1);
+                        adjunto.setDataHandler(new DataHandler(new FileDataSource(ruta)));
+                        int idOC = ordenElegida.getIdOrdenCompra();
+                        adjunto.setFileName("OrdendeCompra" + idOC + ".pdf");
+                        multiparte.addBodyPart(adjunto);
+                        mensaje.setSubject(asunto);
+                        mensaje.setContent(multiparte);
+                        if (emails.indexOf(',') > 0) {
+                            mensaje.addRecipients(Message.RecipientType.TO, InternetAddress.parse(emails));
+                        } else {
+                            mensaje.addRecipient(Message.RecipientType.TO, new InternetAddress(emails));
+                        }
+                    } catch (MessagingException e) {
+                    }
+
+                    Transport transport = null;
+                    try {
+                        transport = mailSession.getTransport(protocolo);
+                        transport.connect(servidorCorreos, puerto, user, passRemitente);
+                        transport.sendMessage(mensaje, mensaje.getRecipients(Message.RecipientType.TO));
+                        transport.close();
+                        ok = true;
+                        File file = new File(ruta);
+                        file.delete();
+
+                        fMsg.setSeverity(FacesMessage.SEVERITY_INFO);
+                        fMsg.setDetail("El correo se envió correctamente !!");
+                        limpiarFormulario();
+                        FacesContext.getCurrentInstance().addMessage(null, fMsg);
+                    } catch (NoSuchProviderException e) {
+                        fMsg.setSeverity(FacesMessage.SEVERITY_WARN);
+                        fMsg.setDetail(e.getMessage() + "Error capturado1");
+                    } catch (MessagingException e) {
+                        fMsg.setSeverity(FacesMessage.SEVERITY_WARN);
+                        fMsg.setDetail("Aviso: Corrige el correo..");
+                    }
+                } catch (Exception ex) {
+                    fMsg.setSeverity(FacesMessage.SEVERITY_WARN);
+                    fMsg.setDetail("Aviso: Acompleta el correo...");
+                }
+            }
+        }
+        if (!ok) {
+            FacesContext.getCurrentInstance().addMessage(null, fMsg);
+        }
+    }        // TODO
+
+    public void cargaContactos() {
+        try {
+            this.listaContactos = new ArrayList<Contacto>();
+            DAOOrdenDeCompra daoOC = new DAOOrdenDeCompra();
+            try {
+                listaContactos = daoOC.obtenerContactos(ordenElegida.getIdOrdenCompra());
+                cadena = "";
+
+
+            } catch (SQLException ex) {
+                Logger.getLogger(MbOrdenCompra.class
+                        .getName()).log(Level.SEVERE, null, ex);
+            }
+
+
+        } catch (NamingException ex) {
+            Logger.getLogger(MbOrdenCompra.class
+                    .getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+
+    public void contactoSeleccion() {
+        String elegido = contactoElegido.getCorreo();
+        cadena = cadena + elegido + ",";
+        correo.setPara(cadena);
+    }
+
+    public void limpiarFormulario() {
+        for (Contacto e : listaContactos) {
+            e.setCorreo("");
+        }
+        this.correo.setPara("");
+        this.correo.setAsunto("");
+        this.correo.setMensaje("");
+
+        cargaContactos();
+    }
+
+    public String validarCadenaCorreos(String cadena) {
+        String cad = "";
+        cadena += ",";
+        char arregloCadena[] = cadena.trim().toCharArray();
+        for (int x = 0; x < cadena.length(); x++) {
+            if (arregloCadena[x] != ',') {
+                cad += arregloCadena[x];
+            } else {
+                boolean paso = validarEmail(cad);
+                if (paso == false) {
+                    break;
+                } else {
+                    cad = "";
+                }
+            }
+        }
+        return cad;
+    }
+
+    public boolean validarEmail(String email) {
+        email.trim();
+        boolean validar = false;
+        Pattern pattern = Pattern.compile("[\\w\\.-]*[a-zA-Z0-9_]@[\\w\\.-]*[a-zA-Z0-9]\\.[a-zA-Z][a-zA-Z\\.]*[a-zA-Z]");
+        Matcher matcher = pattern.matcher(email);
+        validar = matcher.matches();
+        return validar;
+    }
+
+    public void buscar() {
+        this.mbBuscar.buscarLista();
+    }
+
+    // GET Y SETS ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     public MbProveedores getMbProveedores() {
         return mbProveedores;
     }
@@ -255,7 +570,16 @@ public class MbOrdenCompra implements Serializable {
 
     public ArrayList<OrdenCompraEncabezado> getListaOrdenesEncabezado() throws NamingException {
         if (listaOrdenesEncabezado == null) {
-            this.cargaOrdenesEncabezado();
+            try {
+                this.cargaOrdenesEncabezado();
+
+
+
+
+            } catch (SQLException ex) {
+                Logger.getLogger(MbOrdenCompra.class
+                        .getName()).log(Level.SEVERE, null, ex);
+            }
         }
         return listaOrdenesEncabezado;
     }
@@ -324,12 +648,7 @@ public class MbOrdenCompra implements Serializable {
     }
 
     public String getSubtotF() {
-        //     Utilerias u = new Utilerias();
-        //       Numero_a_Letra num = new Numero_a_Letra();
         subtotF = utilerias.Utilerias.formatoMonedas(this.getSubtotalGeneral());
-        //     String letra = u.quitarComasNumero(subtotF);
-        //      letra = num.Convertir(letra, true);
-        //    System.out.println("Letras: " + letra);
         return subtotF;
     }
 
@@ -395,9 +714,139 @@ public class MbOrdenCompra implements Serializable {
         return sumaDescuentosTotalesF;
     }
 
-    public void generarReporte() {
-        OrdenCompraReporte reporte = new OrdenCompraReporte();
-        reporte.generarReporte(listaOrdenDetalle);
+    public Correo getCorreo() {
+        return correo;
+    }
 
+    public void setCorreo(Correo correo) {
+        this.correo = correo;
+    }
+
+    public ArrayList<Contacto> getListaContactos() {
+        return listaContactos;
+    }
+
+    public void setListaContactos(ArrayList<Contacto> listaContactos) {
+        this.listaContactos = listaContactos;
+    }
+
+    public Contacto getContactoElegido() {
+        return contactoElegido;
+    }
+
+    public void setContactoElegido(Contacto contactoElegido) {
+        this.contactoElegido = contactoElegido;
+    }
+
+    public MbBuscarEmpaques getMbBuscar() {
+        return mbBuscar;
+    }
+
+    public void setMbBuscar(MbBuscarEmpaques mbBuscar) {
+        this.mbBuscar = mbBuscar;
+    }
+
+    public ArrayList<Empaque> getListaEmpaque() {
+        return listaEmpaque;
+    }
+
+    public void setListaEmpaque(ArrayList<Empaque> listaEmpaque) {
+        this.listaEmpaque = listaEmpaque;
+    }
+
+    public Empaque getEmpaque() {
+        return empaque;
+    }
+
+    public void setEmpaque(Empaque empaque) {
+        this.empaque = empaque;
+    }
+
+//    public MbEntradas getMbEntradas() {
+//        return mbEntradas;
+//    }
+//
+//    public void setMbEntradas(MbEntradas mbEntradas) {
+//        this.mbEntradas = mbEntradas;
+//    }
+    public MbMiniProveedor getMbMiniProveedor() {
+        return mbMiniProveedor;
+    }
+
+    public void setMbMiniProveedor(MbMiniProveedor mbMiniProveedor) {
+        this.mbMiniProveedor = mbMiniProveedor;
+    }
+
+    public Almacen getAlmacen() {
+        return almacen;
+    }
+
+    public void setAlmacen(Almacen almacen) {
+        this.almacen = almacen;
+    }
+
+    public Empresa getEmpresa() {
+        return empresa;
+    }
+
+    public void setEmpresa(Empresa empresa) {
+        this.empresa = empresa;
+    }
+
+    public Cedis getCedis() {
+        return cedis;
+    }
+
+    public void setCedis(Cedis cedis) {
+        this.cedis = cedis;
+    }
+
+    public void cargarAlmacenes() {
+        try {
+            empresa.getIdEmpresa();
+            cedis.getIdCedis();
+            DAOAlmacenes daoAlmacenes = new DAOAlmacenes();
+            almacenes = daoAlmacenes.obtenerAlmacenes(cedis.getIdCedis(), empresa.getIdEmpresa());
+            for (Almacen alm : almacenes) {
+                listaAlmacenes.add(new SelectItem(alm, alm.getAlmacen()));
+            }
+        } catch (NamingException ex) {
+            Logger.getLogger(MbOrdenCompra.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (SQLException ex) {
+            Logger.getLogger(MbOrdenCompra.class.getName()).log(Level.SEVERE, null, ex);
+        }
+
+    }
+
+    public ArrayList<SelectItem> getListaAlmacenes() {
+        return listaAlmacenes;
+    }
+
+    public void setListaAlmacenes(ArrayList<SelectItem> listaAlmacenes) {
+        this.listaAlmacenes = listaAlmacenes;
+    }
+
+    public ArrayList<Almacen> getAlmacenes() {
+        return almacenes;
+    }
+
+    public void setAlmacenes(ArrayList<Almacen> almacenes) {
+        this.almacenes = almacenes;
+    }
+
+    public MbEmpresas getMbEmpresas() {
+        return mbEmpresas;
+    }
+
+    public void setMbEmpresas(MbEmpresas mbEmpresas) {
+        this.mbEmpresas = mbEmpresas;
+    }
+
+    public MbMiniCedis getMbCedis() {
+        return mbCedis;
+    }
+
+    public void setMbCedis(MbMiniCedis mbCedis) {
+        this.mbCedis = mbCedis;
     }
 }

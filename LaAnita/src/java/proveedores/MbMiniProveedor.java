@@ -1,7 +1,7 @@
 package proveedores;
 
 import cotizaciones.dao.DAOCotizaciones;
-import dominios.Moneda;
+import cotizaciones.dominio.Moneda;
 import java.io.Serializable;
 import java.sql.SQLException;
 import java.util.ArrayList;

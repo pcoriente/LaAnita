@@ -1,5 +1,6 @@
 package ordenesDeCompra.dominio;
 
+import java.io.Serializable;
 import java.util.Date;
 import proveedores.dominio.Proveedor;
 
@@ -7,7 +8,7 @@ import proveedores.dominio.Proveedor;
  *
  * @author jsolis
  */
-public class OrdenCompraEncabezado {
+public class OrdenCompraEncabezado implements Serializable{
 
     private int idOrdenCompra;
     private int idCotizacion;

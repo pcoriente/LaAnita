@@ -31,6 +31,12 @@ public class Empaque {
         this.volumen=0;
     }
 
+    public Empaque() {
+//        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    
+
     @Override
     public String toString() {
         String empaque=producto.toString();

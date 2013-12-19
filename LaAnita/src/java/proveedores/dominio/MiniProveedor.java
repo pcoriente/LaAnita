@@ -1,5 +1,7 @@
 package proveedores.dominio;
 
+import ordenesDeCompra.dominio.OrdenCompraEncabezado;
+
 /**
  *
  * @author jsolis
@@ -11,6 +13,7 @@ public class MiniProveedor {
     private double desctoComercial;
     private double desctoProntoPago;
     private int idImpuestoZona;
+    private OrdenCompraEncabezado ordenCompraEncabezado;
 
     public MiniProveedor() {
         this.idProveedor=0;
@@ -99,4 +102,14 @@ public class MiniProveedor {
     public void setIdImpuestoZona(int idImpuestoZona) {
         this.idImpuestoZona = idImpuestoZona;
     }
+
+    public OrdenCompraEncabezado getOrdenCompraEncabezado() {
+        return ordenCompraEncabezado;
+    }
+
+    public void setOrdenCompraEncabezado(OrdenCompraEncabezado ordenCompraEncabezado) {
+        this.ordenCompraEncabezado = ordenCompraEncabezado;
+    }
+
+   
 }

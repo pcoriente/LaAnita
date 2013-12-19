@@ -5,7 +5,7 @@
 package cotizaciones.converters;
 
 import cotizaciones.dao.DAOCotizaciones;
-import dominios.Moneda;
+import cotizaciones.dominio.Moneda;
 import java.util.ResourceBundle;
 import javax.faces.application.FacesMessage;
 import javax.faces.component.UIComponent;

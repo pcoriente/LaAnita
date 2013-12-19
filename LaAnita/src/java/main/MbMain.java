@@ -1,5 +1,6 @@
 package main;
 
+import java.io.Serializable;
 import java.util.Date;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ViewScoped;
@@ -14,7 +15,7 @@ import usuarios.UsuarioSesion;
  */
 @ManagedBean(name = "mbMain")
 @ViewScoped
-public class MbMain {
+public class MbMain implements Serializable {
     private Date date;
     private String comenta;
 
