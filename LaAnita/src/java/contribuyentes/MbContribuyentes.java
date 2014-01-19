@@ -9,6 +9,7 @@ import javax.faces.application.FacesMessage;
 import javax.faces.context.FacesContext;
 import javax.naming.NamingException;
 import org.primefaces.context.RequestContext;
+import utilerias.Utilerias;
 
 /**
  *
@@ -17,42 +18,60 @@ import org.primefaces.context.RequestContext;
 @Named(value = "mbContribuyentes")
 @SessionScoped
 public class MbContribuyentes implements Serializable {
+
     private Contribuyente contribuyente;
     private ArrayList<Contribuyente> contribuyentes;
     private DAOContribuyentes dao;
-    
+
     public MbContribuyentes() {
         this.contribuyente = new Contribuyente();
         this.contribuyentes = new ArrayList<Contribuyente>();
     }
-    
+
     public void cancelar() {
-        boolean ok=true;
+        boolean ok = true;
         RequestContext context = RequestContext.getCurrentInstance();
         context.addCallbackParam("okContribuyente", ok);
     }
-    
+
     public boolean valida() {
-        boolean ok=false;
+        boolean ok = false;
         RequestContext context = RequestContext.getCurrentInstance();
         FacesMessage fMsg = new FacesMessage(FacesMessage.SEVERITY_WARN, "Aviso:", "");
-        
-        if(this.contribuyente.getRfc().isEmpty()) {
+        if (this.contribuyente.getRfc().isEmpty()) {
             fMsg.setDetail("Se requiere el RFC !!");
-        } else if(this.contribuyente.getContribuyente().isEmpty()) {
+        } else if (this.contribuyente.getContribuyente().isEmpty()) {
             fMsg.setDetail("Se requiere el nombre comercial o razón social del contribuyente !!");
+        } else if (this.contribuyente.getRfc().length() > 0) {
+            Utilerias utilerias = new Utilerias();
+            String mensaje = utilerias.verificarRfc(this.getContribuyente().getRfc());
+            if (mensaje.equals("") && this.getContribuyente().getRfc().length() == 13) {
+                boolean validacion = utilerias.validarCurp(this.contribuyente.getCurp());
+                if (validacion == false) {
+                    fMsg.setDetail("Error! Curp no valido");
+                } else {
+                    ok = true;
+//                    fMsg.setDetail(mensaje);
+                }
+            } else if (this.getContribuyente().getRfc().length() == 12&& mensaje.equals("")) {
+                ok=true;
+//                fMsg.setDetail(mensaje);
+            } else {
+                fMsg.setDetail(mensaje);
+            }
         } else {
-            ok=true;
+            ok = true;
         }
-        if(!ok) {
+        if (!ok) {
+
             FacesContext.getCurrentInstance().addMessage(null, fMsg);
         }
         context.addCallbackParam("okContribuyente", ok);
         return ok;
     }
-    
+
     public Contribuyente copia(Contribuyente contribuyente) {
-        Contribuyente c=new Contribuyente();
+        Contribuyente c = new Contribuyente();
         c.setIdContribuyente(contribuyente.getIdContribuyente());
         c.setIdRfc(contribuyente.getIdRfc());
         c.setRfc(contribuyente.getRfc());
@@ -60,13 +79,13 @@ public class MbContribuyentes implements Serializable {
         c.setDireccion(contribuyente.getDireccion());
         return c;
     }
-    
+
     public Contribuyente obtenerContribuyente(int idContribuyente) {
-        Contribuyente c=null;
+        Contribuyente c = null;
         FacesMessage fMsg = new FacesMessage(FacesMessage.SEVERITY_WARN, "Aviso:", "");
         try {
             this.dao = new DAOContribuyentes();
-            c=this.dao.obtenerContribuyente(idContribuyente);
+            c = this.dao.obtenerContribuyente(idContribuyente);
         } catch (SQLException ex) {
             fMsg.setSeverity(FacesMessage.SEVERITY_ERROR);
             fMsg.setDetail(ex.getErrorCode() + " " + ex.getMessage());
@@ -77,18 +96,18 @@ public class MbContribuyentes implements Serializable {
         FacesContext.getCurrentInstance().addMessage(null, fMsg);
         return c;
     }
-    
+
     public void obtenerContribuyentesRFC() {
         FacesMessage fMsg = new FacesMessage(FacesMessage.SEVERITY_WARN, "Aviso:", "");
         try {
-            this.dao=new DAOContribuyentes();
-            int idRfc=this.dao.obtenerRfc(this.contribuyente.getRfc());
-            if(idRfc==0) {
-                idRfc=this.dao.grabarRFC(this.contribuyente.getRfc());
+            this.dao = new DAOContribuyentes();
+            int idRfc = this.dao.obtenerRfc(this.contribuyente.getRfc());
+            if (idRfc == 0) {
+                idRfc = this.dao.grabarRFC(this.contribuyente.getRfc());
                 this.contribuyente.setIdRfc(idRfc);
-                this.contribuyentes=new ArrayList<Contribuyente>();
+                this.contribuyentes = new ArrayList<Contribuyente>();
             } else {
-                this.contribuyentes=this.dao.obtenerContribuyentesRFC(this.contribuyente.getRfc());
+                this.contribuyentes = this.dao.obtenerContribuyentesRFC(this.contribuyente.getRfc());
             }
         } catch (SQLException ex) {
             fMsg.setSeverity(FacesMessage.SEVERITY_ERROR);
