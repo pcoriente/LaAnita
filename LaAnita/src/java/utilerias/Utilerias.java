@@ -10,6 +10,8 @@ import java.util.Date;
 import java.util.Locale;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import javax.faces.application.FacesMessage;
+import javax.faces.validator.ValidatorException;
 
 /**
  *
@@ -107,14 +109,40 @@ public class Utilerias {
         num = num.replace("$", "");
         return num;
     }
-    
-    
-     public String quitarSigno$(String cantidad) {
+
+    public String quitarSigno$(String cantidad) {
         String canti = "";
         canti = cantidad.replace("$", " ");
         return canti;
     }
-    
-    
-    
+
+    public String verificarRfc(String rfc) {
+        rfc = rfc.trim();
+        String mensaje = "";
+        boolean comprobar;
+        switch (rfc.length()) {
+            case 12:
+                comprobar = Pattern.matches("\\D{3}[0-9]{6}\\w{3}+", rfc);
+                if (comprobar == false) {
+                    mensaje = "El RFC no es válido";
+                }
+                break;
+            case 13:
+                comprobar = Pattern.matches("\\D{4}[0-9]{6}\\w{3}+", rfc);
+                if (comprobar == false) {
+                    mensaje = "El RFC no es válido";
+                }
+                break;
+            default:
+                mensaje = "La longitud del RFC no es válida";
+        }
+        return mensaje;
+    }
+
+    public boolean validarCurp(String curp) {
+        boolean paso = false;
+        curp = curp.toUpperCase().trim();
+        paso = curp.matches("[A-Z]{4}[0-9]{6}[H,M][A-Z]{5}[0-9]{2}");
+        return paso;
+    }
 }

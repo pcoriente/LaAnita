@@ -36,7 +36,6 @@ public class DAOAcciones {
     
     public ArrayList<Accion> obtenerAcciones(int idModulo) throws SQLException {
         ArrayList<Accion> acciones=new ArrayList<Accion>();
-        
         Connection cn=this.ds.getConnection();
         Statement st=cn.createStatement();
         try {
