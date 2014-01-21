@@ -182,7 +182,17 @@
                             </p:row>
                             <f:facet name="footer" >
                                 <p:row >
-                                    <p:column colspan="9" style="text-align: right;" >
+                                    <p:column style="font-weight: bold; color: red; width: 90px;" >Moneda :</p:column>
+                                    <p:column colspan="3" >
+                                        <p:selectOneMenu id="moneda" value="#{mbEntradas.mbMonedas.moneda}" 
+                                                     filter="true" filterMatchMode="contains" style="width: 100px;" >
+                                        <f:converter converterId="converters.Moneda" />
+                                        <f:selectItems value="#{mbEntradas.mbMonedas.listaMonedas}" />
+                                        <p:ajax event="change" />
+                                    </p:selectOneMenu>
+                                    <p:column colspan="2" >Tipo de Cambio :</p:column>
+                                    <p:column ><p:inputText id="txtTipoCambio" value="#{mbEntradas.entrada.tipoCambio}"/></p:column>
+                                    <p:column colspan="2" style="text-align: right;" >
                                         <p:commandButton id="btnGrabarEntrada" icon="ui-icon-disk" title="Grabar Entrada" 
                                                          disabled="#{mbEntradas.factura.cerrada}"
                                                          process="@this" actionListener="#{mbEntradas.grabarEntrada()}" 

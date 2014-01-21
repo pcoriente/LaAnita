@@ -1,11 +1,5 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
-package cotizaciones.converters;
+package monedas;
 
-import cotizaciones.dao.DAOCotizaciones;
-import cotizaciones.dominio.Moneda;
 import java.util.ResourceBundle;
 import javax.faces.application.FacesMessage;
 import javax.faces.component.UIComponent;
@@ -23,8 +17,8 @@ public class MonedasConverter implements Converter {
             if(idMoneda == 0) {
                 moneda=new Moneda();
             } else {
-                DAOCotizaciones dao=new DAOCotizaciones();
-                moneda=dao.obtenerMonedasConverter(idMoneda);
+                DAOMonedas dao=new DAOMonedas();
+                moneda=dao.obtenerMoneda(idMoneda);
             }
         } catch(Throwable ex) {
             ResourceBundle bundle = ResourceBundle.getBundle("messages");

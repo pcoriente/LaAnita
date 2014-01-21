@@ -23,6 +23,7 @@ import javax.faces.bean.ManagedProperty;
 import javax.faces.context.FacesContext;
 import javax.faces.model.SelectItem;
 import javax.naming.NamingException;
+import monedas.MbMonedas;
 import ordenesDeCompra.MbOrdenCompra;
 import ordenesDeCompra.dominio.OrdenCompraDetalle;
 import ordenesDeCompra.dominio.OrdenCompraEncabezado;
@@ -58,6 +59,8 @@ public class MbEntradas implements Serializable {
     private MbFacturas mbFacturas;
     @ManagedProperty(value="#{mbOrdenCompra}")
     private MbOrdenCompra mbOrdenCompra;
+    @ManagedProperty(value="#{mbMonedas}")
+    private MbMonedas mbMonedas;
     
     private DAOAlmacenes daoAlmacenes;
     private ArrayList<SelectItem> listaAlmacenes;
@@ -93,6 +96,7 @@ public class MbEntradas implements Serializable {
         this.mbBuscar=new MbBuscarEmpaques();
         this.mbFacturas=new MbFacturas();
         this.mbOrdenCompra=new MbOrdenCompra();
+        this.mbMonedas=new MbMonedas();
     }
     
     public void grabarEntrada() {
@@ -674,5 +678,13 @@ public class MbEntradas implements Serializable {
 
     public void setSinOrden(boolean sinOrden) {
         this.sinOrden = sinOrden;
+    }
+
+    public MbMonedas getMbMonedas() {
+        return mbMonedas;
+    }
+
+    public void setMbMonedas(MbMonedas mbMonedas) {
+        this.mbMonedas = mbMonedas;
     }
 }
