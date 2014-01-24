@@ -30,7 +30,7 @@ public class Entrada {
         this.idProveedor=0;
         this.idImpuestoZona=0;
         this.idMoneda=0;
-        this.tipoCambio=1;
+        this.tipoCambio=1.00;
         this.desctoComercial=0.00;
         this.desctoProntoPago=0.00;
         this.fecha=new Date();

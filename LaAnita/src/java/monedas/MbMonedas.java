@@ -18,17 +18,20 @@ import javax.naming.NamingException;
 @Dependent
 public class MbMonedas implements Serializable {
     
-    private ArrayList<SelectItem> listaMonedas = new ArrayList<SelectItem>();
-    private Moneda moneda = new Moneda();
+    private ArrayList<SelectItem> listaMonedas;
+    private Moneda moneda;
 
     public MbMonedas() {
+        this.moneda=new Moneda();
     }
     
     private ArrayList<SelectItem> obtenerListaMonedas() throws NamingException {
-        Moneda m0 = new Moneda();
+        listaMonedas=new ArrayList<SelectItem>();
         try {
+            Moneda m0 = new Moneda();
             m0.setIdMoneda(0);
             m0.setMoneda("Moneda: ");
+            
             listaMonedas.add(new SelectItem(m0, m0.toString()));
             DAOMonedas dao=new DAOMonedas();
             ArrayList<Moneda> monedas = dao.obtenerMonedas();

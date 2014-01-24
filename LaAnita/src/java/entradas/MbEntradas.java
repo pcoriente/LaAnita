@@ -379,8 +379,8 @@ public class MbEntradas implements Serializable {
         this.entrada.setIdEmpresa(this.mbEmpresas.getEmpresa().getIdEmpresa());
         this.entrada.setIdProveedor(this.mbProveedores.getMiniProveedor().getIdProveedor());
         this.entrada.setIdAlmacen(this.almacen.getIdAlmacen());
-        this.entrada.setDesctoComercial(0);
-        this.entrada.setDesctoProntoPago(0);
+        //this.entrada.setDesctoComercial(0);
+        //this.entrada.setDesctoProntoPago(0);
         this.entradaDetalle=new ArrayList<EntradaProducto>();
         this.ordenCompra=new OrdenCompraEncabezado();
         this.sinOrden=false;
@@ -414,20 +414,21 @@ public class MbEntradas implements Serializable {
     }
     
     // Este metodo se ejecutaba al seleccionar un almacen de la lista
-    public String inicializarEntrada() {
+    public void inicializarEntrada() {
         this.modoEdicion=true;
         this.entrada=new Entrada();
         this.ordenCompra=new OrdenCompraEncabezado();
         this.entrada.setIdProveedor(this.mbProveedores.getMiniProveedor().getIdProveedor());
         this.entrada.setIdEmpresa(this.mbEmpresas.getEmpresa().getIdEmpresa());
         this.entradaDetalle=new ArrayList<EntradaProducto>();
-        return "entradas.xhtml";
+        //return "entradas.xhtml";
     }
     
-    public String salir() {
+    public void salir() {
         this.modoEdicion=false;
         this.ordenCompra=new OrdenCompraEncabezado();
-        return "entradas.xhtml";
+        this.entrada=new Entrada();
+        //return "entradas.xhtml";
     }
     
     public String terminar() {
