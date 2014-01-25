@@ -1,7 +1,7 @@
 package ordenesDeCompra.dao;
 
+import cedis.dominio.Cedis;
 import contactos.dominio.Contacto;
-import contribuyentes.Contribuyente;
 import cotizaciones.dao.DAOCotizaciones;
 import direccion.dominio.Direccion;
 import java.sql.Connection;
@@ -279,6 +279,61 @@ public class DAOOrdenDeCompra {
       
         cont.setCorreo(rs.getString("correo"));
         return cont;
+    }
+    
+     public Direccion obtenerUnaDireccion(int idDireccion) throws SQLException {
+        Direccion toDir=null;
+        Connection cn=this.ds.getConnection();
+        Statement st=cn.createStatement();
+        try {
+            ResultSet rs=st.executeQuery("SELECT * FROM direcciones WHERE idDireccion="+idDireccion);
+            if(rs.next()) toDir=construirDireccion(rs);
+        } finally {
+            cn.close();
+        }
+        return toDir;
+    }
+    
+    private Direccion construirDireccion(ResultSet rs) throws SQLException {
+        Direccion Dir=new Direccion();
+        Dir.setIdDireccion(rs.getInt("idDireccion"));
+        Dir.setCalle(rs.getString("calle"));
+        Dir.setNumeroExterior(rs.getString("numeroExterior"));
+        Dir.setNumeroInterior(rs.getString("numeroInterior"));
+        Dir.setReferencia(rs.getString("referencia"));
+        Dir.getPais().setIdPais(rs.getInt("idPais"));   
+        Dir.setCodigoPostal(rs.getString("codigoPostal"));
+        Dir.setEstado(rs.getString("estado"));
+        Dir.setMunicipio(rs.getString("municipio"));
+        Dir.setLocalidad(rs.getString("localidad"));
+        Dir.setColonia(rs.getString("colonia"));
+        Dir.setNumeroLocalizacion(rs.getString("numeroLocalizacion"));
+        return Dir;
+    }
+    
+     public Cedis obtenerUnCedis(int idCedis) throws SQLException {
+        Cedis to=null;
+        Connection cn=this.ds.getConnection();
+        Statement st=cn.createStatement();
+        try {
+            ResultSet rs=st.executeQuery("SELECT * FROM cedis WHERE idCedis="+idCedis);
+            if(rs.next()) to=construirCedis(rs);
+        } finally {
+            cn.close();
+        }
+        return to;
+    }
+     
+     private Cedis construirCedis(ResultSet rs) throws SQLException {
+        Cedis to=new Cedis();
+        to.setIdCedis(rs.getInt("idCedis"));
+        to.setCedis(rs.getString("cedis"));
+        to.setTelefono(rs.getString("telefono"));
+        to.setFax(rs.getString("fax"));
+        to.setCorreo(rs.getString("eMail"));
+        to.setRepresentante(rs.getString("representante"));
+         to.setDireccion(this.obtenerUnaDireccion(rs.getInt("idDireccion")));
+        return to;
     }
 
 }

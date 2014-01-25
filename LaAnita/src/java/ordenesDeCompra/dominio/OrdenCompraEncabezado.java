@@ -8,7 +8,7 @@ import proveedores.dominio.Proveedor;
  *
  * @author jsolis
  */
-public class OrdenCompraEncabezado implements Serializable{
+public class OrdenCompraEncabezado implements Serializable {
 
     private int idOrdenCompra;
     private int idCotizacion;
@@ -25,6 +25,8 @@ public class OrdenCompraEncabezado implements Serializable{
     private double desctoProntoPago;
     private String fechaEntrega;
     private String status;
+    private Date fechaEmisionDirectas;
+    private Date fechaEntregaDirectas;
 
     public OrdenCompraEncabezado() {
         this.idOrdenCompra = 0;
@@ -163,6 +165,21 @@ public class OrdenCompraEncabezado implements Serializable{
     public void setStatus(String status) {
         this.status = status;
     }
-    
-    
+
+    public Date getFechaEmisionDirectas() {
+        return fechaEmisionDirectas;
+    }
+
+    public void setFechaEmisionDirectas(Date fechaEmisionDirectas) {
+        this.fechaEmisionDirectas = fechaEmisionDirectas;
+    }
+
+    public Date getFechaEntregaDirectas() {
+        return fechaEntregaDirectas;
+    }
+
+    public void setFechaEntregaDirectas(Date fechaEntregaDirectas) {
+        this.fechaEntregaDirectas = fechaEntregaDirectas;
+    }
+
 }

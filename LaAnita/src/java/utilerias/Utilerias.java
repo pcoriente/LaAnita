@@ -39,11 +39,9 @@ public class Utilerias {
                     fecha = (Date) formatter.parse(strFecha);
                 } catch (ParseException ex) {
                     throw new Exception("Fecha no válida: " + strFecha + " Error !!!");
-                    //JOptionPane.showMessageDialog(null, "Fecha no válida: " + strFecha, "Error !!!", JOptionPane.ERROR_MESSAGE);
                 }
             } else {
                 throw new Exception("Fecha no válida: " + strFecha + " Error !!!");
-                //JOptionPane.showMessageDialog(null, "Formato de fecha incorrecto (dd/mm/yyyy)", "Error !!!", JOptionPane.ERROR_MESSAGE);
             }
         }
         return fecha;

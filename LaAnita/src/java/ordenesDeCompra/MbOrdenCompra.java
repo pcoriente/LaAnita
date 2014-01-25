@@ -1,23 +1,21 @@
 package ordenesDeCompra;
 
-import almacenes.MbAlmacenes;
 import almacenes.dao.DAOAlmacenes;
 import almacenes.dominio.Almacen;
-import cedis.MbCedis;
 import cedis.MbMiniCedis;
 import cedis.dominio.Cedis;
 import contactos.dominio.Contacto;
 import cotizaciones.MbCotizaciones;
-import empresas.MbEmpresas;
 import empresas.MbMiniEmpresas;
 import empresas.dominio.Empresa;
-import entradas.MbEntradas;
 import java.io.File;
 import javax.inject.Named;
 import javax.enterprise.context.SessionScoped;
 import java.io.Serializable;
 import java.sql.SQLException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.Properties;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -52,14 +50,13 @@ import org.primefaces.event.SelectEvent;
 import productos.MbBuscarEmpaques;
 import productos.dominio.Empaque;
 import proveedores.MbMiniProveedor;
-import proveedores.MbProveedores;
+import proveedores.dao.DAOProveedores;
+import proveedores.dominio.Proveedor;
 
 @Named(value = "mbOrdenCompra")
 @SessionScoped
 public class MbOrdenCompra implements Serializable {
 
-    @ManagedProperty(value = "#{mbProveedores}")
-    private MbProveedores mbProveedores;
     private OrdenCompraEncabezado ordenCompraEncabezado;
     @ManagedProperty(value = "#{mbCotizaciones}")
     private MbCotizaciones mbCotizaciones;
@@ -89,28 +86,28 @@ public class MbOrdenCompra implements Serializable {
     private transient Contacto contactoElegido;
     private String cadena;
     private transient OrdenCompraReporte ocr;
-    //pablo
     @ManagedProperty(value = "#{mbBuscarEmpaques}")
     private MbBuscarEmpaques mbBuscar;
     private ArrayList<Empaque> listaEmpaque = new ArrayList<Empaque>();
     private Empaque empaque;
-//    @ManagedProperty(value = "#{mbEntradas}")
-//    private MbEntradas mbEntradas;
-    @ManagedProperty(value = "#{mbMiniProveedor}")
-    private MbMiniProveedor mbMiniProveedor;
-    private Almacen almacen = new Almacen();
-//    -------------CosasPablo-----------------
     private Empresa empresa = new Empresa();
     private Cedis cedis = new Cedis();
-    private ArrayList<SelectItem> listaAlmacenes = new ArrayList();
-    private ArrayList<Almacen> almacenes = new ArrayList<Almacen>();
-    @ManagedProperty(value = "#{mbEmpresas}")
-    private MbEmpresas mbEmpresas = new MbEmpresas();
-    @ManagedProperty(value = "#{mbCedis}")
-    private MbMiniCedis mbCedis = new MbMiniCedis();
+    @ManagedProperty(value = "#{mbMiniCedis}")
+    private MbMiniCedis mbCedis;
+    @ManagedProperty(value = "#{mbMiniEmpresas}")
+    private MbMiniEmpresas mbEmpresas;
+    @ManagedProperty(value = "#{mbMiniProveedor}")
+    private MbMiniProveedor mbProveedores;
+    private Proveedor provee;
+    private Date fechaEmision;
+    private Date fechaEntrega;
+    private String fechaInicial;
+    private String fechaFinal;
+    //---------------------DIRECTAS
+    private OrdenCompraEncabezado ordenCompraEncabezadoDirecta;
+    private OrdenCompraDetalle ordenCompraDetalleDirecta;
 
     public MbOrdenCompra() throws NamingException {
-        this.mbProveedores = new MbProveedores();
         this.ordenCompraEncabezado = new OrdenCompraEncabezado();
         this.mbCotizaciones = new MbCotizaciones();
         this.ordenCompraDetalle = new OrdenCompraDetalle();
@@ -121,8 +118,16 @@ public class MbOrdenCompra implements Serializable {
         this.ocr = new OrdenCompraReporte();
         this.mbBuscar = new MbBuscarEmpaques();
         this.empaque = new Empaque();
-//        this.mbEntradas = new MbEntradas();
-        this.mbMiniProveedor = new MbMiniProveedor();
+        this.mbProveedores = new MbMiniProveedor();
+        this.mbEmpresas = new MbMiniEmpresas();
+//        this.mbCedis = new MbMiniCedis();
+//        this.almacen = new Almacen();
+        this.provee = new Proveedor();
+//        this.ced = new Cedis();
+        //-------DIRECTAS
+        this.ordenCompraEncabezadoDirecta = new OrdenCompraEncabezado();
+        this.ordenCompraDetalleDirecta = new OrdenCompraDetalle();
+
     }
 
     //M E T O D O S  ////////////////////////////////////////////////////////////////////////////////////////////
@@ -155,7 +160,6 @@ public class MbOrdenCompra implements Serializable {
     }
 
     public void eliminarEmpaqueSeleccionado() {
-//      mbBuscar.getProductos().add(empaque);
         listaEmpaque.remove(empaque);
     }
 
@@ -543,12 +547,114 @@ public class MbOrdenCompra implements Serializable {
         this.mbBuscar.buscarLista();
     }
 
+    //JULIO ENTRADAS
+//    public void cargaListaAlmacenes() {
+//        boolean ok = false;
+//        FacesMessage fMsg = new FacesMessage(FacesMessage.SEVERITY_WARN, "Aviso:", "");
+//        try {
+//            if (this.mbCedis.getCedis().getIdCedis() != 0 && this.mbEmpresas.getEmpresa().getIdEmpresa() != 0) {
+//                this.daoAlmacenes = new DAOAlmacenes();
+//                this.almacenes = this.daoAlmacenes.obtenerAlmacenes(this.mbCedis.getCedis().getIdCedis(), this.mbEmpresas.getEmpresa().getIdEmpresa());
+//            } else {
+//                this.almacenes = new ArrayList<Almacen>();
+//            }
+//            this.listaAlmacenes = new ArrayList<SelectItem>();
+//            Almacen xAlm = new Almacen();
+//            xAlm.setAlmacen("Seleccione un Almacén");
+//            SelectItem a0 = new SelectItem(xAlm, xAlm.toString());
+//            this.listaAlmacenes.add(a0);
+//
+//            for (Almacen a : this.almacenes) {
+//                this.listaAlmacenes.add(new SelectItem(a, a.toString()));
+//            }
+//            ok = true;
+//        } catch (SQLException ex) {
+//            fMsg.setSeverity(FacesMessage.SEVERITY_ERROR);
+//            fMsg.setDetail(ex.getErrorCode() + " " + ex.getMessage());
+//        } catch (NamingException ex) {
+//            fMsg.setSeverity(FacesMessage.SEVERITY_ERROR);
+//            fMsg.setDetail(ex.getMessage());
+//        }
+//        if (!ok) {
+//            FacesContext.getCurrentInstance().addMessage(null, fMsg);
+//        }
+//    }
+//    public void cargaAlmacenes() {
+//        boolean ok = false;
+//        FacesMessage fMsg = new FacesMessage(FacesMessage.SEVERITY_ERROR, "Aviso:", "");
+//        try {
+//            if (this.mbCedis.getCedis().getIdCedis() != 0 && this.mbEmpresas.getEmpresa().getIdEmpresa() != 0) {
+//                this.daoAlmacenes = new DAOAlmacenes();
+//                this.almacenes = this.daoAlmacenes.obtenerAlmacenes(this.mbCedis.getCedis().getIdCedis(), this.mbEmpresas.getEmpresa().getIdEmpresa());
+//            } else {
+//                this.almacenes = new ArrayList<Almacen>();
+//            }
+//            this.listaAlmacenes = null;
+//            ok = true;
+//        } catch (SQLException ex) {
+//            fMsg.setSeverity(FacesMessage.SEVERITY_ERROR);
+//            fMsg.setDetail(ex.getErrorCode() + " " + ex.getMessage());
+//        } catch (NamingException ex) {
+//            fMsg.setSeverity(FacesMessage.SEVERITY_ERROR);
+//            fMsg.setDetail(ex.getMessage());
+//        }
+//        if (!ok) {
+//            FacesContext.getCurrentInstance().addMessage(null, fMsg);
+//        }
+//    }
+    public void cargaDatosProveedor() throws NamingException {
+        int idProve = this.mbProveedores.getMiniProveedor().getIdProveedor();
+        DAOProveedores daoProv = new DAOProveedores();
+        try {
+            provee = daoProv.obtenerProveedor(idProve);
+            int idDirProv = provee.getDireccionEntrega().getIdDireccion();
+            this.provee.setDireccionEntrega(daoO.obtenerDireccion(idDirProv));
+        } catch (SQLException ex) {
+            Logger.getLogger(MbOrdenCompra.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+
+//    public void cargaDatosCedis(){
+//        int idCed = 0;
+//        try {
+//            ced=daoO.obtenerUnCedis(idCed);
+//        } catch (SQLException ex) {
+//            Logger.getLogger(MbOrdenCompra.class.getName()).log(Level.SEVERE, null, ex);
+//        }
+//    }
+    public void validarRangoFechas() {
+
+        boolean ok = false;
+        FacesMessage fMsg = new FacesMessage(FacesMessage.SEVERITY_WARN, "Aviso:", "");
+
+        SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy");
+        this.ordenCompraEncabezado.setFechaCreacion(sdf.format(ordenCompraEncabezado.getFechaEmisionDirectas()));
+        this.ordenCompraEncabezado.setFechaFinalizacion(sdf.format(ordenCompraEncabezado.getFechaEntregaDirectas()));
+        if (this.ordenCompraEncabezado.getFechaCreacion() != null && ordenCompraEncabezado.getFechaFinalizacion() != null) {
+            if (this.ordenCompraEncabezado.getFechaCreacion().compareTo(ordenCompraEncabezado.getFechaFinalizacion()) <= 0) {
+                ok = true;
+//                System.out.println("datos correctos");
+//                this.ordenCompraEncabezadoDirecta.setFechaCreacion(fechaInicial);
+//                this.ordenCompraEncabezadoDirecta.setFechaEntrega(fechaFinal);
+            } else {
+                fMsg.setDetail("La fecha de emision  debe ser menor o igual a la fecha de entrega... ");
+            }
+        } else {
+            fMsg.setDetail("Las fechas no deben ser vacías... ");
+        }
+
+        if (!ok) {
+            FacesContext.getCurrentInstance().addMessage(null, fMsg);
+        }
+        System.out.println("Inicial: " + fechaInicial + "Final: " + fechaFinal);
+    }
+
     // GET Y SETS ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-    public MbProveedores getMbProveedores() {
+    public MbMiniProveedor getMbProveedores() {
         return mbProveedores;
     }
 
-    public void setMbProveedores(MbProveedores mbProveedores) {
+    public void setMbProveedores(MbMiniProveedor mbProveedores) {
         this.mbProveedores = mbProveedores;
     }
 
@@ -572,10 +678,6 @@ public class MbOrdenCompra implements Serializable {
         if (listaOrdenesEncabezado == null) {
             try {
                 this.cargaOrdenesEncabezado();
-
-
-
-
             } catch (SQLException ex) {
                 Logger.getLogger(MbOrdenCompra.class
                         .getName()).log(Level.SEVERE, null, ex);
@@ -762,29 +864,13 @@ public class MbOrdenCompra implements Serializable {
         this.empaque = empaque;
     }
 
-//    public MbEntradas getMbEntradas() {
-//        return mbEntradas;
+//    public Almacen getAlmacen() {
+//        return almacen;
 //    }
 //
-//    public void setMbEntradas(MbEntradas mbEntradas) {
-//        this.mbEntradas = mbEntradas;
+//    public void setAlmacen(Almacen almacen) {
+//        this.almacen = almacen;
 //    }
-    public MbMiniProveedor getMbMiniProveedor() {
-        return mbMiniProveedor;
-    }
-
-    public void setMbMiniProveedor(MbMiniProveedor mbMiniProveedor) {
-        this.mbMiniProveedor = mbMiniProveedor;
-    }
-
-    public Almacen getAlmacen() {
-        return almacen;
-    }
-
-    public void setAlmacen(Almacen almacen) {
-        this.almacen = almacen;
-    }
-
     public Empresa getEmpresa() {
         return empresa;
     }
@@ -801,44 +887,47 @@ public class MbOrdenCompra implements Serializable {
         this.cedis = cedis;
     }
 
-    public void cargarAlmacenes() {
-        try {
-            empresa.getIdEmpresa();
-            cedis.getIdCedis();
-            DAOAlmacenes daoAlmacenes = new DAOAlmacenes();
-            almacenes = daoAlmacenes.obtenerAlmacenes(cedis.getIdCedis(), empresa.getIdEmpresa());
-            for (Almacen alm : almacenes) {
-                listaAlmacenes.add(new SelectItem(alm, alm.getAlmacen()));
-            }
-        } catch (NamingException ex) {
-            Logger.getLogger(MbOrdenCompra.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (SQLException ex) {
-            Logger.getLogger(MbOrdenCompra.class.getName()).log(Level.SEVERE, null, ex);
-        }
-
-    }
-
-    public ArrayList<SelectItem> getListaAlmacenes() {
-        return listaAlmacenes;
-    }
-
-    public void setListaAlmacenes(ArrayList<SelectItem> listaAlmacenes) {
-        this.listaAlmacenes = listaAlmacenes;
-    }
-
-    public ArrayList<Almacen> getAlmacenes() {
-        return almacenes;
-    }
-
-    public void setAlmacenes(ArrayList<Almacen> almacenes) {
-        this.almacenes = almacenes;
-    }
-
-    public MbEmpresas getMbEmpresas() {
+//    public void cargarAlmacenes() {
+//        try {
+//            empresa.getIdEmpresa();
+//            cedis.getIdCedis();
+//            DAOAlmacenes daoAlmacenes = new DAOAlmacenes();
+//            almacenes = daoAlmacenes.obtenerAlmacenes(cedis.getIdCedis(), empresa.getIdEmpresa());
+//            for (Almacen alm : almacenes) {
+//                listaAlmacenes.add(new SelectItem(alm, alm.getAlmacen()));
+//            }
+//        } catch (NamingException ex) {
+//            Logger.getLogger(MbOrdenCompra.class.getName()).log(Level.SEVERE, null, ex);
+//        } catch (SQLException ex) {
+//            Logger.getLogger(MbOrdenCompra.class.getName()).log(Level.SEVERE, null, ex);
+//        }
+//
+//    }
+//
+//    public ArrayList<SelectItem> getListaAlmacenes() {
+//        if (this.listaAlmacenes == null) {
+//            this.cargaListaAlmacenes();
+//
+//        }
+//        return listaAlmacenes;
+//    }
+//
+//    public void setListaAlmacenes(ArrayList<SelectItem> listaAlmacenes) {
+//        this.listaAlmacenes = listaAlmacenes;
+//    }
+//
+//    public ArrayList<Almacen> getAlmacenes() {
+//        return almacenes;
+//    }
+//
+//    public void setAlmacenes(ArrayList<Almacen> almacenes) {
+//        this.almacenes = almacenes;
+//    }
+    public MbMiniEmpresas getMbEmpresas() {
         return mbEmpresas;
     }
 
-    public void setMbEmpresas(MbEmpresas mbEmpresas) {
+    public void setMbEmpresas(MbMiniEmpresas mbEmpresas) {
         this.mbEmpresas = mbEmpresas;
     }
 
@@ -848,5 +937,69 @@ public class MbOrdenCompra implements Serializable {
 
     public void setMbCedis(MbMiniCedis mbCedis) {
         this.mbCedis = mbCedis;
+    }
+
+    public Proveedor getProvee() {
+        return provee;
+    }
+
+    public void setProvee(Proveedor provee) {
+        this.provee = provee;
+    }
+
+    public Date getFechaEmision() {
+        return fechaEmision;
+    }
+
+    public void setFechaEmision(Date fechaEmision) {
+        this.fechaEmision = fechaEmision;
+    }
+
+    public Date getFechaEntrega() {
+        return fechaEntrega;
+    }
+
+    public void setFechaEntrega(Date fechaEntrega) {
+        this.fechaEntrega = fechaEntrega;
+    }
+
+    public String getFechaInicial() {
+        return fechaInicial;
+    }
+
+    public void setFechaInicial(String fechaInicial) {
+        this.fechaInicial = fechaInicial;
+    }
+
+    public String getFechaFinal() {
+        return fechaFinal;
+    }
+
+    public void setFechaFinal(String fechaFinal) {
+        this.fechaFinal = fechaFinal;
+    }
+
+//    public Cedis getCed() {
+//        return ced;
+//    }
+//
+//    public void setCed(Cedis ced) {
+//        this.ced = ced;
+//    }
+    //-----------DIRECTAS
+    public OrdenCompraEncabezado getOrdenCompraEncabezadoDirecta() {
+        return ordenCompraEncabezadoDirecta;
+    }
+
+    public void setOrdenCompraEncabezadoDirecta(OrdenCompraEncabezado ordenCompraEncabezadoDirecta) {
+        this.ordenCompraEncabezadoDirecta = ordenCompraEncabezadoDirecta;
+    }
+
+    public OrdenCompraDetalle getOrdenCompraDetalleDirecta() {
+        return ordenCompraDetalleDirecta;
+    }
+
+    public void setOrdenCompraDetalleDirecta(OrdenCompraDetalle ordenCompraDetalleDirecta) {
+        this.ordenCompraDetalleDirecta = ordenCompraDetalleDirecta;
     }
 }
