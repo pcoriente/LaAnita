@@ -9,7 +9,7 @@
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"></meta>
         <h:outputStylesheet library="css" name="main.css"/>
         <h:outputStylesheet library="css" name="estilos.css"/>
-        
+
         <title>Actualización de Direccion</title>
     </h:head>
     <h:body>
@@ -25,29 +25,21 @@
                         <h:messages layout="table" />
                     </h:panelGroup>
                     <p:panel header="MANTENIMIENTO DE DIRECCIONES" styleClass="quitaCuadro">
-
                         <p:messages id="msgs" showDetail="true" />
-
                         <h:panelGrid id="panelCapturaDireccion" frame="box" border="0" columns="2" styleClass="quitaCuadro" >
-
                             <h:outputLabel value="Calle:" for="calle"  styleClass="colorLetra" />
                             <p:inputText id="calle" value="#{mbDireccion.direccion.calle}" maxlength="100" size="50" />
-
                             <h:outputLabel value="No.Exterior:" for="noExterior" styleClass="colorLetra"  />
                             <p:inputText id="noExterior" value="#{mbDireccion.direccion.numeroExterior}" maxlength="50" size="50"  />
-
                             <h:outputLabel value="No.Interior:" for="noInterior" styleClass="colorLetra" />
                             <p:inputText id="noInterior" value="#{mbDireccion.direccion.numeroInterior}" maxlength="50" size="50"  />
-
                             <h:outputLabel value="Referencia:" for="referencia" styleClass="colorLetra" />
                             <p:inputText id="referencia" value="#{mbDireccion.direccion.referencia}" maxlength="100" size="50" />
-
                             <h:outputLabel value="País:" for="cboPaises" styleClass="colorLetra"/>
                             <h:selectOneMenu id="cboPaises" value="#{mbDireccion.direccion.pais}">
                                 <f:converter converterId="converters.Pais" />
                                 <f:selectItems value="#{mbDireccion.listaPaises}" />
                             </h:selectOneMenu>
-
                             <h:outputLabel value="Código Postal:" for="codigoPostal" styleClass="colorLetra"/>
                             <h:panelGroup >
                                 <p:inputText id="codigoPostal" value="#{mbDireccion.direccion.codigoPostal}" maxlength="10" size="11" />

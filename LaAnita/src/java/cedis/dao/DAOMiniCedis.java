@@ -73,6 +73,27 @@ public class DAOMiniCedis {
         return lstMiniCedis;
     }
     
+    public ArrayList<MiniCedis> obtenerTodasListaMiniCedis() throws SQLException {
+        ArrayList<MiniCedis> lstMiniCedis=new ArrayList<MiniCedis>();
+        
+        Connection cn=ds.getConnection();
+        Statement sentencia = cn.createStatement();
+        String strSQL="select * \n" +
+                        "from cedis" ;
+        try {
+            ResultSet rs = sentencia.executeQuery(strSQL);
+            while(rs.next()) {
+                lstMiniCedis.add(construirMini(rs));
+            }
+        } finally {
+            cn.close();
+        }
+        return lstMiniCedis;
+    }
+    
+    
+    
+    
     private MiniCedis construirMini(ResultSet rs) throws SQLException {
         MiniCedis to=new MiniCedis();
         to.setIdCedis(rs.getInt("idCedis"));

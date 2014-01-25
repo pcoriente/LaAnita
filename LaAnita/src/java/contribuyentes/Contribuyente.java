@@ -2,24 +2,28 @@ package contribuyentes;
 
 import direccion.dominio.Direccion;
 import direccion.to.TODireccion;
+import java.io.Serializable;
 
 /**
  *
  * @author jsolis
  */
 public class Contribuyente {
+
     private int idContribuyente;
     private String contribuyente;
     private int idRfc;
     private String rfc;
     private Direccion direccion;
+    private String curp;
 
     public Contribuyente() {
-        this.idContribuyente=0;
-        this.contribuyente="";
-        this.idRfc=0;
-        this.rfc="";
-        this.direccion=new Direccion();
+        this.idContribuyente = 0;
+        this.contribuyente = "";
+        this.idRfc = 0;
+        this.rfc = "";
+        this.curp = "";
+        this.direccion = new Direccion();
     }
 
     @Override
@@ -87,5 +91,13 @@ public class Contribuyente {
 
     public void setDireccion(Direccion direccion) {
         this.direccion = direccion;
+    }
+
+    public String getCurp() {
+        return curp;
+    }
+
+    public void setCurp(String curp) {
+        this.curp = curp;
     }
 }

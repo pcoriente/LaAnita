@@ -20,7 +20,7 @@ import javax.naming.NamingException;
 @SessionScoped
 public class MbMiniCedis implements Serializable {
     private MiniCedis cedis;
-    private ArrayList<SelectItem> listaMiniCedis;
+    private ArrayList<SelectItem> listaMiniCedis =null;
     private DAOMiniCedis dao;
     
     public MbMiniCedis() {

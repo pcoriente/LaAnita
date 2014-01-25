@@ -16,6 +16,7 @@ import javax.faces.bean.ManagedProperty;
 import javax.faces.context.FacesContext;
 import javax.faces.model.SelectItem;
 import javax.naming.NamingException;
+import monedas.MbMonedas;
 import org.primefaces.event.RowEditEvent;
 import productos.FrmProducto;
 import productos.MbBuscarEmpaques;
@@ -75,6 +76,8 @@ public class MbRequisiciones implements Serializable {
     private String desctoTotalesF;
     @ManagedProperty(value = "#{mbMiniProveedor}")
     private MbMiniProveedor mbMiniProveedor = new MbMiniProveedor();
+    @ManagedProperty(value = "#{mbMonedas}")
+    private MbMonedas mbMonedas = new MbMonedas();
     private ArrayList<CotizacionEncabezado> cotizacionesEncabezado;
     private CotizacionEncabezado cotizacionEncabezado = new CotizacionEncabezado();
     private double subtotalBruto;
@@ -463,8 +466,7 @@ public class MbRequisiciones implements Serializable {
     }
 
     private RequisicionProducto convertir(TORequisicionProducto to, DAOProductos daoPro) throws SQLException, NamingException {
-        RequisicionProducto rd = null;
-        rd = new RequisicionProducto(daoPro.obtenerProducto(to.getIdProducto()));
+        RequisicionProducto rd = new RequisicionProducto(daoPro.obtenerProducto(to.getIdProducto()));
         rd.setIdRequisicion(to.getIdRequisicion());
         rd.setCantidad(to.getCantidad());
         rd.setCantidadAutorizada(to.getCantidadAutorizada());
@@ -484,7 +486,7 @@ public class MbRequisiciones implements Serializable {
         re.setUsuario(daoU.obtenerUsuarioConverter(to.getIdSolicito()));
         int state = to.getStatus();
         re.setStatus(state);
-        String estado = null;
+        String estado;
 
 
         switch (state) {
@@ -570,7 +572,7 @@ public class MbRequisiciones implements Serializable {
     }
 
     public void aprobarRequisicion(int idReq, int estado) throws SQLException {
-        DAORequisiciones daoReq = null;
+        DAORequisiciones daoReq;
         FacesMessage msg = null;
         try {
             int longitud = requisicionProductos.size();
@@ -655,7 +657,7 @@ public class MbRequisiciones implements Serializable {
 
     public void modificarRequisicionStatus(int idReq, int status, int cant) throws SQLException {
         DAORequisiciones daoR;
-        FacesMessage msg = null;
+        FacesMessage msg;
         try {
             daoR = new DAORequisiciones();
             daoR.modificarAprobacion(idReq, status, cant);
@@ -673,12 +675,12 @@ public class MbRequisiciones implements Serializable {
 
     //COTIZACIONES
     public void guardaCotizacion(int idReq, double dc, double dpp) throws SQLException {
-        DAORequisiciones daoReq = null;
-        FacesMessage msg = null;
+        DAORequisiciones daoReq;
+        FacesMessage msg;
         try {
 
             int idProv = this.mbMiniProveedor.getMiniProveedor().getIdProveedor();
-            int idMon = this.mbMiniProveedor.getMoneda().getIdMoneda();
+            int idMon = this.mbMonedas.getMoneda().getIdMoneda();
 
             daoReq = new DAORequisiciones();
             if (idProv != 0 && idMon != 0) {
@@ -689,7 +691,7 @@ public class MbRequisiciones implements Serializable {
                     this.setNumCotizacion(numCotizacion);
                     this.limpiaCotizacion();
                     mbMiniProveedor.getMiniProveedor().setIdProveedor(0);
-                    mbMiniProveedor.getMoneda().setIdMoneda(0);
+                    mbMonedas.getMoneda().setIdMoneda(0);
                 } else {
                     msg = new FacesMessage(FacesMessage.SEVERITY_INFO, "Aviso:", "Capture al menos la cotización para un producto..");
                 }
@@ -801,9 +803,9 @@ public class MbRequisiciones implements Serializable {
     public void calculoDescuentoGeneral() {
         descuentoGeneralAplicado = 0;
         double sumaCostoCotizado = 0;
-        double descuentoC = 0;
-        double descuentoPP = 0;
-        double descuentoGA = 0;
+        double descuentoC;
+        double descuentoPP;
+        double descuentoGA;
         for (CotizacionDetalle e : cotizacionProductos) {
             sumaCostoCotizado += (e.getCantidadCotizada() * e.getNeto());
         }
@@ -864,7 +866,7 @@ public class MbRequisiciones implements Serializable {
         this.total = 0;
         ArrayList<SelectItem> listaMonedas = new ArrayList<SelectItem>();
 
-        this.mbMiniProveedor.setListaMonedas(listaMonedas);
+        this.mbMonedas.setListaMonedas(listaMonedas);
     }
 
     public void calcularSubtotalBruto() {
@@ -874,5 +876,13 @@ public class MbRequisiciones implements Serializable {
     public void irMenuCotizaciones(){
     
         
+    }
+
+    public MbMonedas getMbMonedas() {
+        return mbMonedas;
+    }
+
+    public void setMbMonedas(MbMonedas mbMonedas) {
+        this.mbMonedas = mbMonedas;
     }
 }

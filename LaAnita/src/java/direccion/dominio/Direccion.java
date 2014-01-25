@@ -1,7 +1,5 @@
 package direccion.dominio;
-
 import java.io.Serializable;
-
 /**
  *
  * @author Julio

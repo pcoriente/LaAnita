@@ -172,8 +172,8 @@ public class DAOEntradas {
         try {
             st.executeUpdate("BEGIN TRANSACTION");
             
-            strSQL="INSERT INTO movimientos (idTipo, idAlmacen, idFactura, idOrdenCompra, desctoComercial, desctoProntoPago, idUsuario) "
-                    + "VALUES (1, "+entrada.getIdAlmacen()+", "+entrada.getIdFactura()+", "+entrada.getIdOrdenCompra()+", "+entrada.getDesctoComercial()+", "+entrada.getDesctoProntoPago()+", "+this.idUsuario+")";
+            strSQL="INSERT INTO movimientos (idTipo, idAlmacen, idFactura, idOrdenCompra, idMoneda, tipoCambio, desctoComercial, desctoProntoPago, idUsuario) "
+                    + "VALUES (1, "+entrada.getIdAlmacen()+", "+entrada.getIdFactura()+", "+entrada.getIdOrdenCompra()+", 0, 1, "+entrada.getDesctoComercial()+", "+entrada.getDesctoProntoPago()+", "+this.idUsuario+")";
             st.executeUpdate(strSQL);
             
             ResultSet rs=st.executeQuery("SELECT @@IDENTITY AS idMovto");
@@ -295,7 +295,7 @@ public class DAOEntradas {
         Connection cn=this.ds.getConnection();
         Statement st=cn.createStatement();
         try {
-            ResultSet rs=st.executeQuery("SELECT idMovto, idTipo, idAlmacen, idFactura, idOrdenCompra, desctoComercial, desctoProntoPago, fecha, idUsuario "
+            ResultSet rs=st.executeQuery("SELECT idMovto, idTipo, idAlmacen, idFactura, idOrdenCompra, idMoneda, tipoCambio, desctoComercial, desctoProntoPago, fecha, idUsuario "
                     + "FROM movimientos "
                     + "WHERE idTipo=1 AND idFactura="+idFactura);
             while(rs.next()) {
@@ -312,7 +312,7 @@ public class DAOEntradas {
         Connection cn=this.ds.getConnection();
         Statement st=cn.createStatement();
         try {
-             ResultSet rs=st.executeQuery("SELECT idMovto, idTipo, idAlmacen, idFactura, idOrdenCompra, desctoComercial, desctoProntoPago, fecha, idUsuario "
+             ResultSet rs=st.executeQuery("SELECT idMovto, idTipo, idAlmacen, idFactura, idOrdenCompra, idMoneda, tipoCambio, desctoComercial, desctoProntoPago, fecha, idUsuario "
                         + "FROM movimientos "
                         + "WHERE idMovto="+idMovto);
             if(rs.next()) {
@@ -330,8 +330,8 @@ public class DAOEntradas {
         Statement st=cn.createStatement();
         try {
             st.executeUpdate("BEGIN TRANSACTION");
-            st.executeUpdate("INSERT INTO movimientos (idTipo, idAlmacen, idFactura, idOrdenCompra, desctoComercial, desctoProntoPago, idUsuario) "
-                    + "VALUES (1, "+idAlmacen+", "+idFactura+", "+idOrdenCompra+", 0.00, 0.00, "+this.idUsuario+")");
+            st.executeUpdate("INSERT INTO movimientos (idTipo, idAlmacen, idFactura, idOrdenCompra, idMoneda, tipoCambio, desctoComercial, desctoProntoPago, idUsuario) "
+                    + "VALUES (1, "+idAlmacen+", "+idFactura+", "+idOrdenCompra+",0, 1, 0.00, 0.00, "+this.idUsuario+")");
             ResultSet rs=st.executeQuery("SELECT @@IDENTITY AS idMovto");
             if(rs.next()) {
                 idMovto=rs.getInt("idMovto");
@@ -352,14 +352,14 @@ public class DAOEntradas {
         Statement st=cn.createStatement();
         try {
             st.executeUpdate("BEGIN TRANSACTION");
-            ResultSet rs=st.executeQuery("SELECT idMovto, idTipo, idAlmacen, idFactura, idOrdenCompra, desctoComercial, desctoProntoPago, fecha, idUsuario "
+            ResultSet rs=st.executeQuery("SELECT idMovto, idTipo, idAlmacen, idFactura, idOrdenCompra, idMoneda, tipoCambio, desctoComercial, desctoProntoPago, fecha, idUsuario "
                         + "FROM movimientos "
                         + "WHERE idTipo=1 AND idAlmacen="+idAlmacen+" AND idFactura="+idFactura+" AND idOrdenCompra="+idOrdenCompra);
             if(rs.next()) {
                 entrada=construir(rs);
             } else {
-                st.executeUpdate("INSERT INTO movimientos (idTipo, idAlmacen, idFactura, idOrdenCompra, desctoComercial, desctoProntoPago, idUsuario) "
-                        + "VALUES (1, "+idAlmacen+", "+idFactura+", "+idOrdenCompra+", 0.00, 0.00, "+this.idUsuario+")");
+                st.executeUpdate("INSERT INTO movimientos (idTipo, idAlmacen, idFactura, idOrdenCompra, idMoneda, tipoCambio, desctoComercial, desctoProntoPago, idUsuario) "
+                        + "VALUES (1, "+idAlmacen+", "+idFactura+", "+idOrdenCompra+", 0, 1, 0.00, 0.00, "+this.idUsuario+")");
                 rs=st.executeQuery("SELECT @@IDENTITY AS idMovto");
                 if(rs.next()) {
                     entrada=new Entrada();
