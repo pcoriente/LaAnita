@@ -17,7 +17,7 @@
             <div id="content" align="left">
                 <h:form id="main"  onkeypress="return event.keyCode !== 13;">
                     <p:messages id="msgs" showDetail="true" showSummary="false" closable="true" />
-                    <p:panel header="CONSULTA DE ENTRADAS" styleClass="quitaCuadro" 
+                    <p:panel id="encabezado" header="CONSULTA DE ENTRADAS" styleClass="quitaCuadro" 
                              rendered="#{not empty mbEntradas.acciones and not mbEntradas.modoEdicion}">
                         <p:panelGrid >
                             <p:row>
@@ -111,14 +111,14 @@
                                     <p:column colspan="7" style="text-align: right;" >
                                         <p:commandLink id="lnkEditarFactura" styleClass="nueva" value="Editar" 
                                                        disabled="#{mbEntradas.factura.cerrada or mbEntradas.factura.idFactura==0}"
-                                                       ajax="false" action="#{mbEntradas.entradas()}" process="@this" />|
+                                                       update="main" actionListener="#{mbEntradas.entradas()}" process="@this" />|
                                         <p:commandLink styleClass="nueva" action="#{mbEntradas.terminar()}" value="Salir" ajax="false" />
                                     </p:column>
                                 </p:row>
                             </f:facet>
                         </p:panelGrid>
                     </p:panel>
-                    <p:panel header="ENTRADAS AL INVENTARIO: #{mbEntradas.mbEmpresas.empresa.nombreComercial}" styleClass="quitaCuadro" rendered="#{mbEntradas.modoEdicion}" >
+                    <p:panel id="mantenimiento" header="ENTRADAS AL INVENTARIO: #{mbEntradas.mbEmpresas.empresa.nombreComercial}" styleClass="quitaCuadro" rendered="#{mbEntradas.modoEdicion}" >
                         <p:panelGrid id="mttoEntradas" >
                             <p:row >
                                 <p:column style="font-weight: bold; color: red; width: 70px; text-align: right;" >Cedis :</p:column>
@@ -150,7 +150,7 @@
                             <p:row >
                                 <p:column style="font-weight: bold; color: red; width: 90px;" >Orden Compra :</p:column>
                                 <p:column style="width: 110px;" >
-                                    <p:inputText id="txtOrdenCompra" value="#{mbEntradas.ordenCompra.idOrdenCompra}" readonly="true" 
+                                    <p:inputText id="txtOrdenCompra" value="#{mbEntradas.ordenCompra.idOrdenCompra}" readonly="true"
                                                  maxlength="6" size="8" style="width: 60px;" />
                                     <p:commandButton id="btnBuscarOC" icon="ui-icon-search" title="Buscar Orden de Compra" 
                                                      disabled="#{mbEntradas.ordenCompra.idOrdenCompra!=0 or mbEntradas.sinOrden}"
@@ -158,9 +158,9 @@
                                 </p:column>
                                 <p:column style="width: 90px;" >
                                     <p:selectBooleanCheckbox id="chkSinOrden" itemLabel="Sin Orden" style="font-weight: bold; color: red;" 
-                                                             disabled="#{mbEntradas.ordenCompra.idOrdenCompra!=0 or mbEntradas.sinOrden}" 
-                                                             value="#{mbEntradas.sinOrden}" >
-                                        <p:ajax update="btnEquivalencias" />
+                                                             value="#{mbEntradas.sinOrden}" 
+                                                             disabled="#{mbEntradas.ordenCompra.idOrdenCompra!=0}" >
+                                        <p:ajax update=":main:btnEquivalencias btnBuscarOC" />
                                     </p:selectBooleanCheckbox>
                                 </p:column>
                                 <p:column colspan="2" style="font-weight: bold; color: red; text-align: right;" >(%) Descto. Comercial :</p:column>
@@ -182,7 +182,17 @@
                             </p:row>
                             <f:facet name="footer" >
                                 <p:row >
-                                    <p:column colspan="9" style="text-align: right;" >
+                                    <p:column style="font-weight: bold; color: red; width: 90px; text-align: right;" >Moneda :</p:column>
+                                    <p:column colspan="2" >
+                                        <p:selectOneMenu id="moneda" value="#{mbEntradas.mbMonedas.moneda}" style="width: 180px;" >
+                                           <f:converter converterId="converters.Moneda" />
+                                           <f:selectItems value="#{mbEntradas.mbMonedas.listaMonedas}" />
+                                           <p:ajax event="change" />
+                                       </p:selectOneMenu>
+                                    </p:column>
+                                    <p:column colspan="2" style="font-weight: bold; color: red; text-align: right;" >Tipo de Cambio :</p:column>
+                                    <p:column colspan="2" ><p:inputText id="txtTipoCambio" value="#{mbEntradas.entrada.tipoCambio}" style="width: 70px;"/></p:column>
+                                    <p:column colspan="2" style="text-align: right;" >
                                         <p:commandButton id="btnGrabarEntrada" icon="ui-icon-disk" title="Grabar Entrada" 
                                                          disabled="#{mbEntradas.factura.cerrada}"
                                                          process="@this" actionListener="#{mbEntradas.grabarEntrada()}" 
@@ -192,7 +202,8 @@
                                                          process="@this" actionListener="#{mbEntradas.mbBuscar.inicializar()}" 
                                                          update="buscarProductos listaBuscarProductos" oncomplete="buscarProductoDlg.show()" />
                                         <p:commandButton icon="ui-icon-arrowreturnthick-1-w" title="Terminar"
-                                                         ajax="false" action="#{mbEntradas.salir()}" process="@this" />
+                                                         update="main" 
+                                                         actionListener="#{mbEntradas.salir()}" process="@this" />
                                     </p:column>
                                 </p:row>
                             </f:facet>

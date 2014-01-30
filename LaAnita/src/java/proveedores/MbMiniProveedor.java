@@ -1,7 +1,6 @@
 package proveedores;
 
-import cotizaciones.dao.DAOCotizaciones;
-import cotizaciones.dominio.Moneda;
+import monedas.Moneda;
 import java.io.Serializable;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -47,24 +46,6 @@ public class MbMiniProveedor implements Serializable {
         return listaMiniProveedores;
     }
 
-    private ArrayList<SelectItem> obtenerListaMonedas() throws NamingException {
-        Moneda m0 = new Moneda();
-        try {
-            m0.setIdMoneda(0);
-            m0.setMoneda("Moneda: ");
-            listaMonedas.add(new SelectItem(m0, m0.toString()));
-            DAOCotizaciones daoC = new DAOCotizaciones();
-            ArrayList<Moneda> monedas = daoC.obtenerMonedas();
-            for (Moneda e : monedas) {
-                listaMonedas.add(new SelectItem(e, e.toString()));
-            }
-        } catch (SQLException ex) {
-            Logger.getLogger(MbMiniProveedor.class.getName()).log(Level.SEVERE, null, ex);
-        }
-
-        return listaMonedas;
-    }
-
     ///////////////////////////////// GETS Y SETS
     public ArrayList<SelectItem> getListaMiniProveedores() throws SQLException, NamingException {
 
@@ -82,26 +63,5 @@ public class MbMiniProveedor implements Serializable {
 
     public void setMiniProveedor(MiniProveedor miniProveedor) {
         this.miniProveedor = miniProveedor;
-    }
-
-    public ArrayList<SelectItem> getListaMonedas() throws NamingException {
-      
-        listaMonedas = new ArrayList<SelectItem>();
-        
-        listaMonedas = this.obtenerListaMonedas();
-
-        return listaMonedas;
-    }
-
-    public void setListaMonedas(ArrayList<SelectItem> listaMonedas) {
-        this.listaMonedas = listaMonedas;
-    }
-
-    public Moneda getMoneda() {
-        return moneda;
-    }
-
-    public void setMoneda(Moneda moneda) {
-        this.moneda = moneda;
     }
 }

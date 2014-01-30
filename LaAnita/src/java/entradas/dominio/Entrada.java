@@ -14,6 +14,8 @@ public class Entrada {
     private int idAlmacen;
     private int idFactura;
     private int idOrdenCompra;
+    private int idMoneda;
+    private double tipoCambio;
     private double desctoComercial;
     private double desctoProntoPago;
     private Date fecha;
@@ -27,6 +29,8 @@ public class Entrada {
         this.idEntrada=0;
         this.idProveedor=0;
         this.idImpuestoZona=0;
+        this.idMoneda=0;
+        this.tipoCambio=1.00;
         this.desctoComercial=0.00;
         this.desctoProntoPago=0.00;
         this.fecha=new Date();
@@ -155,5 +159,21 @@ public class Entrada {
 
     public void setIdImpuestoZona(int idImpuestoZona) {
         this.idImpuestoZona = idImpuestoZona;
+    }
+
+    public int getIdMoneda() {
+        return idMoneda;
+    }
+
+    public void setIdMoneda(int idMoneda) {
+        this.idMoneda = idMoneda;
+    }
+
+    public double getTipoCambio() {
+        return tipoCambio;
+    }
+
+    public void setTipoCambio(double tipoCambio) {
+        this.tipoCambio = tipoCambio;
     }
 }

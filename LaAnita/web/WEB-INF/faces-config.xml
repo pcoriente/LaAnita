@@ -517,6 +517,6 @@
     
      <converter>
         <converter-id>converters.Moneda</converter-id>
-        <converter-class>cotizaciones.converters.MonedasConverter</converter-class>
+        <converter-class>monedas.MonedasConverter</converter-class>
     </converter>
 </faces-config>
