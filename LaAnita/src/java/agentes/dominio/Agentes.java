@@ -4,6 +4,9 @@
  */
 package agentes.dominio;
 
+import cedis.dominio.MiniCedis;
+import contactos.dominio.Contacto;
+import contactos.dominio.Telefono;
 import contribuyentes.Contribuyente;
 import direccion.dominio.Direccion;
 import direccion.to.TODireccion;
@@ -17,14 +20,11 @@ public class Agentes implements Serializable {
 
     private int idAgente;
     private String agente;
-    private int idContribuyente;
-    private int idDireccion;
-    private int idCedis;
-    private String cedis;
-    private String rfc;
-//    private Direccion direccion = new Direccion();
+    private Direccion direccionAgente = new Direccion();
     private Contribuyente contribuyente = new Contribuyente();
-    private TODireccion toDireccion = new TODireccion();
+    private MiniCedis miniCedis = new MiniCedis();
+    private Contacto contacto = new Contacto();
+    private Telefono telefono = new Telefono();
 
     public int getIdAgente() {
         return idAgente;
@@ -42,54 +42,6 @@ public class Agentes implements Serializable {
         this.agente = agente;
     }
 
-    public int getIdContribuyente() {
-        return idContribuyente;
-    }
-
-    public void setIdContribuyente(int idContribuyente) {
-        this.idContribuyente = idContribuyente;
-    }
-
-    public int getIdDireccion() {
-        return idDireccion;
-    }
-
-    public void setIdDireccion(int idDireccion) {
-        this.idDireccion = idDireccion;
-    }
-
-    public int getIdCedis() {
-        return idCedis;
-    }
-
-    public void setIdCedis(int idCedis) {
-        this.idCedis = idCedis;
-    }
-
-    public String getCedis() {
-        return cedis;
-    }
-
-    public void setCedis(String cedis) {
-        this.cedis = cedis;
-    }
-
-    public String getRfc() {
-        return rfc;
-    }
-
-    public void setRfc(String rfc) {
-        this.rfc = rfc;
-    }
-
-    public TODireccion getToDireccion() {
-        return toDireccion;
-    }
-
-    public void setToDireccion(TODireccion toDireccion) {
-        this.toDireccion = toDireccion;
-    }
-
     public Contribuyente getContribuyente() {
         return contribuyente;
     }
@@ -97,4 +49,38 @@ public class Agentes implements Serializable {
     public void setContribuyente(Contribuyente contribuyente) {
         this.contribuyente = contribuyente;
     }
+
+    public Direccion getDireccionAgente() {
+        return direccionAgente;
+    }
+
+    public void setDireccionAgente(Direccion direccionAgente) {
+        this.direccionAgente = direccionAgente;
+    }
+
+    public MiniCedis getMiniCedis() {
+        return miniCedis;
+    }
+
+    public void setMiniCedis(MiniCedis miniCedis) {
+        this.miniCedis = miniCedis;
+    }
+
+    public Contacto getContacto() {
+        return contacto;
+    }
+
+    public void setContacto(Contacto contacto) {
+        this.contacto = contacto;
+    }
+
+    public Telefono getTelefono() {
+        return telefono;
+    }
+
+    public void setTelefono(Telefono telefono) {
+        this.telefono = telefono;
+    }
+    
+    
 }

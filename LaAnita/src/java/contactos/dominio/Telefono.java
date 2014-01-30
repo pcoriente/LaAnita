@@ -1,10 +1,12 @@
 package contactos.dominio;
 
+import java.io.Serializable;
+
 /**
  *
  * @author jsolis
  */
-public class Telefono {
+public class Telefono implements Serializable {
     private int idTelefono;
     private String lada;
     private String telefono;

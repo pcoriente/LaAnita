@@ -389,7 +389,6 @@ public class MbProveedores implements Serializable {
     
     public void grabar() {
         FacesMessage fMsg = new FacesMessage(FacesMessage.SEVERITY_WARN, "Aviso:", "");
-        
         String strContribuyente=Utilerias.Acentos(this.proveedor.getContribuyente().getContribuyente());
         this.proveedor.getContribuyente().setContribuyente(strContribuyente);
         if(this.proveedor.getNombreComercial().equals("")) {

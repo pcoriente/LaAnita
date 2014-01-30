@@ -31,7 +31,8 @@
                                     <p:outputPanel >
                                         <p:commandLink id="lnkNuevoProveedor" styleClass="nueva" 
                                                        disabled="#{not mbProveedores.mbAcciones.validarAccion('lnkNuevoProveedor')}" 
-                                                       action="#{mbProveedores.mantenimiento(0)}" value="Nueva" ajax="false" immediate="true" />|
+                                                       action="#{mbProveedores.mantenimiento(0)}"
+                                                       value="Nueva" ajax="false" immediate="true" />|
                                         <p:commandLink styleClass="nueva" action="#{mbProveedores.terminar()}" value="Salir" ajax="false" />|
                                     </p:outputPanel>
                                 </p:column>

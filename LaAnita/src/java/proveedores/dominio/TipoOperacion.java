@@ -1,10 +1,12 @@
 package proveedores.dominio;
 
+import java.io.Serializable;
+
 /**
  *
  * @author jsolis
  */
-public class TipoOperacion {
+public class TipoOperacion implements Serializable {
     private int idTipoOperacion;
     private String tipoOperacion;
     private String operacion;

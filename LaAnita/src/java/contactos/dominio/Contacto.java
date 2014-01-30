@@ -1,17 +1,19 @@
 package contactos.dominio;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 
 /**
  *
  * @author jsolis
  */
-public class Contacto {
+public class Contacto implements Serializable{
     private int idContacto;
     private String contacto;
     private String puesto;
     private String correo;
     private ArrayList<Telefono> telefonos;
+    
 
     public Contacto() {
         this.idContacto=0;
