@@ -11,6 +11,7 @@ import cedis.dao.DAOMiniCedis;
 import cedis.dominio.MiniCedis;
 import contactos.MbContactos;
 import contactos.dao.DAOTelefonos;
+import contactos.dominio.Telefono;
 import contactos.dominio.TelefonoTipo;
 import contribuyentes.MbContribuyentes;
 import direccion.MbDireccion;
@@ -28,6 +29,7 @@ import javax.faces.context.FacesContext;
 import javax.faces.model.SelectItem;
 import javax.naming.NamingException;
 import org.primefaces.context.RequestContext;
+import utilerias.Utilerias;
 
 /**
  *
@@ -84,6 +86,9 @@ public class MbAgentes implements Serializable {
         boolean ok = false;
         ok = mbContribuyente.valida();
         if (ok == true) {
+            agente.getContribuyente().setContribuyente(mbContribuyente.getContribuyente().getContribuyente());
+            agente.getContribuyente().setRfc(mbContribuyente.getContribuyente().getRfc());
+            agente.getContribuyente().setCurp(mbContribuyente.getContribuyente().getCurp());
             if (agente.getContribuyente().getDireccion().getCalle().equals("")) {
                 ok = false;
                 fMsg.setDetail("Se requiere una Dirección!!");
@@ -92,16 +97,45 @@ public class MbAgentes implements Serializable {
                 }
                 context.addCallbackParam("okContribuyente", ok);
             } else {
-                if (agente.getMiniCedis().getIdCedis() == 0) {
-                    ok = false;
-                    fMsg.setDetail("Se requiere un Cedis!!");
-                    FacesContext.getCurrentInstance().addMessage(null, fMsg);
-                    context.addCallbackParam("okContribuyente", ok);
-                } else {
-                    ok = this.validarAgente();
-                    if (ok == true) {
-                        DaoAgentes daoAgentes = new DaoAgentes();
-//                        boolean okExito = daoAgentes.guardarAgentes(mbContribuyente.getContribuyente(), mbDireccion.getDireccionContribuyente(), mbDireccion.getDireccionAgente(), agente);
+                ok = this.validarAgente();
+                if (ok == true) {
+                    if (agente.getMiniCedis().getIdCedis() == 0) {
+                        ok = false;
+                        fMsg.setDetail("Se requiere un Cedis!!");
+                        FacesContext.getCurrentInstance().addMessage(null, fMsg);
+                        context.addCallbackParam("okContribuyente", ok);
+                    } else {
+                        if (ok == true) {
+                            try {
+                                if (this.agente.getContacto().getCorreo().equals("")) {
+                                    ok = false;
+                                    fMsg.setDetail("Error!! Correo Requerido");
+                                    FacesContext.getCurrentInstance().addMessage(null, fMsg);
+                                    context.addCallbackParam("okContribuyente", ok);
+                                } else {
+                                    Utilerias u = new Utilerias();
+                                    boolean paso = u.validarEmail(this.agente.getContacto().getCorreo());
+                                    if (paso == true) {
+                                        listaAgentes = null;
+                                        DaoAgentes daoAgentes = new DaoAgentes();
+                                        boolean okExito = daoAgentes.guardarAgentes(agente);
+                                        if (okExito == true) {
+                                            fMsg = new FacesMessage(FacesMessage.SEVERITY_INFO, "Aviso:", "");
+                                            fMsg.setDetail("Exito!! Nuevo Agente Disponible");
+                                            FacesContext.getCurrentInstance().addMessage(null, fMsg);
+                                            context.addCallbackParam("okContribuyente", ok);
+                                        }
+                                    } else {
+                                        ok = false;
+                                        fMsg.setDetail("Error!! Correo no Valido");
+                                        FacesContext.getCurrentInstance().addMessage(null, fMsg);
+                                        context.addCallbackParam("okContribuyente", ok);
+                                    }
+                                }
+                            } catch (SQLException ex) {
+                                Logger.getLogger(MbAgentes.class.getName()).log(Level.SEVERE, null, ex);
+                            }
+                        }
                     }
                 }
             }
@@ -293,22 +327,23 @@ public class MbAgentes implements Serializable {
         boolean ok = false;
         ok = this.mbContactos.getMbTelefonos().validarTelefonos();
         if (ok == true) {
-            try {
-                DAOTelefonos dao = new DAOTelefonos();
-                agente.getContacto().getTelefonos().add(mbContactos.getMbTelefonos().getTelefono());
-                try {
-                    dao.agregar(mbContactos.getMbTelefonos().getTelefono(), agente.getContacto().getIdContacto());
-                    this.mbContactos.getMbTelefonos().cargaTelefonos(agente.getContacto().getIdContacto());
-                } catch (SQLException ex) {
-                    Logger.getLogger(MbAgentes.class.getName()).log(Level.SEVERE, null, ex);
-                }
-            } catch (NamingException ex) {
-                Logger.getLogger(MbAgentes.class.getName()).log(Level.SEVERE, null, ex);
-            }
+            agente.getContacto().getTelefonos().add(mbContactos.getMbTelefonos().getTelefono());
+            cargaListaTelefonos();
         }
     }
-    
-    public void  limpiarCampos(){
+    public void cargaListaTelefonos() {
+        ArrayList<SelectItem> listaTipos;
+        TelefonoTipo t0 = new TelefonoTipo(false);
+        t0.setTipo("Nuevo Tipo");
+        listaTipos = new ArrayList<SelectItem>();
+        listaTipos.add(new SelectItem(t0, t0.toString()));
+        for (Telefono t : this.agente.getContacto().getTelefonos()) {
+            listaTipos.add(new SelectItem(t, t.toString()));
+        }
+        this.mbContactos.getMbTelefonos().setListaTipos(listaTipos);
+    }
+
+    public void limpiarCampos() {
         this.agente.getMiniCedis().setIdCedis(0);
         this.agente.getContacto().setIdContacto(0);
         this.agente.getTelefono().setIdTelefono(0);

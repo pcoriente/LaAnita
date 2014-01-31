@@ -17,7 +17,7 @@
         <h:form onkeypress="return event.keyCode !== 13;">
             <div class="divPerzonalizado container">
                 <div class="divPerzonalizado col-lg-12">
-                    <p:growl id="growl" showDetail="true" sticky="true" />  
+                    <p:growl id="growl" showDetail="true"/>  
                     <section>
                         <div class="divPerzonalizado row">
                             <div  class="divPerzonalizad col-lg-10o col-lg-10 col-lg-offset-1 col-sm-10 col-sm-offset-1">
@@ -29,22 +29,23 @@
                                                          process="@this"
                                                          title="Nuevo Agente"
                                                          actionListener="#{mbAgentes.cargarAgentes()}"
-                                                         update="cmbContactos cmbTelefono"/>
+                                                         update="cmbTelefono"/>
                                     </f:facet>
                                     <p:dataTable
+                                        id="listaAgentes"
                                         value="#{mbAgentes.listaAgentes}"
                                         var="agentes"
                                         selection="#{mbAgentes.seleccionListaAgentes}"
                                         selectionMode="single"
                                         rowKey="#{agentes}">
                                         <p:column headerText="RFC">
-                                            #{agentes.rfc}
+                                            #{agentes.contribuyente.rfc}
                                         </p:column>
                                         <p:column headerText="Nombre Agente">
                                             #{agentes.agente}
                                         </p:column>
                                         <p:column headerText="Cedis">
-                                            #{agentes.cedis}
+                                            #{agentes.miniCedis.cedis}
                                         </p:column>
                                     </p:dataTable>
                                 </p:panel>
@@ -62,7 +63,7 @@
                       style="height: auto"
                       resizable="false">
                 <p:ajax event="close" 
-                        update="cmbContactos cmbCedis cmbTelefono btnMttoTelefonos" 
+                        update="cmbCedis cmbTelefono btnMttoTelefonos" 
                         listener="#{mbAgentes.limpiarCampos()}"/>
                 <center>
                     <h:panelGrid columns="3"><h:outputLabel value="Rfc:"/>
@@ -128,21 +129,9 @@
                                          process="@this"
                                          actionListener="#{mbAgentes.respaldoDireccionAgente()}"
                                          update="cboPaises localidad municipio estado gln calle asentamiento noExterior noInterior referencia codigoPostal"/>
-                        <h:outputLabel value="Contactos"/>
-                        <p:selectOneMenu id="cmbContactos" 
-                                         style="width: 190px"
-                                         value="#{mbAgentes.agente.contacto}">
-                            <f:converter converterId="converters.Contacto" />
-                            <f:selectItems value="#{mbAgentes.mbContactos.listaContactos}"/>
-                            <p:ajax event="change"
-                                    update="btnEliminarContacto btnMttoTelefonos cmbTelefono"
-                                    process="@this"
-                                    listener="#{mbAgentes.dameValor()}"/>
-                        </p:selectOneMenu>
-                        <p:commandButton  icon="ui-icon-pencil"
-                                          title="Nuevo Contacto"
-                                          process="@this"
-                                          oncomplete="mttoContactosDialog.show()"/>
+                        <h:outputLabel value="Correo"/>
+                        <p:inputText  id="correo" value="#{mbAgentes.agente.contacto.correo}"/>
+                        <h:outputLabel/>
                         <h:outputLabel value="Telefonos"/>
                         <p:selectOneMenu id="cmbTelefono" 
                                          value="#{mbAgentes.agente.telefono}" style="width: 190px;" >
@@ -152,7 +141,6 @@
                         <p:commandButton id="btnMttoTelefonos" 
                                          icon="ui-icon-pencil" 
                                          title="Mtto.Teléfonos" 
-                                         disabled="#{mbAgentes.agente.contacto.idContacto==0}"
                                          process="@this" 
                                          actionListener="#{mbAgentes.cargaTipos()}" 
                                          update="mttoTelefonos cmbTelefonoTipo"
@@ -160,10 +148,10 @@
                     </h:panelGrid>
                     <p:commandButton  icon="ui-icon-disk" 
                                       title="Guardar Agente"
-                                      process="@this txtNombreAgente txtRfc txtContribuyente txtCurp direccionFiscal cmbCedis direccionAgente"
+                                      process="@this txtNombreAgente txtRfc txtContribuyente txtCurp direccionFiscal cmbCedis direccionAgente correo"
                                       actionListener="#{mbAgentes.agregarNuevoAgente()}"
                                       oncomplete="nuevoContribuyente(xhr, status, args)"
-                                      update="growl"/>
+                                      update="growl listaAgentes"/>
                     <p:commandButton  icon="ui-icon-cancel" 
                                       title="Cancelar Agente"
                                       update="direccionFiscal direccionAgente"/>
@@ -250,38 +238,6 @@
                     </h:panelGroup>
                 </h:panelGrid>
             </p:dialog>
-            <!--- Dialog de Mantenimiento Contactos -->
-            <p:dialog header="MANTENIMIENTO DE CONTACTOS" 
-                      widgetVar="mttoContactosDialog"
-                      modal="true"
-                      closable="true">
-                <h:panelGrid id="mttoContactos" columns="2" >
-                    <h:outputLabel value="Puesto:" style="font-weight: bold; color: red" />
-                    <p:inputText id="txtPuesto" value="#{mbAgentes.mbContactos.contacto.puesto}">
-                    </p:inputText>
-                    <h:outputLabel  value="Contacto:" style="font-weight: bold; color: red" />
-                    <p:inputText id="txtContacto" value="#{mbAgentes.mbContactos.contacto.contacto}">
-                    </p:inputText>
-                    <h:outputLabel  value="Correo:" style="font-weight: bold; color: red" />
-                    <p:inputText id="txtCorreo" value="#{mbAgentes.mbContactos.contacto.correo}">
-                    </p:inputText>
-                </h:panelGrid>
-                <center>
-                    <p:commandButton id="btnGrabarContacto" 
-                                     process="@this txtPuesto txtContacto txtCorreo" 
-                                     actionListener="#{mbAgentes.validarContacto()}"
-                                     oncomplete="nuevoCont(xhr, status, args)"
-                                     update="growl"
-                                     title="Grabar Contacto"
-                                     icon="ui-icon-disk"/>
-                    <p:commandButton id="btnEliminarContacto" 
-                                     type="button" 
-                                     icon="#{mbAgentes.lblCancelar}"
-                                     title="#{mbAgentes.titleCancelar}"
-                                     />
-                </center>
-            </p:dialog>
-
             <!--- Dialog de Mantenimiento de Telefonos -->
             <p:dialog header="MANTENIMIENTO DE TELEFONOS" widgetVar="mttoTelefonosDialog" resizable="false"
                       style="width: 500px;" modal="true" >
