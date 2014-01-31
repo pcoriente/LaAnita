@@ -53,31 +53,36 @@ public class DaoAgentes {
 
     public ArrayList<Agentes> listaAgentes() throws SQLException {
         ArrayList<Agentes> listagentes = new ArrayList<Agentes>();
-        String slq = "select rfc ,agente, cedis from agentes a\n"
-                + "inner join contribuyentes ct\n"
-                + "on ct.idContribuyente = a.idContribuyente\n"
-                + "inner join contribuyentesRfc crfc\n"
-                + "on crfc.idRfc = ct.idRfc\n"
-                + "inner join cedis cd\n"
-                + "on cd.idCedis = a.idCedis";
-        Connection cn = ds.getConnection();
-        Statement st = cn.createStatement();
-        ResultSet rs = st.executeQuery(slq);
-        while (rs.next()) {
-            Agentes agentes = new Agentes();
-            agentes.setRfc(rs.getString("rfc"));
-            agentes.setAgente(rs.getString("agente"));
-            agentes.setCedis(rs.getString("cedis"));
-            listagentes.add(agentes);
-        }
+//        String slq = "select * from agentes a\n"
+//                + "inner join contribuyentes ct\n"
+//                + "on ct.idContribuyente = a.idContribuyente\n"
+//                + "inner join contribuyentesRfc crfc\n"
+//                + "on crfc.idRfc = ct.idRfc\n"
+//                + "inner join cedis cd\n"
+//                + "on cd.idCedis = a.idCedis";
+//        Connection cn = ds.getConnection();
+//        Statement st = cn.createStatement();
+//        ResultSet rs = st.executeQuery(slq);
+//        while (rs.next()) {
+//            Agentes agentes = new Agentes();
+//            agentes.getContribuyente().setRfc(rs.getString("rfc"));
+//            agentes.setAgente(rs.getString("agente"));
+//            agentes.getMiniCedis().setCedis(rs.getString("cedis"));
+//            listagentes.add(agentes);
+//        }
         return listagentes;
     }
 
-    public boolean guardarAgentes(Contribuyente contribuyente, Direccion direccion, Agentes agente, MiniCedis minicedis) {
+    public boolean guardarAgentes(Agentes agente) {
         boolean x = false;
-        String sqlContribuyente = "";
-        String sqlDireccion = "";
-        String sqlAgente = "";
+//        int idPais = 0;
+//        int idDireccionContribuyente = 0;
+//        int idDireccionAgente = 0;
+//        String sqlContribuyenteRfc = "INSERT INTO (rfc, curp) VALUES ('" + contribuyente.getRfc() + "', '" + contribuyente.getCurp() + "')";
+//        String sqlDireccionContribuyente = "INSERT INTO direcciones (calle, numeroExterior, numeroInterior, colonia, localidad, referencia, municipio, estado, idPais, codigoPostal)VALUES('" + direccionContribuyente.getCalle() + "', '" + direccionContribuyente.getNumeroExterior() + "','" + direccionContribuyente.getNumeroInterior() + "','" + direccionContribuyente.getColonia() + "','" + direccionContribuyente.getLocalidad() + "','" + direccionContribuyente.getReferencia() + "','" + direccionContribuyente.getMunicipio() + "','" + direccionContribuyente.getEstado() + "','" + direccionContribuyente.getPais().getIdPais() + "','" + direccionContribuyente.getCodigoPostal() + "')";
+//        String sqlDireccionAgente = "INSERT INTO direcciones (calle, numeroExterior, numeroInterior, colonia, localidad, referencia, municipio, estado, idPais, codigoPostal)VALUES('" + direccionAgente.getCalle() + "', '" + direccionAgente.getNumeroExterior() + "','" + direccionAgente.getNumeroInterior() + "','" + direccionAgente.getColonia() + "','" + direccionAgente.getLocalidad() + "','" + direccionAgente.getReferencia() + "','" + direccionAgente.getMunicipio() + "','" + direccionAgente.getEstado() + "','" + direccionAgente.getPais().getIdPais() + "','" + direccionAgente.getCodigoPostal() + "')";
+//        String sqlContribuyente = "INSERT INTO contribuyente(contribuyente, idRfc, idDireccion)";
+//        String sqlAgentes = "INSERT INTO agentes (agente, idContribuyente, idDireccion, idCedis) VALUES('" + agente.getAgente() + "','" + agente.getContribuyente().getIdContribuyente() + "','" + agente.getDireccionAgente().getIdDireccion() + "','" + agente.getMiniCedis().getIdCedis() + "')";
         return x;
     }
 }
