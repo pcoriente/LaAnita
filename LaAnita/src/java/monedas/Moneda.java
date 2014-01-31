@@ -22,8 +22,6 @@ public class Moneda implements Serializable {
         this.idMoneda=0;
         this.moneda="";
         this.codigoIso="";
-       
-        
     }
 
     @Override

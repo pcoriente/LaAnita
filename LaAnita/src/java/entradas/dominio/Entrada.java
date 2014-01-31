@@ -1,6 +1,7 @@
 package entradas.dominio;
 
 import java.util.Date;
+import monedas.Moneda;
 
 /**
  *
@@ -14,7 +15,7 @@ public class Entrada {
     private int idAlmacen;
     private int idFactura;
     private int idOrdenCompra;
-    private int idMoneda;
+    private Moneda moneda;
     private double tipoCambio;
     private double desctoComercial;
     private double desctoProntoPago;
@@ -29,7 +30,8 @@ public class Entrada {
         this.idEntrada=0;
         this.idProveedor=0;
         this.idImpuestoZona=0;
-        this.idMoneda=0;
+        this.moneda=new Moneda();
+        this.moneda.setIdMoneda(1);
         this.tipoCambio=1.00;
         this.desctoComercial=0.00;
         this.desctoProntoPago=0.00;
@@ -161,12 +163,12 @@ public class Entrada {
         this.idImpuestoZona = idImpuestoZona;
     }
 
-    public int getIdMoneda() {
-        return idMoneda;
+    public Moneda getMoneda() {
+        return moneda;
     }
 
-    public void setIdMoneda(int idMoneda) {
-        this.idMoneda = idMoneda;
+    public void setMoneda(Moneda moneda) {
+        this.moneda = moneda;
     }
 
     public double getTipoCambio() {

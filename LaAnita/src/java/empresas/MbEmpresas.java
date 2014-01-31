@@ -14,9 +14,9 @@ import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ManagedProperty;
 import javax.faces.bean.SessionScoped;
 import javax.faces.context.FacesContext;
+import javax.faces.model.SelectItem;
 import javax.naming.NamingException;
 import utilerias.Utilerias;
-//import sun.util.calendar.LocalGregorianCalendar.Date;
 
 @ManagedBean(name = "mbEmpresas")
 @SessionScoped
@@ -26,10 +26,10 @@ public class MbEmpresas {
     private ArrayList<Empresa> listaEmpresas;
     @ManagedProperty(value = "#{mbDireccion}")
     private MbDireccion mbDireccion;
-    //private Direccion direccion;
     private DAOEmpresas dao;
     private Date date;
     private String comenta;
+    private ArrayList<SelectItem> listaObtenerEmpresas;
 
     public MbEmpresas() throws NamingException {
         this.dao = new DAOEmpresas();
@@ -72,7 +72,23 @@ public class MbEmpresas {
         this.comenta = comenta;
     }
 
-    //////////////////// M E T O D O S  ////////////
+    public ArrayList<SelectItem> getListaObtenerEmpresas() throws NamingException {
+        if(listaObtenerEmpresas == null){
+            try {
+                listaObtenerEmpresas=obtenerListaEmpresas();
+            } catch (SQLException ex) {
+                Logger.getLogger(MbEmpresas.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+        return listaObtenerEmpresas;
+    }
+
+    public void setListaObtenerEmpresas(ArrayList<SelectItem> listaObtenerEmpresas) {
+        this.listaObtenerEmpresas = listaObtenerEmpresas;
+        
+    }
+
+        //////////////////// M E T O D O S  ////////////
     public ArrayList<Empresa> getListaEmpresas() throws NamingException {
         try {
             if (listaEmpresas == null) {
@@ -84,6 +100,7 @@ public class MbEmpresas {
         return listaEmpresas;
     }
 
+    
     private void cargaEmpresas() throws SQLException, NamingException {
         listaEmpresas = new ArrayList<Empresa>();
         ArrayList<TOEmpresa> toLista = dao.obtenerEmpresa();
@@ -206,4 +223,26 @@ public class MbEmpresas {
     public String terminar() {
         return "menuEmpresa.terminar";
     }
+    
+    public ArrayList<SelectItem> obtenerListaEmpresas() throws SQLException, NamingException {
+        ArrayList<SelectItem> listaComboEmpresas=new ArrayList<SelectItem>();
+        
+        try {
+            Empresa e0=new Empresa();
+            e0.setIdEmpresa(0);
+            e0.setCodigoEmpresa(0);
+            e0.setNombreComercial("Empresa");
+            listaComboEmpresas.add(new SelectItem(e0, e0.toString()));
+
+            ArrayList<Empresa> empresas=this.dao.obtenerComboEmpresa();
+            for (Empresa e : empresas) {
+                listaComboEmpresas.add(new SelectItem(e, e.toString()));
+            }
+        } catch (SQLException e) {
+            Logger.getLogger(MbEmpresas.class.getName()).log(Level.SEVERE, null, e);
+        }
+        return listaComboEmpresas;
+    }
+    
+
 }

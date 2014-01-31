@@ -135,8 +135,7 @@
                         <h:outputLabel value="Telefonos"/>
                         <p:selectOneMenu id="cmbTelefono" 
                                          value="#{mbAgentes.agente.telefono}" style="width: 190px;" >
-                            <f:converter converterId="converters.Telefono" />
-                            <f:selectItems value="#{mbAgentes.mbContactos.mbTelefonos.listaTelefonos}" />
+                            <f:selectItems value="#{mbAgentes.listaTipos}" />
                         </p:selectOneMenu>
                         <p:commandButton id="btnMttoTelefonos" 
                                          icon="ui-icon-pencil" 

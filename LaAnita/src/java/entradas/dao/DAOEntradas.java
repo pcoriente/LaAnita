@@ -43,7 +43,7 @@ public class DAOEntradas {
         }
     }
     
-    public boolean grabarEntrada(int idAlmacen, int idMovto, int idFactura, ArrayList<EntradaProducto> productos) throws SQLException {
+    public boolean grabarEntrada(int idAlmacen, int idMovto, double tipoCambio, int idFactura, ArrayList<EntradaProducto> productos) throws SQLException {
         int capturados;
         boolean ok=false;
         ArrayList<ImpuestosProducto> impuestos;
@@ -53,6 +53,7 @@ public class DAOEntradas {
                     "SET costo=?, desctoProducto1=?, desctoProducto2=?, desctoConfidencial=?, unitario=?, cantFacturada=? " +
                     "WHERE idMovto="+idMovto+" AND idEmpaque=?";
         PreparedStatement ps1=cn.prepareStatement(strSQL1);
+        
         String strSQL2="UPDATE movimientosDetalleImpuestos " +
                     "SET importe=? " +
                     "WHERE idMovto="+idMovto+" AND idEmpaque=?";
@@ -79,6 +80,9 @@ public class DAOEntradas {
         try {
             capturados=0;
             st.executeUpdate("BEGIN TRANSACTION");
+            
+            st.executeUpdate("UPDATE movimientos SET tipoCambio="+tipoCambio+" WHERE idMovto="+idMovto);
+            
             for(EntradaProducto p: productos) {
                 idEmpaque=p.getEmpaque().getIdEmpaque();
                 

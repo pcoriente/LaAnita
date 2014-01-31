@@ -58,6 +58,7 @@ public class MbAgentes implements Serializable {
     boolean editarAsentamiento = false;
     String lblCancelar = "";
     String titleCancelar = "";
+    ArrayList<SelectItem> listaTipos = new ArrayList<SelectItem>();
 
     public MbAgentes() {
         titleCancelar = "Cancelar Contacto";
@@ -327,12 +328,18 @@ public class MbAgentes implements Serializable {
         boolean ok = false;
         ok = this.mbContactos.getMbTelefonos().validarTelefonos();
         if (ok == true) {
-            agente.getContacto().getTelefonos().add(mbContactos.getMbTelefonos().getTelefono());
+//            listaTipos.removeAll(listaTipos);
+            Telefono t = new Telefono();
+            mbContactos.getMbTelefonos().getTelefono();
+            t.setLada(mbContactos.getMbTelefonos().getTelefono().getLada());
+            t.setTelefono(mbContactos.getMbTelefonos().getTelefono().getTelefono());
+            t.setTipo(mbContactos.getMbTelefonos().getTelefono().getTipo());
+            agente.getContacto().getTelefonos().add(t);
             cargaListaTelefonos();
         }
     }
+
     public void cargaListaTelefonos() {
-        ArrayList<SelectItem> listaTipos;
         TelefonoTipo t0 = new TelefonoTipo(false);
         t0.setTipo("Nuevo Tipo");
         listaTipos = new ArrayList<SelectItem>();
@@ -340,7 +347,7 @@ public class MbAgentes implements Serializable {
         for (Telefono t : this.agente.getContacto().getTelefonos()) {
             listaTipos.add(new SelectItem(t, t.toString()));
         }
-        this.mbContactos.getMbTelefonos().setListaTipos(listaTipos);
+//        this.mbContactos.getMbTelefonos().setListaTipos(listaTipos);
     }
 
     public void limpiarCampos() {
@@ -387,5 +394,13 @@ public class MbAgentes implements Serializable {
 
     public void setTitleCancelar(String titleCancelar) {
         this.titleCancelar = titleCancelar;
+    }
+
+    public ArrayList<SelectItem> getListaTipos() {
+        return listaTipos;
+    }
+
+    public void setListaTipos(ArrayList<SelectItem> listaTipos) {
+        this.listaTipos = listaTipos;
     }
 }

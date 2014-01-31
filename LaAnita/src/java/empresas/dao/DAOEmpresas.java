@@ -1,5 +1,6 @@
 package empresas.dao;
 
+import empresas.dominio.Empresa;
 import empresas.to.TOEmpresa;
 import java.sql.Connection;
 import java.sql.ResultSet;
@@ -13,6 +14,7 @@ import javax.naming.InitialContext;
 import javax.naming.NamingException;
 import javax.servlet.http.HttpSession;
 import javax.sql.DataSource;
+import ordenesDeCompra.dao.DAOOrdenDeCompra;
 import usuarios.UsuarioSesion;
 
 public class DAOEmpresas {
@@ -65,6 +67,58 @@ public class DAOEmpresas {
         return to;
     }
 
+    //DAVID
+     public ArrayList<Empresa> obtenerComboEmpresa() throws SQLException, NamingException {
+        ArrayList<Empresa> listaCombo = new ArrayList<Empresa>();
+        ResultSet rs;
+        Connection cn = ds.getConnection();
+        try {
+            String stringSQL = "SELECT * FROM empresasGrupo";
+            Statement sentencia = cn.createStatement();
+            rs = sentencia.executeQuery(stringSQL);
+            while (rs.next()) {
+                listaCombo.add(construirCombo(rs));
+            }
+        } finally {
+            cn.close();
+        }
+        return listaCombo;
+    }
+     
+     public Empresa obtenerEmpresaConverter(int idEmpresa) throws SQLException, NamingException {
+        Empresa to = null;
+        Connection cn = this.ds.getConnection();
+        Statement st = cn.createStatement();
+        try {
+            ResultSet rs = st.executeQuery("SELECT * FROM empresasGrupo WHERE idEmpresa=" + idEmpresa);
+            if (rs.next()) {
+                to = construirCombo(rs);
+            }
+        } finally {
+            cn.close();
+        }
+        return to;
+    }
+
+    private Empresa construirCombo(ResultSet rs) throws SQLException, NamingException {
+        Empresa to = new Empresa();
+        DAOOrdenDeCompra daoOC = new DAOOrdenDeCompra();
+
+        to.setIdEmpresa(rs.getInt("idEmpresa"));
+        to.setCodigoEmpresa(rs.getInt("codigoEmpresa"));
+        to.setEmpresa(rs.getString("empresa"));
+        to.setNombreComercial(rs.getString("nombreComercial"));
+        to.setRfc(rs.getString("rfc"));
+        to.setTelefono(rs.getString("telefono"));
+        to.setFax(rs.getString("fax"));
+        to.seteMail(rs.getString("eMail"));
+        to.setRepresentanteLegal(rs.getString("representanteLegal"));
+      //  to.setIdDireccion(rs.getInt("idDireccion"));
+        to.setDireccion(daoOC.obtenerDireccion(rs.getInt("idDireccion")));
+        return to;
+    }
+//FIN DAVID
+    
     public int ultimoEmpresa() throws SQLException {
         int ultimo = 0;
         Connection cn = this.ds.getConnection();

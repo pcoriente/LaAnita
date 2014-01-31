@@ -153,7 +153,8 @@
                                     <p:inputText id="txtOrdenCompra" value="#{mbEntradas.ordenCompra.idOrdenCompra}" readonly="true"
                                                  maxlength="6" size="8" style="width: 60px;" />
                                     <p:commandButton id="btnBuscarOC" icon="ui-icon-search" title="Buscar Orden de Compra" 
-                                                     disabled="#{mbEntradas.ordenCompra.idOrdenCompra!=0 or mbEntradas.sinOrden}"
+                                                     disabled="#{mbEntradas.ordenCompra.idOrdenCompra!=0 or mbEntradas.sinOrden}" 
+                                                     actionListener="#{mbEntradas.mbOrdenCompra.cargaOrdenesEncabezado(2)}"
                                                      update="listaOrdenes" oncomplete="listaOrdenesDlg.show();" />
                                 </p:column>
                                 <p:column style="width: 90px;" >
@@ -180,33 +181,35 @@
                                     </pe:inputNumber>
                                 </p:column>
                             </p:row>
-                            <f:facet name="footer" >
-                                <p:row >
-                                    <p:column style="font-weight: bold; color: red; width: 90px; text-align: right;" >Moneda :</p:column>
-                                    <p:column colspan="2" >
-                                        <p:selectOneMenu id="moneda" value="#{mbEntradas.mbMonedas.moneda}" style="width: 180px;" >
-                                           <f:converter converterId="converters.Moneda" />
-                                           <f:selectItems value="#{mbEntradas.mbMonedas.listaMonedas}" />
-                                           <p:ajax event="change" />
-                                       </p:selectOneMenu>
-                                    </p:column>
-                                    <p:column colspan="2" style="font-weight: bold; color: red; text-align: right;" >Tipo de Cambio :</p:column>
-                                    <p:column colspan="2" ><p:inputText id="txtTipoCambio" value="#{mbEntradas.entrada.tipoCambio}" style="width: 70px;"/></p:column>
-                                    <p:column colspan="2" style="text-align: right;" >
-                                        <p:commandButton id="btnGrabarEntrada" icon="ui-icon-disk" title="Grabar Entrada" 
-                                                         disabled="#{mbEntradas.factura.cerrada}"
-                                                         process="@this" actionListener="#{mbEntradas.grabarEntrada()}" 
-                                                         update="@this" />
-                                        <p:commandButton id="btnEquivalencias" icon="ui-icon-search" title="Buscar Productos" 
-                                                         disabled="#{not mbEntradas.sinOrden}"
-                                                         process="@this" actionListener="#{mbEntradas.mbBuscar.inicializar()}" 
-                                                         update="buscarProductos listaBuscarProductos" oncomplete="buscarProductoDlg.show()" />
-                                        <p:commandButton icon="ui-icon-arrowreturnthick-1-w" title="Terminar"
-                                                         update="main" 
-                                                         actionListener="#{mbEntradas.salir()}" process="@this" />
-                                    </p:column>
-                                </p:row>
-                            </f:facet>
+                            <p:row >
+                                <p:column style="font-weight: bold; color: red; width: 90px; text-align: right;" >Moneda :</p:column>
+                                <p:column colspan="2" >
+                                    <p:selectOneMenu id="cboMoneda" value="#{mbEntradas.entrada.moneda}" style="width: 180px;" >
+                                       <f:converter converterId="converters.Moneda" />
+                                       <f:selectItems value="#{mbEntradas.mbMonedas.listaMonedas}" />
+                                       <p:ajax event="change" />
+                                   </p:selectOneMenu>
+                                </p:column>
+                                <p:column colspan="2" style="font-weight: bold; color: red; text-align: right;" >Tipo de Cambio :</p:column>
+                                <p:column colspan="2" >
+                                    <p:inputText id="txtTipoCambio" value="#{mbEntradas.entrada.tipoCambio}" style="width: 70px;">
+                                        <p:ajax event="change" process="@this" listener="#{mbEntradas.cambiaPrecios()}" update="detalleEntrada :main:mttoEntradasTotales" />
+                                    </p:inputText>
+                                </p:column>
+                                <p:column colspan="2" style="text-align: right;" >
+                                    <p:commandButton id="btnGrabarEntrada" icon="ui-icon-disk" title="Grabar Entrada" 
+                                                     disabled="#{mbEntradas.factura.cerrada}"
+                                                     process="@this" actionListener="#{mbEntradas.grabarEntrada()}" 
+                                                     update="@this main" />
+                                    <p:commandButton id="btnEquivalencias" icon="ui-icon-search" title="Buscar Productos" 
+                                                     disabled="#{not mbEntradas.sinOrden}"
+                                                     process="@this" actionListener="#{mbEntradas.mbBuscar.inicializar()}" 
+                                                     update="buscarProductos listaBuscarProductos" oncomplete="buscarProductoDlg.show()" />
+                                    <p:commandButton icon="ui-icon-arrowreturnthick-1-w" title="Terminar"
+                                                     update="main" 
+                                                     actionListener="#{mbEntradas.salir()}" process="@this" />
+                                </p:column>
+                            </p:row>
                         </p:panelGrid>
                         <p:dataTable id="detalleEntrada" widgetVar="detalleEntrada" value="#{mbEntradas.entradaDetalle}" style="border:solid 1px"
                                      var="prod" rowKey="#{prod.empaque.idEmpaque}" selection="#{mbEntradas.entradaProducto}" selectionMode="single" 
@@ -241,21 +244,21 @@
                             <p:column headerText="(%)Descto1" width="64" >
                                 <pe:inputNumber value="#{prod.desctoProducto1}" decimalPlaces="2"  minValue="0" maxValue="99.99" 
                                                 disabled="#{prod.empaque.idEmpaque!=mbEntradas.entradaProducto.empaque.idEmpaque or not mbEntradas.sinOrden}" >
-                                    <p:ajax event="change" listener="#{mbEntradas.cambiaPrecio()}" 
+                                    <p:ajax event="change" listener="#{mbEntradas.cambiaDescto()}" 
                                             process="@this" update="detalleEntrada :main:mttoEntradasTotales" />
                                 </pe:inputNumber>
                             </p:column>
                             <p:column headerText="(%)Descto2" width="64" >
                                 <pe:inputNumber  value="#{prod.desctoProducto2}" decimalPlaces="2"  minValue="0" maxValue="99.99" 
                                                  disabled="#{prod.empaque.idEmpaque!=mbEntradas.entradaProducto.empaque.idEmpaque or not mbEntradas.sinOrden}" >
-                                    <p:ajax event="change" listener="#{mbEntradas.cambiaPrecio()}" 
+                                    <p:ajax event="change" listener="#{mbEntradas.cambiaDescto()}" 
                                             process="@this" update="detalleEntrada :main:mttoEntradasTotales" />
                                 </pe:inputNumber>
                             </p:column>
                             <p:column headerText="(%)Descto3" width="64" >
                                 <pe:inputNumber  value="#{prod.desctoConfidencial}" decimalPlaces="2"  minValue="0" maxValue="99.99" 
                                                  disabled="#{prod.empaque.idEmpaque!=mbEntradas.entradaProducto.empaque.idEmpaque or not mbEntradas.sinOrden}" >
-                                    <p:ajax event="change" listener="#{mbEntradas.cambiaPrecio()}" 
+                                    <p:ajax event="change" listener="#{mbEntradas.cambiaDescto()}" 
                                             process="@this" update="detalleEntrada :main:mttoEntradasTotales" />
                                 </pe:inputNumber>
                             </p:column>
@@ -318,19 +321,19 @@
                                      var="orden" rowKey="#{orden.idOrdenCompra}" selection="#{mbEntradas.ordenCompra}" selectionMode="single" 
                                      emptyMessage="No hay elementos que desplegar" scrollable="true" scrollHeight="220" >
                             <p:ajax process="@this" event="rowSelect" listener="#{mbEntradas.cargaDetalleOrdenCompra}" 
-                                    update=":main:txtOrdenCompra :main:txtDesctoComercial :main:txtDesctoProntoPago :main:mttoEntradasTotales :main:detalleEntrada :main:msgs :main:chkSinOrden :main:btnBuscarOC" 
+                                    update=":main:txtOrdenCompra :main:txtDesctoComercial :main:txtDesctoProntoPago :main:mttoEntradasTotales :main:detalleEntrada :main:msgs :main:chkSinOrden :main:btnBuscarOC :main:cboMoneda" 
                                     oncomplete="listaOrdenesDlg.hide();" />
                             <p:column headerText="Orden Compra" >
                                 <h:outputText value="#{orden.idOrdenCompra}" />
                             </p:column>
                             <p:column headerText="F. Puesta">
-                                <h:outputText value="#{orden.fechaPuesta}"    />
+                                <h:outputText value="#{orden.fechaPuesta}" />
                             </p:column>
                             <p:column headerText="F. Entrega">
-                                <h:outputText value="#{orden.fechaEntrega}"    />
+                                <h:outputText value="#{orden.fechaEntrega}" />
                             </p:column>
                             <p:column headerText="Status">
-                                <h:outputText value="#{orden.estado}"    />
+                                <h:outputText value="#{orden.estado}" />
                             </p:column>
                         </p:dataTable>
                     </p:dialog>
