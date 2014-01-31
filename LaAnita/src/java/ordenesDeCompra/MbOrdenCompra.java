@@ -134,6 +134,15 @@ public class MbOrdenCompra implements Serializable {
             listaOrdenesEncabezado.add(d);
         }
     }
+    
+    public void cargaOrdenesEncabezado(int status) throws NamingException, SQLException {
+        this.listaOrdenesEncabezado = new ArrayList<OrdenCompraEncabezado>();
+        DAOOrdenDeCompra daoOC = new DAOOrdenDeCompra();
+        ArrayList<OrdenCompraEncabezado> lista = daoOC.listaOrdenes(status);
+        for (OrdenCompraEncabezado d : lista) {
+            listaOrdenesEncabezado.add(d);
+        }
+    }
 
     public void dameEmpaqueSeleccionado() {
 //         listaEmpaque.add(mbBuscar.getProducto());
@@ -572,10 +581,6 @@ public class MbOrdenCompra implements Serializable {
         if (listaOrdenesEncabezado == null) {
             try {
                 this.cargaOrdenesEncabezado();
-
-
-
-
             } catch (SQLException ex) {
                 Logger.getLogger(MbOrdenCompra.class
                         .getName()).log(Level.SEVERE, null, ex);

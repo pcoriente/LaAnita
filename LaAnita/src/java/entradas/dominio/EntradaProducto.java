@@ -10,6 +10,7 @@ import productos.dominio.Empaque;
  */
 public class EntradaProducto {
     private Empaque empaque;
+    private double costoOrdenado;
     private double cantOrdenada;
     private double cantFacturada;
     private double cantRecibida;
@@ -24,6 +25,7 @@ public class EntradaProducto {
 
     public EntradaProducto() {
         this.empaque=new Empaque(0);
+        this.costoOrdenado=0.00;
         this.cantOrdenada=0.00;
         this.cantFacturada=0.00;
         this.cantRecibida=0.00;
@@ -157,5 +159,13 @@ public class EntradaProducto {
 
     public void setCantFacturada(double cantFacturada) {
         this.cantFacturada = cantFacturada;
+    }
+
+    public double getCostoOrdenado() {
+        return costoOrdenado;
+    }
+
+    public void setCostoOrdenado(double costoOrdenado) {
+        this.costoOrdenado = costoOrdenado;
     }
 }
