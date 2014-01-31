@@ -21,26 +21,27 @@ import org.primefaces.context.RequestContext;
 @Named(value = "mbContactos")
 @SessionScoped
 public class MbContactos implements Serializable {
+
     private Contacto contacto;
     private ArrayList<Contacto> contactos;
     private ArrayList<SelectItem> listaContactos;
-    @ManagedProperty(value="#{mbTelefonos}")
+    @ManagedProperty(value = "#{mbTelefonos}")
     private MbTelefonos mbTelefonos;
     private DAOContactos dao;
-    
+
     public MbContactos() {
-        this.contacto=new Contacto();
-        this.mbTelefonos=new MbTelefonos();
+        this.contacto = new Contacto();
+        this.mbTelefonos = new MbTelefonos();
     }
-    
+
     public boolean eliminar(int idPadre) {
-        boolean ok=false;
+        boolean ok = false;
         RequestContext context = RequestContext.getCurrentInstance();
         FacesMessage fMsg = new FacesMessage(FacesMessage.SEVERITY_WARN, "Aviso:", "");
         try {
-            this.dao=new DAOContactos();
+            this.dao = new DAOContactos();
             this.dao.eliminar(idPadre);
-            ok=true;
+            ok = true;
         } catch (SQLException ex) {
             fMsg.setSeverity(FacesMessage.SEVERITY_ERROR);
             fMsg.setDetail(ex.getErrorCode() + " " + ex.getMessage());
@@ -48,28 +49,28 @@ public class MbContactos implements Serializable {
             fMsg.setSeverity(FacesMessage.SEVERITY_ERROR);
             fMsg.setDetail(ex.getMessage());
         }
-        if(!ok) {
+        if (!ok) {
             FacesContext.getCurrentInstance().addMessage(null, fMsg);
         }
         context.addCallbackParam("okContacto", ok);
         return ok;
     }
-    
+
     public boolean grabar(int idTipo, int idPadre) {
-        boolean ok=false;
+        boolean ok = false;
         RequestContext context = RequestContext.getCurrentInstance();
         FacesMessage fMsg = new FacesMessage(FacesMessage.SEVERITY_WARN, "Aviso:", "");
         try {
-            if(this.contacto.getContacto().isEmpty()) {
+            if (this.contacto.getContacto().isEmpty()) {
                 fMsg.setDetail("Se requiere la descripción del contacto");
             } else {
-                this.dao=new DAOContactos();
-                if(this.contacto.getIdContacto()==0) {
+                this.dao = new DAOContactos();
+                if (this.contacto.getIdContacto() == 0) {
                     this.contacto.setIdContacto(this.dao.agregar(this.contacto, idPadre, idTipo));
                 } else {
                     this.dao.modificar(contacto);
                 }
-                ok=true;
+                ok = true;
             }
         } catch (SQLException ex) {
             fMsg.setSeverity(FacesMessage.SEVERITY_ERROR);
@@ -78,36 +79,49 @@ public class MbContactos implements Serializable {
             fMsg.setSeverity(FacesMessage.SEVERITY_ERROR);
             fMsg.setDetail(ex.getMessage());
         }
-        if(!ok) {
+        if (!ok) {
             FacesContext.getCurrentInstance().addMessage(null, fMsg);
         }
         context.addCallbackParam("okContacto", ok);
         return ok;
     }
-    
+
+    public boolean validarContactos() {
+        boolean ok = false;
+        RequestContext context = RequestContext.getCurrentInstance();
+        FacesMessage fMsg = new FacesMessage(FacesMessage.SEVERITY_WARN, "Aviso:", "");
+        if (this.contacto.getContacto().isEmpty()) {
+            fMsg.setDetail("Se requiere la descripción del contacto");
+            FacesContext.getCurrentInstance().addMessage(null, fMsg);
+        } else {
+            ok = true;
+        }
+        context.addCallbackParam("okContacto", ok);
+        return ok;
+    }
+
     public ArrayList<Contacto> obtenerContactos(int idTipo, int idPadre) throws NamingException, SQLException {
-        this.dao=new DAOContactos();
-        ArrayList<Contacto> lstContactos=this.dao.obtenerContactos(idTipo, idPadre);
-        for(Contacto c: lstContactos) {
+        this.dao = new DAOContactos();
+        ArrayList<Contacto> lstContactos = this.dao.obtenerContactos(idTipo, idPadre);
+        for (Contacto c : lstContactos) {
             c.setTelefonos(this.mbTelefonos.obtenerTelefonos(c.getIdContacto()));
         }
         return lstContactos;
     }
-    
+
     public void cargaContactos(int idTipo, int idPadre) {
-        boolean ok=false;
+        boolean ok = false;
         FacesMessage fMsg = new FacesMessage(FacesMessage.SEVERITY_WARN, "Aviso:", "");
         try {
-            this.contactos=this.obtenerContactos(idTipo, idPadre);
-            
-            Contacto c0=new Contacto();
+            this.contactos = this.obtenerContactos(idTipo, idPadre);
+            Contacto c0 = new Contacto();
             c0.setContacto("Nuevo Contacto");
-            this.listaContactos=new ArrayList<SelectItem>();
+            this.listaContactos = new ArrayList<SelectItem>();
             this.listaContactos.add(new SelectItem(c0, c0.toString()));
-            for(Contacto c: this.contactos) {
+            for (Contacto c : this.contactos) {
                 this.listaContactos.add(new SelectItem(c, c.toString()));
             }
-            ok=true;
+            ok = true;
         } catch (SQLException ex) {
             fMsg.setSeverity(FacesMessage.SEVERITY_ERROR);
             fMsg.setDetail(ex.getErrorCode() + " " + ex.getMessage());
@@ -115,13 +129,13 @@ public class MbContactos implements Serializable {
             fMsg.setSeverity(FacesMessage.SEVERITY_ERROR);
             fMsg.setDetail(ex.getMessage());
         }
-        if(!ok) {
+        if (!ok) {
             FacesContext.getCurrentInstance().addMessage(null, fMsg);
         }
     }
-    
+
     public Contacto copia(Contacto c1) {
-        Contacto c=new Contacto();
+        Contacto c = new Contacto();
         c.setIdContacto(c1.getIdContacto());
         c.setContacto(c1.getContacto());
         c.setPuesto(c1.getPuesto());
@@ -150,14 +164,15 @@ public class MbContactos implements Serializable {
     }
 
     public ArrayList<SelectItem> getListaContactos() {
+
         return listaContactos;
     }
 
     public void setListaContactos(ArrayList<SelectItem> listaContactos) {
-        this.listaContactos = listaContactos;
     }
 
     public MbTelefonos getMbTelefonos() {
+        this.listaContactos = listaContactos;
         return mbTelefonos;
     }
 
