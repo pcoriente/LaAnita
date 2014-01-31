@@ -80,6 +80,7 @@ public class MbEntradas implements Serializable {
     private DAOEmpaques daoEmpaques;
     private DAOImpuestosProducto daoImps;
     private boolean sinOrden;
+    private double tipoCambio;  // Solo sirve para cuando hay cambio en el valor del tipo de cambio
     
     public MbEntradas() throws NamingException {
         this.modoEdicion = false;
@@ -88,6 +89,7 @@ public class MbEntradas implements Serializable {
         this.entrada=new Entrada();
         this.resEntradaProducto=new EntradaProducto();
         this.ordenCompra=new OrdenCompraEncabezado();
+        this.tipoCambio=1.00;
         
         this.mbAcciones = new MbAcciones();
         this.mbCedis = new MbMiniCedis();
@@ -105,11 +107,12 @@ public class MbEntradas implements Serializable {
         FacesMessage fMsg = new FacesMessage(FacesMessage.SEVERITY_WARN, "Aviso:", "");
         try {
             this.dao=new DAOEntradas();
-            if(this.dao.grabarEntrada(this.entrada.getIdAlmacen(), this.entrada.getIdEntrada(), this.factura.getIdFactura(), this.entradaDetalle)) {
+            if(this.dao.grabarEntrada(this.entrada.getIdAlmacen(), this.entrada.getIdEntrada(), this.entrada.getTipoCambio(), this.factura.getIdFactura(), this.entradaDetalle)) {
                 fMsg.setSeverity(FacesMessage.SEVERITY_INFO);
                 fMsg.setDetail("La entrada se grabo correctamente !!!");
                 //outcome="entradas.xhtml";
                 //ok=true;
+                this.modoEdicion=false;
             }
         } catch (SQLException ex) {
             fMsg.setSeverity(FacesMessage.SEVERITY_ERROR);
@@ -139,6 +142,9 @@ public class MbEntradas implements Serializable {
             this.entrada.setDesctoProntoPago(this.ordenCompra.getDesctoProntoPago());
             this.entrada.setIdFactura(this.factura.getIdFactura());
             this.entrada.setIdOrdenCompra(this.ordenCompra.getIdOrdenCompra());
+            this.entrada.setMoneda(this.ordenCompra.getMoneda());
+            this.entrada.setTipoCambio(1.00);
+            this.tipoCambio=1.00;
             
             this.dao=new DAOEntradas();
             this.daoEmpaques=new DAOEmpaques();
@@ -151,6 +157,7 @@ public class MbEntradas implements Serializable {
                 this.entradaDetalle=new ArrayList<EntradaProducto>();
                 for(OrdenCompraDetalle d: this.mbOrdenCompra.getListaOrdenDetalle()) {
                     prod=new EntradaProducto();
+                    prod.setCostoOrdenado(d.getCostoOrdenado());
                     prod.setCantOrdenada(d.getCantOrdenada());
                     prod.setCantRecibida(d.getCantOrdenada());
                     prod.setPrecio(d.getCostoOrdenado());
@@ -240,9 +247,13 @@ public class MbEntradas implements Serializable {
         EntradaProducto ep=this.entradaProducto;
         for(EntradaProducto p: this.entradaDetalle) {
             this.entradaProducto=p;
+            this.entradaProducto.setPrecio(this.entradaProducto.getPrecio()/this.tipoCambio);
+            this.entradaProducto.setPrecio(this.entradaProducto.getPrecio()*this.entrada.getTipoCambio());
             calculaProducto();
             sumaTotales();
         }
+        this.tipoCambio=this.entrada.getTipoCambio();
+        
         for(EntradaProducto p: this.entradaDetalle) {
             if(p.equals(ep)) {
                 this.entradaProducto=p;
@@ -304,9 +315,15 @@ public class MbEntradas implements Serializable {
         this.entrada.setTotal(this.entrada.getTotal()-Math.round(resta*100.00)/100.00);
     }
     
+    public void cambiaDescto() {
+        restaTotales();
+        calculaProducto();
+        sumaTotales();
+    }
+    
     public void cambiaPrecio() {
         restaTotales();
-        calculaImpuestos();
+        this.entradaProducto.setPrecio(this.entradaProducto.getPrecio()*this.entrada.getTipoCambio());
         calculaProducto();
         sumaTotales();
     }
