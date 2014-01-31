@@ -1,17 +1,13 @@
 package ordenesDeCompra;
 
-import almacenes.dao.DAOAlmacenes;
-import almacenes.dominio.Almacen;
 import cedis.MbMiniCedis;
 import cedis.dominio.Cedis;
 import contactos.dominio.Contacto;
 import cotizaciones.MbCotizaciones;
+import empresas.MbEmpresas;
 import empresas.MbMiniEmpresas;
+import empresas.dao.DAOEmpresas;
 import empresas.dominio.Empresa;
-
-
-
-
 import java.io.File;
 import javax.inject.Named;
 import javax.enterprise.context.SessionScoped;
@@ -30,7 +26,6 @@ import javax.activation.FileDataSource;
 import javax.faces.application.FacesMessage;
 import javax.faces.bean.ManagedProperty;
 import javax.faces.context.FacesContext;
-import javax.faces.model.SelectItem;
 import javax.mail.BodyPart;
 import javax.mail.Message;
 import javax.mail.MessagingException;
@@ -98,8 +93,10 @@ public class MbOrdenCompra implements Serializable {
     private Cedis cedis = new Cedis();
     @ManagedProperty(value = "#{mbMiniCedis}")
     private MbMiniCedis mbCedis;
-    @ManagedProperty(value = "#{mbMiniEmpresas}")
-    private MbMiniEmpresas mbEmpresas;
+//    @ManagedProperty(value = "#{mbMiniEmpresas}")
+//    private MbMiniEmpresas mbEmpresas;
+    @ManagedProperty(value = "#{mbEmpresas}")
+    private MbEmpresas mbEmpresas;
     @ManagedProperty(value = "#{mbMiniProveedor}")
     private MbMiniProveedor mbProveedores;
     private Proveedor provee;
@@ -110,6 +107,7 @@ public class MbOrdenCompra implements Serializable {
     //---------------------DIRECTAS
     private OrdenCompraEncabezado ordenCompraEncabezadoDirecta;
     private OrdenCompraDetalle ordenCompraDetalleDirecta;
+    private Empresa empre;
 
     public MbOrdenCompra() throws NamingException {
         this.ordenCompraEncabezado = new OrdenCompraEncabezado();
@@ -123,7 +121,7 @@ public class MbOrdenCompra implements Serializable {
         this.mbBuscar = new MbBuscarEmpaques();
         this.empaque = new Empaque();
         this.mbProveedores = new MbMiniProveedor();
-        this.mbEmpresas = new MbMiniEmpresas();
+        this.mbEmpresas = new MbEmpresas();
 //        this.mbCedis = new MbMiniCedis();
 //        this.almacen = new Almacen();
         this.provee = new Proveedor();
@@ -551,61 +549,6 @@ public class MbOrdenCompra implements Serializable {
         this.mbBuscar.buscarLista();
     }
 
-    //JULIO ENTRADAS
-//    public void cargaListaAlmacenes() {
-//        boolean ok = false;
-//        FacesMessage fMsg = new FacesMessage(FacesMessage.SEVERITY_WARN, "Aviso:", "");
-//        try {
-//            if (this.mbCedis.getCedis().getIdCedis() != 0 && this.mbEmpresas.getEmpresa().getIdEmpresa() != 0) {
-//                this.daoAlmacenes = new DAOAlmacenes();
-//                this.almacenes = this.daoAlmacenes.obtenerAlmacenes(this.mbCedis.getCedis().getIdCedis(), this.mbEmpresas.getEmpresa().getIdEmpresa());
-//            } else {
-//                this.almacenes = new ArrayList<Almacen>();
-//            }
-//            this.listaAlmacenes = new ArrayList<SelectItem>();
-//            Almacen xAlm = new Almacen();
-//            xAlm.setAlmacen("Seleccione un Almacén");
-//            SelectItem a0 = new SelectItem(xAlm, xAlm.toString());
-//            this.listaAlmacenes.add(a0);
-//
-//            for (Almacen a : this.almacenes) {
-//                this.listaAlmacenes.add(new SelectItem(a, a.toString()));
-//            }
-//            ok = true;
-//        } catch (SQLException ex) {
-//            fMsg.setSeverity(FacesMessage.SEVERITY_ERROR);
-//            fMsg.setDetail(ex.getErrorCode() + " " + ex.getMessage());
-//        } catch (NamingException ex) {
-//            fMsg.setSeverity(FacesMessage.SEVERITY_ERROR);
-//            fMsg.setDetail(ex.getMessage());
-//        }
-//        if (!ok) {
-//            FacesContext.getCurrentInstance().addMessage(null, fMsg);
-//        }
-//    }
-//    public void cargaAlmacenes() {
-//        boolean ok = false;
-//        FacesMessage fMsg = new FacesMessage(FacesMessage.SEVERITY_ERROR, "Aviso:", "");
-//        try {
-//            if (this.mbCedis.getCedis().getIdCedis() != 0 && this.mbEmpresas.getEmpresa().getIdEmpresa() != 0) {
-//                this.daoAlmacenes = new DAOAlmacenes();
-//                this.almacenes = this.daoAlmacenes.obtenerAlmacenes(this.mbCedis.getCedis().getIdCedis(), this.mbEmpresas.getEmpresa().getIdEmpresa());
-//            } else {
-//                this.almacenes = new ArrayList<Almacen>();
-//            }
-//            this.listaAlmacenes = null;
-//            ok = true;
-//        } catch (SQLException ex) {
-//            fMsg.setSeverity(FacesMessage.SEVERITY_ERROR);
-//            fMsg.setDetail(ex.getErrorCode() + " " + ex.getMessage());
-//        } catch (NamingException ex) {
-//            fMsg.setSeverity(FacesMessage.SEVERITY_ERROR);
-//            fMsg.setDetail(ex.getMessage());
-//        }
-//        if (!ok) {
-//            FacesContext.getCurrentInstance().addMessage(null, fMsg);
-//        }
-//    }
     public void cargaDatosProveedor() throws NamingException {
         int idProve = this.mbProveedores.getMiniProveedor().getIdProveedor();
         DAOProveedores daoProv = new DAOProveedores();
@@ -618,14 +561,6 @@ public class MbOrdenCompra implements Serializable {
         }
     }
 
-//    public void cargaDatosCedis(){
-//        int idCed = 0;
-//        try {
-//            ced=daoO.obtenerUnCedis(idCed);
-//        } catch (SQLException ex) {
-//            Logger.getLogger(MbOrdenCompra.class.getName()).log(Level.SEVERE, null, ex);
-//        }
-//    }
     public void validarRangoFechas() {
 
         boolean ok = false;
@@ -868,13 +803,6 @@ public class MbOrdenCompra implements Serializable {
         this.empaque = empaque;
     }
 
-//    public Almacen getAlmacen() {
-//        return almacen;
-//    }
-//
-//    public void setAlmacen(Almacen almacen) {
-//        this.almacen = almacen;
-//    }
     public Empresa getEmpresa() {
         return empresa;
     }
@@ -891,54 +819,17 @@ public class MbOrdenCompra implements Serializable {
         this.cedis = cedis;
     }
 
-//    public void cargarAlmacenes() {
-//        try {
-//            empresa.getIdEmpresa();
-//            cedis.getIdCedis();
-//            DAOAlmacenes daoAlmacenes = new DAOAlmacenes();
-//            almacenes = daoAlmacenes.obtenerAlmacenes(cedis.getIdCedis(), empresa.getIdEmpresa());
-//            for (Almacen alm : almacenes) {
-//                listaAlmacenes.add(new SelectItem(alm, alm.getAlmacen()));
-//            }
-//        } catch (NamingException ex) {
-//            Logger.getLogger(MbOrdenCompra.class.getName()).log(Level.SEVERE, null, ex);
-//        } catch (SQLException ex) {
-//            Logger.getLogger(MbOrdenCompra.class.getName()).log(Level.SEVERE, null, ex);
-//        }
-//
-//    }
-//
-//    public ArrayList<SelectItem> getListaAlmacenes() {
-//        if (this.listaAlmacenes == null) {
-//            this.cargaListaAlmacenes();
-//
-//        }
-//        return listaAlmacenes;
-//    }
-//
-//    public void setListaAlmacenes(ArrayList<SelectItem> listaAlmacenes) {
-//        this.listaAlmacenes = listaAlmacenes;
-//    }
-//
-//    public ArrayList<Almacen> getAlmacenes() {
-//        return almacenes;
-//    }
-//
-//    public void setAlmacenes(ArrayList<Almacen> almacenes) {
-//        this.almacenes = almacenes;
-//    }
-    public MbMiniEmpresas getMbEmpresas() {
-        return mbEmpresas;
-    }
-
-    public void setMbEmpresas(MbMiniEmpresas mbEmpresas) {
-        this.mbEmpresas = mbEmpresas;
-    }
-
     public MbMiniCedis getMbCedis() {
         return mbCedis;
     }
 
+//    public MbMiniEmpresas getMbEmpresas() {
+//        return mbEmpresas;
+//    }
+//
+//    public void setMbEmpresas(MbMiniEmpresas mbEmpresas) {
+//        this.mbEmpresas = mbEmpresas;
+//    }
     public void setMbCedis(MbMiniCedis mbCedis) {
         this.mbCedis = mbCedis;
     }
@@ -983,13 +874,6 @@ public class MbOrdenCompra implements Serializable {
         this.fechaFinal = fechaFinal;
     }
 
-//    public Cedis getCed() {
-//        return ced;
-//    }
-//
-//    public void setCed(Cedis ced) {
-//        this.ced = ced;
-//    }
     //-----------DIRECTAS
     public OrdenCompraEncabezado getOrdenCompraEncabezadoDirecta() {
         return ordenCompraEncabezadoDirecta;
@@ -1005,5 +889,21 @@ public class MbOrdenCompra implements Serializable {
 
     public void setOrdenCompraDetalleDirecta(OrdenCompraDetalle ordenCompraDetalleDirecta) {
         this.ordenCompraDetalleDirecta = ordenCompraDetalleDirecta;
+    }
+
+    public MbEmpresas getMbEmpresas() {
+        return mbEmpresas;
+    }
+
+    public void setMbEmpresas(MbEmpresas mbEmpresas) {
+        this.mbEmpresas = mbEmpresas;
+    }
+
+    public Empresa getEmpre() {
+        return empre;
+    }
+
+    public void setEmpre(Empresa empre) {
+        this.empre = empre;
     }
 }

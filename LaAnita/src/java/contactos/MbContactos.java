@@ -99,7 +99,6 @@ public class MbContactos implements Serializable {
         FacesMessage fMsg = new FacesMessage(FacesMessage.SEVERITY_WARN, "Aviso:", "");
         try {
             this.contactos=this.obtenerContactos(idTipo, idPadre);
-            
             Contacto c0=new Contacto();
             c0.setContacto("Nuevo Contacto");
             this.listaContactos=new ArrayList<SelectItem>();

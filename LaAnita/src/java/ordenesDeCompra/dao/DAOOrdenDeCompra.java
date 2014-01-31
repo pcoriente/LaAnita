@@ -1,9 +1,9 @@
 package ordenesDeCompra.dao;
 
-import cedis.dominio.Cedis;
 import contactos.dominio.Contacto;
 import cotizaciones.dao.DAOCotizaciones;
 import direccion.dominio.Direccion;
+import empresas.dao.DAOEmpresas;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -54,7 +54,7 @@ public class DAOOrdenDeCompra {
 "                                       , isnull(c.idProveedor,0) as idProveedor, isnull(c.idDireccionEntrega,0) as idDireccionEntrega\n" +
 "                                       , isnull(c.nombreComercial,'') as nombreComercial, isnull(c.idDireccion, 0) as idDireccion\n" +
 "                               from ordenCompra oc\n" +
-"                               left join (select c.idCotizacion, c.idRequisicion, c.descuentoCotizacion as desctoComercial, c.descuentoProntoPago as desctoProntoPago\n" +
+"                               left join (select c.idCotizacion, c.idRequisicion, eg.idEmpresa, c.descuentoCotizacion as desctoComercial, c.descuentoProntoPago as desctoProntoPago\n" +
 "                                               , p.idProveedor, p.idDireccionEntrega, eg.nombreComercial, d.idDireccion\n" +
 "                                           from cotizaciones c\n" +
 "                                           inner join proveedores p on p.idProveedor = c.idProveedor\n" +
@@ -80,10 +80,12 @@ public class DAOOrdenDeCompra {
         OrdenCompraEncabezado oce = new OrdenCompraEncabezado();
 
         DAOProveedores daoP = new DAOProveedores();
+        DAOEmpresas daoE = new DAOEmpresas();
         oce.setIdOrdenCompra(rs.getInt("idOrdenCompra"));
         oce.setIdCotizacion(rs.getInt("idCotizacion"));
         oce.setIdRequisicion(rs.getInt("idRequisicion"));
-        oce.setNombreComercial(rs.getString("nombreComercial"));
+           
+      oce.setNombreComercial(rs.getString("nombreComercial"));
         oce.setDesctoComercial(rs.getDouble("desctoComercial"));
         oce.setDesctoProntoPago(rs.getDouble("desctoProntoPago"));
         
@@ -281,7 +283,7 @@ public class DAOOrdenDeCompra {
         return cont;
     }
     
-     public Direccion obtenerUnaDireccion(int idDireccion) throws SQLException {
+     public Direccion obtenerUnaDireccion(int idDireccion) throws SQLException, NamingException {
         Direccion toDir=null;
         Connection cn=this.ds.getConnection();
         Statement st=cn.createStatement();
@@ -294,8 +296,9 @@ public class DAOOrdenDeCompra {
         return toDir;
     }
     
-    private Direccion construirDireccion(ResultSet rs) throws SQLException {
+    private Direccion construirDireccion(ResultSet rs) throws SQLException, NamingException {
         Direccion Dir=new Direccion();
+        
         Dir.setIdDireccion(rs.getInt("idDireccion"));
         Dir.setCalle(rs.getString("calle"));
         Dir.setNumeroExterior(rs.getString("numeroExterior"));
@@ -309,31 +312,6 @@ public class DAOOrdenDeCompra {
         Dir.setColonia(rs.getString("colonia"));
         Dir.setNumeroLocalizacion(rs.getString("numeroLocalizacion"));
         return Dir;
-    }
-    
-     public Cedis obtenerUnCedis(int idCedis) throws SQLException {
-        Cedis to=null;
-        Connection cn=this.ds.getConnection();
-        Statement st=cn.createStatement();
-        try {
-            ResultSet rs=st.executeQuery("SELECT * FROM cedis WHERE idCedis="+idCedis);
-            if(rs.next()) to=construirCedis(rs);
-        } finally {
-            cn.close();
-        }
-        return to;
-    }
-     
-     private Cedis construirCedis(ResultSet rs) throws SQLException {
-        Cedis to=new Cedis();
-        to.setIdCedis(rs.getInt("idCedis"));
-        to.setCedis(rs.getString("cedis"));
-        to.setTelefono(rs.getString("telefono"));
-        to.setFax(rs.getString("fax"));
-        to.setCorreo(rs.getString("eMail"));
-        to.setRepresentante(rs.getString("representante"));
-         to.setDireccion(this.obtenerUnaDireccion(rs.getInt("idDireccion")));
-        return to;
     }
 
 }

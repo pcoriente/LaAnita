@@ -1,5 +1,6 @@
 package ordenesDeCompra.dominio;
 
+import empresas.dominio.Empresa;
 import java.io.Serializable;
 import java.util.Date;
 import proveedores.dominio.Proveedor;
@@ -27,6 +28,7 @@ public class OrdenCompraEncabezado implements Serializable {
     private String status;
     private Date fechaEmisionDirectas;
     private Date fechaEntregaDirectas;
+    private Empresa empresa;
 
     public OrdenCompraEncabezado() {
         this.idOrdenCompra = 0;
@@ -180,6 +182,14 @@ public class OrdenCompraEncabezado implements Serializable {
 
     public void setFechaEntregaDirectas(Date fechaEntregaDirectas) {
         this.fechaEntregaDirectas = fechaEntregaDirectas;
+    }
+
+    public Empresa getEmpresa() {
+        return empresa;
+    }
+
+    public void setEmpresa(Empresa empresa) {
+        this.empresa = empresa;
     }
 
 }
