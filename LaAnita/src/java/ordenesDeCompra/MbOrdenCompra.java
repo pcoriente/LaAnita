@@ -5,9 +5,8 @@ import cedis.dominio.Cedis;
 import contactos.dominio.Contacto;
 import cotizaciones.MbCotizaciones;
 import empresas.MbEmpresas;
-import empresas.MbMiniEmpresas;
-import empresas.dao.DAOEmpresas;
 import empresas.dominio.Empresa;
+import empresas.to.TOEmpresa;
 import java.io.File;
 import javax.inject.Named;
 import javax.enterprise.context.SessionScoped;
@@ -37,6 +36,7 @@ import javax.mail.internet.MimeBodyPart;
 import javax.mail.internet.MimeMessage;
 import javax.mail.internet.MimeMultipart;
 import javax.naming.NamingException;
+import monedas.MbMonedas;
 import net.sf.jasperreports.engine.JRException;
 import ordenDeCompra.Report.OrdenCompraReporte;
 import ordenesDeCompra.Reporte.Reportes;
@@ -108,6 +108,8 @@ public class MbOrdenCompra implements Serializable {
     private OrdenCompraEncabezado ordenCompraEncabezadoDirecta;
     private OrdenCompraDetalle ordenCompraDetalleDirecta;
     private Empresa empre;
+     @ManagedProperty(value = "#{mbMonedas}")
+    private MbMonedas mbMonedas;
 
     public MbOrdenCompra() throws NamingException {
         this.ordenCompraEncabezado = new OrdenCompraEncabezado();
@@ -129,6 +131,7 @@ public class MbOrdenCompra implements Serializable {
         //-------DIRECTAS
         this.ordenCompraEncabezadoDirecta = new OrdenCompraEncabezado();
         this.ordenCompraDetalleDirecta = new OrdenCompraDetalle();
+         this.mbMonedas=new MbMonedas();
 
     }
 
@@ -581,9 +584,6 @@ public class MbOrdenCompra implements Serializable {
         if (this.ordenCompraEncabezado.getFechaCreacion() != null && ordenCompraEncabezado.getFechaFinalizacion() != null) {
             if (this.ordenCompraEncabezado.getFechaCreacion().compareTo(ordenCompraEncabezado.getFechaFinalizacion()) <= 0) {
                 ok = true;
-//                System.out.println("datos correctos");
-//                this.ordenCompraEncabezadoDirecta.setFechaCreacion(fechaInicial);
-//                this.ordenCompraEncabezadoDirecta.setFechaEntrega(fechaFinal);
             } else {
                 fMsg.setDetail("La fecha de emision  debe ser menor o igual a la fecha de entrega... ");
             }
@@ -595,6 +595,17 @@ public class MbOrdenCompra implements Serializable {
             FacesContext.getCurrentInstance().addMessage(null, fMsg);
         }
         System.out.println("Inicial: " + fechaInicial + "Final: " + fechaFinal);
+    }
+    
+    public void terminar() {
+       this.mbEmpresas.setListaObtenerEmpresas(null);
+       this.setEmpre(null);
+      
+       this.mbProveedores.setListaMiniProveedores(null);
+       this.provee = new Proveedor();
+       this.setProvee(null);
+       this.mbMonedas.setListaMonedas(null);
+        
     }
 
     // GET Y SETS ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -915,4 +926,14 @@ public class MbOrdenCompra implements Serializable {
     public void setEmpre(Empresa empre) {
         this.empre = empre;
     }
+
+    public MbMonedas getMbMonedas() {
+        return mbMonedas;
+    }
+
+    public void setMbMonedas(MbMonedas mbMonedas) {
+        this.mbMonedas = mbMonedas;
+    }
+    
+    
 }

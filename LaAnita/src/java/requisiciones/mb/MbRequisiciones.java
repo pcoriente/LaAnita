@@ -90,6 +90,7 @@ public class MbRequisiciones implements Serializable {
         this.mbBuscarProd = new MbBuscarProd();
         this.mbMiniProveedor = new MbMiniProveedor();
         this.mbBuscarEmpaques = new MbBuscarEmpaques();
+        this.mbMonedas = new MbMonedas();
 
     }
 
@@ -708,15 +709,28 @@ public class MbRequisiciones implements Serializable {
     }
 
     public void limpiaCotizacion() throws NamingException {
-        int longitud = this.cotizacionProductos.size();
-        for (int x = 0; x < longitud; x++) {
-            cotizacionProductos.get(x).setCantidadCotizada(0);
-            cotizacionProductos.get(x).setCostoCotizado(0);
-            cotizacionProductos.get(x).setDescuentoProducto(0);
-            cotizacionProductos.get(x).setDescuentoProducto2(0);
-            cotizacionProductos.get(x).setNeto(0);
-            cotizacionProductos.get(x).setSubtotal(0);
+        
+        
+        //ACTUALIZACION DE CODIGO
+        for(CotizacionDetalle d: cotizacionProductos){
+            d.setCantidadCotizada(0);
+            d.setCostoCotizado(0);
+            d.setDescuentoProducto(0);
+            d.setDescuentoProducto2(0);
+            d.setNeto(0);
+            d.setSubtotal(0);
+        
         }
+        
+//        int longitud = this.cotizacionProductos.size();
+//        for (int x = 0; x < longitud; x++) {
+//            cotizacionProductos.get(x).setCantidadCotizada(0);
+//            cotizacionProductos.get(x).setCostoCotizado(0);
+//            cotizacionProductos.get(x).setDescuentoProducto(0);
+//            cotizacionProductos.get(x).setDescuentoProducto2(0);
+//            cotizacionProductos.get(x).setNeto(0);
+//            cotizacionProductos.get(x).setSubtotal(0);
+//        }
 
         this.subtotalGeneral = 0;
 
@@ -847,13 +861,22 @@ public class MbRequisiciones implements Serializable {
     }
 
     public void limpiaDetalle() throws NamingException {
-        int longitud = this.cotizacionProductos.size();
-        for (int x = 0; x < longitud; x++) {
-            cotizacionProductos.get(x).setCostoCotizado(0);
-            cotizacionProductos.get(x).setDescuentoProducto(0);
-            cotizacionProductos.get(x).setNeto(0);
-            cotizacionProductos.get(x).setSubtotal(0);
+        
+        //ACTUALIZACION CODIGO
+        for(CotizacionDetalle d: cotizacionProductos ){
+            d.setCostoCotizado(0);
+            d.setDescuentoProducto(0);
+            d.setNeto(0);
+            d.setSubtotal(0);
         }
+        
+//        int longitud = this.cotizacionProductos.size();
+//        for (int x = 0; x < longitud; x++) {
+//            cotizacionProductos.get(x).setCostoCotizado(0);
+//            cotizacionProductos.get(x).setDescuentoProducto(0);
+//            cotizacionProductos.get(x).setNeto(0);
+//            cotizacionProductos.get(x).setSubtotal(0);
+//        }
 
         this.subtotalGeneral = 0;
 
@@ -864,9 +887,9 @@ public class MbRequisiciones implements Serializable {
         this.impuesto = 0;
 
         this.total = 0;
-        ArrayList<SelectItem> listaMonedas = new ArrayList<SelectItem>();
-
-        this.mbMonedas.setListaMonedas(listaMonedas);
+//        ArrayList<SelectItem> listaMonedas = new ArrayList<SelectItem>();
+//
+//        this.mbMonedas.setListaMonedas(listaMonedas);
     }
 
     public void calcularSubtotalBruto() {

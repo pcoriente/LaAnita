@@ -2,6 +2,7 @@ package ordenesDeCompra.dao;
 
 import contactos.dominio.Contacto;
 import cotizaciones.dao.DAOCotizaciones;
+import direccion.dao.DAOPais;
 import direccion.dominio.Direccion;
 import empresas.dao.DAOEmpresas;
 import java.sql.Connection;
@@ -210,28 +211,28 @@ public class DAOOrdenDeCompra {
         return ocd;
     }
     
-    public Direccion obtenerDireccion(int idDireccion) throws SQLException {
+    public Direccion obtenerDireccion(int idDireccion) throws SQLException, NamingException {
         Direccion toDir=null;
         Connection cn=this.ds.getConnection();
         Statement st=cn.createStatement();
         try {
             ResultSet rs=st.executeQuery("SELECT * FROM direcciones WHERE idDireccion="+idDireccion);
-            if(rs.next()) toDir=construir(rs);
+            if(rs.next()) toDir=construirDireccion(rs);
         } finally {
             cn.close();
         }
         return toDir;
     }
     
-    private Direccion construir(ResultSet rs) throws SQLException {
+    private Direccion construirDireccion(ResultSet rs) throws SQLException, NamingException {
         Direccion toDir=new Direccion();
+        DAOPais daoP= new DAOPais();
         toDir.setIdDireccion(rs.getInt("idDireccion"));
         toDir.setCalle(rs.getString("calle"));
         toDir.setNumeroExterior(rs.getString("numeroExterior"));
         toDir.setNumeroInterior(rs.getString("numeroInterior"));
         toDir.setReferencia(rs.getString("referencia"));
-        toDir.getPais().setIdPais(rs.getInt("idPais"));
-    //    toDir.setIdPais(rs.getInt("idPais"));
+        toDir.setPais(daoP.obtener(rs.getInt("idPais")));
         toDir.setCodigoPostal(rs.getString("codigoPostal"));
         toDir.setEstado(rs.getString("estado"));
         toDir.setMunicipio(rs.getString("municipio"));
@@ -323,41 +324,7 @@ public class DAOOrdenDeCompra {
 
     private Contacto construirContactos(ResultSet rs) throws SQLException {
         Contacto cont = new Contacto();
-
-      
         cont.setCorreo(rs.getString("correo"));
         return cont;
     }
-    
-     public Direccion obtenerUnaDireccion(int idDireccion) throws SQLException, NamingException {
-        Direccion toDir=null;
-        Connection cn=this.ds.getConnection();
-        Statement st=cn.createStatement();
-        try {
-            ResultSet rs=st.executeQuery("SELECT * FROM direcciones WHERE idDireccion="+idDireccion);
-            if(rs.next()) toDir=construirDireccion(rs);
-        } finally {
-            cn.close();
-        }
-        return toDir;
-    }
-    
-    private Direccion construirDireccion(ResultSet rs) throws SQLException, NamingException {
-        Direccion Dir=new Direccion();
-        
-        Dir.setIdDireccion(rs.getInt("idDireccion"));
-        Dir.setCalle(rs.getString("calle"));
-        Dir.setNumeroExterior(rs.getString("numeroExterior"));
-        Dir.setNumeroInterior(rs.getString("numeroInterior"));
-        Dir.setReferencia(rs.getString("referencia"));
-        Dir.getPais().setIdPais(rs.getInt("idPais"));   
-        Dir.setCodigoPostal(rs.getString("codigoPostal"));
-        Dir.setEstado(rs.getString("estado"));
-        Dir.setMunicipio(rs.getString("municipio"));
-        Dir.setLocalidad(rs.getString("localidad"));
-        Dir.setColonia(rs.getString("colonia"));
-        Dir.setNumeroLocalizacion(rs.getString("numeroLocalizacion"));
-        return Dir;
-    }
-
 }

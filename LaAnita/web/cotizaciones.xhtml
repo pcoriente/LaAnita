@@ -26,7 +26,7 @@
                         <p:toolbar  id="tb" style="width: 845px; height: auto; margin:0 auto; " >  
                             <p:toolbarGroup align="right">  
 
-                               
+
                                 <p:commandButton
                                     icon="ui-icon-disk"
                                     title="Guardar cotización"
@@ -43,11 +43,11 @@
                                 <p:separator />
 
                                 <p:commandButton 
-                                                 icon="ui-icon-note"
-                                                 title="ir a Menú Requisiciones"
-                                                 action="menuRequisiciones.xhtml"
-                                                 update=":fc:detalleCotizacion  cabeceroCotizacion"
-                                                 />
+                                    icon="ui-icon-note"
+                                    title="ir a Menú Requisiciones"
+                                    action="menuRequisiciones.xhtml"
+                                    update=":fc:detalleCotizacion  cabeceroCotizacion"
+                                    />
 
                                 <p:commandButton id="salirCotizacion"
                                                  icon="ui-icon-home"
@@ -68,7 +68,7 @@
                                     <f:selectItems value="#{mbRequisiciones.mbMiniProveedor.listaMiniProveedores}"  />
                                     <p:ajax event="change"
                                             listener="#{mbRequisiciones.limpiaDetalle()}"
-                                              update="cabeceroCotizacion :fc:detalleCotizacion moneda desctoComercial dc desctoProntoPago dpp "/>
+                                            update="cabeceroCotizacion :fc:detalleCotizacion moneda desctoComercial dc desctoProntoPago dpp "/>
 
                                 </p:selectOneMenu>
                             </p:column>
@@ -76,12 +76,10 @@
                                 <h:outputLabel  value="Moneda :"  styleClass="textoEtiquetas" />
                             </p:column >
                             <p:column  >
-                                <p:selectOneMenu id="moneda"
-                                                 value="#{mbRequisiciones.mbMiniProveedor.moneda}"
-                                                 >
+                                <p:selectOneMenu id="moneda" value="#{mbRequisiciones.mbMonedas.moneda}">
                                     <f:converter converterId="converters.Moneda" />
-                                    <f:selectItems value="#{mbRequisiciones.mbMiniProveedor.listaMonedas}"   />
-
+                                    <f:selectItems value="#{mbRequisiciones.mbMonedas.listaMonedas}"   />
+                                    <p:ajax event="change" />
                                 </p:selectOneMenu>
                             </p:column>
                         </h:panelGrid>
@@ -229,7 +227,7 @@
 
                                     <p:column style="text-align:right; font-size: 14px;" footerText="Por Productos :"/>
                                     <p:column footerText="#{mbRequisiciones.descF}" id="sumaDescuentosProductos" />
-                                
+
 
                                     <p:column style="text-align:right; font-size: 14px;" footerText="Comercial+Pronto Pago :"/>
                                     <p:column footerText="#{mbRequisiciones.descGralAplicF}" id="descuentoGeneralAplicado" />

@@ -22,8 +22,8 @@
                         <p:commandButton 
                             icon="ui-icon-plus"
                             title="Crear orden de compra directa"
+                            oncomplete="odecD.show();"   
 
-                            oncomplete="odecD.show();"
                             />
                         <p:commandButton 
                             icon="ui-icon-note"
@@ -277,23 +277,36 @@
 
 
                     <!-- ///////////////////////////////////////////    D I  R E C T A S   ////////////////////////////////////////////////////              -->
-                    <p:dialog widgetVar="odecD" width="950" header="MANTENIMIENTO ORDENES DE COMPRA DIRECTAS" id="dialogoOCD" modal="true">
+
+
+                    <p:dialog widgetVar="odecD" width="1000" header="MANTENIMIENTO ORDENES DE COMPRA DIRECTAS" id="dialogoOCD" modal="true">
                         <p:messages id="mensajeProducto" showDetail="true" autoUpdate="true" closable="true" showSummary="false" />  
-                        <p:panelGrid id="encabezadoOCD" style="width: 900px; height: auto; margin:0 auto; "  >
+                        <p:panelGrid id="encabezadoOCD" style="width: 950px; height: auto; margin:0 auto; "  >
                             <p:row>
-                                <p:column styleClass="fondoCelda"    >
-                                    <h:outputLabel value="Orden de Compra: " styleClass="textoEtiquetas"/> 
+                                <p:column styleClass="fondoCelda"  >
+                                    <h:outputLabel value="Empresa: " styleClass="textoEtiquetas"/>
                                 </p:column>
-                                <p:column  styleClass="fondoCelda" width="30"  >
-                                    <h:outputLabel id="idOrdenD"  />
+                                <p:column styleClass="fondoCelda"  >
+                                    <h:outputLabel   styleClass="textoContenido" />
+
+                                    <p:selectOneMenu id="empresaD" value="#{mbOrdenCompra.mbEmpresas.empresa}" style="width: 250px;" >
+                                        <f:converter converterId="converters.Empresa" />
+                                        <f:selectItems value="#{mbOrdenCompra.mbEmpresas.listaObtenerEmpresas}" />
+                                        <p:ajax event="change"
+                                                update=":form:dirEmpD"
+                                                />
+                                    </p:selectOneMenu><br></br>
+                                    <p:inplace id="verDireccionEmpresa" label="Ver direccion empresa"  editor="true" >  
+                                        <h:outputLabel id="dirEmpD" value="#{mbOrdenCompra.mbEmpresas.empresa.direccion.toString()}"    />  
+                                    </p:inplace> 
                                 </p:column>
 
                                 <p:column styleClass="fondoCelda"  >
                                     <h:outputLabel  value="Emision: " styleClass="textoEtiquetas"/> 
                                 </p:column>
-                                <p:column styleClass="fondoCelda"   >
+                                <p:column styleClass="fondoCelda"    >
                                     <p:calendar id="fEmision"  
-                                                value="#{mbOrdenCompra.ordenCompraEncabezado.fechaEmisionDirectas}" style="width: 10px">
+                                                value="#{mbOrdenCompra.ordenCompraEncabezado.fechaEmisionDirectas}" maxlength="8" size="10" style="width: 70px;">
                                     </p:calendar>
                                 </p:column>
                                 <p:column styleClass="fondoCelda"  >
@@ -302,7 +315,7 @@
                                 <p:column styleClass="fondoCelda"  >
                                     <p:column styleClass="fondoCelda"   >
                                         <p:calendar id="fEntrega"  
-                                                    value="#{mbOrdenCompra.ordenCompraEncabezado.fechaEntregaDirectas}">
+                                                    value="#{mbOrdenCompra.ordenCompraEncabezado.fechaEntregaDirectas}" maxlength="8" size="10" style="width: 70px;">
                                             <p:ajax event="dateSelect"
                                                     process="@this fEmision"
                                                     listener="#{mbOrdenCompra.validarRangoFechas()}"/>
@@ -311,51 +324,19 @@
                                 </p:column>
                             </p:row>
                             <p:row>
-                                <p:column styleClass="fondoCelda"  >
-                                    <h:outputLabel value="Empresa: " styleClass="textoEtiquetas"/>
-                                </p:column>
-                                <p:column styleClass="fondoCelda" width="30"  >
-                                    <h:outputLabel   styleClass="textoContenido" />
-
-                                    <p:selectOneMenu id="empresa" value="#{mbOrdenCompra.mbEmpresas.empresa}" style="width: 250px;" >
-                                        <f:converter converterId="converters.Empresa" />
-                                        <f:selectItems value="#{mbOrdenCompra.mbEmpresas.listaObtenerEmpresas}" />
-                                     <p:ajax event="change"
-                                                update=":form:dirEmpD"
-                                                />
-                                    </p:selectOneMenu><br></br>
-                                    <p:inplace id="verDireccionEmpresa" label="Ver direccion empresa"  editor="true" >  
-                                        <h:outputLabel id="dirEmpD" value="#{mbOrdenCompra.mbEmpresas.empresa.direccion.toString()}"    />  
-                                    </p:inplace> 
-                                    
-
-                                </p:column>
-                                <p:column styleClass="fondoCelda"  >
-                                    <h:outputLabel  value="Moneda: " styleClass="textoEtiquetas"  /> 
-                                </p:column>
-                                <p:column  styleClass="fondoCelda" colspan="3" >
-                                    <h:outputLabel id="monedaD"   styleClass="textoContenido"  />
-                                </p:column>
-
-                            </p:row>
-                            <p:row>
-                                <p:column styleClass="fondoCelda"   >
+                                <p:column styleClass="fondoCelda"  rowspan="2"  >
                                     <h:outputLabel value="Proveedor: " styleClass="textoEtiquetas"  /> 
-
                                 </p:column>
-                                <p:column  styleClass="fondoCelda"  width="30"  >
+                                <p:column  styleClass="fondoCelda" rowspan="2"  >
                                     <h:outputLabel   styleClass="textoContenido"  />
-                                    <p:selectOneMenu id="proveedor"
-                                                     value="#{mbOrdenCompra.mbProveedores.miniProveedor}"
-                                                     >
+                                    <p:selectOneMenu id="proveedorD"  value="#{mbOrdenCompra.mbProveedores.miniProveedor}" filter="true" filterMatchMode="contains" style="width: 250px;"  >
                                         <f:converter converterId="converters.miniProveedor" />
                                         <f:selectItems value="#{mbOrdenCompra.mbProveedores.listaMiniProveedores}"  />
                                         <p:ajax event="change"
                                                 listener="#{mbOrdenCompra.cargaDatosProveedor()}"
                                                 update=":form:dirProvD :form:dcD :form:ppD"
                                                 />
-                                    </p:selectOneMenu>
-
+                                    </p:selectOneMenu><br></br>
                                     <p:inplace id="verDireccionProveedor" label="Ver Direccion"  editor="true" >  
                                         <h:outputLabel id="dirProvD" value="#{mbOrdenCompra.provee.direccionEntrega}"    />  
                                     </p:inplace> 
@@ -373,7 +354,18 @@
                                     <h:outputLabel id="ppD"  value="#{mbOrdenCompra.provee.desctoProntoPago} " styleClass="textoContenido"  />
                                 </p:column>
                             </p:row>
-
+                            <p:row>
+                                <p:column styleClass="fondoCelda"  >
+                                    <h:outputLabel  value="Moneda: " styleClass="textoEtiquetas"  /> 
+                                </p:column>
+                                <p:column  styleClass="fondoCelda" colspan="3" >
+                                    <p:selectOneMenu id="monedaD" value="#{mbOrdenCompra.mbMonedas.moneda}" style="width: 180px;"  >
+                                        <f:converter converterId="converters.Moneda" />
+                                        <f:selectItems value="#{mbOrdenCompra.mbMonedas.listaMonedas}" />
+                                        <p:ajax event="change" />
+                                    </p:selectOneMenu>
+                                </p:column>
+                            </p:row>
                         </p:panelGrid>
                         <p:separator style="width:900px;height:0.5px" />
                         <p:toolbar  id="tbD" style="width: 900px; height: auto; margin:0 auto; " >  
@@ -425,6 +417,8 @@
                                 <p:commandButton id="salirOCD"
                                                  icon="ui-icon-home"
                                                  title="Ir al menu principal"
+                                                 actionListener="#{mbOrdenCompra.terminar()}"
+                                                 update=":form:empresaD :form:proveedorD"
                                                  />
                             </p:toolbarGroup>  
                         </p:toolbar>
@@ -503,7 +497,7 @@
                         </p:dataTable>
                     </p:dialog>
 
-                    <!-- FORMULARIO DE ENVIO DE CORREO ///////////////////////////////////////////////////////////////////////////////////////////////////////  -->
+                    <!--  FORMULARIO DE ENVIO DE CORREO ///////////////////////////////////////////////////////////////////////////////////////////////////////  -->
                     <p:dialog widgetVar="correo" width="900" header="Formulario de envio de correo" id="dialogoCorreo" modal="true">
                         <p:messages id="messagePanel6" showDetail="true" closable="true" showSummary="false" autoUpdate="true" />
                         <p:panelGrid id="formCorreo" style="width:850px; height: auto; margin:0 auto; "  >

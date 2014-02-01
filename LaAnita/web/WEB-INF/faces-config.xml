@@ -434,7 +434,7 @@
     
     <converter>
         <converter-id>converters.MiniEmpresa</converter-id>
-        <converter-class>empresas.converters.empresaConverter</converter-class>
+        <converter-class>empresas.converters.MiniEmpresaConverter</converter-class>
     </converter>
     
     <!-- =========== FINAL CONVERTER PRODUCTOS (JULIO) ================================== -->
