@@ -25,7 +25,7 @@
                                             disabled="#{not mbUnidadMedida.mbAcciones.validarAccion('lnkNuevaUnidadMedida')}"
                                             ajax="false" action="#{mbUnidadMedida.nuevaUnidadMedida()}" immediate="true" update="edicionUniadesMedida" />|
                              <p:commandLink id="lnkModifUnidadMedida" styleClass="nueva" value="Modificar" 
-                                            disabled="#{not mbUnidadMedida.mbAcciones.validarAccion('lnkModifUnidadMedida') or mbUnidadMedida.unidadMedida==null}"
+                                            disabled="#{not mbUnidadMedida.mbAcciones.validarAccion('lnkModifUnidadMedida') or mbUnidadMedida.unidadMedidaSeleccionada==null}"
                                             ajax="false" action="#{mbUnidadMedida.modificarUnidadMedida()}" immediate="true" update="edicionUniadesMedida" />|
                              <p:commandLink styleClass="nueva" action="#{mbUnidadMedida.terminar()}" value="Salir" ajax="false" />|
                         </div>

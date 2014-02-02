@@ -51,6 +51,7 @@ public class MbUnidadMedida implements Serializable {
                     this.dao.modificar(this.unidadMedida);
                 }
                 this.modoEdicion=false;
+                this.unidadMedidaSeleccionada=this.unidadMedida;
                 this.unidadesMedida=null;
                 destino="unidadesMedida.xhtml";
             } catch (NamingException ex) {
@@ -139,7 +140,7 @@ public class MbUnidadMedida implements Serializable {
 
     public ArrayList<Accion> getAcciones() {
         if(this.acciones==null) {
-            this.acciones=this.mbAcciones.obtenerAcciones(13);
+            this.acciones=this.mbAcciones.obtenerAcciones(8);
         }
         return acciones;
     }

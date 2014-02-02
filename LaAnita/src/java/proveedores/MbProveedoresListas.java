@@ -218,7 +218,7 @@ public class MbProveedoresListas implements Serializable {
 
     public ArrayList<Accion> getAcciones() {
         if(this.acciones==null) {
-            this.acciones=this.mbAcciones.obtenerAcciones(12);
+            this.acciones=this.mbAcciones.obtenerAcciones(9);
         }
         return acciones;
     }
