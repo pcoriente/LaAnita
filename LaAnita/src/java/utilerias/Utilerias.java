@@ -41,11 +41,9 @@ public class Utilerias {
                     fecha = (Date) formatter.parse(strFecha);
                 } catch (ParseException ex) {
                     throw new Exception("Fecha no válida: " + strFecha + " Error !!!");
-                    //JOptionPane.showMessageDialog(null, "Fecha no válida: " + strFecha, "Error !!!", JOptionPane.ERROR_MESSAGE);
                 }
             } else {
                 throw new Exception("Fecha no válida: " + strFecha + " Error !!!");
-                //JOptionPane.showMessageDialog(null, "Formato de fecha incorrecto (dd/mm/yyyy)", "Error !!!", JOptionPane.ERROR_MESSAGE);
             }
         }
         return fecha;
@@ -144,5 +142,14 @@ public class Utilerias {
         curp = curp.toUpperCase().trim();
         paso = curp.matches("[A-Z]{4}[0-9]{6}[H,M][A-Z]{5}[0-9]{2}");
         return paso;
+    }
+
+    public boolean validarEmail(String email) {
+        email.trim();
+        boolean validar = false;
+        Pattern pattern = Pattern.compile("[\\w\\.-]*[a-zA-Z0-9_]@[\\w\\.-]*[a-zA-Z0-9]\\.[a-zA-Z][a-zA-Z\\.]*[a-zA-Z]");
+        Matcher matcher = pattern.matcher(email);
+        validar = matcher.matches();
+        return validar;
     }
 }

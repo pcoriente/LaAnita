@@ -434,7 +434,7 @@
     
     <converter>
         <converter-id>converters.MiniEmpresa</converter-id>
-        <converter-class>empresas.converters.MiniEmpresaConverter</converter-class>
+        <converter-class>empresas.converters.empresaConverter</converter-class>
     </converter>
     
     <!-- =========== FINAL CONVERTER PRODUCTOS (JULIO) ================================== -->
@@ -518,5 +518,10 @@
      <converter>
         <converter-id>converters.Moneda</converter-id>
         <converter-class>monedas.MonedasConverter</converter-class>
+    </converter>
+    
+    <converter>
+        <converter-id>converters.Empresa</converter-id>
+        <converter-class>empresas.converters.EmpresaConverter</converter-class>
     </converter>
 </faces-config>

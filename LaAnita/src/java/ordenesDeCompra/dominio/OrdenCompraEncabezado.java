@@ -1,5 +1,6 @@
 package ordenesDeCompra.dominio;
 
+import empresas.dominio.Empresa;
 import java.io.Serializable;
 import java.util.Date;
 import monedas.Moneda;
@@ -9,7 +10,7 @@ import proveedores.dominio.Proveedor;
  *
  * @author jsolis
  */
-public class OrdenCompraEncabezado implements Serializable{
+public class OrdenCompraEncabezado implements Serializable {
 
     private int idOrdenCompra;
     private int idCotizacion;
@@ -26,6 +27,9 @@ public class OrdenCompraEncabezado implements Serializable{
     private double desctoProntoPago;
     private String fechaEntrega;
     private String status;
+    private Date fechaEmisionDirectas;
+    private Date fechaEntregaDirectas;
+    private Empresa empresa;
     private Moneda moneda;
 
     public OrdenCompraEncabezado() {
@@ -166,6 +170,30 @@ public class OrdenCompraEncabezado implements Serializable{
         this.status = status;
     }
 
+    public Date getFechaEmisionDirectas() {
+        return fechaEmisionDirectas;
+    }
+
+    public void setFechaEmisionDirectas(Date fechaEmisionDirectas) {
+        this.fechaEmisionDirectas = fechaEmisionDirectas;
+    }
+
+    public Date getFechaEntregaDirectas() {
+        return fechaEntregaDirectas;
+    }
+
+    public void setFechaEntregaDirectas(Date fechaEntregaDirectas) {
+        this.fechaEntregaDirectas = fechaEntregaDirectas;
+    }
+
+    public Empresa getEmpresa() {
+        return empresa;
+    }
+
+    public void setEmpresa(Empresa empresa) {
+        this.empresa = empresa;
+    }
+
     public Moneda getMoneda() {
         return moneda;
     }
@@ -173,4 +201,7 @@ public class OrdenCompraEncabezado implements Serializable{
     public void setMoneda(Moneda moneda) {
         this.moneda = moneda;
     }
+    
+    
+
 }

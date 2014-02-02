@@ -10,6 +10,7 @@
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"></meta>
         <title>Menu de Ordenes de Compra</title>
         <h:outputStylesheet library="css" name="main.css"/>
+        <h:outputScript library="js" name="lenguaje.js" />
     </h:head>
     <body>
         <div id="wrapper" align="center">
@@ -21,7 +22,7 @@
                         <p:commandButton 
                             icon="ui-icon-plus"
                             title="Crear orden de compra directa"
-                            
+
                             oncomplete="odecD.show();"
                             />
                         <p:commandButton 
@@ -64,7 +65,7 @@
                                 <h:outputText value="#{oc.idRequisicion}"   />
                             </p:column>
                             <p:column headerText="Empresa" >
-                                <h:outputText value="#{oc.nombreComercial}"   />
+                                <h:outputText value="#{oc.empresa.empresa}"   />
                             </p:column>
                             <p:column headerText="Proveedor">
                                 <h:outputText value="#{oc.proveedor.contribuyente}"    />
@@ -162,7 +163,7 @@
                                     <h:outputLabel value="Empresa: " styleClass="textoEtiquetas"/> 
                                 </p:column>
                                 <p:column styleClass="fondoCelda"  >
-                                    <h:outputLabel  value="#{mbOrdenCompra.ordenElegida.nombreComercial}" styleClass="textoContenido" /> 
+                                    <h:outputLabel  value="#{mbOrdenCompra.ordenElegida.empresa.empresa}" styleClass="textoContenido" /> 
                                 </p:column>
                                 <p:column styleClass="fondoCelda"   >
                                     <h:outputLabel value="Dirección entrega: " styleClass="textoEtiquetas" /> 
@@ -283,80 +284,96 @@
                                 <p:column styleClass="fondoCelda"    >
                                     <h:outputLabel value="Orden de Compra: " styleClass="textoEtiquetas"/> 
                                 </p:column>
-                                <p:column  styleClass="fondoCelda"  >
+                                <p:column  styleClass="fondoCelda" width="30"  >
                                     <h:outputLabel id="idOrdenD"  />
                                 </p:column>
-                                <p:column styleClass="fondoCelda" >
-                                    <h:outputLabel id="fechasD" value="Fechas:  " styleClass="textoEtiquetas" /> 
-                                </p:column>
-                                <p:column styleClass="fondoCelda"  >
-                                    <h:outputLabel id="emisionD" value="Emision: " styleClass="textoEtiquetas"/> 
-                                </p:column>
-                                <p:column styleClass="fondoCelda"  >
-                                    <h:outputLabel    />
-                                </p:column>
 
                                 <p:column styleClass="fondoCelda"  >
-                                    <h:outputLabel id="entregaD" value="Entrega: " styleClass="textoEtiquetas"/> 
-
+                                    <h:outputLabel  value="Emision: " styleClass="textoEtiquetas"/> 
+                                </p:column>
+                                <p:column styleClass="fondoCelda"   >
+                                    <p:calendar id="fEmision"  
+                                                value="#{mbOrdenCompra.ordenCompraEncabezado.fechaEmisionDirectas}" style="width: 10px">
+                                    </p:calendar>
                                 </p:column>
                                 <p:column styleClass="fondoCelda"  >
-                                    <p:inputText />
+                                    <h:outputLabel  value="Entrega: " styleClass="textoEtiquetas"/> 
+                                </p:column>
+                                <p:column styleClass="fondoCelda"  >
+                                    <p:column styleClass="fondoCelda"   >
+                                        <p:calendar id="fEntrega"  
+                                                    value="#{mbOrdenCompra.ordenCompraEncabezado.fechaEntregaDirectas}">
+                                            <p:ajax event="dateSelect"
+                                                    process="@this fEmision"
+                                                    listener="#{mbOrdenCompra.validarRangoFechas()}"/>
+                                        </p:calendar>
+                                    </p:column>
                                 </p:column>
                             </p:row>
                             <p:row>
                                 <p:column styleClass="fondoCelda"  >
                                     <h:outputLabel value="Empresa: " styleClass="textoEtiquetas"/>
                                 </p:column>
-                                <p:column styleClass="fondoCelda"  >
+                                <p:column styleClass="fondoCelda" width="30"  >
                                     <h:outputLabel   styleClass="textoContenido" />
+
+                                    <p:selectOneMenu id="empresa" value="#{mbOrdenCompra.mbEmpresas.empresa}" style="width: 250px;" >
+                                        <f:converter converterId="converters.Empresa" />
+                                        <f:selectItems value="#{mbOrdenCompra.mbEmpresas.listaObtenerEmpresas}" />
+                                     <p:ajax event="change"
+                                                update=":form:dirEmpD"
+                                                />
+                                    </p:selectOneMenu><br></br>
+                                    <p:inplace id="verDireccionEmpresa" label="Ver direccion empresa"  editor="true" >  
+                                        <h:outputLabel id="dirEmpD" value="#{mbOrdenCompra.mbEmpresas.empresa.direccion.toString()}"    />  
+                                    </p:inplace> 
+                                    
+
                                 </p:column>
-                                <p:column styleClass="fondoCelda"   >
-                                    <h:outputLabel value="Dirección entrega: " styleClass="textoEtiquetas" /> 
+                                <p:column styleClass="fondoCelda"  >
+                                    <h:outputLabel  value="Moneda: " styleClass="textoEtiquetas"  /> 
                                 </p:column>
-                                <p:column styleClass="fondoCelda"  colspan="4" >
-                                    <h:outputLabel   styleClass="textoContenido"  /> 
-                                </p:column>
-                            </p:row>
-                            <p:row>
-                                <p:column styleClass="fondoCelda"  rowspan="2" >
-                                    <h:outputLabel value="Proveedor: " styleClass="textoEtiquetas" /> 
-                                </p:column>
-                                <p:column  styleClass="fondoCelda" rowspan="2" >
-                                    <h:outputLabel   styleClass="textoContenido"  />
-                                    <p:selectOneMenu id="proveedor"
-                                                     value="#{mbOrdenCompra.mbMiniProveedor.miniProveedor}"
-                                                     >
-                                        <f:converter converterId="converters.miniProveedor" />
-                                        <f:selectItems value="#{mbOrdenCompra.mbMiniProveedor.listaMiniProveedores}"  />
-                                        <p:ajax event="change" update=":form:direccionD :form:descuentos"/>
-                                    </p:selectOneMenu>
-                                </p:column>
-                                <p:column styleClass="fondoCelda" >
-                                    <h:outputLabel  value="Dirección:" styleClass="textoEtiquetas"    /> 
-                                </p:column>
-                                <p:column styleClass="fondoCelda" colspan="4" >
-                                    <h:outputLabel id="direccionD" value="#{mbOrdenCompra.mbMiniProveedor.miniProveedor.ordenCompraEncabezado.proveedor.direccionEntrega.toString()}"    /> 
+                                <p:column  styleClass="fondoCelda" colspan="3" >
+                                    <h:outputLabel id="monedaD"   styleClass="textoContenido"  />
                                 </p:column>
 
                             </p:row>
-                            <p:row id="descuentos">
-                                <p:column styleClass="fondoCelda" >
-                                    <h:outputLabel value="Descuentos:" styleClass="textoEtiquetas" /> 
+                            <p:row>
+                                <p:column styleClass="fondoCelda"   >
+                                    <h:outputLabel value="Proveedor: " styleClass="textoEtiquetas"  /> 
+
+                                </p:column>
+                                <p:column  styleClass="fondoCelda"  width="30"  >
+                                    <h:outputLabel   styleClass="textoContenido"  />
+                                    <p:selectOneMenu id="proveedor"
+                                                     value="#{mbOrdenCompra.mbProveedores.miniProveedor}"
+                                                     >
+                                        <f:converter converterId="converters.miniProveedor" />
+                                        <f:selectItems value="#{mbOrdenCompra.mbProveedores.listaMiniProveedores}"  />
+                                        <p:ajax event="change"
+                                                listener="#{mbOrdenCompra.cargaDatosProveedor()}"
+                                                update=":form:dirProvD :form:dcD :form:ppD"
+                                                />
+                                    </p:selectOneMenu>
+
+                                    <p:inplace id="verDireccionProveedor" label="Ver Direccion"  editor="true" >  
+                                        <h:outputLabel id="dirProvD" value="#{mbOrdenCompra.provee.direccionEntrega}"    />  
+                                    </p:inplace> 
                                 </p:column>
                                 <p:column styleClass="fondoCelda"   >
-                                    <h:outputLabel id="descuentoComercialD" value="Comercial (%): " styleClass="textoEtiquetas" /> 
+                                    <h:outputLabel value="Comercial (%): " styleClass="textoEtiquetas" /> 
                                 </p:column>
                                 <p:column  styleClass="fondoCelda">
-                                    <h:outputLabel value="#{mbOrdenCompra.mbMiniProveedor.miniProveedor.desctoComercial} " styleClass="textoContenido"  />
+                                    <h:outputLabel  id="dcD" value="#{mbOrdenCompra.provee.desctoComercial} " styleClass="textoContenido"  />
                                 </p:column>
                                 <p:column styleClass="fondoCelda"  >
-                                    <h:outputLabel id="prontoPagoD" value="Pronto Pago (%): " styleClass="textoEtiquetas"  /> 
+                                    <h:outputLabel  value="Pronto Pago (%): " styleClass="textoEtiquetas"  /> 
                                 </p:column>
                                 <p:column  styleClass="fondoCelda" >
-                                    <h:outputLabel  value="#{mbOrdenCompra.mbMiniProveedor.miniProveedor.desctoProntoPago} " styleClass="textoContenido"  />
+                                    <h:outputLabel id="ppD"  value="#{mbOrdenCompra.provee.desctoProntoPago} " styleClass="textoContenido"  />
                                 </p:column>
                             </p:row>
+
                         </p:panelGrid>
                         <p:separator style="width:900px;height:0.5px" />
                         <p:toolbar  id="tbD" style="width: 900px; height: auto; margin:0 auto; " >  
@@ -375,10 +392,10 @@
                                     actionListener="#{mbOrdenCompra.eliminarEmpaqueSeleccionado()}"
                                     update=":form:detalleOCD :form:listaBuscarProductos"
                                     />
-                                 <p:commandButton
+                                <p:commandButton
                                     icon="ui-icon-clear"
                                     title="Limpiar formulario de orden de compra directa"
-                                    
+
                                     update=":form:detalleOCD :form:encabezadoOCD "
                                     />
                                 <p:separator />
@@ -434,7 +451,8 @@
                                             />
                                 </pe:inputNumber>
                             </p:column>
-                            <p:column headerText="Cost" styleClass="alineacionD">  
+                            <p:column headerText="Cost" styleClass="alineacionD">
+
 
                             </p:column> 
                             <p:column headerText="1 Descuento (%)" styleClass="alineacionD">  

@@ -1,9 +1,9 @@
 package ordenesDeCompra.dao;
 
 import contactos.dominio.Contacto;
-import contribuyentes.Contribuyente;
 import cotizaciones.dao.DAOCotizaciones;
 import direccion.dominio.Direccion;
+import empresas.dao.DAOEmpresas;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -122,10 +122,12 @@ public class DAOOrdenDeCompra {
         moneda.setCodigoIso(rs.getString("codigoIso"));
 
         DAOProveedores daoP = new DAOProveedores();
+        DAOEmpresas daoE = new DAOEmpresas();
         oce.setIdOrdenCompra(rs.getInt("idOrdenCompra"));
         oce.setIdCotizacion(rs.getInt("idCotizacion"));
         oce.setIdRequisicion(rs.getInt("idRequisicion"));
-        oce.setNombreComercial(rs.getString("nombreComercial"));
+           
+      oce.setNombreComercial(rs.getString("nombreComercial"));
         oce.setDesctoComercial(rs.getDouble("desctoComercial"));
         oce.setDesctoProntoPago(rs.getDouble("desctoProntoPago"));
         
@@ -325,6 +327,37 @@ public class DAOOrdenDeCompra {
       
         cont.setCorreo(rs.getString("correo"));
         return cont;
+    }
+    
+     public Direccion obtenerUnaDireccion(int idDireccion) throws SQLException, NamingException {
+        Direccion toDir=null;
+        Connection cn=this.ds.getConnection();
+        Statement st=cn.createStatement();
+        try {
+            ResultSet rs=st.executeQuery("SELECT * FROM direcciones WHERE idDireccion="+idDireccion);
+            if(rs.next()) toDir=construirDireccion(rs);
+        } finally {
+            cn.close();
+        }
+        return toDir;
+    }
+    
+    private Direccion construirDireccion(ResultSet rs) throws SQLException, NamingException {
+        Direccion Dir=new Direccion();
+        
+        Dir.setIdDireccion(rs.getInt("idDireccion"));
+        Dir.setCalle(rs.getString("calle"));
+        Dir.setNumeroExterior(rs.getString("numeroExterior"));
+        Dir.setNumeroInterior(rs.getString("numeroInterior"));
+        Dir.setReferencia(rs.getString("referencia"));
+        Dir.getPais().setIdPais(rs.getInt("idPais"));   
+        Dir.setCodigoPostal(rs.getString("codigoPostal"));
+        Dir.setEstado(rs.getString("estado"));
+        Dir.setMunicipio(rs.getString("municipio"));
+        Dir.setLocalidad(rs.getString("localidad"));
+        Dir.setColonia(rs.getString("colonia"));
+        Dir.setNumeroLocalizacion(rs.getString("numeroLocalizacion"));
+        return Dir;
     }
 
 }

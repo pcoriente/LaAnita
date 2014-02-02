@@ -29,7 +29,6 @@
             30
         </session-timeout>
     </session-config>
-    
     <resource-ref>
         <res-ref-name>jdbc/__webSystem</res-ref-name>
         <res-type>javax.sql.DataSource</res-type>
