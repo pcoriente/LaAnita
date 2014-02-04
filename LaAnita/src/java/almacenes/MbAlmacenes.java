@@ -396,7 +396,7 @@ public class MbAlmacenes implements Serializable {
 
     public ArrayList<Accion> getAcciones() {
         if (this.acciones == null) {
-            this.acciones = this.mbAcciones.obtenerAcciones(14);
+            this.acciones = this.mbAcciones.obtenerAcciones(12);
         }
         return acciones;
     }
