@@ -7,20 +7,22 @@ import java.util.ArrayList;
  *
  * @author jsolis
  */
-public class Contacto implements Serializable{
+public class Contacto implements Serializable {
+
     private int idContacto;
     private String contacto;
     private String puesto;
     private String correo;
     private ArrayList<Telefono> telefonos;
-    
+    private ArrayList<TelefonoTipo> telefonosTipos;
 
     public Contacto() {
-        this.idContacto=0;
-        this.contacto="";
-        this.puesto="";
-        this.correo="";
-        this.telefonos=new ArrayList<Telefono>();
+        this.idContacto = 0;
+        this.contacto = "";
+        this.puesto = "";
+        this.correo = "";
+        this.telefonos = new ArrayList<Telefono>();
+        this.telefonosTipos = new ArrayList<TelefonoTipo>();
     }
 
     @Override
@@ -88,5 +90,13 @@ public class Contacto implements Serializable{
 
     public void setTelefonos(ArrayList<Telefono> telefonos) {
         this.telefonos = telefonos;
+    }
+
+    public ArrayList<TelefonoTipo> getTelefonosTipos() {
+        return telefonosTipos;
+    }
+
+    public void setTelefonosTipos(ArrayList<TelefonoTipo> telefonosTipos) {
+        this.telefonosTipos = telefonosTipos;
     }
 }

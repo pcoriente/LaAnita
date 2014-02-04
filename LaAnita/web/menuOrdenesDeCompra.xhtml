@@ -32,7 +32,7 @@
 
                             />
                         <p:commandButton id="salir"
-                                         icon="ui-icon-home"
+                                         icon="ui-icon-arrowreturnthick-1-w"
                                          title="Salir de Listado de Requisiciones"
                                          action="index.xhtml"
 
@@ -125,7 +125,7 @@
                                 <p:separator />
 
                                 <p:commandButton id="salirOC"
-                                                 icon="ui-icon-home"
+                                                 icon="ui-icon-arrowreturnthick-1-w"
                                                  title="Ir al menu principal"
                                                  action="index.xhtml"
                                                  ajax="false"
@@ -279,22 +279,24 @@
                     <!-- ///////////////////////////////////////////    D I  R E C T A S   ////////////////////////////////////////////////////              -->
 
 
-                    <p:dialog widgetVar="odecD" width="1000" header="MANTENIMIENTO ORDENES DE COMPRA DIRECTAS" id="dialogoOCD" modal="true">
+                    <p:dialog widgetVar="odecD" width="950" header="MANTENIMIENTO ORDENES DE COMPRA DIRECTAS" id="dialogoOCD" modal="true">
                         <p:messages id="mensajeProducto" showDetail="true" autoUpdate="true" closable="true" showSummary="false" />  
-                        <p:panelGrid id="encabezadoOCD" style="width: 950px; height: auto; margin:0 auto; "  >
+                        <p:ajax event="close" 
+                                listener="#{mbOrdenCompra.handleClose()}"
+                                process="@this"
+                                 update=":form:empresaD :form:proveedorD :form:monedaD :form:dirEmpD :form:dirProvD :form:fEmision :form:fEntrega :form:dcD :form:ppD"/> 
+                        <p:panelGrid id="encabezadoOCD" style="width: 900px; height: auto; margin:0 auto; "  >
                             <p:row>
                                 <p:column styleClass="fondoCelda"  >
                                     <h:outputLabel value="Empresa: " styleClass="textoEtiquetas"/>
                                 </p:column>
                                 <p:column styleClass="fondoCelda"  >
                                     <h:outputLabel   styleClass="textoContenido" />
-
                                     <p:selectOneMenu id="empresaD" value="#{mbOrdenCompra.mbEmpresas.empresa}" style="width: 250px;" >
                                         <f:converter converterId="converters.Empresa" />
                                         <f:selectItems value="#{mbOrdenCompra.mbEmpresas.listaObtenerEmpresas}" />
                                         <p:ajax event="change"
-                                                update=":form:dirEmpD"
-                                                />
+                                                update=":form:dirEmpD"/>
                                     </p:selectOneMenu><br></br>
                                     <p:inplace id="verDireccionEmpresa" label="Ver direccion empresa"  editor="true" >  
                                         <h:outputLabel id="dirEmpD" value="#{mbOrdenCompra.mbEmpresas.empresa.direccion.toString()}"    />  
@@ -367,7 +369,7 @@
                                 </p:column>
                             </p:row>
                         </p:panelGrid>
-                        <p:separator style="width:900px;height:0.5px" />
+                   
                         <p:toolbar  id="tbD" style="width: 900px; height: auto; margin:0 auto; " >  
                             <p:toolbarGroup id="toolbarD" align="right">  
                                 <p:commandButton
@@ -415,22 +417,24 @@
                                 <p:separator />
 
                                 <p:commandButton id="salirOCD"
-                                                 icon="ui-icon-home"
+                                                 icon="ui-icon-arrowreturnthick-1-w"
                                                  title="Ir al menu principal"
-                                                 actionListener="#{mbOrdenCompra.terminar()}"
                                                  update=":form:empresaD :form:proveedorD"
                                                  />
                             </p:toolbarGroup>  
                         </p:toolbar>
-                        <p:dataTable id="detalleOCD"
+                        <p:dataTable id="detalleOCD" style="width: 900px"
+                                     
                                      value="#{mbOrdenCompra.listaEmpaque}"
                                      var="detD" rowKey="#{detD.idEmpaque}"
                                      selectionMode="single" 
-                                     selection="#{mbOrdenCompra.empaque}">
+                                     selection="#{mbOrdenCompra.empaque}"
+                                     scrollable="true"
+                                     scrollHeight="300">
                             <p:ajax event = "rowSelect"/>
-                            <p:column headerText="No.">
+                            <p:column headerText="No." width="30">
                             </p:column>
-                            <p:column headerText="Producto"  >
+                            <p:column headerText="Producto" width="200"  >
                                 #{detD.toString()}
                             </p:column>
                             <p:column headerText="Cant." width="60" styleClass="alineacionD" >
@@ -445,18 +449,18 @@
                                             />
                                 </pe:inputNumber>
                             </p:column>
-                            <p:column headerText="Cost" styleClass="alineacionD">
+                            <p:column headerText="Costo" styleClass="alineacionD" width="60"> 
 
 
                             </p:column> 
-                            <p:column headerText="1 Descuento (%)" styleClass="alineacionD">  
+                            <p:column headerText="1 Descto(%)" styleClass="alineacionD" width="60">  
 
                             </p:column>
-                            <p:column headerText="2 Descuento (%)" styleClass="alineacionD">  
+                            <p:column headerText="2 Descto(%)" styleClass="alineacionD" width="60">  
 
                             </p:column>
 
-                            <p:column headerText="Subtotal" styleClass="alineacionD">  
+                            <p:column headerText="Subtotal" styleClass="alineacionD" width="60">  
                                 <h:outputText  id="subtotalD" >
                                     <f:convertNumber type="currency" locale="en-US"   />
                                 </h:outputText>
@@ -468,7 +472,7 @@
                             <p:columnGroup type="footer" >  
                                 <p:row >
                                     <p:column colspan="6"  style="text-align:right; font-size: 14px;" footerText="Importe:" />
-                                    <p:column colspan="6"  id="generalD"   styleClass="alineacionD"  />
+                                    <p:column colspan="6"  id="generalD"   styleClass="alineacionD" width="60" />
                                 </p:row>
                                 <p:row>
                                     <p:column colspan="2" style="text-align:right; background-color: whitesmoke; font-size: 14px; " footerText="Generales:"   />
@@ -478,19 +482,19 @@
                                     <p:column  id="sumaDescuentosProductosD"  />
 
                                     <p:column style="text-align:right; font-size: 14px;" footerText="Desc. Totales:"/>
-                                    <p:column  id="descuentoGeneralAplicadoD"  styleClass="alineacionD" />
+                                    <p:column  id="descuentoGeneralAplicadoD"  styleClass="alineacionD" width="60" />
                                 </p:row>
                                 <p:row>
                                     <p:column colspan="6" style="text-align:right; font-size: 14px;" footerText="Subtotal:"/>
-                                    <p:column   id="subtotalBrutoD"  styleClass="alineacionD"/>
+                                    <p:column   id="subtotalBrutoD"  styleClass="alineacionD" width="60"/>
                                 </p:row>
                                 <p:row>
                                     <p:column colspan="6" style="text-align:right; font-size: 14px;" footerText="IVA:"/>
-                                    <p:column  id="impuestoD"  styleClass="alineacionD"/>
+                                    <p:column  id="impuestoD"  styleClass="alineacionD" width="60"/>
                                 </p:row>
                                 <p:row>
                                     <p:column colspan="6" style="text-align:right; font-size: 14px;" footerText="Total :"/>
-                                    <p:column   id="totalD"  styleClass="alineacionD">
+                                    <p:column   id="totalD"  styleClass="alineacionD" width="60">
                                     </p:column>
                                 </p:row>
                             </p:columnGroup> 
