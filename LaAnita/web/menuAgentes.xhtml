@@ -14,7 +14,7 @@
         <h:outputScript library="js" name="bootstrap.min.js"/>
     </h:head>
     <h:body>
-        <h:form onkeypress="return event.keyCode !== 13;">
+        <h:form  id="form" onkeypress="return event.keyCode !== 13;">
             <div class="divPerzonalizado container">
                 <div class="divPerzonalizado col-lg-12">
                     <p:growl id="growl" showDetail="true"/>  
@@ -30,6 +30,14 @@
                                                          title="Nuevo Agente"
                                                          actionListener="#{mbAgentes.cargarAgentes()}"
                                                          update="cmbTelefono"/>
+                                        <p:commandButton id="actualizar"
+                                                         icon="ui-icon-pencil" 
+                                                         oncomplete="dlg.show();"
+                                                         process="@this"
+                                                         title="Actualizar Agente"
+                                                         actionListener="#{mbAgentes.cargarDatosActualizar()}"
+                                                         disabled="#{mbAgentes.actualizar==0}"
+                                                         />
                                     </f:facet>
                                     <p:dataTable
                                         id="listaAgentes"
@@ -37,7 +45,12 @@
                                         var="agentes"
                                         selection="#{mbAgentes.seleccionListaAgentes}"
                                         selectionMode="single"
-                                        rowKey="#{agentes}">
+                                        rowKey="#{agentes}"
+                                        emptyMessage="No hay AGENTES disponibles">
+                                        <p:ajax event="rowSelect"
+                                                listener="#{mbAgentes.cargarDatosActualizar()}"
+                                                process="@this"
+                                                update=":form:panelNuevoAgente :form:actualizar"/>
                                         <p:column headerText="RFC">
                                             #{agentes.contribuyente.rfc}
                                         </p:column>
@@ -63,10 +76,9 @@
                       style="height: auto"
                       resizable="false">
                 <p:ajax event="close" 
-                        update="cmbCedis cmbTelefono btnMttoTelefonos" 
                         listener="#{mbAgentes.limpiarCampos()}"/>
                 <center>
-                    <h:panelGrid columns="3"><h:outputLabel value="Rfc:"/>
+                    <h:panelGrid columns="3" id="panelNuevoAgente"><h:outputLabel value="Rfc:"/>
                         <p:inputText id="txtRfc"
                                      value="#{mbAgentes.mbContribuyente.contribuyente.rfc}">
                             <p:ajax event="keyup"
@@ -104,7 +116,8 @@
                                          title="Nueva direccion Fiscal"
                                          process="@this"
                                          actionListener="#{mbAgentes.respaldoDireccionContribuyente()}"
-                                         update="cboPaises localidad municipio estado gln calle asentamiento noExterior noInterior referencia codigoPostal"/>
+                                         update="cboPaises localidad municipio estado gln calle asentamiento noExterior noInterior referencia :form:codigoPostal"
+                                         />
                         <h:outputLabel>Agente:</h:outputLabel>
                         <p:inputText id="txtNombreAgente" value="#{mbAgentes.agente.agente}"/> 
                         <h:outputLabel/>
@@ -128,7 +141,7 @@
                                          title="Nueva direccion Fiscal"
                                          process="@this"
                                          actionListener="#{mbAgentes.respaldoDireccionAgente()}"
-                                         update="cboPaises localidad municipio estado gln calle asentamiento noExterior noInterior referencia codigoPostal"/>
+                                         update="cboPaises localidad municipio estado gln calle asentamiento noExterior noInterior referencia :form:codigoPostal"/>
                         <h:outputLabel value="Correo"/>
                         <p:inputText  id="correo" value="#{mbAgentes.agente.contacto.correo}"/>
                         <h:outputLabel/>
@@ -145,7 +158,7 @@
                                          update="mttoTelefonos cmbTelefonoTipo"
                                          oncomplete="mttoTelefonosDialog.show()" />
                     </h:panelGrid>
-                    <p:commandButton  icon="ui-icon-disk" 
+                    <p:commandButton  icon="#{mbAgentes.lblnuevoAgente}" 
                                       title="Guardar Agente"
                                       process="@this txtNombreAgente txtRfc txtContribuyente txtCurp direccionFiscal cmbCedis direccionAgente correo"
                                       actionListener="#{mbAgentes.agregarNuevoAgente()}"
@@ -187,7 +200,7 @@
                                 title="Buscar Codigo Postal"
                                 icon="ui-icon-search"
                                 action="#{mbAgentes.mbDireccion.buscarAsentamientos()}" 
-                                process="@this cboPaises j_idt12:codigoPostal" 
+                                process="@this cboPaises codigoPostal" 
                                 update="cboAsentamientos"
                                 style="height: 30px"/>
                         </h:panelGrid>
@@ -222,7 +235,7 @@
                     <p:inputText id="gln" value="#{mbAgentes.mbDireccion.direccion.numeroLocalizacion}"/>
                     <h:outputLabel />
                     <h:panelGroup style="display: block; text-align: right" >
-                        <p:commandButton icon="ui-icon-disk"
+                        <p:commandButton icon="#{mbAgentes.lblNuevaDireccionAgente}"
                                          actionListener="#{mbAgentes.validarDireccion()}"
                                          process="@this cboPaises localidad municipio estado gln calle asentamiento noExterior noInterior referencia codigoPostal"
                                          title="Grabar Direccion"
