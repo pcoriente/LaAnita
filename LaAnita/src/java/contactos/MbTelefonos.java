@@ -102,7 +102,6 @@ public class MbTelefonos implements Serializable {
         try {
             this.dao = new DAOTelefonos();
             ArrayList<TelefonoTipo> tipos = this.dao.obtenerTipos(this.celular);
-
             TelefonoTipo t0 = new TelefonoTipo(this.celular);
             t0.setTipo("Nuevo Tipo");
             this.listaTipos = new ArrayList<SelectItem>();

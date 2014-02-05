@@ -542,7 +542,7 @@ public class MbEntradas implements Serializable {
 
     public ArrayList<Accion> getAcciones() {
         if (this.acciones == null) {
-            this.acciones = this.mbAcciones.obtenerAcciones(15);
+            this.acciones = this.mbAcciones.obtenerAcciones(13);
         }
         return acciones;
     }
