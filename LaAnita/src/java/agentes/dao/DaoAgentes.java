@@ -137,7 +137,7 @@ public class DaoAgentes {
             if (rs.next()) {
                 idDireccionAgente = rs.getInt("idDireccionAgente");
             }
-            String sqlDireccionContribuyente = "INSERT INTO direcciones (calle, numeroExterior, numeroInterior, colonia, localidad, referencia, municipio, estado, idPais, codigoPostal,numeroLocalizacion)VALUES('" + agente.getContribuyente().getDireccion().getCalle() + "', '" + agente.getContribuyente().getDireccion().getNumeroExterior() + "','" + agente.getContribuyente().getDireccion().getNumeroInterior() + "','" + agente.getContribuyente().getDireccion().getColonia() + "','" + agente.getContribuyente().getDireccion().getLocalidad() + "','" + agente.getContribuyente().getDireccion().getReferencia() + "','" + agente.getContribuyente().getDireccion().getMunicipio() + "','" + agente.getContribuyente().getDireccion().getEstado() + "','" + idPais + "','" + agente.getContribuyente().getDireccion().getCodigoPostal() + "','100')";
+            String sqlDireccionContribuyente = "INSERT INTO direcciones (calle, numeroExterior, numeroInterior, colonia, localidad, referencia, municipio, estado, idPais, codigoPostal,numeroLocalizacion)VALUES('" + agente.getContribuyente().getDireccion().getCalle() + "', '" + agente.getContribuyente().getDireccion().getNumeroExterior() + "','" + agente.getContribuyente().getDireccion().getNumeroInterior() + "','" + agente.getContribuyente().getDireccion().getColonia() + "','" + agente.getContribuyente().getDireccion().getLocalidad() + "','" + agente.getContribuyente().getDireccion().getReferencia() + "','" + agente.getContribuyente().getDireccion().getMunicipio() + "','" + agente.getContribuyente().getDireccion().getEstado() + "','" + agente.getContribuyente().getDireccion().getPais().getIdPais() + "','" + agente.getContribuyente().getDireccion().getCodigoPostal() + "','100')";
             st.executeUpdate(sqlDireccionContribuyente);
             rs = st.executeQuery("SELECT @@IDENTITY AS idDireccionContribuyente");
             if (rs.next()) {
@@ -175,11 +175,12 @@ public class DaoAgentes {
                             + "'" + telefonos.getLada() + "','" + telefonos.getTelefono() + "','" + telefonos.getExtension() + "','" + idTipo + "','" + idContacto + "') ";
                     ps = cn.prepareStatement(sql);
                     ps.executeUpdate();
+                    ps.close();
                 }
-                ps.close();
-                st.executeUpdate("commit transaction");
             }
+            st.executeUpdate("commit transaction");
         } catch (SQLException ex) {
+            System.err.println(ex);
             st.executeUpdate("rollback transaction");
             Logger.getLogger(DaoAgentes.class.getName()).log(Level.SEVERE, null, ex);
             x = false;
@@ -188,5 +189,18 @@ public class DaoAgentes {
             st.close();
         }
         return x;
+    }
+
+    public void actualizarAgente(Agentes agente) throws SQLException {
+        Connection cn = this.ds.getConnection();
+        Statement st = cn.createStatement();
+        String sql = "UPDATE agentes set agente='"+agente.getAgente()+"', idcedis ='"+agente.getMiniCedis().getIdCedis()+"' WHERE idAgente="+agente.getIdAgente();
+        try {
+            st.executeUpdate(sql);
+        } finally {
+            cn.close();
+            st.close();
+        }
+
     }
 }
