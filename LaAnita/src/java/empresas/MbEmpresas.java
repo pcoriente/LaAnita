@@ -224,6 +224,7 @@ public class MbEmpresas {
         return "menuEmpresa.terminar";
     }
     
+    //DAVID
     public ArrayList<SelectItem> obtenerListaEmpresas() throws SQLException, NamingException {
         ArrayList<SelectItem> listaComboEmpresas=new ArrayList<SelectItem>();
         

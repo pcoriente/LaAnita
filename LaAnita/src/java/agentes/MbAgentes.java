@@ -7,14 +7,19 @@ package agentes;
 import agentes.dao.DaoAgentes;
 import agentes.dominio.Agentes;
 import cedis.MbMiniCedis;
+import cedis.dao.DAOCedis;
 import cedis.dao.DAOMiniCedis;
 import cedis.dominio.MiniCedis;
 import contactos.MbContactos;
+import contactos.dao.DAOContactos;
 import contactos.dao.DAOTelefonos;
+import contactos.dominio.Contacto;
 import contactos.dominio.Telefono;
 import contactos.dominio.TelefonoTipo;
+import contribuyentes.DAOContribuyentes;
 import contribuyentes.MbContribuyentes;
 import direccion.MbDireccion;
+import direccion.dao.DAODireccion;
 import direccion.dominio.Direccion;
 import java.io.Serializable;
 import java.sql.SQLException;
@@ -48,7 +53,7 @@ public class MbAgentes implements Serializable {
     @ManagedProperty(value = "#{mbDireccion}")
     private MbDireccion mbDireccion = new MbDireccion();
     private ArrayList<Agentes> listaAgentes;
-    private Agentes seleccionListaAgentes;
+    private Agentes seleccionListaAgentes = new Agentes();
     private Agentes agente = new Agentes();
     private ArrayList<SelectItem> listaAsentamientos = new ArrayList<SelectItem>();
     private int personaFisica = 0;
@@ -56,19 +61,26 @@ public class MbAgentes implements Serializable {
     private DAOMiniCedis dao;
     private int flgDireccion = 0;
     boolean editarAsentamiento = false;
-    String lblCancelar = "";
-    String titleCancelar = "";
-    ArrayList<SelectItem> listaTipos = new ArrayList<SelectItem>();
+    private String lblCancelar = "";
+    private String titleCancelar = "";
+    private String lblnuevoAgente = "";
+    private String lblNuevaDireccionAgente = "";
+    private int actualizar = 0;
+    ArrayList<SelectItem> listaTelefonos = new ArrayList<SelectItem>();
 
     public MbAgentes() {
         titleCancelar = "Cancelar Contacto";
         lblCancelar = "ui-icon-arrowreturnthick-1-w";
+        lblnuevoAgente = "ui-icon-disk";
+        lblNuevaDireccionAgente = "ui-icon-disk";
     }
 
     private void cargarTablaAgentes() {
         try {
+//            if (listaAgentes == null) {
             DaoAgentes daoAgentes = new DaoAgentes();
             listaAgentes = daoAgentes.listaAgentes();
+//            }
         } catch (SQLException ex) {
             Logger.getLogger(MbAgentes.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -104,7 +116,6 @@ public class MbAgentes implements Serializable {
                         ok = false;
                         fMsg.setDetail("Se requiere un Cedis!!");
                         FacesContext.getCurrentInstance().addMessage(null, fMsg);
-                        context.addCallbackParam("okContribuyente", ok);
                     } else {
                         if (ok == true) {
                             try {
@@ -112,27 +123,48 @@ public class MbAgentes implements Serializable {
                                     ok = false;
                                     fMsg.setDetail("Error!! Correo Requerido");
                                     FacesContext.getCurrentInstance().addMessage(null, fMsg);
-                                    context.addCallbackParam("okContribuyente", ok);
                                 } else {
                                     Utilerias u = new Utilerias();
                                     boolean paso = u.validarEmail(this.agente.getContacto().getCorreo());
                                     if (paso == true) {
                                         listaAgentes = null;
                                         DaoAgentes daoAgentes = new DaoAgentes();
-                                        boolean okExito = daoAgentes.guardarAgentes(agente);
-                                        if (okExito == true) {
-                                            fMsg = new FacesMessage(FacesMessage.SEVERITY_INFO, "Aviso:", "");
-                                            fMsg.setDetail("Exito!! Nuevo Agente Disponible");
-                                            FacesContext.getCurrentInstance().addMessage(null, fMsg);
-                                            context.addCallbackParam("okContribuyente", ok);
+                                        if (actualizar == 0) {
+                                            boolean okExito = daoAgentes.guardarAgentes(agente);
+                                            if (okExito == true) {
+                                                ok = true;
+                                                fMsg = new FacesMessage(FacesMessage.SEVERITY_INFO, "Aviso:", "");
+                                                fMsg.setDetail("Exito!! Nuevo Agente Disponible");
+                                                FacesContext.getCurrentInstance().addMessage(null, fMsg);
+                                            }
+                                        } else {
+                                            try {
+                                                DAOContactos daoContactos = new DAOContactos();
+                                                daoContactos.modificar(agente.getContacto());
+                                                DAOContribuyentes daoContribuyente = new DAOContribuyentes();
+                                                DaoAgentes daoAgente = new DaoAgentes();
+//                                                DAOMiniCedis daoMinicedis = new DAOMinCedis();
+//                                                daoMinicedis.
+                                                daoContribuyente.actualizarContribuyente(mbContribuyente.getContribuyente());
+                                                daoContribuyente.actualizarContribuyenteRfc(mbContribuyente.getContribuyente());
+                                                daoAgente.actualizarAgente(agente);
+                                                this.setActualizar(0);
+                                                ok = true;
+                                                fMsg = new FacesMessage(FacesMessage.SEVERITY_INFO, "Aviso:", "");
+                                                fMsg.setDetail("Exito!! Nuevo Agente Actualizado");
+                                                FacesContext.getCurrentInstance().addMessage(null, fMsg);
+
+                                            } catch (NamingException ex) {
+                                                Logger.getLogger(MbAgentes.class.getName()).log(Level.SEVERE, null, ex);
+                                            }
                                         }
                                     } else {
                                         ok = false;
                                         fMsg.setDetail("Error!! Correo no Valido");
                                         FacesContext.getCurrentInstance().addMessage(null, fMsg);
-                                        context.addCallbackParam("okContribuyente", ok);
                                     }
                                 }
+                                context.addCallbackParam("okContribuyente", ok);
                             } catch (SQLException ex) {
                                 Logger.getLogger(MbAgentes.class.getName()).log(Level.SEVERE, null, ex);
                             }
@@ -194,6 +226,18 @@ public class MbAgentes implements Serializable {
             }
             mbDireccion.setDireccion(new Direccion());
         }
+        if (this.getActualizar() == 1) {
+            try {
+                DAODireccion daoDireccion = new DAODireccion();
+                try {
+                    daoDireccion.modificar(mbDireccion.getDireccion().getIdDireccion(), mbDireccion.getDireccion().getCalle(), mbDireccion.getDireccion().getNumeroExterior(), mbDireccion.getDireccion().getNumeroInterior(), mbDireccion.getDireccion().getReferencia(), mbDireccion.getDireccion().getPais().getIdPais(), mbDireccion.getDireccion().getCodigoPostal(), mbDireccion.getDireccion().getEstado(), mbDireccion.getDireccion().getMunicipio(), mbDireccion.getDireccion().getLocalidad(), mbDireccion.getDireccion().getColonia(), mbDireccion.getDireccion().getNumeroLocalizacion());
+                } catch (SQLException ex) {
+                    Logger.getLogger(MbAgentes.class.getName()).log(Level.SEVERE, null, ex);
+                }
+            } catch (NamingException ex) {
+                Logger.getLogger(MbAgentes.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
     }
 
     public void validarContacto() {
@@ -214,6 +258,48 @@ public class MbAgentes implements Serializable {
             this.setLblCancelar("ui-icon-arrowreturnthick-1-w");
             this.setTitleCancelar("Cancelar Contacto");
         }
+    }
+
+    public void cargarDatosActualizar() {
+        try {
+            this.setActualizar(1);
+            ArrayList<Telefono> telefono = new ArrayList<Telefono>();
+            mbContribuyente.getContribuyente().setIdContribuyente(seleccionListaAgentes.getContribuyente().getIdContribuyente());
+            mbContribuyente.getContribuyente().setRfc(seleccionListaAgentes.getContribuyente().getRfc());
+            mbContribuyente.getContribuyente().setCurp(seleccionListaAgentes.getContribuyente().getCurp());
+            mbContribuyente.getContribuyente().setContribuyente(seleccionListaAgentes.getContribuyente().getContribuyente());
+            mbContribuyente.getContribuyente().setIdRfc(seleccionListaAgentes.getContribuyente().getIdRfc());
+            this.agente.getMiniCedis().setIdCedis(seleccionListaAgentes.getMiniCedis().getIdCedis());
+            this.agente.setAgente(seleccionListaAgentes.getAgente());
+            this.agente.setIdAgente(seleccionListaAgentes.getIdAgente());
+            this.agente.setDireccionAgente(seleccionListaAgentes.getDireccionAgente());
+            this.agente.getContribuyente().setDireccion(seleccionListaAgentes.getContribuyente().getDireccion());
+            DAOTelefonos telefonos = new DAOTelefonos();
+            this.agente.getContacto().setCorreo(seleccionListaAgentes.getContacto().getCorreo());
+            this.agente.getContacto().setIdContacto(seleccionListaAgentes.getContacto().getIdContacto());
+            try {
+                telefono = telefonos.obtenerTelefonos(seleccionListaAgentes.getContacto().getIdContacto());
+                TelefonoTipo t0 = new TelefonoTipo(false);
+                t0.setTipo("Nuevo Tipo");
+                listaTelefonos = new ArrayList<SelectItem>();
+                listaTelefonos.add(new SelectItem(t0, t0.toString()));
+                for (Telefono t : telefono) {
+                    listaTelefonos.add(new SelectItem(t, t.toString()));
+                }
+            } catch (SQLException ex) {
+                Logger.getLogger(MbAgentes.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        } catch (NamingException ex) {
+            Logger.getLogger(MbAgentes.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+
+    public void deseleccionar() {
+        if (this.getActualizar() == 1) {
+            seleccionListaAgentes = null;
+            this.setActualizar(0);
+        }
+
     }
 
     public String getLblCancelar() {
@@ -320,6 +406,7 @@ public class MbAgentes implements Serializable {
     }
 
     public void cargarAgentes() {
+        limpiarCampos();
         this.getMbContactos().cargaContactos(2, 0);
         this.getMbContactos().getMbTelefonos().cargaTelefonos(0);
     }
@@ -328,7 +415,6 @@ public class MbAgentes implements Serializable {
         boolean ok = false;
         ok = this.mbContactos.getMbTelefonos().validarTelefonos();
         if (ok == true) {
-//            listaTipos.removeAll(listaTipos);
             Telefono t = new Telefono();
             mbContactos.getMbTelefonos().getTelefono();
             t.setLada(mbContactos.getMbTelefonos().getTelefono().getLada());
@@ -342,22 +428,33 @@ public class MbAgentes implements Serializable {
     public void cargaListaTelefonos() {
         TelefonoTipo t0 = new TelefonoTipo(false);
         t0.setTipo("Nuevo Tipo");
-        listaTipos = new ArrayList<SelectItem>();
-        listaTipos.add(new SelectItem(t0, t0.toString()));
+        listaTelefonos = new ArrayList<SelectItem>();
+        listaTelefonos.add(new SelectItem(t0, t0.toString()));
         for (Telefono t : this.agente.getContacto().getTelefonos()) {
-            listaTipos.add(new SelectItem(t, t.toString()));
+            listaTelefonos.add(new SelectItem(t, t.toString()));
         }
-//        this.mbContactos.getMbTelefonos().setListaTipos(listaTipos);
     }
 
     public void limpiarCampos() {
+        mbContribuyente.getContribuyente().setRfc("");
+        mbContribuyente.getContribuyente().setCurp("");
+        mbContribuyente.getContribuyente().setContribuyente("");
+//      mbCedis.getCedis().setIdCedis(0);
         this.agente.getMiniCedis().setIdCedis(0);
-        this.agente.getContacto().setIdContacto(0);
         this.agente.getTelefono().setIdTelefono(0);
+        this.agente.setAgente("");
+        this.agente.getContacto().setCorreo("");
+        this.agente.setDireccionAgente(new Direccion());
+        this.agente.getContribuyente().setDireccion(new Direccion());
     }
 
     public void cargaTipos() {
         mbContactos.getMbTelefonos().cargaTipos();
+        if (agente.getIdAgente() > 0) {
+//            agente.getTelefono().get;
+            mbContactos.getMbTelefonos().setTelefono(agente.getTelefono());
+//            mbContactos.getMbTelefonos().getTelefono();
+        }
     }
 
     public void setListaMiniCedis(ArrayList<SelectItem> listaMiniCedis) {
@@ -397,10 +494,34 @@ public class MbAgentes implements Serializable {
     }
 
     public ArrayList<SelectItem> getListaTipos() {
-        return listaTipos;
+        return listaTelefonos;
     }
 
     public void setListaTipos(ArrayList<SelectItem> listaTipos) {
-        this.listaTipos = listaTipos;
+        this.listaTelefonos = listaTipos;
+    }
+
+    public String getLblnuevoAgente() {
+        return lblnuevoAgente;
+    }
+
+    public void setLblnuevoAgente(String lblnuevoAgente) {
+        this.lblnuevoAgente = lblnuevoAgente;
+    }
+
+    public String getLblNuevaDireccionAgente() {
+        return lblNuevaDireccionAgente;
+    }
+
+    public void setLblNuevaDireccionAgente(String lblNuevaDireccionAgente) {
+        this.lblNuevaDireccionAgente = lblNuevaDireccionAgente;
+    }
+
+    public int getActualizar() {
+        return actualizar;
+    }
+
+    public void setActualizar(int actualizar) {
+        this.actualizar = actualizar;
     }
 }

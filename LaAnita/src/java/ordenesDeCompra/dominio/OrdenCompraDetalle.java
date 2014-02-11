@@ -2,6 +2,7 @@ package ordenesDeCompra.dominio;
 
 import cotizaciones.dominio.CotizacionDetalle;
 import java.io.Serializable;
+import productos.dominio.Empaque;
 import productos.dominio.Producto;
 
 public class OrdenCompraDetalle implements Serializable {
@@ -30,6 +31,7 @@ public class OrdenCompraDetalle implements Serializable {
     private String subtotalF;
     private String costoOrdenadoF;
     private String nombreProducto;
+    private Empaque empaque;
 
     public OrdenCompraDetalle() {
     }

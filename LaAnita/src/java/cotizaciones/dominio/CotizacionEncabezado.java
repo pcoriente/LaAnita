@@ -22,6 +22,7 @@ public class CotizacionEncabezado {
     private int estado;
     private CotizacionDetalle cotizacionDetalle;
     private ArrayList<CotizacionDetalle> proveedor;
+    private int idMoneda;
     
 
     public CotizacionEncabezado(int idCotizacion,  int idProveedor) {
@@ -161,6 +162,14 @@ public class CotizacionEncabezado {
 
     public void setProveedor(ArrayList<CotizacionDetalle> proveedor) {
         this.proveedor = proveedor;
+    }
+
+    public int getIdMoneda() {
+        return idMoneda;
+    }
+
+    public void setIdMoneda(int idMoneda) {
+        this.idMoneda = idMoneda;
     }
 
     
