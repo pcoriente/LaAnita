@@ -1,32 +1,35 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project-private xmlns="http://www.netbeans.org/ns/project-private/1">
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/1"/>
-    <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="7">
+    <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="10">
         <file>
-            <url>web/menuOrdenesDeCompra.xhtml</url>
-            <bookmark id="2">
+            <url>src/java/agentes/MbAgentes.java</url>
+            <bookmark id="8">
                 <name/>
-                <line>281</line>
+                <line>236</line>
+                <key/>
+            </bookmark>
+        </file>
+        <file>
+            <url>web/menuAgentes.xhtml</url>
+            <bookmark id="9">
+                <name/>
+                <line>40</line>
                 <key/>
             </bookmark>
             <bookmark id="6">
                 <name/>
-                <line>287</line>
+                <line>69</line>
                 <key/>
             </bookmark>
-            <bookmark id="7">
+            <bookmark id="6">
                 <name/>
-                <line>372</line>
+                <line>176</line>
                 <key/>
             </bookmark>
             <bookmark id="4">
                 <name/>
-                <line>425</line>
-                <key/>
-            </bookmark>
-            <bookmark id="5">
-                <name/>
-                <line>471</line>
+                <line>257</line>
                 <key/>
             </bookmark>
         </file>

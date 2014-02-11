@@ -9,7 +9,6 @@ import contactos.dominio.Contacto;
 import contactos.dominio.Telefono;
 import contribuyentes.Contribuyente;
 import direccion.dominio.Direccion;
-import direccion.to.TODireccion;
 import java.io.Serializable;
 
 /**

@@ -25,17 +25,16 @@
                                 <p:panel>
                                     <f:facet name="header">
                                         <p:commandButton icon="ui-icon-document" 
-                                                         onclick="dlg.show();"
+                                                         oncomplete="dlg.show();"
                                                          process="@this"
                                                          title="Nuevo Agente"
                                                          actionListener="#{mbAgentes.cargarAgentes()}"
-                                                         update="cmbTelefono"/>
+                                                         update=":form:panelNuevoAgente"/>
                                         <p:commandButton id="actualizar"
                                                          icon="ui-icon-pencil" 
                                                          oncomplete="dlg.show();"
                                                          process="@this"
                                                          title="Actualizar Agente"
-                                                         actionListener="#{mbAgentes.cargarDatosActualizar()}"
                                                          disabled="#{mbAgentes.actualizar==0}"
                                                          />
                                     </f:facet>
@@ -74,11 +73,12 @@
                       showEffect="explode"
                       hideEffect="explode"
                       style="height: auto"
-                      resizable="false">
-                <p:ajax event="close" 
-                        listener="#{mbAgentes.limpiarCampos()}"/>
+                      resizable="false"
+                      closable="false">
                 <center>
-                    <h:panelGrid columns="3" id="panelNuevoAgente"><h:outputLabel value="Rfc:"/>
+                    <h:panelGrid columns="3" 
+                                 id="panelNuevoAgente">
+                        <h:outputLabel value="Rfc:"/>
                         <p:inputText id="txtRfc"
                                      value="#{mbAgentes.mbContribuyente.contribuyente.rfc}">
                             <p:ajax event="keyup"
@@ -143,7 +143,8 @@
                                          actionListener="#{mbAgentes.respaldoDireccionAgente()}"
                                          update="cboPaises localidad municipio estado gln calle asentamiento noExterior noInterior referencia :form:codigoPostal"/>
                         <h:outputLabel value="Correo"/>
-                        <p:inputText  id="correo" value="#{mbAgentes.agente.contacto.correo}"/>
+                        <p:inputText  id="correo" 
+                                      value="#{mbAgentes.agente.contacto.correo}"/>
                         <h:outputLabel/>
                         <h:outputLabel value="Telefonos"/>
                         <p:selectOneMenu id="cmbTelefono" 
@@ -155,7 +156,7 @@
                                          title="Mtto.Teléfonos" 
                                          process="@this" 
                                          actionListener="#{mbAgentes.cargaTipos()}" 
-                                         update="mttoTelefonos cmbTelefonoTipo"
+                                         update="cmbTelefonoTipo :form:mttoTelefonos"
                                          oncomplete="mttoTelefonosDialog.show()" />
                     </h:panelGrid>
                     <p:commandButton  icon="#{mbAgentes.lblnuevoAgente}" 
@@ -163,10 +164,13 @@
                                       process="@this txtNombreAgente txtRfc txtContribuyente txtCurp direccionFiscal cmbCedis direccionAgente correo"
                                       actionListener="#{mbAgentes.agregarNuevoAgente()}"
                                       oncomplete="nuevoContribuyente(xhr, status, args)"
-                                      update="growl listaAgentes"/>
+                                      update="growl listaAgentes actualizar"/>
                     <p:commandButton  icon="ui-icon-cancel" 
                                       title="Cancelar Agente"
-                                      update="direccionFiscal direccionAgente"/>
+                                      update=":form:listaAgentes :form:actualizar "
+                                      actionListener="#{mbAgentes.deseleccionar()}"
+                                      process="@this"
+                                      oncomplete="dlg.hide()"/>
                 </center>
             </p:dialog>
             <!--- Dialog de Direccion -->
