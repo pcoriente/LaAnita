@@ -248,4 +248,12 @@ public class OrdenCompraDetalle implements Serializable {
     public void setCantRecibida(double cantRecibida) {
         this.cantRecibida = cantRecibida;
     }
+
+    public Empaque getEmpaque() {
+        return empaque;
+    }
+
+    public void setEmpaque(Empaque empaque) {
+        this.empaque = empaque;
+    }
 }
