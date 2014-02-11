@@ -26,7 +26,7 @@ public class MbImpuestos implements Serializable {
     private DAOImpuestos dao;
 
     public MbImpuestos() {
-        this.impuesto = new Impuesto(0, "", false, 1, false);
+        this.impuesto = new Impuesto(0, "", false, 1, false, false);
         this.impuestos = new ArrayList<Impuesto>();
         this.impuestos.add(this.impuesto);
         this.strModo = "1";
@@ -43,7 +43,7 @@ public class MbImpuestos implements Serializable {
                 this.dao = new DAOImpuestos();
                 this.dao.eliminar(this.impuesto.getIdImpuesto());
                 this.impuestos = this.dao.obtenerImpuestos();
-                this.impuesto = new Impuesto(0, "", false, 1, false);
+                this.impuesto = new Impuesto(0, "", false, 1, false, false);
                 this.strModo = "1";
                 ok = true;
             } catch (SQLException ex) {
@@ -95,7 +95,7 @@ public class MbImpuestos implements Serializable {
     }
 
     public void nuevo() {
-        this.impuesto = new Impuesto(0, "", false, 1, false);
+        this.impuesto = new Impuesto(0, "", false, 1, false, false);
         this.strModo = "1";
     }
 

@@ -17,7 +17,7 @@ public class ImpuestoDetalle {
     //private Date fechaInicialSiguiente;
     
     public ImpuestoDetalle() {
-        this.impuesto=new Impuesto(0, "", false, 1, false);
+        this.impuesto=new Impuesto(0, "", false, 1, false, false);
         //this.fechaInicialSiguiente=new Date();
     }
     /*

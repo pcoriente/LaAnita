@@ -15,8 +15,8 @@
         <Node id="menuEmpresas.xhtml" x="650" y="450" zoom="true"/>
         <Node id="menuMarcas.xhtml" x="1150" y="150" zoom="true"/>
         <Node id="login.xhtml" x="400" y="150" zoom="true"/>
-        <Node id="menuBancos.xhtml" x="1150" y="450" zoom="true"/>
         <Node id="empresa.xhtml" x="400" y="750" zoom="true"/>
+        <Node id="menuBancos.xhtml" x="1150" y="450" zoom="true"/>
         <Node id="pedidos.xhtml" x="1400" y="150" zoom="true"/>
         <Node id="banco.xhtml" x="900" y="600" zoom="true"/>
         <Node id="direccion.xhtml" x="400" y="450" zoom="true"/>
@@ -24,8 +24,8 @@
         <Node id="menuClientes.xhtml" x="1400" y="300" zoom="true"/>
         <Node id="menuClasificaciones.xhtml" x="650" y="600" zoom="true"/>
         <Node id="pedidos1.xhtml" x="900" y="450" zoom="true"/>
-        <Node id="resources/ezcomp/out.xhtml" x="150" y="450" zoom="true"/>
         <Node id="index.xhtml" x="400" y="300" zoom="true"/>
+        <Node id="resources/ezcomp/out.xhtml" x="150" y="450" zoom="true"/>
         <Node id="cedis.xhtml" x="150" y="600" zoom="true"/>
     </Scope>
     <Scope Scope="All Faces Configurations"/>

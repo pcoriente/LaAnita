@@ -9,6 +9,8 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.text.Format;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import javax.faces.context.ExternalContext;
 import javax.faces.context.FacesContext;
@@ -41,6 +43,111 @@ public class DAOEntradas {
         } catch (NamingException ex) {
             throw (ex);
         }
+    }
+    
+    public int obtenerLote(java.util.Date fecha) {
+        int i=1;
+        return i;
+    }
+    
+    public boolean grabarEntrada2(int idAlmacen, int idMovto, double tipoCambio, int idFactura, ArrayList<EntradaProducto> productos) throws SQLException {
+        int capturados;
+        boolean ok=false;
+        int idLote;
+        java.util.Date fechaCaducidad;
+        fechaCaducidad = new java.util.Date();
+        Format formatter=new SimpleDateFormat("yyyy-MM-dd");
+        
+        Connection cn=this.ds.getConnection();
+        String strSQL1="UPDATE movimientosDetalle " +
+                    "SET cantFacturada=? " +
+                    "WHERE idMovto="+idMovto+" AND idEmpaque=?";
+        PreparedStatement ps1=cn.prepareStatement(strSQL1);
+        
+//        String strSQL2="UPDATE movimientosDetalleImpuestos " +
+//                    "SET importe=? " +
+//                    "WHERE idMovto="+idMovto+" AND idEmpaque=?";
+//        PreparedStatement ps2=cn.prepareStatement(strSQL2);
+        
+        idLote=obtenerLote(fechaCaducidad);
+        
+        String strSQL3="INSERT INTO kardex (idAlmacen, idMovto, idTipoMovto, idEmpaque, idLote, fecha, existenciaAnterior, cantidad, saldo, idUsuario, fechaCaducidad) " +
+                    "VALUES ("+idAlmacen+", "+idMovto+", 2, ?, "+idLote+", GETDATE(), ?, ?, ?, ?, ?, ?)";
+        PreparedStatement ps3=cn.prepareStatement(strSQL3);
+        
+        String strSQL4="INSERT INTO almacenesEmpaques (idAlmacen, idEmpaque, existencia, existenciaOficina, promedioPonderado, existenciaMinima, existenciaMaxima, ultimoCosto, idMovtoEntrada) " +
+                    "VALUES "+idAlmacen+", ?, ?, 0, 0, 0, 0, 0, 0)";
+        PreparedStatement ps4=cn.prepareStatement(strSQL4);
+        
+        String strSQL5="UPDATE almacenesEmpaques " +
+                    "SET existencia=existencia+?, " +
+                    "WHERE idAlmacen="+idAlmacen+" AND idEmpaque=?";
+        PreparedStatement ps5=cn.prepareStatement(strSQL5);
+        
+        ResultSet rs;
+        int idEmpaque;
+        double existenciaAnterior;
+        Statement st=cn.createStatement();
+        try {
+            capturados=0;
+            st.executeUpdate("BEGIN TRANSACTION");
+            
+            for(EntradaProducto p: productos) {
+                idEmpaque=p.getEmpaque().getIdEmpaque();
+                //fechaCaducidad=utilerias.Utilerias.addDays(fechaCaducidad, p.getEmpaque().getProducto().getDiasCaducidad);
+                fechaCaducidad=utilerias.Utilerias.addDays(fechaCaducidad, 365);
+                
+                if(p.getCantFacturada()> 0) {
+                    capturados++;
+                    
+                    ps1.setDouble(1, p.getCantFacturada());
+                    ps1.setInt(2, idEmpaque);
+                    ps1.executeUpdate();
+
+//                    impuestos=p.getImpuestos();
+//                    for(ImpuestosProducto i:impuestos) {
+//                        ps2.setDouble(1, i.getImporte());
+//                        ps2.setInt(2, idEmpaque);
+//                        ps2.executeUpdate();
+//                    }
+                    
+                    rs=st.executeQuery("SELECT existencia " +
+                                        "FROM almacenesEmpaques " +
+                                        "WHERE idAlmacen="+idAlmacen+" AND idEmpaque="+idEmpaque);
+                    if(rs.next()) {
+                        existenciaAnterior=rs.getDouble("existencia");
+                        
+                        ps5.setDouble(1, p.getCantFacturada());
+                        ps5.setInt(2, idEmpaque);
+                        ps5.executeUpdate();
+                    } else {
+                        existenciaAnterior=0;
+                        
+                        ps4.setInt(1, idEmpaque);
+                        ps4.setDouble(2, p.getCantFacturada()); // La existencia es igual a la cantidadFacturada por estarse dando de alta el producto para el almacen
+                        ps4.executeUpdate();
+                    }
+                    ps3.setInt(1, idEmpaque);
+                    ps3.setDouble(2, existenciaAnterior);
+                    ps3.setDouble(3, p.getCantFacturada());
+                    ps3.setDouble(4, p.getCantFacturada());
+                    ps3.setInt(5, this.idUsuario);
+                    ps3.setDate(6, new java.sql.Date(fechaCaducidad.getTime()));
+                    ps3.executeUpdate();
+                }
+            }
+            if(capturados>0) {
+                st.executeUpdate("UPDATE facturas SET cerrada=1 WHERE idFactura="+idFactura);
+            }
+            st.executeUpdate("COMMIT TRANSACTION");
+            ok=true;
+        } catch(SQLException e) {
+            st.executeUpdate("ROLLBACK TRANSACTION");
+            throw(e);
+        } finally {
+            cn.close();
+        }
+        return ok;
     }
     
     public boolean grabarEntrada(int idAlmacen, int idMovto, double tipoCambio, int idFactura, ArrayList<EntradaProducto> productos) throws SQLException {
@@ -110,15 +217,6 @@ public class DAOEntradas {
                                         "WHERE idAlmacen="+idAlmacen+" AND idEmpaque="+idEmpaque);
                     if(rs.next()) {
                         existenciaAnterior=rs.getDouble("existenciaOficina");
-                        
-//                        ps3.setInt(1, idAlmacen);
-//                        ps3.setInt(2, idMovto);
-//                        ps3.setInt(3, idEmpaque);
-//                        ps3.setDouble(4, existenciaAnterior);
-//                        ps3.setDouble(5, p.getCantFacturada());
-//                        ps3.setDouble(6, p.getCantFacturada());
-//                        ps3.setInt(7, this.idUsuario);
-//                        ps3.executeUpdate();
                         
                         ps5.setDouble(1, p.getCantFacturada());
                         ps5.setDouble(2, p.getCantFacturada());
