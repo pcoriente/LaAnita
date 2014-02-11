@@ -210,7 +210,9 @@ public class MbOrdenCompra implements Serializable {
 
         try {
             int idOC = ordenElegida.getIdOrdenCompra();
+            
             DAOOrdenDeCompra daoOC = new DAOOrdenDeCompra();
+         
             ArrayList<OrdenCompraDetalle> lista = daoOC.consultaOrdenCompra(idOC);
             for (OrdenCompraDetalle d : lista) {
                 listaOrdenDetalle.add(d);
@@ -314,6 +316,7 @@ public class MbOrdenCompra implements Serializable {
         FacesMessage msg = null;
         try {
             if (estado == 1) {
+//                Ima=this.mbMonedas.getMoneda().getIdMoneda();
                 daoO.procesarOrdenCompra(idOrden);
                 this.setListaOrdenesEncabezado(null);
                 this.cargaOrdenesEncabezado();

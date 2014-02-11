@@ -686,7 +686,12 @@ public class MbRequisiciones implements Serializable {
             daoReq = new DAORequisiciones();
             if (idProv != 0 && idMon != 0) {
                 if (this.total != 0) {
-                    daoReq.grabarCotizacion(idReq, idProv, idMon, dc, dpp, this.cotizacionProductos);
+                    this.cotizacionEncabezado.setIdRequisicion(idReq);
+                    this.cotizacionEncabezado.setIdProveedor(idProv);
+                    this.cotizacionEncabezado.setDescuentoCotizacion(dc);
+                    this.cotizacionEncabezado.setDescuentoProntoPago(dpp);
+                    this.cotizacionEncabezado.setIdMoneda(idMon);
+                    daoReq.grabarCotizacion(this.cotizacionEncabezado, this.cotizacionProductos);
                     msg = new FacesMessage(FacesMessage.SEVERITY_INFO, "Aviso:", "La cotización ha sido registrada..");
                     numCotizacion += 1;
                     this.setNumCotizacion(numCotizacion);

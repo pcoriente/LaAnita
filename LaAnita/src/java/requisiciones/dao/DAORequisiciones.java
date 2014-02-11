@@ -1,6 +1,7 @@
 package requisiciones.dao;
 
 import cotizaciones.dominio.CotizacionDetalle;
+import cotizaciones.dominio.CotizacionEncabezado;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -271,7 +272,9 @@ public class DAORequisiciones {
     }
 
     //COTIZACIONES
-    public void grabarCotizacion(int idReq, int idProv, int idMon, double descGral, double descPP, ArrayList<CotizacionDetalle> cd) throws SQLException {
+    public void grabarCotizacion(CotizacionEncabezado ce, ArrayList<CotizacionDetalle> cd) throws SQLException {
+        int idProv=ce.getIdProveedor();
+      
         Connection cn = this.ds.getConnection();
         Statement st = cn.createStatement();
         PreparedStatement ps1, ps2, ps3, ps4;
@@ -280,7 +283,7 @@ public class DAORequisiciones {
             st.executeUpdate("begin transaction");
             //CABECERO
             String strSQL1 = "INSERT INTO cotizaciones(idRequisicion, idProveedor, idMoneda, folioProveedor, fechaCotizacion, descuentoCotizacion,descuentoProntoPago, observaciones)"
-                    + " VALUES (" + idReq + ", " + idProv +  ", " + idMon + ",'Folio' ,GETDATE(), " + descGral + ", " + descPP + ", 'hola')";
+                    + " VALUES (" + ce.getIdRequisicion() + ", " + idProv +  ", " + ce.getIdMoneda() + ",'Folio' ,GETDATE(), " + ce.getDescuentoCotizacion() + ", " + ce.getDescuentoProntoPago() + ", 'hola')";
             String strSQLIdentity = "SELECT @@IDENTITY as idCot";
             ps1 = cn.prepareStatement(strSQL1);
             ps1.executeUpdate();
@@ -308,7 +311,7 @@ public class DAORequisiciones {
             }
 
 
-            String strSQL3 = "UPDATE requisiciones SET estado=3  WHERE idRequisicion=" + idReq;
+            String strSQL3 = "UPDATE requisiciones SET estado=3  WHERE idRequisicion=" + ce.getIdRequisicion();
             ps4 = cn.prepareStatement(strSQL3);
             ps4.executeUpdate();
 
