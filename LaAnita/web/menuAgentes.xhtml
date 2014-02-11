@@ -84,11 +84,11 @@
                             <p:ajax event="keyup"
                                     listener="#{mbAgentes.dameStatusRfc()}"
                                     process="txtRfc"
-                                    update="txtCurp"/>
+                                    update="txtCurp growl"/>
                             <p:ajax event="blur" 
                                     listener="#{mbAgentes.dameStatusRfc()}"
                                     process="txtRfc"
-                                    update="txtCurp"/>
+                                    update="txtCurp growl"/>
                         </p:inputText>
                         <h:outputLabel/>
                         <h:outputLabel  value="Contribuyente:"/>
@@ -116,7 +116,7 @@
                                          title="Nueva direccion Fiscal"
                                          process="@this"
                                          actionListener="#{mbAgentes.respaldoDireccionContribuyente()}"
-                                         update="cboPaises localidad municipio estado gln calle asentamiento noExterior noInterior referencia :form:codigoPostal"
+                                         update="asentamientos cboPaises cboAsentamientos localidad municipio estado gln calle  noExterior noInterior referencia :form:codigoPostal"
                                          />
                         <h:outputLabel>Agente:</h:outputLabel>
                         <p:inputText id="txtNombreAgente" value="#{mbAgentes.agente.agente}"/> 
@@ -141,23 +141,13 @@
                                          title="Nueva direccion Fiscal"
                                          process="@this"
                                          actionListener="#{mbAgentes.respaldoDireccionAgente()}"
-                                         update="cboPaises localidad municipio estado gln calle asentamiento noExterior noInterior referencia :form:codigoPostal"/>
+                                         update="cboPaises asentamientos cboAsentamientos localidad municipio estado gln calle  noExterior noInterior referencia :form:codigoPostal "/>
                         <h:outputLabel value="Correo"/>
                         <p:inputText  id="correo" 
                                       value="#{mbAgentes.agente.contacto.correo}"/>
                         <h:outputLabel/>
                         <h:outputLabel value="Telefonos"/>
-                        <p:selectOneMenu id="cmbTelefono" 
-                                         value="#{mbAgentes.agente.telefono}" style="width: 190px;" >
-                            <f:selectItems value="#{mbAgentes.listaTipos}" />
-                        </p:selectOneMenu>
-                        <p:commandButton id="btnMttoTelefonos" 
-                                         icon="ui-icon-pencil" 
-                                         title="Mtto.Teléfonos" 
-                                         process="@this" 
-                                         actionListener="#{mbAgentes.cargaTipos()}" 
-                                         update="cmbTelefonoTipo :form:mttoTelefonos"
-                                         oncomplete="mttoTelefonosDialog.show()" />
+
                     </h:panelGrid>
                     <p:commandButton  icon="#{mbAgentes.lblnuevoAgente}" 
                                       title="Guardar Agente"
@@ -211,16 +201,18 @@
                     </h:panelGroup>
                     <h:outputLabel value="Colonia:" />
                     <h:panelGroup id="asentamientos">
-                        <h:panelGrid rendered="#{mbAgentes.editarAsentamiento}" columns="2" >
-                            <p:inputText id="asentamiento" value="#{mbAgentes.mbDireccion.direccion.colonia}" />
-                            <p:commandButton value="Elegir" 
-                                             actionListener="#{mbAgentes.mbDireccion.setEditarAsentamiento}" 
-                                             update="asentamientos"
-                                             title="Elegir Asentamiento"
-                                             process="@this"/>
+                        <h:panelGrid rendered="#{mbAgentes.mbDireccion.editarAsentamiento}" columns="2" >
+                            <p:inputText id="txtAsentamiento" 
+                                         value="#{mbAgentes.mbDireccion.direccion.colonia}"/>
+                            <p:commandButton 
+                                icon="ui-icon-pencil"
+                                actionListener="#{mbAgentes.mbDireccion.setEditarAsentamiento(false)}" 
+                                update="asentamientos"
+                                title="Elegir Asentamiento"
+                                process="@this"/>
                         </h:panelGrid>
                         <p:selectOneMenu id="cboAsentamientos" 
-                                         rendered="#{!mbAgentes.editarAsentamiento}" 
+                                         rendered="#{!mbAgentes.mbDireccion.editarAsentamiento}" 
                                          value="#{mbAgentes.mbDireccion.direccion.selAsentamiento}" 
                                          style="width: 188px">
                             <p:ajax event="change" listener="#{mbAgentes.mbDireccion.actualizaAsentamiento}" 
@@ -241,7 +233,7 @@
                     <h:panelGroup style="display: block; text-align: right" >
                         <p:commandButton icon="#{mbAgentes.lblNuevaDireccionAgente}"
                                          actionListener="#{mbAgentes.validarDireccion()}"
-                                         process="@this cboPaises localidad municipio estado gln calle asentamiento noExterior noInterior referencia codigoPostal"
+                                         process="@this txtAsentamiento cboPaises localidad municipio estado gln calle txtAsentamiento noExterior noInterior referencia codigoPostal"
                                          title="Grabar Direccion"
                                          update="direccionFiscal direccionAgente growl"
                                          oncomplete="nuevaDireccion(xhr, status, args)" />
@@ -249,14 +241,17 @@
                                          title="Cancelar Direccion"
                                          actionListener="#{mbAgentes.mbDireccion.cancelarDireccion()}"
                                          process="@this"
-                                         update="cboPaises localidad municipio estado gln calle asentamiento noExterior noInterior referencia codigoPostal direccionFiscal"
+                                         update="cboPaises localidad municipio estado gln calle txtAsentamiento noExterior noInterior referencia codigoPostal direccionFiscal"
                                          oncomplete="dlgDireccion.hide();"/>
                     </h:panelGroup>
                 </h:panelGrid>
             </p:dialog>
             <!--- Dialog de Mantenimiento de Telefonos -->
-            <p:dialog header="MANTENIMIENTO DE TELEFONOS" widgetVar="mttoTelefonosDialog" resizable="false"
-                      style="width: 500px;" modal="true" >
+            <p:dialog header="MANTENIMIENTO DE TELEFONOS"
+                      widgetVar="mttoTelefonosDialog" 
+                      resizable="false"
+                      style="width: 500px;" modal="true" 
+                      hideEffect="explode">
                 <p:panelGrid id="mttoTelefonos">
                     <p:row rendered="#{mbAgentes.mbContactos.mbTelefonos.telefono.idTelefono==0}" >
                         <p:column >
@@ -317,14 +312,19 @@
                     <f:facet name="footer" >
                         <p:row >
                             <p:column colspan="3" >
-                                <p:commandButton id="btnGrabarTelefono" value="Grabar" 
+                                <p:commandButton id="btnGrabarTelefono" 
+                                                 value="Grabar" 
                                                  process="@this celular cmbTelefonoTipo txtLada txtTelefono txtExtension" 
                                                  actionListener="#{mbAgentes.validarTelefonos()}"
-                                                 update="cmbTelefono growl" 
+                                                 update="growl" 
                                                  oncomplete="nuevoTelefono(xhr, status, args)" />
-                                <p:commandButton id="btnEliminarTelefono" value="Eliminar"
+                                <p:commandButton id="btnEliminarTelefono" 
+                                                 value="Eliminar"
                                                  disabled="#{mbAgentes.mbContactos.mbTelefonos.telefono.idTelefono==0}" 
-                                                 type="button"/>
+                                                 actionListener="#{mbAgentes.eliminarTelefono()}"
+                                                 update="growl"
+                                                 oncomplete="mttoTelefonosDialog.hide();"
+                                                 />
                             </p:column>
                         </p:row>
                     </f:facet>

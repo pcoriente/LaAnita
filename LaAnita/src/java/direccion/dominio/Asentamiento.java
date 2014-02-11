@@ -1,10 +1,12 @@
 package direccion.dominio;
 
+import java.io.Serializable;
+
 /**
  *
  * @author Julio
  */
-public class Asentamiento {
+public class Asentamiento implements Serializable{
     private String codAsentamiento;
     private String codigoPostal;
     private String cTipo;

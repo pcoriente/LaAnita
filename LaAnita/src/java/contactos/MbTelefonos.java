@@ -221,7 +221,6 @@ public class MbTelefonos implements Serializable {
         try {
             this.dao = new DAOTelefonos();
             this.telefonos = this.dao.obtenerTelefonos(idContacto);
-
             Telefono t0 = new Telefono();
             t0.setTelefono("Nuevo Teléfono");
             this.listaTelefonos = new ArrayList<SelectItem>();

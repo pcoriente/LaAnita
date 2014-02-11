@@ -61,14 +61,16 @@
                                     <p:inputText id="asentamiento" value="#{mbDireccion.direccion.colonia}" maxlength="100" size="41" />
                                     <p:commandButton value="Elegir" actionListener="#{mbDireccion.setEditarAsentamiento(false)}" update="msgs asentamientos" ajax="false" />
                                 </h:panelGrid>
-                                <h:selectOneMenu id="cboAsentamientos" rendered="#{!mbDireccion.editarAsentamiento}" value="#{mbDireccion.direccion.selAsentamiento}" >
-                                    <p:ajax event="change" listener="#{mbDireccion.actualizaAsentamiento}" update="estado municipio localidad  asentamientos" />             
-
+                                <h:selectOneMenu id="cboAsentamientos" 
+                                                 rendered="#{!mbDireccion.editarAsentamiento}" 
+                                                 value="#{mbDireccion.direccion.selAsentamiento}" >
+                                    <p:ajax event="change" 
+                                            listener="#{mbDireccion.actualizaAsentamiento}"
+                                            update="estado municipio localidad  asentamientos" />             
                                     <f:converter converterId="converters.Asentamiento" />
                                     <f:selectItems value="#{mbDireccion.listaAsentamientos}" />
                                 </h:selectOneMenu>
                             </h:panelGroup>
-
                             <h:outputLabel value="GLN:" for="gln" styleClass="colorLetra"/>
                             <p:inputText id="gln" value="#{mbDireccion.direccion.numeroLocalizacion}" maxlength="14" size="16" />
 
