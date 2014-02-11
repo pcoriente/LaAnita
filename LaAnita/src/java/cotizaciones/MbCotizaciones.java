@@ -35,6 +35,7 @@ public class MbCotizaciones implements Serializable {
     @ManagedProperty(value = "#{mbProveedores}")
     private MbProveedores mbProveedores;
     private String nombreProduc;
+    private CotizacionEncabezado cotizacionesEncabezadoToOrden;
 
     //CONSTRUCTORES-------------------------------------------------------------------------------------------------------------------------------------------------------
     public MbCotizaciones() {
@@ -58,27 +59,28 @@ public class MbCotizaciones implements Serializable {
         }
     }
 
-    public void cargaCotizacionesProveedor(int idReq) throws NamingException, SQLException {
+    public void cargaCotizacionesProveedor() throws NamingException, SQLException {
+        int idReq = cotizacionesEncabezadoToOrden.getIdRequisicion();
         ordenCompra = new ArrayList<CotizacionDetalle>();
         listaCotizacionDetalleProductos = new ArrayList<CotizacionDetalle>();
         listaCotizacionDetalle = new ArrayList<CotizacionDetalle>();
         DAOCotizaciones daoCot = new DAOCotizaciones();
-        ArrayList<CotizacionDetalle> lista = daoCot.dameProductoCotizacionesProveedores(idReq);
-        for (CotizacionDetalle d : lista) {
-            listaCotizacionDetalle.add(d);
-        }
+//        ArrayList<CotizacionDetalle> 
+        listaCotizacionDetalle = daoCot.dameProductoCotizacionesProveedores(idReq);
+//        for (CotizacionDetalle d : lista) {
+//            listaCotizacionDetalle.add(d);
+//        }
     }
 
-    public void cargaCotizacionesProveedorEncabezado(int idReq) throws NamingException, SQLException {
-        listaCotizacionEncabezado = new ArrayList<CotizacionEncabezado>();
-        DAOCotizaciones daoCot = new DAOCotizaciones();
-        ArrayList<CotizacionEncabezado> lista = daoCot.consultaCotizacionesProveedoresEncabezado(idReq);
-        for (CotizacionEncabezado d : lista) {
-
-            listaCotizacionEncabezado.add(d);
-        }
-    }
-
+//    public void cargaCotizacionesProveedorEncabezado(int idReq) throws NamingException, SQLException {
+//        listaCotizacionEncabezado = new ArrayList<CotizacionEncabezado>();
+//        DAOCotizaciones daoCot = new DAOCotizaciones();
+//        ArrayList<CotizacionEncabezado> lista = daoCot.consultaCotizacionesProveedoresEncabezado(idReq);
+//        for (CotizacionEncabezado d : lista) {
+//
+//            listaCotizacionEncabezado.add(d);
+//        }
+//    }
     public void cotizacionxProveedor() {
         miniCotizacionProveedor = new ArrayList<CotizacionEncabezado>();
 
@@ -125,6 +127,8 @@ public class MbCotizaciones implements Serializable {
             Logger.getLogger(MbCotizaciones.class.getName()).log(Level.SEVERE, null, ex);
         } catch (SQLException ex) {
             Logger.getLogger(MbCotizaciones.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (Exception e) {
+            System.out.println("");
         }
 
     }
@@ -143,7 +147,7 @@ public class MbCotizaciones implements Serializable {
     }
 
     public void guardarOrdenCompra() {
-        int longOC = 0;
+        //   int longOC = 0;
         int longCots = 0;
         FacesMessage msg = null;
         Collections.sort(ordenCompra, new Comparator<CotizacionDetalle>() {
@@ -164,13 +168,13 @@ public class MbCotizaciones implements Serializable {
         try {
             DAOCotizaciones daoCot = new DAOCotizaciones();
             try {
-                longOC = ordenCompra.size();
+                
                 longCots = listaCotizacionDetalle.size();
                 if (longCots == 0) {
-                    daoCot.guardarOrdenCompraTotal(ordenCompra);
+                    daoCot.guardarOrdenCompraTotal(cotizacionesEncabezadoToOrden,ordenCompra);
                     msg = new FacesMessage(FacesMessage.SEVERITY_INFO, "Aviso:", "La orden de compra ha sido generada...");
                     //      this.salirMenuCotizaciones();
-                    this.listaCotizacionEncabezado=null;
+                    this.listaCotizacionEncabezado = null;
                     this.cargaCotizaciones();
                 } else {
                     msg = new FacesMessage(FacesMessage.SEVERITY_INFO, "Aviso:", "La orden de compra está incompleta, faltan productos por integrar...");
@@ -305,5 +309,13 @@ public class MbCotizaciones implements Serializable {
 
     public void setNombreProduc(String nombreProduc) {
         this.nombreProduc = nombreProduc;
+    }
+
+    public CotizacionEncabezado getCotizacionesEncabezadoToOrden() {
+        return cotizacionesEncabezadoToOrden;
+    }
+
+    public void setCotizacionesEncabezadoToOrden(CotizacionEncabezado cotizacionesEncabezadoToOrden) {
+        this.cotizacionesEncabezadoToOrden = cotizacionesEncabezadoToOrden;
     }
 }

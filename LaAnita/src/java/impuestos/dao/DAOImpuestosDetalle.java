@@ -49,7 +49,6 @@ public class DAOImpuestosDetalle {
     public ArrayList<ImpuestoDetalle> grabar(int idZona, int idGrupo, ImpuestoDetalle detalle, String periodo) throws SQLException {
         ArrayList<ImpuestoDetalle> impuestos = new ArrayList<ImpuestoDetalle>();
         Date fechaInicial=new java.sql.Date(detalle.getFechaInicial().getTime());
-        //Date fechaFinal=new java.sql.Date(detalle.getFinFecha().getTime());
         Date fechaFinal=new java.sql.Date(detalle.getFechaFinal().getTime());
         
         Connection cn = this.ds.getConnection();
@@ -59,7 +58,6 @@ public class DAOImpuestosDetalle {
             String strSQL="UPDATE impuestosDetalle "
                     + "SET fechaInicial='"+fechaInicial.toString()+"', fechaFinal='"+fechaFinal.toString()+"' "
                     + "WHERE idZona="+idZona+" AND idGrupo="+idGrupo+" AND fechaInicial='"+fechaInicial.toString()+"'";
-            // +"', fechaFinal='"+fechaFinal.toString()
             st.executeUpdate(strSQL);
             strSQL="UPDATE impuestosDetalle "
                     + "SET valor="+detalle.getValor()+" "
@@ -132,7 +130,7 @@ public class DAOImpuestosDetalle {
             }
             strSQL += "SELECT z.idZona, z.zona "
                     + "         , g.idGrupo, g.grupo "
-                    + "         , i.idImpuesto, i.impuesto, i.aplicable, i.modo, i.acreditable "
+                    + "         , i.idImpuesto, i.impuesto, i.aplicable, i.modo, i.acreditable, i.acumulable "
                     + "         , id.fechaInicial, id.fechaFinal, id.valor, ids.fechaInicial as fechaInicialSiguiente "
                     + "FROM impuestosDetalle id "
                     + "INNER JOIN impuestosZonas z ON z.idZona=id.idZona "
@@ -170,12 +168,9 @@ public class DAOImpuestosDetalle {
     
     private ImpuestoDetalle construirDetalle(ResultSet rs) throws SQLException {
         ImpuestoDetalle imp=new ImpuestoDetalle();
-        //imp.setZona(new ImpuestoZona(rs.getInt("idZona"), rs.getString("zona")));
-        //imp.setGrupo(new ImpuestoGrupo(rs.getInt("idGrupo"), rs.getString("grupo")));
-        imp.setImpuesto(new Impuesto(rs.getInt("idImpuesto"), rs.getString("impuesto"), rs.getBoolean("aplicable"), rs.getInt("modo"), rs.getBoolean("acreditable")));
+        imp.setImpuesto(new Impuesto(rs.getInt("idImpuesto"), rs.getString("impuesto"), rs.getBoolean("aplicable"), rs.getInt("modo"), rs.getBoolean("acreditable"), rs.getBoolean("acumulable")));
         imp.setFechaInicial(new java.util.Date(rs.getDate("fechaInicial").getTime()));
         imp.setFechaFinal(new java.util.Date(rs.getDate("fechaFinal").getTime()));
-        //imp.setFinFecha(new java.util.Date(rs.getDate("fechaFinal").getTime()));
         imp.setValor(rs.getDouble("valor"));
         return imp;
     }

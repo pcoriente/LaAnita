@@ -28,7 +28,7 @@
                                          action="menuOrdenesDeCompra.xhtml"
                                          />
                         <p:commandButton id="salir"
-                                       icon="ui-icon-home"
+                                         icon="ui-icon-arrowreturnthick-1-w"
                                          title="Salir de Listado de Requisiciones"
                                          action="index.xhtml"
                                          />
@@ -43,7 +43,17 @@
                                      var="cot" 
                                      widgetVar="requisicionesTable"
                                      emptyMessage="No existen elementos para desplegar..."
+                                     rowKey="#{cot}"
+                                     selection="#{mbCotizaciones.cotizacionesEncabezadoToOrden}"
+                                     selectionMode="single"
+
                                      >
+                            <p:ajax event="rowSelect" 
+                                    listener="#{mbCotizaciones.cargaCotizacionesProveedor()}"
+                                    oncomplete="panel.show();"
+                                    process="@this"
+                                    update=":form:listaProveedores"
+                                    />
                             <p:column sortBy="#{cot.idRequisicion}" filterBy="#{cot.idRequisicion}" headerText="No. Req." filterMatchMode="contains" width="30"  >
                                 <h:outputText value="#{cot.idRequisicion}"   />
                             </p:column>
@@ -65,7 +75,7 @@
                                 </f:facet>
                                 <h:outputText value="#{cot.fechaAprobacion}"/>
                             </p:column>
-                          
+
                             <p:column width="45" >
                                 <f:facet name="header">
                                     <h:outputText value="Cotizaciones."/>
@@ -80,31 +90,134 @@
                             </p:column>
                             <p:column width="45" >
                                 <f:facet name="header">
+                                    <h:outputText value="Moneda"/>
+                                </f:facet>
+                                <h:outputText value="#{cot.idMoneda}"/>
+                            </p:column>
+                            <p:column width="45" >
+                                <f:facet name="header">
                                     <h:outputText value="Status"/>
                                 </f:facet>
                                 <h:outputText value="#{cot.estado eq 2?'Finalizado':'Proceso'}"/>
                             </p:column>
-                            <p:column width="45" >
-                                <f:facet name="header">
-                                    <h:outputText value="Procesos"/>
-                                </f:facet>
-                                <p:commandButton id="verProveedores"
-                                                 icon="ui-icon-note"
-                                                 title="Procedimiento de cotización"
-                                                 action="cotizacionProveedores.xhtml"
-                                                 actionListener="#{mbCotizaciones.cargaCotizacionesProveedor(cot.idRequisicion)}"
-                                                 style="margin:0 auto;"
-                                                 >
-                                </p:commandButton>
-                                
-                            </p:column>
-
-
-
-
                         </p:dataTable>
                     </p:panel>
+                    <!-- AQUIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIII -->
 
+                    <!-- P A N E L   D E  A D M I N I S T R A C I ON... -->
+                    <p:dialog widgetVar="panel" modal="true">
+                        <p:messages id="messagePanel1" showDetail="true" autoUpdate="true" closable="true" />
+                        <p:panel header="PANEL DE ADMINISTRACION DE ORDENES DE COMPRA" styleClass="quitaCuadro"   >
+                            <p:dataTable id="listaProveedores"
+                                         var="prov"
+                                         value="#{mbCotizaciones.listaCotizacionDetalle}"
+                                         rowKey="#{prov}"
+                                         selection="#{mbCotizaciones.cotizacionDeta}"
+                                         selectionMode="single"
+                                         emptyMessage="No hay PRODUCTOS en la cotización..."
+                                         > 
+                                <p:ajax event="rowSelect" 
+                                        listener="#{mbCotizaciones.dameProductos()}"
+                                        update=":form:productos :form:producto"
+                                        oncomplete="cotizaciones.show();"
+                                        process="@this"/>
+                                <p:column headerText="Cotizacion: ">  
+                                    #{prov.producto.toString()}  
+                                </p:column>
+                            </p:dataTable> 
+                            <br></br>
+                        </p:panel>
+
+                        <p:panel header="Orden de compra: "  >
+                            <p:dataTable id="ordenDeCompra"
+                                         value="#{mbCotizaciones.ordenCompra}"
+                                         var="oc"
+                                         emptyMessage="No hay PRODUCTOS en la orden de compra...">
+                                <p:column headerText="Id">
+                                    #{oc.producto.idProducto}
+                                </p:column>
+                                <p:column headerText="Producto">
+                                    #{oc.producto.toString()}
+                                </p:column>
+                                <p:column headerText="Proveedor">
+                                    #{oc.proveedor.nombreComercial}
+                                </p:column>
+                                <p:column>
+                                    <p:commandButton
+                                        icon="ui-icon-trash"
+                                        title="Eliminar producto de Orden de Compra"
+                                        process="@this"
+                                        actionListener="#{mbCotizaciones.eliminarProducto(oc.producto.idProducto)}" 
+                                        update="ordenDeCompra :form:listaProveedores " />
+                                </p:column>
+
+                            </p:dataTable>
+                        </p:panel> 
+                        <br></br>
+                        <p:commandButton
+                            icon="ui-icon-disk"
+                            title="Guardar Orden de Compra"
+                            actionListener="#{mbCotizaciones.guardarOrdenCompra()}"/>
+                    </p:dialog>
+
+                    <!-- SELECCION DE PRODUCTOS POR PROVEEDOR PARA LA ORDEN DE COMPRA -->
+                    <p:dialog widgetVar="cotizaciones" modal="true">
+                        <p:panelGrid>
+                            <p:row>
+                                <p:column style="color: blueviolet; background-color: #999999 " >
+                                    <h:outputLabel id="producto" value="#{mbCotizaciones.nombreProduc}"/> 
+                                </p:column>
+                            </p:row>
+                        </p:panelGrid>
+                        <p:dataTable id="productos"
+                                     value="#{mbCotizaciones.listaCotizacionDetalleProductos}"
+                                     var="producto"
+                                     rowKey="#{producto}"
+                                     selection="#{mbCotizaciones.productoElegido}"
+                                     selectionMode="single"
+                                     >
+
+                            <p:ajax event="rowSelect" 
+                                    listener="#{mbCotizaciones.ordCompra()}"
+                                    update=":form:ordenDeCompra :form:listaProveedores"
+                                    oncomplete="cotizaciones.hide();"/>
+                            <p:column headerText="Nombre Comercial" styleClass="anchoCol">
+                                #{producto.proveedor.nombreComercial}
+                            </p:column>
+                            <p:column headerText="Descto. Comercial" styleClass="anchoCol">
+                                #{producto.cotizacionEncabezado.descuentoCotizacion}
+                            </p:column>
+                            <p:column headerText="Descto. Pronto Pago" styleClass="anchoCol">
+                                #{producto.cotizacionEncabezado.descuentoProntoPago}
+                            </p:column>
+
+                            <p:column headerText="Cantidad Cotizada" styleClass="anchoCol">  
+                                #{producto.cantidadCotizada}  
+                            </p:column> 
+                            <p:column headerText="Costo Cotizado" styleClass="anchoCol">  
+                                #{producto.costoCotizadoF}  
+                            </p:column> 
+                            <p:column headerText="1 Descuento" styleClass="anchoCol">  
+                                #{producto.descuentoProducto}  
+                            </p:column>
+                            <p:column headerText="2 Descuento" styleClass="anchoCol">  
+                                #{producto.descuentoProducto2}  
+                            </p:column>
+                            <p:column headerText="Neto" styleClass="anchoCol">  
+                                #{producto.netoF}  
+                            </p:column>
+                            <p:column headerText="Subtotal" styleClass="anchoCol">  
+                                #{producto.subtotalF}  
+                            </p:column>
+                            <p:column headerText="IVA" styleClass="anchoCol">  
+                                #{producto.ivaF}  
+                            </p:column>
+                            <p:column headerText="Total" styleClass="anchoCol">  
+                                #{producto.totalF}  
+                            </p:column>
+
+                        </p:dataTable>
+                    </p:dialog>
 
                 </h:form>
             </div>

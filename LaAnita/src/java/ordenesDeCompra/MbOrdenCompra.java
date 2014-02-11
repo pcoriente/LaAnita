@@ -5,8 +5,6 @@ import cedis.dominio.Cedis;
 import contactos.dominio.Contacto;
 import cotizaciones.MbCotizaciones;
 import empresas.MbEmpresas;
-import empresas.MbMiniEmpresas;
-import empresas.dao.DAOEmpresas;
 import empresas.dominio.Empresa;
 import java.io.File;
 import javax.inject.Named;
@@ -15,7 +13,6 @@ import java.io.Serializable;
 import java.sql.SQLException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.Properties;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -37,6 +34,7 @@ import javax.mail.internet.MimeBodyPart;
 import javax.mail.internet.MimeMessage;
 import javax.mail.internet.MimeMultipart;
 import javax.naming.NamingException;
+import monedas.MbMonedas;
 import net.sf.jasperreports.engine.JRException;
 import ordenDeCompra.Report.OrdenCompraReporte;
 import ordenesDeCompra.Reporte.Reportes;
@@ -93,21 +91,16 @@ public class MbOrdenCompra implements Serializable {
     private Cedis cedis = new Cedis();
     @ManagedProperty(value = "#{mbMiniCedis}")
     private MbMiniCedis mbCedis;
-//    @ManagedProperty(value = "#{mbMiniEmpresas}")
-//    private MbMiniEmpresas mbEmpresas;
     @ManagedProperty(value = "#{mbEmpresas}")
     private MbEmpresas mbEmpresas;
     @ManagedProperty(value = "#{mbMiniProveedor}")
     private MbMiniProveedor mbProveedores;
     private Proveedor provee;
-    private Date fechaEmision;
-    private Date fechaEntrega;
-    private String fechaInicial;
-    private String fechaFinal;
     //---------------------DIRECTAS
     private OrdenCompraEncabezado ordenCompraEncabezadoDirecta;
-    private OrdenCompraDetalle ordenCompraDetalleDirecta;
     private Empresa empre;
+    @ManagedProperty(value = "#{mbMonedas}")
+    private MbMonedas mbMonedas;
 
     public MbOrdenCompra() throws NamingException {
         this.ordenCompraEncabezado = new OrdenCompraEncabezado();
@@ -122,13 +115,9 @@ public class MbOrdenCompra implements Serializable {
         this.empaque = new Empaque();
         this.mbProveedores = new MbMiniProveedor();
         this.mbEmpresas = new MbEmpresas();
-//        this.mbCedis = new MbMiniCedis();
-//        this.almacen = new Almacen();
         this.provee = new Proveedor();
-//        this.ced = new Cedis();
         //-------DIRECTAS
-        this.ordenCompraEncabezadoDirecta = new OrdenCompraEncabezado();
-        this.ordenCompraDetalleDirecta = new OrdenCompraDetalle();
+        this.mbMonedas = new MbMonedas();
 
     }
 
@@ -141,7 +130,7 @@ public class MbOrdenCompra implements Serializable {
             listaOrdenesEncabezado.add(d);
         }
     }
-    
+
     public void cargaOrdenesEncabezado(int status) throws NamingException, SQLException {
         this.listaOrdenesEncabezado = new ArrayList<OrdenCompraEncabezado>();
         DAOOrdenDeCompra daoOC = new DAOOrdenDeCompra();
@@ -221,7 +210,9 @@ public class MbOrdenCompra implements Serializable {
 
         try {
             int idOC = ordenElegida.getIdOrdenCompra();
+            
             DAOOrdenDeCompra daoOC = new DAOOrdenDeCompra();
+         
             ArrayList<OrdenCompraDetalle> lista = daoOC.consultaOrdenCompra(idOC);
             for (OrdenCompraDetalle d : lista) {
                 listaOrdenDetalle.add(d);
@@ -325,6 +316,7 @@ public class MbOrdenCompra implements Serializable {
         FacesMessage msg = null;
         try {
             if (estado == 1) {
+//                Ima=this.mbMonedas.getMoneda().getIdMoneda();
                 daoO.procesarOrdenCompra(idOrden);
                 this.setListaOrdenesEncabezado(null);
                 this.cargaOrdenesEncabezado();
@@ -581,9 +573,6 @@ public class MbOrdenCompra implements Serializable {
         if (this.ordenCompraEncabezado.getFechaCreacion() != null && ordenCompraEncabezado.getFechaFinalizacion() != null) {
             if (this.ordenCompraEncabezado.getFechaCreacion().compareTo(ordenCompraEncabezado.getFechaFinalizacion()) <= 0) {
                 ok = true;
-//                System.out.println("datos correctos");
-//                this.ordenCompraEncabezadoDirecta.setFechaCreacion(fechaInicial);
-//                this.ordenCompraEncabezadoDirecta.setFechaEntrega(fechaFinal);
             } else {
                 fMsg.setDetail("La fecha de emision  debe ser menor o igual a la fecha de entrega... ");
             }
@@ -594,7 +583,14 @@ public class MbOrdenCompra implements Serializable {
         if (!ok) {
             FacesContext.getCurrentInstance().addMessage(null, fMsg);
         }
-        System.out.println("Inicial: " + fechaInicial + "Final: " + fechaFinal);
+    }
+
+    public void handleClose() throws NamingException {
+        this.mbEmpresas = new MbEmpresas();
+        this.mbProveedores = new MbMiniProveedor();
+        this.provee = new Proveedor();
+        this.ordenCompraEncabezado = new OrdenCompraEncabezado();
+        this.mbMonedas.getMoneda().setIdMoneda(0);
     }
 
     // GET Y SETS ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -832,13 +828,6 @@ public class MbOrdenCompra implements Serializable {
         return mbCedis;
     }
 
-//    public MbMiniEmpresas getMbEmpresas() {
-//        return mbEmpresas;
-//    }
-//
-//    public void setMbEmpresas(MbMiniEmpresas mbEmpresas) {
-//        this.mbEmpresas = mbEmpresas;
-//    }
     public void setMbCedis(MbMiniCedis mbCedis) {
         this.mbCedis = mbCedis;
     }
@@ -851,38 +840,6 @@ public class MbOrdenCompra implements Serializable {
         this.provee = provee;
     }
 
-    public Date getFechaEmision() {
-        return fechaEmision;
-    }
-
-    public void setFechaEmision(Date fechaEmision) {
-        this.fechaEmision = fechaEmision;
-    }
-
-    public Date getFechaEntrega() {
-        return fechaEntrega;
-    }
-
-    public void setFechaEntrega(Date fechaEntrega) {
-        this.fechaEntrega = fechaEntrega;
-    }
-
-    public String getFechaInicial() {
-        return fechaInicial;
-    }
-
-    public void setFechaInicial(String fechaInicial) {
-        this.fechaInicial = fechaInicial;
-    }
-
-    public String getFechaFinal() {
-        return fechaFinal;
-    }
-
-    public void setFechaFinal(String fechaFinal) {
-        this.fechaFinal = fechaFinal;
-    }
-
     //-----------DIRECTAS
     public OrdenCompraEncabezado getOrdenCompraEncabezadoDirecta() {
         return ordenCompraEncabezadoDirecta;
@@ -890,14 +847,6 @@ public class MbOrdenCompra implements Serializable {
 
     public void setOrdenCompraEncabezadoDirecta(OrdenCompraEncabezado ordenCompraEncabezadoDirecta) {
         this.ordenCompraEncabezadoDirecta = ordenCompraEncabezadoDirecta;
-    }
-
-    public OrdenCompraDetalle getOrdenCompraDetalleDirecta() {
-        return ordenCompraDetalleDirecta;
-    }
-
-    public void setOrdenCompraDetalleDirecta(OrdenCompraDetalle ordenCompraDetalleDirecta) {
-        this.ordenCompraDetalleDirecta = ordenCompraDetalleDirecta;
     }
 
     public MbEmpresas getMbEmpresas() {
@@ -914,5 +863,13 @@ public class MbOrdenCompra implements Serializable {
 
     public void setEmpre(Empresa empre) {
         this.empre = empre;
+    }
+
+    public MbMonedas getMbMonedas() {
+        return mbMonedas;
+    }
+
+    public void setMbMonedas(MbMonedas mbMonedas) {
+        this.mbMonedas = mbMonedas;
     }
 }

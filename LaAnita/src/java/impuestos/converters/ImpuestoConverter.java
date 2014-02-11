@@ -17,7 +17,7 @@ public class ImpuestoConverter implements Converter{
         try {
             int idImpuesto=Integer.parseInt(value);
             if(idImpuesto==0) {
-                impuesto=new Impuesto(0, "", false, 0, false);
+                impuesto=new Impuesto(0, "", false, 0, false, false);
             } else {
                 DAOImpuestos dao = new DAOImpuestos();
                 impuesto=dao.obtenerImpuesto(idImpuesto);
