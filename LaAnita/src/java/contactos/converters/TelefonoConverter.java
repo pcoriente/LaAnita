@@ -23,17 +23,17 @@ public class TelefonoConverter implements Converter {
         FacesMessage fMsg = new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error: ", "");
         Telefono telefono = null;
         try {
-            int idTelefono=Integer.parseInt(value);
-            if(idTelefono==0) {
-                telefono=new Telefono();
+            int idTelefono = Integer.parseInt(value);
+            if (idTelefono == 0) {
+                telefono = new Telefono();
             } else {
-                DAOTelefonos dao=new DAOTelefonos();
+                DAOTelefonos dao = new DAOTelefonos();
                 telefono = dao.obtenerTelefono(idTelefono);
             }
         } catch (NamingException ex) {
             fMsg.setDetail(ex.getMessage());
             throw new ConverterException(fMsg);
-        }  catch (SQLException ex) {
+        } catch (SQLException ex) {
             fMsg.setDetail(ex.getErrorCode() + " " + ex.getMessage());
             throw new ConverterException(fMsg);
         }
@@ -42,9 +42,15 @@ public class TelefonoConverter implements Converter {
 
     @Override
     public String getAsString(FacesContext context, UIComponent component, Object value) {
-        Telefono t = (Telefono) value;
-        String val = Integer.toString(t.getIdTelefono());
+        String val = "";
+        try {
+            Telefono t = (Telefono) value;
+            if (t != null) {
+                val = Integer.toString(t.getIdTelefono());
+            }
+        } catch (Exception e) {
+//            System.err.println(e);
+        }
         return val;
     }
-    
 }

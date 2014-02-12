@@ -25,6 +25,7 @@ public class Entrada {
     private double descuento;
     private double impuesto;
     private double total;
+    private String documento;
 
     public Entrada() {
         this.idEntrada=0;
@@ -41,6 +42,7 @@ public class Entrada {
         this.impuesto=0.00;
         this.total=0.00;
         this.idUsuario=0;
+        this.documento="";
     }
 
     public int getIdEmpresa() {
@@ -177,5 +179,13 @@ public class Entrada {
 
     public void setTipoCambio(double tipoCambio) {
         this.tipoCambio = tipoCambio;
+    }
+
+    public String getDocumento() {
+        return documento;
+    }
+
+    public void setDocumento(String documento) {
+        this.documento = documento;
     }
 }

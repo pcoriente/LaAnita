@@ -7,6 +7,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.GregorianCalendar;
 import java.util.Locale;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -54,8 +55,10 @@ public class Utilerias {
     }
 
     public static Date addDays(Date date, int days) {
-        Calendar cal = Calendar.getInstance();
-        cal.setTime(date);
+        //Calendar cal = Calendar.getInstance();
+        Calendar cal = new GregorianCalendar();
+        //cal.setTime(date);
+        cal.setTimeInMillis(date.getTime());
         cal.add(Calendar.DATE, days); //minus number would decrement the days
         return cal.getTime();
     }

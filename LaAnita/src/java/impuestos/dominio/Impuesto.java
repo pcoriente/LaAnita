@@ -10,13 +10,15 @@ public class Impuesto implements Serializable {
 
     private int idImpuesto;
     private String impuesto;
+    private boolean acumulable;
     private boolean aplicable;
     private int modo; // 1. Aplica % sobre la base; 2. Aplica importe por pieza
     private boolean acreditable;
 
-    public Impuesto(int idImpuesto, String impuesto, boolean aplicable, int modo, boolean acreditable) {
+    public Impuesto(int idImpuesto, String impuesto, boolean aplicable, int modo, boolean acreditable, boolean acumulable) {
         this.idImpuesto = idImpuesto;
         this.impuesto = impuesto;
+        this.acumulable=acumulable;
         this.aplicable = aplicable;
         this.modo = modo;
         this.acreditable = acreditable;
@@ -103,5 +105,13 @@ public class Impuesto implements Serializable {
 
     public void setAcreditable(boolean acreditable) {
         this.acreditable = acreditable;
+    }
+
+    public boolean isAcumulable() {
+        return acumulable;
+    }
+
+    public void setAcumulable(boolean acumulable) {
+        this.acumulable = acumulable;
     }
 }

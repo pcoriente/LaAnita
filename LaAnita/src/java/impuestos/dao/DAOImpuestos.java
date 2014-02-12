@@ -49,7 +49,7 @@ public class DAOImpuestos {
         try {
             st.executeUpdate("UPDATE impuestos "
                     + "SET impuesto='"+impuesto.getImpuesto()+"', aplicable="+(impuesto.isAplicable()?1:0)+", "
-                    + "     modo="+impuesto.getModo()+", acreditable="+(impuesto.isAcreditable()?1:0)+" "
+                    + "     modo="+impuesto.getModo()+", acreditable="+(impuesto.isAcreditable()?1:0)+", acumulable="+(impuesto.isAcumulable()?1:0)+" "
                     + "WHERE idImpuesto="+impuesto.getIdImpuesto());
         } finally {
             cn.close();
@@ -62,8 +62,8 @@ public class DAOImpuestos {
         Statement st = cn.createStatement();
         try {
             st.executeUpdate("begin Transaction");
-            st.executeUpdate("INSERT INTO impuestos (impuesto, aplicable, modo, acreditable) "
-                    + "VALUES ('" + impuesto.getImpuesto() + "', "+(impuesto.isAplicable()?1:0)+", "+impuesto.getModo()+", "+(impuesto.isAcreditable()?1:0)+")");
+            st.executeUpdate("INSERT INTO impuestos (impuesto, aplicable, modo, acreditable, acumulable) "
+                    + "VALUES ('" + impuesto.getImpuesto() + "', "+(impuesto.isAplicable()?1:0)+", "+impuesto.getModo()+", "+(impuesto.isAcreditable()?1:0)+", "+(impuesto.isAcumulable()?1:0)+")");
             ResultSet rs=st.executeQuery("SELECT MAX(idImpuesto) as idImpuesto FROM impuestos");
             if(rs.next()) {
                 idImpuesto=rs.getInt("idImpuesto");
@@ -86,7 +86,7 @@ public class DAOImpuestos {
         try {
             ResultSet rs = st.executeQuery(strSQL);
             if (rs.next()) {
-                tipo = new Impuesto(rs.getInt("idImpuesto"), rs.getString("impuesto"), rs.getBoolean("aplicable"), rs.getInt("modo"), rs.getBoolean("acreditable"));
+                tipo = new Impuesto(rs.getInt("idImpuesto"), rs.getString("impuesto"), rs.getBoolean("aplicable"), rs.getInt("modo"), rs.getBoolean("acreditable"), rs.getBoolean("acumulable"));
             }
         } finally {
             cn.close();
@@ -102,7 +102,7 @@ public class DAOImpuestos {
         try {
             ResultSet rs = st.executeQuery(strSQL);
             while (rs.next()) {
-                impuestos.add(new Impuesto(rs.getInt("idImpuesto"), rs.getString("impuesto"), rs.getBoolean("aplicable"), rs.getInt("modo"), rs.getBoolean("acreditable")));
+                impuestos.add(new Impuesto(rs.getInt("idImpuesto"), rs.getString("impuesto"), rs.getBoolean("aplicable"), rs.getInt("modo"), rs.getBoolean("acreditable"), rs.getBoolean("acumulable")));
             }
         } finally {
             cn.close();

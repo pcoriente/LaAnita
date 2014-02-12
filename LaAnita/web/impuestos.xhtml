@@ -31,7 +31,7 @@
                                 </p:column>
                                 <p:column >
                                     <p:commandButton id="btnZona" value="Mtto.Zonas" actionListener="#{mbDetalle.mttoZonas()}" 
-                                                     process="@this selZona" update="mttoZonas" onclick="mttoZonasDlg.show()" />
+                                                     process="@this selZona" update="mttoZonas" onclick="mttoZonasDlg.show();" />
                                 </p:column>
                             </p:row>
                             <p:row >
@@ -48,10 +48,10 @@
                                     </p:selectOneMenu>
                                 </p:column>
                                 <p:column >
-                                    <p:commandButton id="btnGrupo" value="Mtto.Grupos" actionListener="#{mbDetalle.mttoGrupos()}" 
-                                                     process="@this selGpoImpuesto" update="mttoGrupos" onclick="mttoGruposDlg.show()" />
                                     <p:commandButton id="btnImpuesto" value="Mtto.Impuestos" actionListener="#{mbDetalle.mbImpuestos.mantenimientoImpuestos()}" 
-                                                     process="@this" update="mttoImpuestos" onclick="mttoImpuestosDlg.show()" />
+                                                     process="@this" update="mttoImpuestos" onclick="mttoImpuestosDlg.show();" />
+                                    <p:commandButton id="btnGrupo" value="Mtto.Grupos" actionListener="#{mbDetalle.mttoGrupos()}" 
+                                                     process="@this selGpoImpuesto" update="mttoGrupos" onclick="mttoGruposDlg.show();" />
                                 </p:column>
                             </p:row >
                             <p:row >
@@ -275,7 +275,7 @@
                                 </p:column>
                                 <p:column >
                                     <p:selectBooleanCheckbox id="mttoAplicable" value="#{mbDetalle.mbImpuestos.impuesto.aplicable}" >
-                                        <p:ajax event="change" update="selModo mttoAcreditable" />
+                                        <p:ajax event="change" update="selModo mttoAcreditable mttoAcumulable" />
                                     </p:selectBooleanCheckbox>
                                 </p:column>
                             </p:row>
@@ -301,19 +301,28 @@
                                                              value="#{mbDetalle.mbImpuestos.impuesto.acreditable}" />
                                 </p:column>
                             </p:row>
+                            <p:row >
+                                <p:column >
+                                    <h:outputLabel for="mttoAcumulable" value="ACUMULABLE :" style="font-weight: bold; color: red; width: 110px;" />
+                                </p:column>
+                                <p:column >
+                                    <p:selectBooleanCheckbox id="mttoAcumulable" disabled="#{(mbDetalle.mbImpuestos.impuesto.aplicable?'false':'true')}" 
+                                                             value="#{mbDetalle.mbImpuestos.impuesto.acumulable}" />
+                                </p:column>
+                            </p:row>
                             <f:facet name="footer" >
                                 <p:row >
                                     <p:column colspan="2" >
                                         <p:commandButton id="btnNuevoImpuesto" value="Nuevo" 
                                                          actionListener="#{mbDetalle.mbImpuestos.nuevo()}" 
-                                                         update=":main:mttoImpuesto :main:mttoAplicable :main:selModo :main:mttoAcreditable" 
+                                                         update=":main:mttoImpuesto :main:mttoAplicable :main:selModo :main:mttoAcreditable :main:mttoAcumulable" 
                                                          process="@this" />
                                         <p:commandButton id="btnGrabarImpuesto" value="Grabar" 
                                                          actionListener="#{mbDetalle.mbImpuestos.grabar()}" update=":main:tablaImpuestos"
                                                          process="@this :main:mttoImpuesto :main:mttoAplicable :main:selModo :main:mttoAcreditable" />
                                         <p:commandButton id="btnEliminaImpuesto" value="Eliminar" 
                                                          actionListener="#{mbDetalle.mbImpuestos.eliminar()}" 
-                                                         update=":main:tablaImpuestos :main:mttoImpuesto :main:mttoAplicable :main:selModo :main:mttoAcreditable" 
+                                                         update=":main:tablaImpuestos :main:mttoImpuesto :main:mttoAplicable :main:selModo :main:mttoAcreditable :main:mttoAcumulable" 
                                                          process="@this :main:tablaImpuestos" />
                                     </p:column>
                                 </p:row>

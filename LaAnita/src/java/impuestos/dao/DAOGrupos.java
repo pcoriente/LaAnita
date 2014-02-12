@@ -47,7 +47,7 @@ public class DAOGrupos {
             st.executeUpdate("DELETE FROM impuestosGruposDetalle WHERE idGrupo="+idGrupo+" AND idImpuesto="+idImpuesto);
             ResultSet rs=st.executeQuery(sqlAgregados(idGrupo));
             while(rs.next()) {
-                impuestos.add(new Impuesto(rs.getInt("idImpuesto"),rs.getString("impuesto"), rs.getBoolean("aplicable"), rs.getInt("modo"), rs.getBoolean("acreditable")));
+                impuestos.add(new Impuesto(rs.getInt("idImpuesto"),rs.getString("impuesto"), rs.getBoolean("aplicable"), rs.getInt("modo"), rs.getBoolean("acreditable"), rs.getBoolean("acumulable")));
             }
             st.executeUpdate("commit Transaction");
         } catch (SQLException ex) {
@@ -76,7 +76,7 @@ public class DAOGrupos {
             st.executeUpdate("INSERT INTO impuestosGruposDetalle (idGrupo, idImpuesto) VALUES ("+idGrupo+", "+idImpuesto+")");
             ResultSet rs=st.executeQuery(sqlAgregados(idGrupo));
             while(rs.next()) {
-                impuestos.add(new Impuesto(rs.getInt("idImpuesto"),rs.getString("impuesto"), rs.getBoolean("aplicable"), rs.getInt("modo"), rs.getBoolean("acreditable")));
+                impuestos.add(new Impuesto(rs.getInt("idImpuesto"),rs.getString("impuesto"), rs.getBoolean("aplicable"), rs.getInt("modo"), rs.getBoolean("acreditable"), rs.getBoolean("acumulable")));
             }
             st.executeUpdate("commit Transaction");
         } catch (SQLException ex) {
@@ -95,7 +95,7 @@ public class DAOGrupos {
         try {
             ResultSet rs=st.executeQuery(sqlAgregados(idGrupo));
             while(rs.next()) {
-                impuestos.add(new Impuesto(rs.getInt("idImpuesto"),rs.getString("impuesto"), rs.getBoolean("aplicable"), rs.getInt("modo"), rs.getBoolean("acreditable")));
+                impuestos.add(new Impuesto(rs.getInt("idImpuesto"),rs.getString("impuesto"), rs.getBoolean("aplicable"), rs.getInt("modo"), rs.getBoolean("acreditable"), rs.getBoolean("acumulable")));
             }
         } finally {
             cn.close();
@@ -111,7 +111,7 @@ public class DAOGrupos {
             ResultSet rs=st.executeQuery("SELECT * FROM impuestos "
                     + "WHERE idImpuesto not in (SELECT idImpuesto FROM impuestosGruposDetalle WHERE idGrupo="+idGrupo+")");
             while(rs.next()) {
-                impuestos.add(new Impuesto(rs.getInt("idImpuesto"),rs.getString("impuesto"), rs.getBoolean("aplicable"), rs.getInt("modo"), rs.getBoolean("acreditable")));
+                impuestos.add(new Impuesto(rs.getInt("idImpuesto"),rs.getString("impuesto"), rs.getBoolean("aplicable"), rs.getInt("modo"), rs.getBoolean("acreditable"), rs.getBoolean("acumulable")));
             }
         } finally {
             cn.close();

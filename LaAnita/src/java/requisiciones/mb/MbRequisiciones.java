@@ -16,11 +16,13 @@ import javax.faces.bean.ManagedProperty;
 import javax.faces.context.FacesContext;
 import javax.faces.model.SelectItem;
 import javax.naming.NamingException;
+import monedas.MbMonedas;
 import org.primefaces.event.RowEditEvent;
 import productos.FrmProducto;
 import productos.MbBuscarEmpaques;
 import productos.MbBuscarProd;
 import productos.dao.DAOProductos;
+import productos.dominio.Empaque;
 import productos.dominio.ProdStr;
 import productos.dominio.Producto;
 import proveedores.MbMiniProveedor;
@@ -51,8 +53,12 @@ public class MbRequisiciones implements Serializable {
     private ArrayList<RequisicionProducto> requisicionProductos = new ArrayList<RequisicionProducto>();
     @ManagedProperty(value = "#{mbBuscarProd}")
     private MbBuscarProd mbBuscarProd;
-    @ManagedProperty(value = "#{mbBuscarEmpaques}")
+   @ManagedProperty(value = "#{mbBuscarEmpaques}")
     private MbBuscarEmpaques mbBuscarEmpaques;
+//    @ManagedProperty(value="#{mbBuscarEmpaques}")
+//    private MbBuscarEmpaques mbBuscar;
+//      private ArrayList<Empaque> listaEmpaque = new ArrayList<Empaque>();
+//    private Empaque empaque;
     private Producto producto;
     private ProdStr prodStr;
     private ArrayList<SelectItem> listaMini = new ArrayList<SelectItem>();
@@ -75,6 +81,8 @@ public class MbRequisiciones implements Serializable {
     private String desctoTotalesF;
     @ManagedProperty(value = "#{mbMiniProveedor}")
     private MbMiniProveedor mbMiniProveedor = new MbMiniProveedor();
+    @ManagedProperty(value = "#{mbMonedas}")
+    private MbMonedas mbMonedas = new MbMonedas();
     private ArrayList<CotizacionEncabezado> cotizacionesEncabezado;
     private CotizacionEncabezado cotizacionEncabezado = new CotizacionEncabezado();
     private double subtotalBruto;
@@ -86,7 +94,8 @@ public class MbRequisiciones implements Serializable {
         this.mbUsuarios = new MbUsuarios();
         this.mbBuscarProd = new MbBuscarProd();
         this.mbMiniProveedor = new MbMiniProveedor();
-        this.mbBuscarEmpaques = new MbBuscarEmpaques();
+      //  this.mbBuscarProd = new MbBuscar
+        this.mbMonedas = new MbMonedas();
 
     }
 
@@ -360,6 +369,14 @@ public class MbRequisiciones implements Serializable {
         this.subtotalBruto = subtotalBruto;
     }
 
+//    public MbBuscarEmpaques getMbBuscar() {
+//        return mbBuscar;
+//    }
+//
+//    public void setMbBuscar(MbBuscarEmpaques mbBuscar) {
+//        this.mbBuscar = mbBuscar;
+//    }
+//
     public MbBuscarEmpaques getMbBuscarEmpaques() {
         return mbBuscarEmpaques;
     }
@@ -367,6 +384,8 @@ public class MbRequisiciones implements Serializable {
     public void setMbBuscarEmpaques(MbBuscarEmpaques mbBuscarEmpaques) {
         this.mbBuscarEmpaques = mbBuscarEmpaques;
     }
+
+    
     
     
 
@@ -463,8 +482,7 @@ public class MbRequisiciones implements Serializable {
     }
 
     private RequisicionProducto convertir(TORequisicionProducto to, DAOProductos daoPro) throws SQLException, NamingException {
-        RequisicionProducto rd = null;
-        rd = new RequisicionProducto(daoPro.obtenerProducto(to.getIdProducto()));
+        RequisicionProducto rd = new RequisicionProducto(daoPro.obtenerProducto(to.getIdProducto()));
         rd.setIdRequisicion(to.getIdRequisicion());
         rd.setCantidad(to.getCantidad());
         rd.setCantidadAutorizada(to.getCantidadAutorizada());
@@ -484,7 +502,7 @@ public class MbRequisiciones implements Serializable {
         re.setUsuario(daoU.obtenerUsuarioConverter(to.getIdSolicito()));
         int state = to.getStatus();
         re.setStatus(state);
-        String estado = null;
+        String estado;
 
 
         switch (state) {
@@ -521,6 +539,7 @@ public class MbRequisiciones implements Serializable {
 
     public String salirCotizacion() throws NamingException {
         this.limpiaRequisicion();
+        
         String navega = "menuCotizaciones.xhtml";
         return navega;
     }
@@ -563,13 +582,18 @@ public class MbRequisiciones implements Serializable {
         }
     }
 
+//    public void buscar() {
+//        this.mbBuscarProd.buscarLista();
+//    }
+//    
     public void buscar() {
         System.err.println(mbBuscarProd.getParte());
         this.mbBuscarProd.buscarLista();
     }
 
+
     public void aprobarRequisicion(int idReq, int estado) throws SQLException {
-        DAORequisiciones daoReq = null;
+        DAORequisiciones daoReq;
         FacesMessage msg = null;
         try {
             int longitud = requisicionProductos.size();
@@ -654,7 +678,7 @@ public class MbRequisiciones implements Serializable {
 
     public void modificarRequisicionStatus(int idReq, int status, int cant) throws SQLException {
         DAORequisiciones daoR;
-        FacesMessage msg = null;
+        FacesMessage msg;
         try {
             daoR = new DAORequisiciones();
             daoR.modificarAprobacion(idReq, status, cant);
@@ -672,23 +696,28 @@ public class MbRequisiciones implements Serializable {
 
     //COTIZACIONES
     public void guardaCotizacion(int idReq, double dc, double dpp) throws SQLException {
-        DAORequisiciones daoReq = null;
-        FacesMessage msg = null;
+        DAORequisiciones daoReq;
+        FacesMessage msg;
         try {
 
             int idProv = this.mbMiniProveedor.getMiniProveedor().getIdProveedor();
-            int idMon = this.mbMiniProveedor.getMoneda().getIdMoneda();
+            int idMon = this.mbMonedas.getMoneda().getIdMoneda();
 
             daoReq = new DAORequisiciones();
             if (idProv != 0 && idMon != 0) {
                 if (this.total != 0) {
-                    daoReq.grabarCotizacion(idReq, idProv, idMon, dc, dpp, this.cotizacionProductos);
+                    this.cotizacionEncabezado.setIdRequisicion(idReq);
+                    this.cotizacionEncabezado.setIdProveedor(idProv);
+                    this.cotizacionEncabezado.setDescuentoCotizacion(dc);
+                    this.cotizacionEncabezado.setDescuentoProntoPago(dpp);
+                    this.cotizacionEncabezado.setIdMoneda(idMon);
+                    daoReq.grabarCotizacion(this.cotizacionEncabezado, this.cotizacionProductos);
                     msg = new FacesMessage(FacesMessage.SEVERITY_INFO, "Aviso:", "La cotización ha sido registrada..");
                     numCotizacion += 1;
                     this.setNumCotizacion(numCotizacion);
                     this.limpiaCotizacion();
                     mbMiniProveedor.getMiniProveedor().setIdProveedor(0);
-                    mbMiniProveedor.getMoneda().setIdMoneda(0);
+                    mbMonedas.getMoneda().setIdMoneda(0);
                 } else {
                     msg = new FacesMessage(FacesMessage.SEVERITY_INFO, "Aviso:", "Capture al menos la cotización para un producto..");
                 }
@@ -705,15 +734,28 @@ public class MbRequisiciones implements Serializable {
     }
 
     public void limpiaCotizacion() throws NamingException {
-        int longitud = this.cotizacionProductos.size();
-        for (int x = 0; x < longitud; x++) {
-            cotizacionProductos.get(x).setCantidadCotizada(0);
-            cotizacionProductos.get(x).setCostoCotizado(0);
-            cotizacionProductos.get(x).setDescuentoProducto(0);
-            cotizacionProductos.get(x).setDescuentoProducto2(0);
-            cotizacionProductos.get(x).setNeto(0);
-            cotizacionProductos.get(x).setSubtotal(0);
+        
+        
+        //ACTUALIZACION DE CODIGO
+        for(CotizacionDetalle d: cotizacionProductos){
+            d.setCantidadCotizada(0);
+            d.setCostoCotizado(0);
+            d.setDescuentoProducto(0);
+            d.setDescuentoProducto2(0);
+            d.setNeto(0);
+            d.setSubtotal(0);
+        
         }
+        
+//        int longitud = this.cotizacionProductos.size();
+//        for (int x = 0; x < longitud; x++) {
+//            cotizacionProductos.get(x).setCantidadCotizada(0);
+//            cotizacionProductos.get(x).setCostoCotizado(0);
+//            cotizacionProductos.get(x).setDescuentoProducto(0);
+//            cotizacionProductos.get(x).setDescuentoProducto2(0);
+//            cotizacionProductos.get(x).setNeto(0);
+//            cotizacionProductos.get(x).setSubtotal(0);
+//        }
 
         this.subtotalGeneral = 0;
 
@@ -800,9 +842,9 @@ public class MbRequisiciones implements Serializable {
     public void calculoDescuentoGeneral() {
         descuentoGeneralAplicado = 0;
         double sumaCostoCotizado = 0;
-        double descuentoC = 0;
-        double descuentoPP = 0;
-        double descuentoGA = 0;
+        double descuentoC;
+        double descuentoPP;
+        double descuentoGA;
         for (CotizacionDetalle e : cotizacionProductos) {
             sumaCostoCotizado += (e.getCantidadCotizada() * e.getNeto());
         }
@@ -844,13 +886,22 @@ public class MbRequisiciones implements Serializable {
     }
 
     public void limpiaDetalle() throws NamingException {
-        int longitud = this.cotizacionProductos.size();
-        for (int x = 0; x < longitud; x++) {
-            cotizacionProductos.get(x).setCostoCotizado(0);
-            cotizacionProductos.get(x).setDescuentoProducto(0);
-            cotizacionProductos.get(x).setNeto(0);
-            cotizacionProductos.get(x).setSubtotal(0);
+        
+        //ACTUALIZACION CODIGO
+        for(CotizacionDetalle d: cotizacionProductos ){
+            d.setCostoCotizado(0);
+            d.setDescuentoProducto(0);
+            d.setNeto(0);
+            d.setSubtotal(0);
         }
+        
+//        int longitud = this.cotizacionProductos.size();
+//        for (int x = 0; x < longitud; x++) {
+//            cotizacionProductos.get(x).setCostoCotizado(0);
+//            cotizacionProductos.get(x).setDescuentoProducto(0);
+//            cotizacionProductos.get(x).setNeto(0);
+//            cotizacionProductos.get(x).setSubtotal(0);
+//        }
 
         this.subtotalGeneral = 0;
 
@@ -861,13 +912,43 @@ public class MbRequisiciones implements Serializable {
         this.impuesto = 0;
 
         this.total = 0;
-        ArrayList<SelectItem> listaMonedas = new ArrayList<SelectItem>();
-
-        this.mbMiniProveedor.setListaMonedas(listaMonedas);
+//        ArrayList<SelectItem> listaMonedas = new ArrayList<SelectItem>();
+//
+//        this.mbMonedas.setListaMonedas(listaMonedas);
     }
 
     public void calcularSubtotalBruto() {
         subtotalBruto = this.subtotalGeneral - this.descuentoGeneralAplicado;
 
     }
+    public void irMenuCotizaciones(){
+    
+        
+    }
+
+    public MbMonedas getMbMonedas() {
+        return mbMonedas;
+    }
+
+    public void setMbMonedas(MbMonedas mbMonedas) {
+        this.mbMonedas = mbMonedas;
+    }
+
+//    public ArrayList<Empaque> getListaEmpaque() {
+//        return listaEmpaque;
+//    }
+//
+//    public void setListaEmpaque(ArrayList<Empaque> listaEmpaque) {
+//        this.listaEmpaque = listaEmpaque;
+//    }
+//
+//    public Empaque getEmpaque() {
+//        return empaque;
+//    }
+//
+//    public void setEmpaque(Empaque empaque) {
+//        this.empaque = empaque;
+//    }
+    
+    
 }

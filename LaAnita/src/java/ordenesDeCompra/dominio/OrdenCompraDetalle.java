@@ -14,6 +14,7 @@ public class OrdenCompraDetalle implements Serializable {
     private String sku;
     private double cantOrdenada;
     private double cantidadSolicitada;
+    private double cantRecibida;
     private double costoOrdenado;
     private double descuentoProducto;
     private double descuentoProducto2;
@@ -43,6 +44,7 @@ public class OrdenCompraDetalle implements Serializable {
         this.sku = "";
         this.cantOrdenada = 0.00;
         this.cantidadSolicitada=0.00;
+        this.cantRecibida=0;
         this.costoOrdenado = 0.00;
         this.descuentoProducto = 0.00;
         this.descuentoProducto2 = 0.00;
@@ -239,6 +241,14 @@ public class OrdenCompraDetalle implements Serializable {
         this.nombreProducto = nombreProducto;
     }
 
+    public double getCantRecibida() {
+        return cantRecibida;
+    }
+
+    public void setCantRecibida(double cantRecibida) {
+        this.cantRecibida = cantRecibida;
+    }
+
     public Empaque getEmpaque() {
         return empaque;
     }
@@ -246,7 +256,4 @@ public class OrdenCompraDetalle implements Serializable {
     public void setEmpaque(Empaque empaque) {
         this.empaque = empaque;
     }
-    
-    
-    
 }
