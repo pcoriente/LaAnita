@@ -12,6 +12,7 @@ public class ImpuestosProducto {
     private int modo;
     private boolean acreditable;
     private double importe;
+    private boolean acumulable;
     
     public ImpuestosProducto() {
         this.idImpuesto=0;
@@ -20,6 +21,7 @@ public class ImpuestosProducto {
         this.aplicable=true;
         this.modo=0;
         this.acreditable=true;
+        this.acumulable=false;
         this.importe=0.00;
     } 
 
@@ -77,5 +79,13 @@ public class ImpuestosProducto {
 
     public void setImporte(double importe) {
         this.importe = importe;
+    }
+
+    public boolean isAcumulable() {
+        return acumulable;
+    }
+
+    public void setAcumulable(boolean acumulable) {
+        this.acumulable = acumulable;
     }
 }

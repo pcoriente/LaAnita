@@ -12,7 +12,8 @@ public class Factura {
    private String numero;
    private Date fecha;
    private int idProveedor;
-   private boolean cerrada;
+   private boolean cerradaOficina;
+   private boolean cerradaAlmacen;
 
     public Factura() {
         this.idFactura=0;
@@ -20,7 +21,8 @@ public class Factura {
         this.numero="";
         this.fecha=new Date();
         this.idProveedor=0;
-        this.cerrada=false;
+        this.cerradaOficina=false;
+        this.cerradaAlmacen=false;
     }
     
     public Factura(int idProveedor) {
@@ -29,7 +31,8 @@ public class Factura {
         this.numero="";
         this.fecha=new Date();
         this.idProveedor=idProveedor;
-        this.cerrada=false;
+        this.cerradaOficina=false;
+        this.cerradaAlmacen=false;
     }
 
     @Override
@@ -99,11 +102,19 @@ public class Factura {
         this.idProveedor = idProveedor;
     }
 
-    public boolean isCerrada() {
-        return cerrada;
+    public boolean isCerradaOficina() {
+        return cerradaOficina;
     }
 
-    public void setCerrada(boolean cerrada) {
-        this.cerrada = cerrada;
+    public void setCerradaOficina(boolean cerradaOficina) {
+        this.cerradaOficina = cerradaOficina;
+    }
+
+    public boolean isCerradaAlmacen() {
+        return cerradaAlmacen;
+    }
+
+    public void setCerradaAlmacen(boolean cerradaAlmacen) {
+        this.cerradaAlmacen = cerradaAlmacen;
     }
 }

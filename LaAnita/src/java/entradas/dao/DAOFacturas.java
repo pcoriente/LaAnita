@@ -39,14 +39,29 @@ public class DAOFacturas {
         }
     }
     
-    public boolean obtenerEstado(int idFactura) throws SQLException {
+    public boolean obtenerEstadoAlmacen(int idFactura) throws SQLException {
         boolean cerrada=false;   // 0.-Abierta; 1.-Cerrada
         Connection cn=this.ds.getConnection();
         Statement st=cn.createStatement();
         try {
-            ResultSet rs=st.executeQuery("SELECT cerrada FROM facturas WHERE idFactura="+idFactura);
+            ResultSet rs=st.executeQuery("SELECT cerradaAlmacen FROM facturas WHERE idFactura="+idFactura);
             if(rs.next()) {
-                cerrada=rs.getBoolean("cerrada");
+                cerrada=rs.getBoolean("cerradaAlmacen");
+            }
+        } finally {
+            cn.close();
+        }
+        return cerrada;
+    }
+    
+    public boolean obtenerEstadoOficina(int idFactura) throws SQLException {
+        boolean cerrada=false;   // 0.-Abierta; 1.-Cerrada
+        Connection cn=this.ds.getConnection();
+        Statement st=cn.createStatement();
+        try {
+            ResultSet rs=st.executeQuery("SELECT cerradaOficina FROM facturas WHERE idFactura="+idFactura);
+            if(rs.next()) {
+                cerrada=rs.getBoolean("cerradaOficina");
             }
         } finally {
             cn.close();
@@ -75,8 +90,8 @@ public class DAOFacturas {
         try {
             st.executeUpdate("BEGIN TRANSACTION");
             Date fechaFactura=new java.sql.Date(factura.getFecha().getTime());
-            st.executeUpdate("INSERT INTO facturas (idProveedor, serie, numero, fecha, idUsuario, cerrada) "
-                            + "VALUES ("+factura.getIdProveedor()+", '"+factura.getSerie()+"', '"+factura.getNumero()+"', '"+fechaFactura.toString()+"', "+this.idUsuario+", 0)");
+            st.executeUpdate("INSERT INTO facturas (idProveedor, serie, numero, fecha, idUsuario, cerradaOficina, cerradaAlmacen) "
+                            + "VALUES ("+factura.getIdProveedor()+", '"+factura.getSerie()+"', '"+factura.getNumero()+"', '"+fechaFactura.toString()+"', "+this.idUsuario+", 0, 0)");
             ResultSet rs=st.executeQuery("SELECT @@IDENTITY AS idFactura");
             if(rs.next()) {
                 idFactura=rs.getInt("idFactura");
@@ -163,7 +178,8 @@ public class DAOFacturas {
         f.setSerie(rs.getString("serie"));
         f.setNumero(rs.getString("numero"));
         f.setFecha(new java.util.Date(rs.getDate("fecha").getTime()));
-        f.setCerrada(rs.getBoolean("cerrada"));
+        f.setCerradaOficina(rs.getBoolean("cerradaOficina"));
+        f.setCerradaAlmacen(rs.getBoolean("cerradaAlmacen"));
         return f;
     }
 }

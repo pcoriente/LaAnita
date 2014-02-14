@@ -13,6 +13,7 @@ public class EntradaProducto {
     private double costoOrdenado;
     private double cantOrdenada;
     private double cantFacturada;
+    private double cantSinCargo;
     private double cantRecibida;
     private double precio;
     private double desctoProducto1;
@@ -28,6 +29,7 @@ public class EntradaProducto {
         this.costoOrdenado=0.00;
         this.cantOrdenada=0.00;
         this.cantFacturada=0.00;
+        this.cantSinCargo=0.00;
         this.cantRecibida=0.00;
         this.precio=0.00;
         this.desctoProducto1=0.00;
@@ -167,5 +169,13 @@ public class EntradaProducto {
 
     public void setCostoOrdenado(double costoOrdenado) {
         this.costoOrdenado = costoOrdenado;
+    }
+
+    public double getCantSinCargo() {
+        return cantSinCargo;
+    }
+
+    public void setCantSinCargo(double cantSinCargo) {
+        this.cantSinCargo = cantSinCargo;
     }
 }
