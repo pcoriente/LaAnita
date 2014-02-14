@@ -367,7 +367,6 @@ public class MbDireccion implements Serializable {
         if (this.direccion.getPais().getIdPais() != 1) {
             return;
         }
-
         String codigoPostal = this.direccion.getCodigoPostal();
         if (!codigoPostal.isEmpty()) {
             try {

@@ -6,6 +6,7 @@ package agentes.dao;
 
 import agentes.dominio.Agentes;
 import contactos.dominio.Telefono;
+import direccion.dominio.Asentamiento;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -75,7 +76,7 @@ public class DaoAgentes {
             agentes.getMiniCedis().setIdCedis(rs.getInt("idCedis"));
             agentes.getContribuyente().setContribuyente(rs.getString("contribuyente"));
             agentes.getContribuyente().setIdRfc(rs.getInt("idRfc"));
-            agentes.getContribuyente().getDireccion().setIdDireccion(rs.getInt("idDireccion"));
+            agentes.getContribuyente().getDireccion().setIdDireccion(rs.getInt(9));
             agentes.getContribuyente().getDireccion().setCalle(rs.getString("calle"));
             agentes.getContribuyente().getDireccion().setNumeroExterior(rs.getString("numeroExterior"));
             agentes.getContribuyente().getDireccion().setNumeroInterior(rs.getString("numeroInterior"));
@@ -194,7 +195,7 @@ public class DaoAgentes {
     public void actualizarAgente(Agentes agente) throws SQLException {
         Connection cn = this.ds.getConnection();
         Statement st = cn.createStatement();
-        String sql = "UPDATE agentes set agente='"+agente.getAgente()+"', idcedis ='"+agente.getMiniCedis().getIdCedis()+"' WHERE idAgente="+agente.getIdAgente();
+        String sql = "UPDATE agentes set agente='" + agente.getAgente() + "', idcedis ='" + agente.getMiniCedis().getIdCedis() + "' WHERE idAgente=" + agente.getIdAgente();
         try {
             st.executeUpdate(sql);
         } finally {
@@ -203,4 +204,13 @@ public class DaoAgentes {
         }
 
     }
+
+//    private Asentamiento construirAsentamientoAgente(ResultSet rs) throws SQLException {
+//        Asentamiento asentamiento = new Asentamiento();
+//        while(rs.next()){
+//        asentamiento.get
+//        }
+//
+//        return asentamiento;
+//    }
 }
