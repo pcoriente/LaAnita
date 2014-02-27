@@ -1,0 +1,154 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:f="http://java.sun.com/jsf/core">
+    <h:head>
+        <h:outputStylesheet library="css" name="main.css"/>
+        <title>Relación de Clientes Grupos</title>
+    </h:head>
+    <body>
+        <div id="wrapper" align="center">
+            <ui:include src="wrapper.xhtml" />
+            <div id="content" align="center"  >
+                <br></br>
+                <h:form id="form" >
+                    <p:growl id="growl" showDetail="true"/>  
+                    <div align="right">
+                        <p:commandButton value="Nuevo"
+                                         oncomplete="dlgClientesGrupos.show();"
+                                         actionListener="#{mbMenuClientesGrupos.cargaContactos()}"
+                                         process="@this"
+                                         update="form"/>
+                        <p:commandButton id="actualizarContacto"
+                                         value="Actualizar" 
+                                         actionListener="#{mbMenuClientesGrupos.actualizar()}"
+                                         process="@this cmbContactos"
+                                         update="form"
+                                         disabled="#{mbMenuClientesGrupos.clienteGrupoSeleccionado.idGrupoCte==0}"
+                                         oncomplete="dlgClientesGrupos.show();"
+                                         />
+                        <p:commandButton value="Salir"/>
+                    </div>
+                    <p:panel header="Relacion de Clientes" 
+                             styleClass="quitaCuadro">
+                        <p:dataTable
+                            id="tablaClientesGrupos"
+                            scrollable="true"
+                            scrollHeight="320"
+                            scrollWidth="600"
+                            value="#{mbMenuClientesGrupos.lstClientesGrupos}"
+                            var="lstClienteGrupos"
+                            selection="#{mbMenuClientesGrupos.clienteGrupoSeleccionado}"
+                            selectionMode="single"
+                            rowKey="#{lstClienteGrupos}"
+                            emptyMessage="No hay clientes Grupos">
+                            <p:ajax event="rowSelect"
+                                    process="@this"
+                                    listener="#{mbMenuClientesGrupos.cargarDatos()}"
+                                    update=":form:txtClienteGrupo :form:actualizarContacto"/>
+                            <p:column headerText="Grupo" width="140" >
+                                #{lstClienteGrupos.idGrupoCte}
+                            </p:column>
+                            <p:column headerText="Nombre Comercial" width="400">
+                                #{lstClienteGrupos.grupoCte}
+                            </p:column>
+                        </p:dataTable>
+                    </p:panel>
+                    <p:dialog widgetVar="dlgClientesGrupos" 
+                              header="Clientes grupos"
+                              hideEffect="explode"
+                              showEffect="explode">
+                        <h:panelGrid columns="3" 
+                                     id="renderdd">
+                            <h:outputLabel  value="Grupo" style="color: black"/>
+                            <p:inputText value="#{mbMenuClientesGrupos.clientesGrupos.grupoCte}" 
+                                         id="txtClienteGrupo"/>
+                            <h:outputLabel/>
+                            <h:outputLabel id="lblContactos"
+                                           value="Contactos" style="color: black"
+                                           rendered="#{mbMenuClientesGrupos.actualizarx}"/>
+                            <p:selectOneMenu style="width: 155px" 
+                                             id="cmbContactos"
+                                             rendered="#{mbMenuClientesGrupos.actualizarx}"
+                                             value="#{mbMenuClientesGrupos.mbContactos.contacto}">
+                                <f:selectItems value="#{mbMenuClientesGrupos.mbContactos.listaContactos}"/>
+                                <f:converter converterId="converters.Contacto"/>
+                                <p:ajax process="@this"
+                                        event="change" 
+                                        listener="#{mbMenuClientesGrupos.cargarTelefonos()}"
+                                        update=":form:cmbTelefonos growl"
+                                        />
+                            </p:selectOneMenu>
+                            <p:commandButton value="Nuevo"
+                                             process="@this txtClienteGrupo"
+                                             rendered="#{mbMenuClientesGrupos.actualizarx}"
+                                             oncomplete="dlgContactos.show();"/>
+                            <h:outputLabel id="lblTelefonos"
+                                           value="Telefonos" style="color: black"
+                                           rendered="#{mbMenuClientesGrupos.actualizarx}"/>
+                            <p:selectOneMenu style="width: 155px" 
+                                             id="cmbTelefonos"
+                                             rendered="#{mbMenuClientesGrupos.actualizarx}">
+                                <f:selectItems value="#{mbMenuClientesGrupos.mbContactos.mbTelefonos.listaTelefonos}"/>
+                            </p:selectOneMenu>
+                            <p:commandButton value="Nuevo Telefono"
+                                             rendered="#{mbMenuClientesGrupos.actualizarx}"
+                                             />
+                        </h:panelGrid>
+                        <div style="margin: auto">
+                            <p:commandButton value="Guardar" 
+                                             actionListener="#{mbMenuClientesGrupos.guardar()}"
+                                             process="@this txtClienteGrupo"
+                                             oncomplete="nuevoClienteGrupo(xhr, status, args);"
+                                             update="growl tablaClientesGrupos"/>
+                            <p:commandButton value="Cancelar"/>
+                        </div>
+                    </p:dialog>
+                    <p:dialog widgetVar="dlgContactos">
+                        <h:panelGrid columns="2">
+                            <h:outputLabel value="Contacto :" style="color: black"/>
+                            <p:inputText id="txtContacto" value="#{mbMenuClientesGrupos.mbContactos.contacto.contacto}"/>
+                            <h:outputLabel value="puesto :" style="color: black"/>
+                            <p:inputText id="txtPuesto" value="#{mbMenuClientesGrupos.mbContactos.contacto.puesto}"/>
+                            <h:outputLabel value="correo" style="color: black"/>
+                            <p:inputText id="txtCorreo" value="#{mbMenuClientesGrupos.mbContactos.contacto.correo}"/>
+                        </h:panelGrid>
+                        <div style="margin: auto">
+                            <p:commandButton value="Guardar" 
+                                             actionListener="#{mbMenuClientesGrupos.guardarContacto()}"
+                                             process="@this :form:txtContacto :form:txtPuesto :form:txtCorreo"
+                                             oncomplete="nuevoContacto(xhr, status, args);"
+                                             update="growl"/>
+                            <p:commandButton value="Cancelar"
+                                             oncomplete="dlgContactos.hide()"/>
+                        </div>
+                    </p:dialog>
+
+                </h:form>
+            </div>
+            <!-- FIN DE CONTENIDO -->
+            <ui:include src="footer.html" />
+        </div>
+        <script>
+            function nuevoClienteGrupo(xhr, status, args) {
+                if (args.validationFailed || !args.ok) {
+                    dlgClientesGrupos.jq.effect("shake", {times: 5}, 100);
+                }
+                else {
+                    dlgClientesGrupos.hide();
+                }
+            }
+            function nuevoContacto(xhr, status, args) {
+                if (args.validationFailed || !args.okContacto) {
+                    dlgContactos.jq.effect("shake", {times: 5}, 100);
+                }
+                else {
+                    dlgContactos.hide();
+                }
+            }
+        </script>
+    </body>
+</html>

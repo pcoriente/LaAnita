@@ -22,6 +22,7 @@ import productos.FrmProducto;
 import productos.MbBuscarEmpaques;
 import productos.MbBuscarProd;
 import productos.dao.DAOProductos;
+import productos.dominio.Empaque;
 import productos.dominio.ProdStr;
 import productos.dominio.Producto;
 import proveedores.MbMiniProveedor;
@@ -52,8 +53,12 @@ public class MbRequisiciones implements Serializable {
     private ArrayList<RequisicionProducto> requisicionProductos = new ArrayList<RequisicionProducto>();
     @ManagedProperty(value = "#{mbBuscarProd}")
     private MbBuscarProd mbBuscarProd;
-    @ManagedProperty(value = "#{mbBuscarEmpaques}")
+   @ManagedProperty(value = "#{mbBuscarEmpaques}")
     private MbBuscarEmpaques mbBuscarEmpaques;
+//    @ManagedProperty(value="#{mbBuscarEmpaques}")
+//    private MbBuscarEmpaques mbBuscar;
+//      private ArrayList<Empaque> listaEmpaque = new ArrayList<Empaque>();
+//    private Empaque empaque;
     private Producto producto;
     private ProdStr prodStr;
     private ArrayList<SelectItem> listaMini = new ArrayList<SelectItem>();
@@ -89,7 +94,7 @@ public class MbRequisiciones implements Serializable {
         this.mbUsuarios = new MbUsuarios();
         this.mbBuscarProd = new MbBuscarProd();
         this.mbMiniProveedor = new MbMiniProveedor();
-        this.mbBuscarEmpaques = new MbBuscarEmpaques();
+      //  this.mbBuscarProd = new MbBuscar
         this.mbMonedas = new MbMonedas();
 
     }
@@ -364,6 +369,14 @@ public class MbRequisiciones implements Serializable {
         this.subtotalBruto = subtotalBruto;
     }
 
+//    public MbBuscarEmpaques getMbBuscar() {
+//        return mbBuscar;
+//    }
+//
+//    public void setMbBuscar(MbBuscarEmpaques mbBuscar) {
+//        this.mbBuscar = mbBuscar;
+//    }
+//
     public MbBuscarEmpaques getMbBuscarEmpaques() {
         return mbBuscarEmpaques;
     }
@@ -371,6 +384,8 @@ public class MbRequisiciones implements Serializable {
     public void setMbBuscarEmpaques(MbBuscarEmpaques mbBuscarEmpaques) {
         this.mbBuscarEmpaques = mbBuscarEmpaques;
     }
+
+    
     
     
 
@@ -567,10 +582,15 @@ public class MbRequisiciones implements Serializable {
         }
     }
 
+//    public void buscar() {
+//        this.mbBuscarProd.buscarLista();
+//    }
+//    
     public void buscar() {
         System.err.println(mbBuscarProd.getParte());
         this.mbBuscarProd.buscarLista();
     }
+
 
     public void aprobarRequisicion(int idReq, int estado) throws SQLException {
         DAORequisiciones daoReq;
@@ -913,4 +933,22 @@ public class MbRequisiciones implements Serializable {
     public void setMbMonedas(MbMonedas mbMonedas) {
         this.mbMonedas = mbMonedas;
     }
+
+//    public ArrayList<Empaque> getListaEmpaque() {
+//        return listaEmpaque;
+//    }
+//
+//    public void setListaEmpaque(ArrayList<Empaque> listaEmpaque) {
+//        this.listaEmpaque = listaEmpaque;
+//    }
+//
+//    public Empaque getEmpaque() {
+//        return empaque;
+//    }
+//
+//    public void setEmpaque(Empaque empaque) {
+//        this.empaque = empaque;
+//    }
+    
+    
 }

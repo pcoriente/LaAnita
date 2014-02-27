@@ -1,35 +1,53 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project-private xmlns="http://www.netbeans.org/ns/project-private/1">
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/1"/>
-    <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="17">
+    <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="10">
         <file>
-            <url>src/java/agentes/MbAgentes.java</url>
-            <bookmark id="13">
-                <name/>
-                <line>450</line>
-                <key/>
-            </bookmark>
-        </file>
-        <file>
-            <url>web/menuAgentes.xhtml</url>
-            <bookmark id="17">
-                <name/>
-                <line>40</line>
-                <key/>
-            </bookmark>
-            <bookmark id="15">
+            <url>web/menuClientesGrupos.xhtml</url>
+            <bookmark id="10">
                 <name/>
                 <line>69</line>
                 <key/>
             </bookmark>
+        </file>
+        <file>
+            <url>web/menuOrdenesDeCompra.xhtml</url>
+            <bookmark id="2">
+                <name/>
+                <line>281</line>
+                <key/>
+            </bookmark>
             <bookmark id="6">
                 <name/>
-                <line>176</line>
+                <line>287</line>
+                <key/>
+            </bookmark>
+            <bookmark id="7">
+                <name/>
+                <line>372</line>
                 <key/>
             </bookmark>
             <bookmark id="4">
                 <name/>
-                <line>247</line>
+                <line>425</line>
+                <key/>
+            </bookmark>
+            <bookmark id="5">
+                <name/>
+                <line>471</line>
+                <key/>
+            </bookmark>
+        </file>
+        <file>
+            <url>web/requisiciones.xhtml</url>
+            <bookmark id="8">
+                <name/>
+                <line>196</line>
+                <key/>
+            </bookmark>
+            <bookmark id="9">
+                <name/>
+                <line>196</line>
                 <key/>
             </bookmark>
         </file>

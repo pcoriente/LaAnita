@@ -13,6 +13,7 @@ import javax.faces.context.FacesContext;
 import javax.faces.model.SelectItem;
 import javax.naming.NamingException;
 import org.primefaces.context.RequestContext;
+import utilerias.Utilerias;
 
 /**
  *
@@ -90,12 +91,24 @@ public class MbContactos implements Serializable {
         boolean ok = false;
         RequestContext context = RequestContext.getCurrentInstance();
         FacesMessage fMsg = new FacesMessage(FacesMessage.SEVERITY_WARN, "Aviso:", "");
-        if (this.contacto.getContacto().isEmpty()) {
+        if (this.contacto.getContacto().equals("")) {
             fMsg.setDetail("Se requiere la descripción del contacto");
-            FacesContext.getCurrentInstance().addMessage(null, fMsg);
+        } else if (this.contacto.getPuesto().equals("")) {
+            fMsg.setDetail("Se requiere un puesto");
+        } else if (this.contacto.getCorreo().equals("")) {
+            fMsg.setDetail("Se requiere un correo");
         } else {
-            ok = true;
+            Utilerias utilerias = new Utilerias();
+            boolean validarCorreo = utilerias.validarEmail(this.contacto.getCorreo());
+            if (validarCorreo == false) {
+                fMsg.setDetail("Correo no valido");
+            } else {
+                fMsg = new FacesMessage(FacesMessage.SEVERITY_INFO, "Aviso", "");
+                fMsg.setDetail("Exito! Nuevo Contacto Disponible");
+                ok = true;
+            }
         }
+        FacesContext.getCurrentInstance().addMessage(null, fMsg);
         context.addCallbackParam("okContacto", ok);
         return ok;
     }
