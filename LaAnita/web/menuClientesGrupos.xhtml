@@ -14,23 +14,28 @@
             <ui:include src="wrapper.xhtml" />
             <div id="content" align="center"  >
                 <br></br>
-                <h:form id="form" >
+                <h:form id="form" onkeypress="return event.keyCode !== 13;" >
                     <p:growl id="growl" showDetail="true"/>  
                     <div align="right">
-                        <p:commandButton value="Nuevo"
+                        <p:commandButton icon="ui-icon-document"
                                          oncomplete="dlgClientesGrupos.show();"
                                          actionListener="#{mbMenuClientesGrupos.cargaContactos()}"
                                          process="@this"
-                                         update="form"/>
+                                         update="form :form:txtClienteGrupo"
+                                         title="Nuevo Grupo"/>
                         <p:commandButton id="actualizarContacto"
-                                         value="Actualizar" 
+                                         icon="ui-icon-pencil"
                                          actionListener="#{mbMenuClientesGrupos.actualizar()}"
                                          process="@this cmbContactos"
-                                         update="form"
-                                         disabled="#{mbMenuClientesGrupos.clienteGrupoSeleccionado.idGrupoCte==0}"
+                                         update="form :form:cmbContactos :form:cmbTelefonos"
+                                         disabled="#{mbMenuClientesGrupos.clienteGrupoSeleccionado==null}"
                                          oncomplete="dlgClientesGrupos.show();"
+                                         title="Actualizar Grupo"
                                          />
-                        <p:commandButton value="Salir"/>
+                        <p:commandButton icon="ui-icon-arrowreturnthick-1-w"
+                                         ajax="false"
+                                         title="Salir"
+                                         action="#{mbMenuClientesGrupos.salir()}"/>
                     </div>
                     <p:panel header="Relacion de Clientes" 
                              styleClass="quitaCuadro">
@@ -60,7 +65,10 @@
                     <p:dialog widgetVar="dlgClientesGrupos" 
                               header="Clientes grupos"
                               hideEffect="explode"
-                              showEffect="explode">
+                              showEffect="explode"
+                              modal="true"
+                              closable="false"
+                              resizable="false">
                         <h:panelGrid columns="3" 
                                      id="renderdd">
                             <h:outputLabel  value="Grupo" style="color: black"/>
@@ -69,86 +77,269 @@
                             <h:outputLabel/>
                             <h:outputLabel id="lblContactos"
                                            value="Contactos" style="color: black"
-                                           rendered="#{mbMenuClientesGrupos.actualizarx}"/>
+                                           rendered="#{mbMenuClientesGrupos.actualizar}"/>
                             <p:selectOneMenu style="width: 155px" 
                                              id="cmbContactos"
-                                             rendered="#{mbMenuClientesGrupos.actualizarx}"
+                                             rendered="#{mbMenuClientesGrupos.actualizar}"
                                              value="#{mbMenuClientesGrupos.mbContactos.contacto}">
                                 <f:selectItems value="#{mbMenuClientesGrupos.mbContactos.listaContactos}"/>
                                 <f:converter converterId="converters.Contacto"/>
                                 <p:ajax process="@this"
                                         event="change" 
                                         listener="#{mbMenuClientesGrupos.cargarTelefonos()}"
-                                        update=":form:cmbTelefonos growl"
+                                        update=":form:cmbTelefonos 
+                                        :form:panelContactos 
+                                        :form:btnContactosNuevo 
+                                        :form:btnTelefonos
+                                        :form:btnContactos
+                                        :form:btnElimminarContacto
+                                        growl"
                                         />
                             </p:selectOneMenu>
-                            <p:commandButton value="Nuevo"
-                                             process="@this txtClienteGrupo"
-                                             rendered="#{mbMenuClientesGrupos.actualizarx}"
-                                             oncomplete="dlgContactos.show();"/>
+                            <p:commandButton id="btnContactosNuevo"
+                                             icon="#{mbMenuClientesGrupos.lblNuevoContacto}"
+                                             process="@this txtClienteGrupo cmbContactos"
+                                             rendered="#{mbMenuClientesGrupos.actualizar}"
+                                             actionListener="#{mbMenuClientesGrupos.limpiarContacto()}"
+                                             oncomplete="dlgContactos.show();"
+                                             update=":form:panelContactos"/>
                             <h:outputLabel id="lblTelefonos"
                                            value="Telefonos" style="color: black"
-                                           rendered="#{mbMenuClientesGrupos.actualizarx}"/>
+                                           rendered="#{mbMenuClientesGrupos.actualizar}"/>
                             <p:selectOneMenu style="width: 155px" 
                                              id="cmbTelefonos"
-                                             rendered="#{mbMenuClientesGrupos.actualizarx}">
+                                             value="#{mbMenuClientesGrupos.mbContactos.mbTelefonos.telefono}"
+                                             rendered="#{mbMenuClientesGrupos.actualizar}">
                                 <f:selectItems value="#{mbMenuClientesGrupos.mbContactos.mbTelefonos.listaTelefonos}"/>
+                                <f:converter converterId="converters.Telefono"/>
+                                <p:ajax event="change"
+                                        update=":form:btnEliminarTelefono 
+                                        :form:btnTelefonos 
+                                        "
+                                        listener="#{mbMenuClientesGrupos.cambiarIconoTelefono()}"/>
                             </p:selectOneMenu>
-                            <p:commandButton value="Nuevo Telefono"
-                                             rendered="#{mbMenuClientesGrupos.actualizarx}"
-                                             />
+                            <p:commandButton id="btnTelefonos"
+                                             title="Nuevo Telefono"
+                                             icon="#{mbMenuClientesGrupos.lblNuevoTelefono}"
+                                             process="@this cmbTelefonos"
+                                             rendered="#{mbMenuClientesGrupos.actualizar}"
+                                             disabled="#{mbMenuClientesGrupos.mbContactos.contacto.idContacto==0}"
+                                             actionListener="#{mbMenuClientesGrupos.cargarTelefonosTipos()}"
+                                             update="form:cmbTelefonoTipo :form:mttoTelefonos"
+                                             oncomplete="mttoTelefonosDialog.show();"/>
                         </h:panelGrid>
                         <div style="margin: auto">
-                            <p:commandButton value="Guardar" 
+                            <p:commandButton title="Guardar"
+                                             icon="ui-icon-disk"
                                              actionListener="#{mbMenuClientesGrupos.guardar()}"
                                              process="@this txtClienteGrupo"
                                              oncomplete="nuevoClienteGrupo(xhr, status, args);"
-                                             update="growl tablaClientesGrupos"/>
-                            <p:commandButton value="Cancelar"/>
+                                             update="growl tablaClientesGrupos 
+                                             :form:tablaClientesGrupos 
+                                             :form:actualizarContacto"/>
+                            <p:commandButton icon="ui-icon-arrowreturnthick-1-w"
+                                             process="@this"
+                                             actionListener="#{mbMenuClientesGrupos.deseleccionar()}"
+                                             oncomplete="dlgClientesGrupos.hide();"
+                                             update=":form:tablaClientesGrupos 
+                                             :form:actualizarContacto"/>
                         </div>
                     </p:dialog>
-                    <p:dialog widgetVar="dlgContactos">
-                        <h:panelGrid columns="2">
+                    <p:dialog widgetVar="dlgContactos"
+                              modal="true"
+                              header="Mantenimiento de Contactos">
+                        <h:panelGrid columns="2" id="panelContactos">
                             <h:outputLabel value="Contacto :" style="color: black"/>
                             <p:inputText id="txtContacto" value="#{mbMenuClientesGrupos.mbContactos.contacto.contacto}"/>
-                            <h:outputLabel value="puesto :" style="color: black"/>
+                            <h:outputLabel value="Puesto :" style="color: black"/>
                             <p:inputText id="txtPuesto" value="#{mbMenuClientesGrupos.mbContactos.contacto.puesto}"/>
-                            <h:outputLabel value="correo" style="color: black"/>
+                            <h:outputLabel value="Correo" style="color: black"/>
                             <p:inputText id="txtCorreo" value="#{mbMenuClientesGrupos.mbContactos.contacto.correo}"/>
                         </h:panelGrid>
                         <div style="margin: auto">
-                            <p:commandButton value="Guardar" 
-                                             actionListener="#{mbMenuClientesGrupos.guardarContacto()}"
-                                             process="@this :form:txtContacto :form:txtPuesto :form:txtCorreo"
+                            <p:commandButton id="btnContactos"
+                                icon="#{mbMenuClientesGrupos.iconos.btnGuardarContactos}"
+                                title="#{mbMenuClientesGrupos.iconos.lblGuardarContactos}"
+                                actionListener="#{mbMenuClientesGrupos.guardarContacto()}"
+                                process="@this :form:txtContacto :form:txtPuesto :form:txtCorreo"
+                                oncomplete="nuevoContacto(xhr, status, args);"
+                                update="growl :form:cmbContactos"/>
+                            <p:commandButton id="btnElimminarContacto"
+                                             disabled="#{mbMenuClientesGrupos.mbContactos.contacto.idContacto==0}"
+                                             icon="ui-icon-trash"
+                                             actionListener="#{mbMenuClientesGrupos.eliminarContacto()}"
                                              oncomplete="nuevoContacto(xhr, status, args);"
-                                             update="growl"/>
-                            <p:commandButton value="Cancelar"
-                                             oncomplete="dlgContactos.hide()"/>
+                                             update=":form:cmbContactos growl"
+                                             title="Eliminar"/>
+                            <p:commandButton icon="ui-icon-arrowreturnthick-1-w"
+                                             oncomplete="dlgContactos.hide()"
+                                             title="Cancelar"/>
+
                         </div>
                     </p:dialog>
 
+                    <p:dialog header="MANTENIMIENTO DE TELEFONOS"
+                              widgetVar="mttoTelefonosDialog" 
+                              resizable="false"
+                              style="width: 500px;" modal="true" 
+                              hideEffect="explode">
+                        <p:panelGrid id="mttoTelefonos">
+                            <p:row rendered="#{mbMenuClientesGrupos.mbContactos.mbTelefonos.telefono.idTelefono==0}" >
+                                <p:column >
+                                    <h:outputLabel for="celular" value="Celular:" style="font-weight: bold; color: red; width: 120px;" />
+                                </p:column>
+                                <p:column colspan="2" >
+                                    <p:selectBooleanCheckbox id="celular" 
+                                                             value="#{mbMenuClientesGrupos.mbContactos.mbTelefonos.celular}" >
+                                        <p:ajax listener="#{mbMenuClientesGrupos.mbContactos.mbTelefonos.cargaTipos()}" 
+                                                update="cmbTelefonoTipo" />
+                                    </p:selectBooleanCheckbox>
+                                </p:column>
+                            </p:row>
+                            <p:row >
+                                <p:column >
+                                    <h:outputLabel for="cmbTelefonoTipo" 
+                                                   value="Tipo:" 
+                                                   style="font-weight: bold; color: red; width: 120px;" />
+                                </p:column>
+                                <p:column >
+                                    <p:selectOneMenu id="cmbTelefonoTipo" 
+                                                     value="#{mbMenuClientesGrupos.mbContactos.mbTelefonos.telefono.tipo}" style="margin: 0px;" >
+                                        <f:converter converterId="converters.TelefonoTipo" />
+                                        <f:selectItems value="#{mbMenuClientesGrupos.mbContactos.mbTelefonos.listaTipos}" />
+                                        <p:ajax event="change" update=":form:txtTelefonoTipo" process="@this" listener="#{mbMenuClientesGrupos.informacionTipo()}"/>
+                                    </p:selectOneMenu>
+                                </p:column>
+                                <p:column >
+                                    <p:commandButton id="btnAgregarTelefonosTipos" 
+                                                     icon="ui-icon-pencil"
+                                                     title="Mtto. Telefonos Tipos" 
+                                                     process="@this" 
+                                                     actionListener="#{mbMenuClientesGrupos.mantenimientoTelefonoTipo()}"
+                                                     update=":form:mttoTelefonosTipos"
+                                                     oncomplete="mttoTelefonosTiposDialog.show()" />
+                                </p:column>
+                            </p:row>
+                            <p:row >
+                                <p:column >
+                                    <h:outputLabel for="txtLada" value="Lada:" style="font-weight: bold; color: red; width: 120px;" />
+                                </p:column>
+                                <p:column colspan="2" >
+                                    <p:inputText id="txtLada" value="#{mbMenuClientesGrupos.mbContactos.mbTelefonos.telefono.lada}" maxlength="3" size="5" />
+                                </p:column>
+                            </p:row>
+                            <p:row >
+                                <p:column >
+                                    <h:outputLabel for="txtTelefono" value="Teléfono:" style="font-weight: bold; color: red; width: 120px;" />
+                                </p:column>
+                                <p:column colspan="2" >
+                                    <p:inputText id="txtTelefono" value="#{mbMenuClientesGrupos.mbContactos.mbTelefonos.telefono.telefono}" 
+                                                 maxlength="8" size="10" />
+                                </p:column>
+                            </p:row>
+                            <p:row >
+                                <p:column >
+                                    <h:outputLabel for="txtExtension" value="Extensión:" style="font-weight: bold; color: red; width: 120px;" />
+                                </p:column>
+                                <p:column colspan="2" >
+                                    <p:inputText id="txtExtension" value="#{mbMenuClientesGrupos.mbContactos.mbTelefonos.telefono.extension}" maxlength="15" size="20" />
+                                </p:column>
+                            </p:row>
+                            <f:facet name="footer" >
+                                <p:row >
+                                    <p:column colspan="3" >
+                                        <p:commandButton id="btnGrabarTelefono" 
+                                                         value="Grabar" 
+                                                         process="@this celular cmbTelefonoTipo txtLada txtTelefono txtExtension cmbContactos" 
+                                                         actionListener="#{mbMenuClientesGrupos.validarTelefonos()}"
+                                                         update="growl :form:cmbTelefonos :form:mttoTelefonos" 
+                                                         oncomplete="nuevoTelefono(xhr, status, args)" />
+                                        <p:commandButton id="btnEliminarTelefono"
+                                                         icon="ui-icon-trash"
+                                                         disabled="#{mbMenuClientesGrupos.mbContactos.mbTelefonos.telefono.idTelefono==0}" 
+                                                         actionListener="#{mbMenuClientesGrupos.eliminarTelefono()}"
+                                                         update="growl :form:cmbTelefonos"
+                                                         oncomplete="mttoTelefonosDialog.hide();"/>
+                                    </p:column>
+                                </p:row>
+                            </f:facet>
+                        </p:panelGrid>
+                    </p:dialog>
+
+
+                    <p:dialog header="MANTENIMIENTO DE TIPOS DE TELEFONOS" 
+                              widgetVar="mttoTelefonosTiposDialog"
+                              resizable="false"
+                              modal="true" >
+                        <p:panelGrid id="mttoTelefonosTipos" styleClass="sinBorde" >
+                            <p:row >
+                                <p:column >
+                                    <h:outputLabel for="txtTelefonoTipo" value="Tipo:" style="font-weight: bold; color: red; width: 120px;" />
+                                </p:column>
+                                <p:column >
+                                    <p:inputText id="txtTelefonoTipo" 
+                                                 value="#{mbMenuClientesGrupos.mbContactos.mbTelefonos.tipo.tipo}" 
+                                                 />
+                                </p:column>
+                            </p:row>
+                            <f:facet name="footer" >
+                                <p:row >
+                                    <p:column colspan="2" >
+                                        <p:commandButton id="btnGrabarTelefonoTipo" value="Grabar" 
+                                                         process="@this txtTelefonoTipo" 
+                                                         actionListener="#{mbMenuClientesGrupos.guardarTelefonoTipo()}"
+                                                         update="cmbTelefonoTipo growl" 
+                                                         oncomplete="handleTelefonoTipo(xhr, status, args)" />
+                                        <p:commandButton id="btnEliminarTelefonoTipo" value="Eliminar" 
+                                                         disabled="#{mbMenuClientesGrupos.mbContactos.mbTelefonos.telefono.tipo.idTipo==0}" 
+                                                         process="@this" 
+                                                         actionListener="#{mbMenuClientesGrupos.eliminarTelefonosTipo()}"
+                                                         update="growl :form:cmbTelefonoTipo" 
+                                                         oncomplete="handleTelefonoTipo(xhr, status, args)" />
+                                    </p:column>
+                                </p:row>
+                            </f:facet>
+                        </p:panelGrid>
+                    </p:dialog>
                 </h:form>
             </div>
             <!-- FIN DE CONTENIDO -->
             <ui:include src="footer.html" />
         </div>
         <script>
-            function nuevoClienteGrupo(xhr, status, args) {
-                if (args.validationFailed || !args.ok) {
-                    dlgClientesGrupos.jq.effect("shake", {times: 5}, 100);
-                }
-                else {
-                    dlgClientesGrupos.hide();
-                }
-            }
-            function nuevoContacto(xhr, status, args) {
-                if (args.validationFailed || !args.okContacto) {
-                    dlgContactos.jq.effect("shake", {times: 5}, 100);
-                }
-                else {
-                    dlgContactos.hide();
-                }
-            }
+                    function nuevoClienteGrupo(xhr, status, args) {
+                        if (args.validationFailed || !args.ok) {
+                            dlgClientesGrupos.jq.effect("shake", {times: 5}, 100);
+                        }
+                        else {
+                            dlgClientesGrupos.hide();
+                        }
+                    }
+                    function nuevoContacto(xhr, status, args) {
+                        if (args.validationFailed || !args.okContacto) {
+                            dlgContactos.jq.effect("shake", {times: 5}, 100);
+                        }
+                        else {
+                            dlgContactos.hide();
+                        }
+                    }
+
+                    function nuevoTelefono(xhr, status, args) {
+                        if (args.validationFailed || !args.okTelefono) {
+                            mttoTelefonosDialog.jq.effect("shake", {times: 5}, 100);
+                        }
+                        else {
+                            mttoTelefonosDialog.hide();
+                        }
+                    }
+
+                    function handleTelefonoTipo(xhr, status, args) {
+                        if (args.validationFailed || !args.okTelefonoTipo) {
+                            mttoTelefonosTiposDialog.jq.effect("shake", {times: 5}, 100);
+                        } else {
+                            mttoTelefonosTiposDialog.hide();
+                        }
+                    }
         </script>
     </body>
 </html>

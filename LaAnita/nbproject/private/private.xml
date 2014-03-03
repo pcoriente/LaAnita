@@ -1,12 +1,30 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project-private xmlns="http://www.netbeans.org/ns/project-private/1">
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/1"/>
-    <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="10">
+    <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="15">
         <file>
             <url>web/menuClientesGrupos.xhtml</url>
-            <bookmark id="10">
+            <bookmark id="15">
                 <name/>
-                <line>69</line>
+                <line>203</line>
+                <key/>
+            </bookmark>
+            <bookmark id="14">
+                <name/>
+                <line>268</line>
+                <key/>
+            </bookmark>
+        </file>
+        <file>
+            <url>web/requisiciones.xhtml</url>
+            <bookmark id="8">
+                <name/>
+                <line>196</line>
+                <key/>
+            </bookmark>
+            <bookmark id="9">
+                <name/>
+                <line>196</line>
                 <key/>
             </bookmark>
         </file>
@@ -35,19 +53,6 @@
             <bookmark id="5">
                 <name/>
                 <line>471</line>
-                <key/>
-            </bookmark>
-        </file>
-        <file>
-            <url>web/requisiciones.xhtml</url>
-            <bookmark id="8">
-                <name/>
-                <line>196</line>
-                <key/>
-            </bookmark>
-            <bookmark id="9">
-                <name/>
-                <line>196</line>
                 <key/>
             </bookmark>
         </file>

@@ -74,6 +74,16 @@ public class DAOClientesGrupo {
         } finally {
             cn.close();
         }
+    }
 
+    public void actualizar(ClientesGrupos clientesGrupos) throws SQLException {
+        Connection cn = ds.getConnection();
+        Statement st = cn.createStatement();
+        String sql = "UPDATE clientesGrupos set grupoCte = '" + clientesGrupos.getGrupoCte() + "' WHERE idGrupoCte = '" + clientesGrupos.getIdGrupoCte() + "'";
+        try {
+            st.executeUpdate(sql);
+        } finally {
+            cn.close();
+        }
     }
 }

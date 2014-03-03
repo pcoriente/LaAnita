@@ -131,10 +131,10 @@ public class MbOrdenCompra implements Serializable {
         }
     }
 
-    public void cargaOrdenesEncabezado(int status) throws NamingException, SQLException {
+    public void cargaOrdenesEncabezado(int idProveedor, int status) throws NamingException, SQLException {
         this.listaOrdenesEncabezado = new ArrayList<OrdenCompraEncabezado>();
         DAOOrdenDeCompra daoOC = new DAOOrdenDeCompra();
-        ArrayList<OrdenCompraEncabezado> lista = daoOC.listaOrdenes(status);
+        ArrayList<OrdenCompraEncabezado> lista = daoOC.listaOrdenes(idProveedor, status);
         for (OrdenCompraEncabezado d : lista) {
             listaOrdenesEncabezado.add(d);
         }

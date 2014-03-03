@@ -40,16 +40,38 @@ public class MbFacturas implements Serializable {
         this.factura.setIdProveedor(factura.getIdProveedor());
         this.factura.setNumero(factura.getNumero());
         this.factura.setSerie(factura.getSerie());
-        this.factura.setCerrada(factura.isCerrada());
+        this.factura.setCerradaOficina(factura.isCerradaOficina());
+        this.factura.setCerradaAlmacen(factura.isCerradaAlmacen());
     }
     
-    public boolean cerrada() {
+    public boolean cerradaAlmacen() {
         boolean ok = false;
         boolean cerrada=false;
         FacesMessage fMsg = new FacesMessage(FacesMessage.SEVERITY_WARN, "Aviso:", "");
         try {
             this.dao=new DAOFacturas();
-            cerrada=this.dao.obtenerEstado(this.factura.getIdFactura());
+            cerrada=this.dao.obtenerEstadoAlmacen(this.factura.getIdFactura());
+            ok=true;
+        } catch (NamingException ex) {
+            fMsg.setSeverity(FacesMessage.SEVERITY_ERROR);
+            fMsg.setDetail(ex.getMessage());
+        } catch (SQLException ex) {
+            fMsg.setSeverity(FacesMessage.SEVERITY_ERROR);
+            fMsg.setDetail(ex.getErrorCode() + " " + ex.getMessage());
+        }
+        if (!ok) {
+            FacesContext.getCurrentInstance().addMessage(null, fMsg);
+        }
+        return cerrada;
+    }
+    
+    public boolean cerradaOficina() {
+        boolean ok = false;
+        boolean cerrada=false;
+        FacesMessage fMsg = new FacesMessage(FacesMessage.SEVERITY_WARN, "Aviso:", "");
+        try {
+            this.dao=new DAOFacturas();
+            cerrada=this.dao.obtenerEstadoOficina(this.factura.getIdFactura());
             ok=true;
         } catch (NamingException ex) {
             fMsg.setSeverity(FacesMessage.SEVERITY_ERROR);

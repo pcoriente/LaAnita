@@ -78,7 +78,7 @@ public class DAOOrdenDeCompra {
         }
         return lista;
     }
-    public ArrayList<OrdenCompraEncabezado> listaOrdenes(int status) throws SQLException, NamingException {
+    public ArrayList<OrdenCompraEncabezado> listaOrdenes(int idProveedor, int status) throws SQLException, NamingException {
         ArrayList<OrdenCompraEncabezado> lista = new ArrayList<OrdenCompraEncabezado>();
         Connection cn = ds.getConnection();
         Statement sentencia = cn.createStatement();
@@ -99,7 +99,7 @@ public class DAOOrdenDeCompra {
                     + "                                           inner join requisiciones r on r.idRequisicion = c.idRequisicion\n"
                     + "                                           inner join empresasGrupo eg on eg.idEmpresa = r.idEmpresa\n"
                     + "                                           inner join direcciones d on d.idDireccion = co.idDireccion) c on c.idCotizacion=oc.idCotizacion\n"
-                    + "                               where oc.estado=" + status + "\n"
+                    + "                               where oc.idProveedor="+idProveedor+" and oc.estado=" + status + "\n"
                     + "                               order by oc.idOrdenCompra desc";
 
             //Statement sentencia = cn.createStatement();

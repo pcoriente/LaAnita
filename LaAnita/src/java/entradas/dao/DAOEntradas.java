@@ -50,7 +50,7 @@ public class DAOEntradas {
         return i;
     }
     
-    public boolean grabarEntrada2(int idAlmacen, int idMovto, double tipoCambio, int idFactura, ArrayList<EntradaProducto> productos) throws SQLException {
+    public boolean grabarEntradaAlmacen(int idAlmacen, int idMovto, double tipoCambio, int idFactura, ArrayList<EntradaProducto> productos) throws SQLException {
         int capturados;
         boolean ok=false;
         int idLote;
@@ -60,27 +60,20 @@ public class DAOEntradas {
         
         Connection cn=this.ds.getConnection();
         String strSQL1="UPDATE movimientosDetalle " +
-                    "SET cantFacturada=? " +
+                    "SET cantRecibida=? " +
                     "WHERE idMovto="+idMovto+" AND idEmpaque=?";
         PreparedStatement ps1=cn.prepareStatement(strSQL1);
         
-//        String strSQL2="UPDATE movimientosDetalleImpuestos " +
-//                    "SET importe=? " +
-//                    "WHERE idMovto="+idMovto+" AND idEmpaque=?";
-//        PreparedStatement ps2=cn.prepareStatement(strSQL2);
-        
-        idLote=obtenerLote(fechaCaducidad);
-        
-        String strSQL3="INSERT INTO kardex (idAlmacen, idMovto, idTipoMovto, idEmpaque, idLote, fecha, existenciaAnterior, cantidad, saldo, idUsuario, fechaCaducidad) " +
-                    "VALUES ("+idAlmacen+", "+idMovto+", 2, ?, "+idLote+", GETDATE(), ?, ?, ?, ?, ?, ?)";
+        String strSQL3="INSERT INTO kardex (idAlmacen, idMovto, idTipoMovto, idEmpaque, idLote, fecha, existenciaAnterior, cantidad) " +
+                    "VALUES ("+idAlmacen+", "+idMovto+", 2, ?, ?, GETDATE(), ?, ?)";
         PreparedStatement ps3=cn.prepareStatement(strSQL3);
         
-        String strSQL4="INSERT INTO almacenesEmpaques (idAlmacen, idEmpaque, existencia, existenciaOficina, promedioPonderado, existenciaMinima, existenciaMaxima, ultimoCosto, idMovtoEntrada) " +
-                    "VALUES "+idAlmacen+", ?, ?, 0, 0, 0, 0, 0, 0)";
+        String strSQL4="INSERT INTO almacenesEmpaques (idAlmacen, idEmpaque, existencia, existenciaOficina, promedioPonderado, existenciaMinima, existenciaMaxima, idMovtoEntrada) " +
+                    "VALUES ("+idAlmacen+", ?, ?, 0, 0, 0, 0, 0)";
         PreparedStatement ps4=cn.prepareStatement(strSQL4);
         
         String strSQL5="UPDATE almacenesEmpaques " +
-                    "SET existencia=existencia+?, " +
+                    "SET existencia=existencia+? " +
                     "WHERE idAlmacen="+idAlmacen+" AND idEmpaque=?";
         PreparedStatement ps5=cn.prepareStatement(strSQL5);
         
@@ -92,24 +85,25 @@ public class DAOEntradas {
             capturados=0;
             st.executeUpdate("BEGIN TRANSACTION");
             
+            //rs = st.executeQuery("SELECT idLote FROM lotes WHERE fecha='" + formatter.format(fechaCaducidad) + "'");
+            rs = st.executeQuery("SELECT idLote FROM lotes WHERE fecha='2014-02-12'");
+            if(rs.next()) {
+                idLote = rs.getInt("idLote");
+            } else {
+                idLote = 0;
+            }
+            
             for(EntradaProducto p: productos) {
                 idEmpaque=p.getEmpaque().getIdEmpaque();
-                //fechaCaducidad=utilerias.Utilerias.addDays(fechaCaducidad, p.getEmpaque().getProducto().getDiasCaducidad);
-                fechaCaducidad=utilerias.Utilerias.addDays(fechaCaducidad, 365);
+//                fechaCaducidad=utilerias.Utilerias.addDays(fechaCaducidad, p.getEmpaque().getProducto().getDiasCaducidad);
+//                fechaCaducidad=utilerias.Utilerias.addDays(fechaCaducidad, 365);
                 
                 if(p.getCantFacturada()> 0) {
                     capturados++;
                     
-                    ps1.setDouble(1, p.getCantFacturada());
+                    ps1.setDouble(1, p.getCantRecibida());
                     ps1.setInt(2, idEmpaque);
                     ps1.executeUpdate();
-
-//                    impuestos=p.getImpuestos();
-//                    for(ImpuestosProducto i:impuestos) {
-//                        ps2.setDouble(1, i.getImporte());
-//                        ps2.setInt(2, idEmpaque);
-//                        ps2.executeUpdate();
-//                    }
                     
                     rs=st.executeQuery("SELECT existencia " +
                                         "FROM almacenesEmpaques " +
@@ -117,27 +111,25 @@ public class DAOEntradas {
                     if(rs.next()) {
                         existenciaAnterior=rs.getDouble("existencia");
                         
-                        ps5.setDouble(1, p.getCantFacturada());
+                        ps5.setDouble(1, p.getCantRecibida());
                         ps5.setInt(2, idEmpaque);
                         ps5.executeUpdate();
                     } else {
                         existenciaAnterior=0;
                         
                         ps4.setInt(1, idEmpaque);
-                        ps4.setDouble(2, p.getCantFacturada()); // La existencia es igual a la cantidadFacturada por estarse dando de alta el producto para el almacen
+                        ps4.setDouble(2, p.getCantRecibida());
                         ps4.executeUpdate();
                     }
                     ps3.setInt(1, idEmpaque);
-                    ps3.setDouble(2, existenciaAnterior);
-                    ps3.setDouble(3, p.getCantFacturada());
-                    ps3.setDouble(4, p.getCantFacturada());
-                    ps3.setInt(5, this.idUsuario);
-                    ps3.setDate(6, new java.sql.Date(fechaCaducidad.getTime()));
+                    ps3.setInt(2, idLote);
+                    ps3.setDouble(3, existenciaAnterior);
+                    ps3.setDouble(4, p.getCantRecibida());
                     ps3.executeUpdate();
                 }
             }
             if(capturados>0) {
-                st.executeUpdate("UPDATE facturas SET cerrada=1 WHERE idFactura="+idFactura);
+                st.executeUpdate("UPDATE facturas SET cerradaAlmacen=1 WHERE idFactura="+idFactura);
             }
             st.executeUpdate("COMMIT TRANSACTION");
             ok=true;
@@ -150,14 +142,14 @@ public class DAOEntradas {
         return ok;
     }
     
-    public boolean grabarEntrada(int idAlmacen, int idMovto, double tipoCambio, int idFactura, ArrayList<EntradaProducto> productos) throws SQLException {
+    public boolean grabarEntradaOficina(int idAlmacen, int idMovto, double tipoCambio, int idFactura, ArrayList<EntradaProducto> productos) throws SQLException {
         int capturados;
         boolean ok=false;
         ArrayList<ImpuestosProducto> impuestos;
         
         Connection cn=this.ds.getConnection();
         String strSQL1="UPDATE movimientosDetalle " +
-                    "SET costo=?, desctoProducto1=?, desctoProducto2=?, desctoConfidencial=?, unitario=?, cantFacturada=? " +
+                    "SET costo=?, desctoProducto1=?, desctoProducto2=?, desctoConfidencial=?, unitario=?, cantFacturada=?, cantSinCargo=? " +
                     "WHERE idMovto="+idMovto+" AND idEmpaque=?";
         PreparedStatement ps1=cn.prepareStatement(strSQL1);
         
@@ -166,17 +158,17 @@ public class DAOEntradas {
                     "WHERE idMovto="+idMovto+" AND idEmpaque=?";
         PreparedStatement ps2=cn.prepareStatement(strSQL2);
         
-        String strSQL3="INSERT INTO kardex (idAlmacen, idMovto, idTipoMovto, idEmpaque, idLote, fecha, existenciaAnterior, cantidad, saldo, idUsuario) " +
-                    "VALUES (?, ?, 1, ?, 0, GETDATE(), ?, ?, ?, ?)";
+        String strSQL3="INSERT INTO kardex (idAlmacen, idMovto, idTipoMovto, idEmpaque, idLote, fecha, existenciaAnterior, cantidad) " +
+                    "VALUES ("+idAlmacen+", "+idMovto+", 1, ?, 0, GETDATE(), ?, ?)";
         PreparedStatement ps3=cn.prepareStatement(strSQL3);
         
-        String strSQL4="INSERT INTO almacenesEmpaques (idAlmacen, idEmpaque, existencia, existenciaOficina, promedioPonderado, existenciaMinima, existenciaMaxima, ultimoCosto, idMovtoEntrada) " +
-                    "VALUES (?, ?, 0, ?, ?, 0, 0, ?, ?)";
+        String strSQL4="INSERT INTO almacenesEmpaques (idAlmacen, idEmpaque, existencia, existenciaOficina, promedioPonderado, existenciaMinima, existenciaMaxima, idMovtoEntrada) " +
+                    "VALUES (?, ?, 0, ?, ?, 0, 0, ?)";
         PreparedStatement ps4=cn.prepareStatement(strSQL4);
         
         String strSQL5="UPDATE almacenesEmpaques " +
                     "SET existenciaOficina=existenciaOficina+?, " +
-                        "promedioPonderado=(existenciaOficina*promedioPonderado+?*?)/(existenciaOficina+?) " +
+                        "promedioPonderado=(existenciaOficina*promedioPonderado+?*?)/(existenciaOficina+?+?) " +
                     "WHERE idAlmacen="+idAlmacen+" AND idEmpaque=?";
         PreparedStatement ps5=cn.prepareStatement(strSQL5);
         
@@ -190,6 +182,9 @@ public class DAOEntradas {
             
             st.executeUpdate("UPDATE movimientos SET tipoCambio="+tipoCambio+" WHERE idMovto="+idMovto);
             
+            //rs=st.executeQuery("select DATEPART(weekday, getdate()-1) AS DIA, DATEPART(week, GETDATE()) AS SEM, DATEPART(YEAR, GETDATE())%10 AS ANIO");
+            //lote=""+rs.getInt("DIA")+String.format("%02d", rs.getInt("SEM"))+rs.getInt("ANIO")+"1";
+            
             for(EntradaProducto p: productos) {
                 idEmpaque=p.getEmpaque().getIdEmpaque();
                 
@@ -202,7 +197,8 @@ public class DAOEntradas {
                     ps1.setDouble(4, p.getDesctoConfidencial());
                     ps1.setDouble(5, p.getUnitario());
                     ps1.setDouble(6, p.getCantFacturada());
-                    ps1.setInt(7, idEmpaque);
+                    ps1.setDouble(7, p.getCantSinCargo());
+                    ps1.setInt(8, idEmpaque);
                     ps1.executeUpdate();
 
                     impuestos=p.getImpuestos();
@@ -218,35 +214,31 @@ public class DAOEntradas {
                     if(rs.next()) {
                         existenciaAnterior=rs.getDouble("existenciaOficina");
                         
-                        ps5.setDouble(1, p.getCantFacturada());
+                        ps5.setDouble(1, p.getCantFacturada()+p.getCantSinCargo());
                         ps5.setDouble(2, p.getCantFacturada());
                         ps5.setDouble(3, p.getUnitario());
                         ps5.setDouble(4, p.getCantFacturada());
-                        ps5.setInt(5, idEmpaque);
+                        ps5.setDouble(5, p.getCantSinCargo());
+                        ps5.setInt(6, idEmpaque);
                         ps5.executeUpdate();
                     } else {
                         existenciaAnterior=0;
                         
                         ps4.setInt(1, idAlmacen);
                         ps4.setInt(2, idEmpaque);
-                        ps4.setDouble(3, p.getCantFacturada()); // La existenciaOficina es igual a la cantidadFacturada por estarse dando de alta el producto para el almacen
-                        ps4.setDouble(4, p.getUnitario());      // El costo promedio ponderado es igual al costo, ya que es el primer movimiento
-                        ps4.setDouble(5, p.getUnitario());      // El ultimo costo el unitario de esta entrada
-                        ps4.setInt(6, idMovto);                 // El id del ultimo movimiento es el id de esta entrada
+                        ps4.setDouble(3, p.getCantFacturada()+p.getCantSinCargo());
+                        ps4.setDouble(4, p.getUnitario()*p.getCantFacturada()/(p.getCantFacturada()+p.getCantSinCargo()));
+                        ps4.setInt(5, idMovto);                 // El id del ultimo movimiento es el id de esta entrada
                         ps4.executeUpdate();
                     }
-                    ps3.setInt(1, idAlmacen);
-                    ps3.setInt(2, idMovto);
-                    ps3.setInt(3, idEmpaque);
-                    ps3.setDouble(4, existenciaAnterior);
-                    ps3.setDouble(5, p.getCantFacturada());
-                    ps3.setDouble(6, p.getCantFacturada());
-                    ps3.setInt(7, this.idUsuario);
+                    ps3.setInt(1, idEmpaque);
+                    ps3.setDouble(2, existenciaAnterior);
+                    ps3.setDouble(3, p.getCantFacturada()+p.getCantSinCargo());
                     ps3.executeUpdate();
                 }
             }
             if(capturados>0) {
-                st.executeUpdate("UPDATE facturas SET cerrada=1 WHERE idFactura="+idFactura);
+                st.executeUpdate("UPDATE facturas SET cerradaOficina=1 WHERE idFactura="+idFactura);
             }
             st.executeUpdate("COMMIT TRANSACTION");
             ok=true;
@@ -267,8 +259,8 @@ public class DAOEntradas {
 //        DAOImpuestosProducto daoImps=new DAOImpuestosProducto();
         
         Connection cn=this.ds.getConnection();
-        String strSQL="INSERT INTO movimientosDetalle (idMovto, idEmpaque, costo, desctoProducto1, desctoProducto2, desctoConfidencial, unitario, cantOrdenada, cantRecibida, idImpuestoGrupo, fecha) "
-                + "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, getdate())";
+        String strSQL="INSERT INTO movimientosDetalle (idMovto, idEmpaque, costo, desctoProducto1, desctoProducto2, desctoConfidencial, unitario, cantOrdenada, cantRecibida, idImpuestoGrupo, cantSinCargo, fecha) "
+                + "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, getdate())";
         PreparedStatement ps=cn.prepareStatement(strSQL);
         Statement st=cn.createStatement();
         try {
@@ -293,18 +285,11 @@ public class DAOEntradas {
                 ps.setDouble(4, p.getDesctoProducto1());
                 ps.setDouble(5, p.getDesctoProducto2());
                 ps.setDouble(6, p.getDesctoConfidencial());
-//                unitario=p.getPrecio();
-//                unitario*=(1-entrada.getDesctoComercial()/100.00);
-//                unitario*=(1-entrada.getDesctoProntoPago()/100.00);
-//                unitario*=(1-p.getDesctoProducto1()/100.00);
-//                unitario*=(1-p.getDesctoProducto2()/100.00);
-//                unitario*=(1-p.getDesctoConfidencial()/100.00);
-//                unitario=Math.round(unitario*100.00)/100.00;
-//                ps.setDouble(7, unitario);
                 ps.setDouble(7, p.getUnitario());
                 ps.setDouble(8, p.getCantOrdenada());
                 ps.setDouble(9, 0);
                 ps.setInt(10, p.getEmpaque().getProducto().getImpuestoGrupo().getIdGrupo());
+                ps.setDouble(11, p.getCantSinCargo());
                 ps.executeUpdate();
                 
                 idEmpaque=p.getEmpaque().getIdEmpaque();
@@ -520,6 +505,7 @@ public class DAOEntradas {
         producto.setDesctoConfidencial(rs.getDouble("desctoConfidencial"));
         producto.setCantOrdenada(rs.getDouble("cantOrdenada"));
         producto.setCantFacturada(rs.getDouble("cantFacturada"));
+        producto.setCantSinCargo(rs.getDouble("cantSinCargo"));
         producto.setCantRecibida(rs.getDouble("cantRecibida"));
         producto.setPrecio(rs.getDouble("costo"));
         return producto;
