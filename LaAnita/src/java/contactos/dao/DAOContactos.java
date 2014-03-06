@@ -90,7 +90,6 @@ public class DAOContactos implements Serializable {
             st.executeUpdate(strSQL);
             strSQL="DELETE FROM telefonos WHERE idContacto="+idContacto;
             st.executeUpdate(strSQL);
-            
             st.executeUpdate("commit transaction");
         } catch(SQLException ex) {
             st.executeUpdate("rollback transaction");

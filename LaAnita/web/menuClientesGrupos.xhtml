@@ -27,7 +27,11 @@
                                          icon="ui-icon-pencil"
                                          actionListener="#{mbMenuClientesGrupos.actualizar()}"
                                          process="@this cmbContactos"
-                                         update="form :form:cmbContactos :form:cmbTelefonos"
+                                         update=":form:dlgClientesGrupos 
+                                         :form:cmbContactos 
+                                         :form:cmbTelefonos
+                                         :form:btnContactos
+                                         :form:btnContactosNuevo"
                                          disabled="#{mbMenuClientesGrupos.clienteGrupoSeleccionado==null}"
                                          oncomplete="dlgClientesGrupos.show();"
                                          title="Actualizar Grupo"
@@ -37,7 +41,7 @@
                                          title="Salir"
                                          action="#{mbMenuClientesGrupos.salir()}"/>
                     </div>
-                    <p:panel header="Relacion de Clientes" 
+                    <p:panel header="Grupo de Clientes" 
                              styleClass="quitaCuadro">
                         <p:dataTable
                             id="tablaClientesGrupos"
@@ -62,7 +66,8 @@
                             </p:column>
                         </p:dataTable>
                     </p:panel>
-                    <p:dialog widgetVar="dlgClientesGrupos" 
+                    <p:dialog id="dlgClientesGrupos"
+                              widgetVar="dlgClientesGrupos" 
                               header="Clientes grupos"
                               hideEffect="explode"
                               showEffect="explode"
@@ -141,7 +146,7 @@
                                              process="@this"
                                              actionListener="#{mbMenuClientesGrupos.deseleccionar()}"
                                              oncomplete="dlgClientesGrupos.hide();"
-                                             update=":form:tablaClientesGrupos 
+                                             update=":form:tablaClientesGrupos
                                              :form:actualizarContacto"/>
                         </div>
                     </p:dialog>
@@ -158,12 +163,12 @@
                         </h:panelGrid>
                         <div style="margin: auto">
                             <p:commandButton id="btnContactos"
-                                icon="#{mbMenuClientesGrupos.iconos.btnGuardarContactos}"
-                                title="#{mbMenuClientesGrupos.iconos.lblGuardarContactos}"
-                                actionListener="#{mbMenuClientesGrupos.guardarContacto()}"
-                                process="@this :form:txtContacto :form:txtPuesto :form:txtCorreo"
-                                oncomplete="nuevoContacto(xhr, status, args);"
-                                update="growl :form:cmbContactos"/>
+                                             icon="#{mbMenuClientesGrupos.iconos.btnGuardarContactos}"
+                                             title="#{mbMenuClientesGrupos.iconos.lblGuardarContactos}"
+                                             actionListener="#{mbMenuClientesGrupos.guardarContacto()}"
+                                             process="@this :form:txtContacto :form:txtPuesto :form:txtCorreo"
+                                             oncomplete="nuevoContacto(xhr, status, args);"
+                                             update="growl :form:cmbContactos"/>
                             <p:commandButton id="btnElimminarContacto"
                                              disabled="#{mbMenuClientesGrupos.mbContactos.contacto.idContacto==0}"
                                              icon="ui-icon-trash"
@@ -249,10 +254,13 @@
                                 <p:row >
                                     <p:column colspan="3" >
                                         <p:commandButton id="btnGrabarTelefono" 
-                                                         value="Grabar" 
+                                                         icon="ui-icon-disk"
                                                          process="@this celular cmbTelefonoTipo txtLada txtTelefono txtExtension cmbContactos" 
                                                          actionListener="#{mbMenuClientesGrupos.validarTelefonos()}"
-                                                         update="growl :form:cmbTelefonos :form:mttoTelefonos" 
+                                                         update="growl 
+                                                         :form:cmbTelefonos 
+                                                         :form:mttoTelefonos
+                                                         :form:btnTelefonos" 
                                                          oncomplete="nuevoTelefono(xhr, status, args)" />
                                         <p:commandButton id="btnEliminarTelefono"
                                                          icon="ui-icon-trash"

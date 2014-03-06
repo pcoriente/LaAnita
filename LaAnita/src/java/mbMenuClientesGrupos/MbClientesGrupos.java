@@ -5,6 +5,7 @@
 package mbMenuClientesGrupos;
 
 import contactos.MbContactos;
+import contactos.MbTelefonos;
 import contactos.dao.DAOContactos;
 import contactos.dominio.Contacto;
 import contactos.dominio.Telefono;
@@ -25,6 +26,7 @@ import menuClientesGrupos.dao.DAOClientesGrupo;
 import menuClientesGrupos.dominio.ClientesGrupos;
 import menuClientesGrupos.dominio.ClientesGruposIconos;
 import org.primefaces.context.RequestContext;
+import productos.dominio.Tipo;
 
 /**
  *
@@ -35,7 +37,7 @@ import org.primefaces.context.RequestContext;
 public class MbClientesGrupos implements Serializable {
 
     @ManagedProperty(value = "#{mbContactos}")
-    private MbContactos mbContactos = new MbContactos();
+    private MbContactos mbContactos;
     private ClientesGrupos clientesGrupos = new ClientesGrupos();
     private ArrayList<ClientesGrupos> lstClientesGrupos;
     private ClientesGrupos clienteGrupoSeleccionado = null;
@@ -45,9 +47,11 @@ public class MbClientesGrupos implements Serializable {
     private ClientesGruposIconos iconos = new ClientesGruposIconos();
 
     public MbClientesGrupos() {
+        mbContactos = new MbContactos();
         if (lstClientesGrupos == null) {
             cargarListaGruposClientes();
         }
+        
     }
 
     public void cargaContactos() {
@@ -149,6 +153,7 @@ public class MbClientesGrupos implements Serializable {
                     clienteGrupoSeleccionado = null;
 
                 }
+                this.getIconos().setLblGuardarContactos("ui-icon-document");
             } catch (NamingException ex) {
                 ok = false;
                 fMsg.setSeverity(FacesMessage.SEVERITY_ERROR);
@@ -181,6 +186,7 @@ public class MbClientesGrupos implements Serializable {
         if (ok == true) {
             this.mbContactos.getMbTelefonos().grabar(this.mbContactos.getContacto().getIdContacto());
             this.mbContactos.getMbTelefonos().cargaTelefonos(this.mbContactos.getContacto().getIdContacto());
+            lblNuevoTelefono="ui-icon-pencil";
 //            this.mbContactos.getMbTelefonos().setTelefono(new Telefono());
         }
     }
@@ -218,7 +224,9 @@ public class MbClientesGrupos implements Serializable {
     }
 
     public void deseleccionar() {
+        this.setActualizar(false);
         clienteGrupoSeleccionado = null;
+//        mbContactos= new MbContactos();
     }
 
     public void informacionTipo() {
@@ -277,6 +285,7 @@ public class MbClientesGrupos implements Serializable {
         mbContactos.getContacto().setIdContacto(0);
         mbContactos.getMbTelefonos().setListaTelefonos(new ArrayList<SelectItem>());
         this.mbContactos.cargaContactos(4, clientesGrupos.getIdGrupoCte());
+        lblNuevoContacto=("ui-icon-document");
         this.setActualizar(true);
     }
 
