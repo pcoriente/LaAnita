@@ -6,21 +6,16 @@ import usuarios.dominio.Usuario;
 public class RequisicionEncabezado {
 
     private int idRequisicion;
-    private int idEmpresa;
-    private int idDepto;
-    private int idSolicito;
+    private MiniEmpresa miniEmpresa;
+    private Depto depto;
+    private Usuario Usuario;
     private int IdAprobo;
     private String fechaRequisicion;
     private String fechaAprobacion;
     private int status;
     private String observaciones;
-    private MiniEmpresa miniEmpresa;
-    private Depto depto;
-    private Usuario Usuario;
     private String Estado;
-    
     private String empleadoAprobo;
-    
 
     public int getIdRequisicion() {
         return idRequisicion;
@@ -28,30 +23,6 @@ public class RequisicionEncabezado {
 
     public void setIdRequisicion(int idRequisicion) {
         this.idRequisicion = idRequisicion;
-    }
-
-    public int getIdEmpresa() {
-        return idEmpresa;
-    }
-
-    public void setIdEmpresa(int idEmpresa) {
-        this.idEmpresa = idEmpresa;
-    }
-
-    public int getIdDepto() {
-        return idDepto;
-    }
-
-    public void setIdDepto(int idDepto) {
-        this.idDepto = idDepto;
-    }
-
-    public int getIdSolicito() {
-        return idSolicito;
-    }
-
-    public void setIdSolicito(int idSolicito) {
-        this.idSolicito = idSolicito;
     }
 
     public int getIdAprobo() {
@@ -94,8 +65,6 @@ public class RequisicionEncabezado {
         this.fechaAprobacion = fechaAprobacion;
     }
 
-   
-
     public MiniEmpresa getMiniEmpresa() {
         return miniEmpresa;
     }
@@ -120,22 +89,6 @@ public class RequisicionEncabezado {
         this.Usuario = Usuario;
     }
 
-//    public RequisicionProducto getRd() {
-//        return rd;
-//    }
-//
-//    public void setRd(RequisicionProducto rd) {
-//        this.rd = rd;
-//    }
-//
-//    public UsuarioSesion getUsuarioSesion() {
-//        return usuarioSesion;
-//    }
-//
-//    public void setUsuarioSesion(UsuarioSesion usuarioSesion) {
-//        this.usuarioSesion = usuarioSesion;
- //   }
-
     public String getEmpleadoAprobo() {
         return empleadoAprobo;
     }
@@ -151,5 +104,4 @@ public class RequisicionEncabezado {
     public void setEstado(String Estado) {
         this.Estado = Estado;
     }
-    
 }

@@ -122,7 +122,7 @@
                                         oncomplete="cotizaciones.show();"
                                         process="@this"/>
                                 <p:column headerText="Cotizacion: ">  
-                                    #{prov.producto.toString()}  
+                                    #{prov.empaque.toString()}  
                                 </p:column>
                             </p:dataTable> 
                             <br></br>
@@ -134,10 +134,10 @@
                                          var="oc"
                                          emptyMessage="No hay PRODUCTOS en la orden de compra...">
                                 <p:column headerText="Id">
-                                    #{oc.producto.idProducto}
+                                    #{oc.empaque.idEmpaque}
                                 </p:column>
                                 <p:column headerText="Producto">
-                                    #{oc.producto.toString()}
+                                    #{oc.empaque.toString()}
                                 </p:column>
                                 <p:column headerText="Proveedor">
                                     #{oc.proveedor.nombreComercial}
@@ -147,7 +147,7 @@
                                         icon="ui-icon-trash"
                                         title="Eliminar producto de Orden de Compra"
                                         process="@this"
-                                        actionListener="#{mbCotizaciones.eliminarProducto(oc.producto.idProducto)}" 
+                                        actionListener="#{mbCotizaciones.eliminarProducto(oc.empaque.idEmpaque)}" 
                                         update="ordenDeCompra :form:listaProveedores " />
                                 </p:column>
 

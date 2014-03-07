@@ -2,12 +2,15 @@ package requisiciones.dao;
 
 import cotizaciones.dominio.CotizacionDetalle;
 import cotizaciones.dominio.CotizacionEncabezado;
+import empresas.dao.DAOMiniEmpresas;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.faces.context.ExternalContext;
 import javax.faces.context.FacesContext;
 import javax.naming.Context;
@@ -15,8 +18,9 @@ import javax.naming.InitialContext;
 import javax.naming.NamingException;
 import javax.servlet.http.HttpSession;
 import javax.sql.DataSource;
-import requisiciones.dominio.RequisicionProducto;
-import requisiciones.to.TORequisicionProducto;
+import productos.dao.DAOEmpaques;
+import requisiciones.dominio.RequisicionDetalle;
+import requisiciones.dominio.RequisicionEncabezado;
 import requisiciones.to.TORequisicionEncabezado;
 import usuarios.UsuarioSesion;
 
@@ -39,7 +43,7 @@ public class DAORequisiciones {
         }
     }
 
-    public void guardarRequisicion(int idEmpresa, int idDepto, int idSolicito, ArrayList<RequisicionProducto> pr) throws SQLException {
+    public void guardarRequisicion(int idEmpresa, int idDepto, int idSolicito, ArrayList<RequisicionDetalle> pr) throws SQLException {
         Connection cn = this.ds.getConnection();
         Statement st = cn.createStatement();
         PreparedStatement ps1;
@@ -59,12 +63,14 @@ public class DAORequisiciones {
                 identity = rs.getInt("idReq");
             }
             // DETALLE
-            String strSQL2 = "INSERT INTO requisicionDetalle(idRequisicion,idProducto, cantidadSolicitada, cantidadAutorizada) VALUES (?,?,?,?)";
+
+            // 17/feb/2014-- cambiar tabla en requisiciones, quitar idProducto por idEmpaque
+            String strSQL2 = "INSERT INTO requisicionDetalle(idRequisicion,idEmpaque, cantidadSolicitada, cantidadAutorizada) VALUES (?,?,?,?)";
             ps2 = cn.prepareStatement(strSQL2);
 
-            for (RequisicionProducto e : pr) {
+            for (RequisicionDetalle e : pr) {
                 ps2.setInt(1, identity);
-                ps2.setInt(2, e.getProducto().getIdProducto());
+                ps2.setInt(2, e.getEmpaque().getIdEmpaque()); //cambio a Empaque
                 ps2.setInt(3, e.getCantidad());
                 ps2.setInt(4, e.getCantidad());
                 ps2.executeUpdate();
@@ -77,19 +83,19 @@ public class DAORequisiciones {
         }
     }
 
-    public ArrayList<TORequisicionEncabezado> dameRequisicion() throws SQLException {
-        ArrayList<TORequisicionEncabezado> lista = new ArrayList<TORequisicionEncabezado>();
+    public ArrayList<RequisicionEncabezado> dameRequisicion() throws SQLException, NamingException {
+        ArrayList<RequisicionEncabezado> lista = new ArrayList<RequisicionEncabezado>();
         ResultSet rs;
         Connection cn = ds.getConnection();
         try {
             String stringSQL = "select r.idRequisicion, r.idEmpresa, r.idDepto, e.idEmpleado, r.idAprobo, r.fechaRequisicion, r.fechaAprobacion, r.estado from requisiciones r\n"
-                    + "                    inner join empleados e on r.idSolicito= e.idEmpleado\n"
+                    + "                    inner join empleados e on e.idEmpleado= r.idSolicito\n"
                     + "                    where r.estado between 0 and 2\n"
                     + "                    order by  idRequisicion desc";
             Statement sentencia = cn.createStatement();
             rs = sentencia.executeQuery(stringSQL);
             while (rs.next()) {
-                lista.add(construirCabecero(rs));
+                lista.add(construirCabecero2(rs));
             }
         } finally {
             cn.close();
@@ -97,20 +103,54 @@ public class DAORequisiciones {
         return lista;
     }
 
-    public ArrayList<TORequisicionProducto> dameRequisicionDetalle(int idReq) throws SQLException {
+    private RequisicionEncabezado construirCabecero2(ResultSet rs) throws SQLException, NamingException {
+        DAOUsuarioRequisiciones daoU = new DAOUsuarioRequisiciones();
+        DAODepto daoD = new DAODepto();
+        DAOMiniEmpresas daoM = new DAOMiniEmpresas();
+        RequisicionEncabezado re = new RequisicionEncabezado();
+        re.setIdRequisicion((rs.getInt("idRequisicion")));
+        re.setMiniEmpresa(daoM.obtenerMiniEmpresa(rs.getInt("idEmpresa")));
+        re.setDepto(daoD.obtenerDeptoConverter(rs.getInt("idDepto")));
+        re.setUsuario(daoU.obtenerUsuarioConverter(rs.getInt("idEmpleado")));
+        re.setFechaRequisicion(utilerias.Utilerias.date2String(rs.getDate("fechaRequisicion")));
+        re.setEmpleadoAprobo(usuarioSesion.getUsuario().getUsuario());
+        re.setFechaAprobacion(utilerias.Utilerias.date2String(rs.getDate("fechaAprobacion")));
+        re.setStatus(rs.getInt("estado"));
+        int state = rs.getInt("estado");
+        switch (state) {
+            case 0:
+                re.setEstado("Rechazado");
+                break;
+            case 1:
+                re.setEstado("Solicitado");
+                break;
+            case 2:
+                re.setEstado("Aprobado");
+                break;
+            default:
+                String noAprobado = "No Aprobado";
+        }
+        return re;
+    }
 
-        ArrayList<TORequisicionProducto> lista = new ArrayList<TORequisicionProducto>();
+    public ArrayList<RequisicionDetalle> dameRequisicionDetalle(int idReq) throws SQLException {
+
+        ArrayList<RequisicionDetalle> lista = new ArrayList<RequisicionDetalle>();
         ResultSet rs;
         Connection cn = ds.getConnection();
         try {
 
-            String stringSQL = "select rd.idRequisicion,rd.idProducto,rd.cantidadSolicitada, rd.cantidadAutorizada from requisicionDetalle rd\n"
+            String stringSQL = "select rd.idRequisicion,rd.idEmpaque,rd.cantidadSolicitada, rd.cantidadAutorizada from requisicionDetalle rd\n"
                     + "where idRequisicion=" + idReq;
 
             Statement sentencia = cn.createStatement();
             rs = sentencia.executeQuery(stringSQL);
             while (rs.next()) {
-                lista.add(construirDetalle(rs));
+                try {
+                    lista.add(construirDetalle(rs));
+                } catch (NamingException ex) {
+                    Logger.getLogger(DAORequisiciones.class.getName()).log(Level.SEVERE, null, ex);
+                }
             }
         } finally {
             cn.close();
@@ -119,10 +159,11 @@ public class DAORequisiciones {
 
     }
 
-    private TORequisicionProducto construirDetalle(ResultSet rs) throws SQLException {
-        TORequisicionProducto to = new TORequisicionProducto();
+    private RequisicionDetalle construirDetalle(ResultSet rs) throws SQLException, NamingException {
+        RequisicionDetalle to = new RequisicionDetalle();
+        DAOEmpaques daoEmp = new DAOEmpaques();
         to.setIdRequisicion(rs.getInt("idRequisicion"));
-        to.setIdProducto(rs.getInt("idProducto"));
+        to.setEmpaque(daoEmp.obtenerEmpaque(rs.getInt("idEmpaque")));
         to.setCantidad(rs.getInt("cantidadSolicitada"));
         to.setCantidadAutorizada(rs.getInt("cantidadAutorizada"));
         return to;
@@ -139,7 +180,7 @@ public class DAORequisiciones {
             Statement sentencia = cn.createStatement();
             rs = sentencia.executeQuery(stringSQL);
             if (rs.next()) {
-                toRE = construirCabecero(rs);
+                toRE = construirCabecero1(rs);
             }
         } finally {
             cn.close();
@@ -147,7 +188,7 @@ public class DAORequisiciones {
         }
     }
 
-    private TORequisicionEncabezado construirCabecero(ResultSet rs) throws SQLException {
+    private TORequisicionEncabezado construirCabecero1(ResultSet rs) throws SQLException {
         TORequisicionEncabezado to = new TORequisicionEncabezado();
         to.setIdRequisicion(rs.getInt("idRequisicion"));
         to.setIdEmpresa(rs.getInt("idEmpresa"));
@@ -186,7 +227,7 @@ public class DAORequisiciones {
         }
     }
 
-    public void eliminaProductoAprobar(int idReq, int idProd) throws SQLException {
+    public void eliminaProductoAprobar(int idReq, int idEmp) throws SQLException {
         Connection cn = this.ds.getConnection();
         Statement st = cn.createStatement();
         PreparedStatement ps1;
@@ -194,7 +235,7 @@ public class DAORequisiciones {
         try {
             st.executeUpdate("begin transaction");
             //CABECERO
-            String strSQL2 = "UPDATE requisicionDetalle SET cantidadAutorizada= 0 WHERE idRequisicion=" + idReq + " and idProducto=" + idProd + "";
+            String strSQL2 = "UPDATE requisicionDetalle SET cantidadAutorizada= 0 WHERE idRequisicion=" + idReq + " and idEmpaque=" + idEmp + "";
             ps2 = cn.prepareStatement(strSQL2);
             ps2.executeUpdate();
             st.executeUpdate("commit transaction");
@@ -206,13 +247,13 @@ public class DAORequisiciones {
         }
     }
 
-    public ArrayList<TORequisicionProducto> dameRequisicionDetalleAprobar(int idRequisi) throws SQLException {
-        ArrayList<TORequisicionProducto> lista = new ArrayList<TORequisicionProducto>();
+    public ArrayList<RequisicionDetalle> dameRequisicionDetalleAprobar(int idRequisi) throws SQLException, NamingException {
+        ArrayList<RequisicionDetalle> lista = new ArrayList<RequisicionDetalle>();
         ResultSet rs;
         Connection cn = ds.getConnection();
         try {
 
-            String stringSQL = "select rd.idRequisicion,rd.idProducto,rd.cantidadSolicitada, rd.cantidadAutorizada from requisicionDetalle rd\n"
+            String stringSQL = "select rd.idRequisicion,rd.idEmpaque,rd.cantidadSolicitada, rd.cantidadAutorizada from requisicionDetalle rd\n"
                     + "                    where idRequisicion=" + idRequisi;
 
             Statement sentencia = cn.createStatement();
@@ -226,14 +267,14 @@ public class DAORequisiciones {
         return lista;
     }
 
-    public void modificaProductoAprobar(int idReq, int idProd, int cantidad) throws SQLException {
+    public void modificaProductoAprobar(int idReq, int idEmp, int cantidad) throws SQLException {
         Connection cn = this.ds.getConnection();
         Statement st = cn.createStatement();
         PreparedStatement ps2;
         try {
             st.executeUpdate("begin transaction");
             //CABECERO
-            String strSQL2 = "UPDATE requisicionDetalle SET cantidadAutorizada=" + cantidad + "  WHERE idRequisicion=" + idReq + " and idProducto=" + idProd + "";
+            String strSQL2 = "UPDATE requisicionDetalle SET cantidadAutorizada=" + cantidad + "  WHERE idRequisicion=" + idReq + " and idEmpaque=" + idEmp + "";
             ps2 = cn.prepareStatement(strSQL2);
             ps2.executeUpdate();
             st.executeUpdate("commit transaction");
@@ -245,7 +286,7 @@ public class DAORequisiciones {
         }
     }
 
-    public void modificarAprobacion(int idReq, int idProd, int cant) throws SQLException {
+    public void modificarAprobacion(int idReq, int idEmp, int cant) throws SQLException {
         Connection cn = this.ds.getConnection();
         Statement st = cn.createStatement();
         PreparedStatement ps2, ps3;
@@ -258,7 +299,7 @@ public class DAORequisiciones {
                 st.executeUpdate("commit transaction");
             } else {
                 st.executeUpdate("begin transaction");
-                String strSQL3 = "UPDATE requisicionDetalle SET cantidadAutorizada=cantidadSolicitada WHERE idRequisicion=" + idReq + " and idProducto=" + idProd;
+                String strSQL3 = "UPDATE requisicionDetalle SET cantidadAutorizada=cantidadSolicitada WHERE idRequisicion=" + idReq + " and idEmpaque=" + idEmp;
                 ps3 = cn.prepareStatement(strSQL3);
                 ps3.executeUpdate();
                 st.executeUpdate("commit transaction");
@@ -273,8 +314,8 @@ public class DAORequisiciones {
 
     //COTIZACIONES
     public void grabarCotizacion(CotizacionEncabezado ce, ArrayList<CotizacionDetalle> cd) throws SQLException {
-        int idProv=ce.getIdProveedor();
-      
+        int idProv = ce.getIdProveedor();
+
         Connection cn = this.ds.getConnection();
         Statement st = cn.createStatement();
         PreparedStatement ps1, ps2, ps3, ps4;
@@ -282,8 +323,8 @@ public class DAORequisiciones {
         try {
             st.executeUpdate("begin transaction");
             //CABECERO
-            String strSQL1 = "INSERT INTO cotizaciones(idRequisicion, idProveedor, idMoneda, folioProveedor, fechaCotizacion, descuentoCotizacion,descuentoProntoPago, observaciones)"
-                    + " VALUES (" + ce.getIdRequisicion() + ", " + idProv +  ", " + ce.getIdMoneda() + ",'Folio' ,GETDATE(), " + ce.getDescuentoCotizacion() + ", " + ce.getDescuentoProntoPago() + ", 'hola')";
+            String strSQL1 = "INSERT INTO cotizaciones(idRequisicion, idProveedor, idMoneda, folioProveedor, fechaCotizacion, descuentoCotizacion,descuentoProntoPago, observaciones,numCotizaciones)"
+                    + " VALUES (" + ce.getIdRequisicion() + ", " + idProv + ", " + ce.getIdMoneda() + ",'Folio' ,GETDATE(), " + ce.getDescuentoCotizacion() + ", " + ce.getDescuentoProntoPago() + ", 'hola'," + ce.getNumCotizaciones()+")";
             String strSQLIdentity = "SELECT @@IDENTITY as idCot";
             ps1 = cn.prepareStatement(strSQL1);
             ps1.executeUpdate();
@@ -295,12 +336,12 @@ public class DAORequisiciones {
 
             }
             // DETALLE
-            String strSQL2 = "INSERT INTO cotizacionesDetalle(idCotizacion,idProducto, cantidadCotizada, costoCotizado, descuentoProducto, descuentoProducto2,neto,subtotal) VALUES (?,?,?,?,?,?,?,?)";
+            String strSQL2 = "INSERT INTO cotizacionesDetalle(idCotizacion,idEmpaque, cantidadCotizada, costoCotizado, descuentoProducto, descuentoProducto2,neto,subtotal) VALUES (?,?,?,?,?,?,?,?)";
             ps2 = cn.prepareStatement(strSQL2);
 
             for (CotizacionDetalle e : cd) {
                 ps2.setInt(1, identity);
-                ps2.setInt(2, e.getProducto().getIdProducto());
+                ps2.setInt(2, e.getEmpaque().getIdEmpaque()); 
                 ps2.setDouble(3, e.getCantidadCotizada());
                 ps2.setDouble(4, e.getCostoCotizado());
                 ps2.setDouble(5, e.getDescuentoProducto());
@@ -326,28 +367,54 @@ public class DAORequisiciones {
 
     }
 
-    public ArrayList<TORequisicionProducto> dameRequisicionDetalleCotizar(int idRequisi) throws SQLException {
-        ArrayList<TORequisicionProducto> lista = new ArrayList<TORequisicionProducto>();
+    public ArrayList<CotizacionDetalle> dameRequisicionDetalleCotizar(int idRequisi) throws SQLException, NamingException {
+        ArrayList<CotizacionDetalle> lista = new ArrayList<CotizacionDetalle>();
         ResultSet rs;
         Connection cn = ds.getConnection();
         //   this.grabarCotizacionInicial(idRequisi);
         try {
 
-            String stringSQL = "select rd.idRequisicion,rd.idProducto,rd.cantidadSolicitada, rd.cantidadAutorizada from requisicionDetalle rd\n"
+            String stringSQL = "select rd.idRequisicion,rd.idEmpaque,rd.cantidadSolicitada, rd.cantidadAutorizada from requisicionDetalle rd\n"
                     + "                    where cantidadAutorizada>0 and idRequisicion=" + idRequisi;
 
             Statement sentencia = cn.createStatement();
             rs = sentencia.executeQuery(stringSQL);
             while (rs.next()) {
-                lista.add(construirDetalle(rs));
+                lista.add(construirCotizacionDetalle(rs));
             }
         } finally {
             cn.close();
         }
         return lista;
     }
+    
+    
+    public CotizacionDetalle construirCotizacionDetalle(ResultSet rs) throws NamingException, SQLException{
+        CotizacionDetalle cd= new CotizacionDetalle();
+        RequisicionDetalle rd = new RequisicionDetalle();
+        DAOEmpaques daoEmp = new DAOEmpaques();
+        //REQUISICION
+        cd.setIdRequisicion(rs.getInt("idRequisicion"));
+        cd.setEmpaque(daoEmp.obtenerEmpaque(rs.getInt("idEmpaque")));
+//        rd.setCantidad(rs.getInt("cantidadSolicitada"));
+//        rd.setCantidadAutorizada(rs.getInt("cantidadAutorizada"));
+        //COTIZACION
+       // cd.setRequisicionDetalle(rd);
+        cd.setCantidadAutorizada(rs.getInt("cantidadAutorizada"));
+        cd.setCantidadCotizada(rs.getDouble("cantidadAutorizada"));
+        cd.setCostoCotizado(0);
+        cd.setNeto(0);
+        cd.setSubtotal(0);
+        cd.setDescuentoProducto(0);
+        cd.setDescuentoProducto2(0);
+        
+        return cd;
+    
+    
+    
+    }
 
-    public void actualizarCantidadCotizada(int idCot, int idProd, int cc) throws SQLException {
+    public void actualizarCantidadCotizada(int idCot, int idEmp, int cc) throws SQLException {
 
         Connection cn = this.ds.getConnection();
         Statement st = cn.createStatement();
@@ -355,7 +422,7 @@ public class DAORequisiciones {
         try {
 
             //CABECERO
-            String strSQL2 = "UPDATE cotizacionesDetalle SET cantidadCotizada=" + cc + "  WHERE idCotizacion=" + idCot + " and idProducto=" + idProd + "";
+            String strSQL2 = "UPDATE cotizacionesDetalle SET cantidadCotizada=" + cc + "  WHERE idCotizacion=" + idCot + " and idEmpaque=" + idEmp + "";
             ps2 = cn.prepareStatement(strSQL2);
             ps2.executeUpdate();
         } catch (SQLException e) {
@@ -366,14 +433,14 @@ public class DAORequisiciones {
 
     }
 
-    public void actualizarPrecioDescuento(int idCot, int idProd, int costo, int desc) throws SQLException {
+    public void actualizarPrecioDescuento(int idCot, int idEmp, int costo, int desc) throws SQLException {
         Connection cn = this.ds.getConnection();
         Statement st = cn.createStatement();
         PreparedStatement ps2;
         try {
 
             //CABECERO
-            String strSQL2 = "UPDATE cotizacionesDetalle SET costoCotizado=" + costo + ", descuentoProducto=" + desc + "  WHERE idCotizacion=" + idCot + " and idProducto=" + idProd + "";
+            String strSQL2 = "UPDATE cotizacionesDetalle SET costoCotizado=" + costo + ", descuentoProducto=" + desc + "  WHERE idCotizacion=" + idCot + " and idEmpaque=" + idEmp + "";
             ps2 = cn.prepareStatement(strSQL2);
             ps2.executeUpdate();
         } catch (SQLException e) {

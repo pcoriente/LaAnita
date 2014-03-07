@@ -28,7 +28,7 @@ public class MbCotizaciones implements Serializable {
 //    ----------------Pablo-------------------------
     private CotizacionDetalle cotizacionDeta = new CotizacionDetalle();
     private CotizacionDetalle productoElegido = new CotizacionDetalle();
-    private ArrayList<CotizacionDetalle> listaCotizacionDetalleProductos = new ArrayList<CotizacionDetalle>();
+    private ArrayList<CotizacionDetalle> listaCotizacionDetalleProductos;
     private ArrayList<CotizacionDetalle> ordenCompra = new ArrayList<CotizacionDetalle>();
 //    ----------------------------------------------
     private ArrayList<CotizacionEncabezado> miniCotizacionProveedor;
@@ -39,13 +39,6 @@ public class MbCotizaciones implements Serializable {
 
     //CONSTRUCTORES-------------------------------------------------------------------------------------------------------------------------------------------------------
     public MbCotizaciones() {
-        try {
-            this.cargaCotizaciones();
-        } catch (NamingException ex) {
-            Logger.getLogger(MbCotizaciones.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (SQLException ex) {
-            Logger.getLogger(MbCotizaciones.class.getName()).log(Level.SEVERE, null, ex);
-        }
     }
     //METODOS ---------------------------------------------------------------------------------------------------------------------------------------------------------
 
@@ -65,11 +58,10 @@ public class MbCotizaciones implements Serializable {
         listaCotizacionDetalleProductos = new ArrayList<CotizacionDetalle>();
         listaCotizacionDetalle = new ArrayList<CotizacionDetalle>();
         DAOCotizaciones daoCot = new DAOCotizaciones();
-//        ArrayList<CotizacionDetalle> 
-        listaCotizacionDetalle = daoCot.dameProductoCotizacionesProveedores(idReq);
-//        for (CotizacionDetalle d : lista) {
-//            listaCotizacionDetalle.add(d);
-//        }
+       ArrayList<CotizacionDetalle> lista = daoCot.dameProductoCotizacionesProveedores(idReq);
+        for (CotizacionDetalle d : lista) {
+            listaCotizacionDetalle.add(d);
+        }
     }
 
 //    public void cargaCotizacionesProveedorEncabezado(int idReq) throws NamingException, SQLException {
@@ -94,7 +86,7 @@ public class MbCotizaciones implements Serializable {
         listaCotizacionDetalleProductos = new ArrayList<CotizacionDetalle>();
         try {
             int idCotizacionDetalle = cotizacionDeta.getIdCotizacion();
-            int idProducto = cotizacionDeta.getProducto().getIdProducto();
+            int idProducto = cotizacionDeta.getEmpaque().getIdEmpaque();
             DAOCotizaciones daoCot = new DAOCotizaciones();
             listaCotizacionDetalleProductos = daoCot.consultaCotizacionesProveedores(idCotizacionDetalle, idProducto);
 
@@ -118,7 +110,7 @@ public class MbCotizaciones implements Serializable {
                 d.setTotal(d.getSubtotal() + d.getIva());
 
 
-                this.setNombreProduc(d.getProducto().toString());
+                this.setNombreProduc(d.getEmpaque().toString());
 
             }
 
@@ -139,7 +131,7 @@ public class MbCotizaciones implements Serializable {
 
         for (CotizacionDetalle d : listaCotizacionDetalle) {
 
-            if (d.getProducto().getIdProducto() == productoElegido.getProducto().getIdProducto()) {
+            if (d.getEmpaque().getIdEmpaque() == productoElegido.getEmpaque().getIdEmpaque()) {
                 listaCotizacionDetalle.remove(d);
                 break;
             }
@@ -211,7 +203,7 @@ public class MbCotizaciones implements Serializable {
         int idProducto = 0;
         int longitud = ordenCompra.size();
         for (int y = 0; y < longitud; y++) {
-            idProducto = ordenCompra.get(y).getProducto().getIdProducto();
+            idProducto = ordenCompra.get(y).getEmpaque().getIdEmpaque();
             if (idProducto == idProd) {
                 listaCotizacionDetalle.add(ordenCompra.get(y));
                 ordenCompra.remove(y);

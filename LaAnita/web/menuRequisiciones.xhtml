@@ -39,7 +39,8 @@
                     <!-- P A N E L    D E   A D M I N I S T R A C I O N... -->
                     <p:messages id="messagePanel" showDetail="true" autoUpdate="true" closable="true" />
                     <p:panel header="PANEL DE ADMINISTRACION DE REQUISICIONES"  >
-                        <h:outputText value="No hay COTIZACIONES que mostrar !!" rendered="#{empty mbRequisiciones.listaRequisicionesEncabezado}" />
+                        <h:outputText value="No hay REQUISICIONES que mostrar !!" 
+                                      rendered="#{empty mbRequisiciones.listaRequisicionesEncabezado}" />
                         <p:dataTable id="requisicion"
                                      value="#{mbRequisiciones.listaRequisicionesEncabezado}"
                                      var="req" 
@@ -87,6 +88,7 @@
                                                  actionListener="#{(mbRequisiciones.requisicionMas(req.idRequisicion))}"
                                                  update=":form:detalle"  
                                                  oncomplete="reqDialog.show()" 
+                                               
                                                  />
 
                                 <p:commandButton 
@@ -95,7 +97,7 @@
                                     update=":form:pgCabecero :form:detalleAprobar"
                                     oncomplete="aprobarDialog.show()"
                                     title="Procedimiento de aprobación"
-                                    actionListener="#{mbRequisiciones.requisicionAprobar(req.idRequisicion)}"
+                                    actionListener="#{mbRequisiciones.cargaRequisicionesDetalleAprobar(req.idRequisicion)}"
                                     style="margin:0 auto;" 
                                     disabled="#{req.status eq 0 || req.status eq 2}"
                                     >  
@@ -116,7 +118,7 @@
                                     icon="ui-icon-help"
                                     title="Quitar Aprobación"
                                     process="@this"
-                                    actionListener="#{mbRequisiciones.modificarRequisicionStatus(req.idRequisicion,mbRequisiciones.requisicionProducto.producto.idProducto,req.status)}" 
+                                    actionListener="#{mbRequisiciones.modificarRequisicionStatus(req.idRequisicion,2,req.status)}" 
                                     update=":form:requisicion" 
                                     style="margin:0 auto;"
                                     disabled="#{req.status eq 1 || req.status eq 0 }"
@@ -129,21 +131,20 @@
                     <!-- M A S   D E T A L L E... -->
                     <p:dialog  widgetVar="reqDialog" resizable="false"  
                                showEffect="fade" hideEffect="explode" modal="true" style="text-align: center">
-                        <p:dataTable id="detalle" value="#{mbRequisiciones.requisicionProductos}" 
+                        <p:dataTable id="detalle" value="#{mbRequisiciones.requisicionDetalles}" 
                                      var="det" scrollable="true" scrollHeight="200"
-                                     style="width: 800px;"
-                                     rowKey="#{det.producto.idProducto}">
+                                     style="width: 800px;">
                             <f:facet name="header">  
                                 DETALLE DE PRODUCTOS REQUISITADOS  
                             </f:facet>
                             <p:column  headerText="Código" width="30" >
-                                <h:outputText value="#{det.producto.idProducto}"  />
+                                <h:outputText value="#{det.empaque.idEmpaque}"  />
                             </p:column>
                             <p:column headerText="Descripción del Producto " width="250" >
-                                <h:outputText value="#{det.producto.toString()}" />
+                                <h:outputText value="#{det.empaque.toString()}" />
                             </p:column>
                             <p:column headerText="Unidad" width="50">
-                                <h:outputText value="#{det.producto.presentacion.toString()}" />
+                                <h:outputText value="#{det.empaque.unidadEmpaque.unidad}" />
                             </p:column>
 
                             <p:column headerText="Cantidad" width="50" >
@@ -190,23 +191,23 @@
 
                         </h:panelGrid >
                         <p:messages id="messagesAprobar" showDetail="true" autoUpdate="true" closable="true" />
-                        <p:dataTable id="detalleAprobar" value="#{mbRequisiciones.requisicionProductos}" 
+                        <p:dataTable id="detalleAprobar" value="#{mbRequisiciones.requisicionDetalles}" 
                                      var="da" scrollable="true" scrollHeight="200"
                                      style="width: 800px;"
-                                     rowKey="#{da.producto.idProducto}"
+                                     rowKey="#{da.empaque.idEmpaque}"
                                      editable="true"
                                      >
                             <p:ajax event="rowEdit" listener="#{mbRequisiciones.onEdit}" update="detalleAprobar" />  
                             <p:ajax event="rowEditCancel"  update="detalleAprobar" />
 
                             <p:column  headerText="Cod." width="20">
-                                <h:outputText value="#{da.producto.idProducto}"  />
+                                <h:outputText value="#{da.empaque.idEmpaque}"  />
                             </p:column>
                             <p:column headerText="Descripción Producto" width="300" >
-                                <h:outputText value="#{da.producto.toString()}" />
+                                <h:outputText value="#{da.empaque.toString()}" />
                             </p:column>
                             <p:column headerText="Unidad" width="50">
-                                <h:outputText value="#{da.producto.presentacion.presentacion}" />
+                                <h:outputText value="#{da.empaque.unidadEmpaque.unidad}" />
                             </p:column>
 
                             <p:column headerText="Solicitada" width="50" >
@@ -235,7 +236,7 @@
                                             title="Eliminar Producto"
                                             disabled="#{mbRequisiciones.requisicionEncabezado.status eq 2 }"
                                             process="@this"
-                                            actionListener="#{mbRequisiciones.eliminaProductoAprobar(mbRequisiciones.requisicionEncabezado.idRequisicion,da.producto.idProducto)}" 
+                                            actionListener="#{mbRequisiciones.eliminaProductoAprobar(mbRequisiciones.requisicionEncabezado.idRequisicion,da.empaque.idEmpaque)}" 
                                             update=":form:detalleAprobar" 
                                             style="margin:0 auto;"
                                             />
@@ -245,7 +246,7 @@
                                             icon="ui-icon-help"
                                             title="Quitar Aprobación"
                                             process="@this"
-                                            actionListener="#{mbRequisiciones.modificarRequisicionStatus(da.idRequisicion,da.producto.idProducto,da.cantidadAutorizada)}" 
+                                            actionListener="#{mbRequisiciones.modificarRequisicionStatus(da.idRequisicion,da.empaque.idEmpaque,da.cantidadAutorizada)}" 
                                             update=":form:detalleAprobar" 
                                             style="margin:0 auto;"
                                             disabled="#{da.cantidadAutorizada > 0 }"

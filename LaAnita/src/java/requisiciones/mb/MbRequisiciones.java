@@ -3,7 +3,6 @@ package requisiciones.mb;
 import cotizaciones.dominio.CotizacionDetalle;
 import cotizaciones.dominio.CotizacionEncabezado;
 import empresas.MbMiniEmpresa;
-import empresas.dao.DAOMiniEmpresas;
 import javax.inject.Named;
 import javax.enterprise.context.SessionScoped;
 import java.io.Serializable;
@@ -20,19 +19,11 @@ import monedas.MbMonedas;
 import org.primefaces.event.RowEditEvent;
 import productos.FrmProducto;
 import productos.MbBuscarEmpaques;
-import productos.MbBuscarProd;
-import productos.dao.DAOProductos;
 import productos.dominio.Empaque;
-import productos.dominio.ProdStr;
-import productos.dominio.Producto;
 import proveedores.MbMiniProveedor;
-import requisiciones.dao.DAODepto;
 import requisiciones.dao.DAORequisiciones;
-import requisiciones.dao.DAOUsuarioRequisiciones;
+import requisiciones.dominio.RequisicionDetalle;
 import requisiciones.dominio.RequisicionEncabezado;
-import requisiciones.dominio.RequisicionProducto;
-import requisiciones.to.TORequisicionEncabezado;
-import requisiciones.to.TORequisicionProducto;
 import usuarios.dominio.Usuario;
 
 @Named(value = "mbRequisiciones")
@@ -49,21 +40,17 @@ public class MbRequisiciones implements Serializable {
     private ArrayList<RequisicionEncabezado> listaRequisicionesEncabezado;
     private RequisicionEncabezado requisicionEncabezado;
     private ArrayList<RequisicionEncabezado> requisicionesFiltradas;
-    private RequisicionProducto requisicionProducto;
-    private ArrayList<RequisicionProducto> requisicionProductos = new ArrayList<RequisicionProducto>();
-    @ManagedProperty(value = "#{mbBuscarProd}")
-    private MbBuscarProd mbBuscarProd;
-   @ManagedProperty(value = "#{mbBuscarEmpaques}")
-    private MbBuscarEmpaques mbBuscarEmpaques;
-//    @ManagedProperty(value="#{mbBuscarEmpaques}")
-//    private MbBuscarEmpaques mbBuscar;
-//      private ArrayList<Empaque> listaEmpaque = new ArrayList<Empaque>();
-//    private Empaque empaque;
-    private Producto producto;
-    private ProdStr prodStr;
-    private ArrayList<SelectItem> listaMini = new ArrayList<SelectItem>();
+    //CAMBIANDO DE PRODUCTOS A EMPAQUES
+    @ManagedProperty(value = "#{mbBuscarEmpaques}")
+    private MbBuscarEmpaques mbBuscar;
+    private ArrayList<Empaque> listaEmpaque = new ArrayList<Empaque>();
+    private Empaque empaque;
+    private RequisicionDetalle requisicionDetalle;
+    private ArrayList<RequisicionDetalle> requisicionDetalles;
+    private RequisicionDetalle empaqueElegido = new RequisicionDetalle();
     //COTIZACION
-    private ArrayList<CotizacionDetalle> cotizacionProductos;
+    private ArrayList<SelectItem> listaMini = new ArrayList<SelectItem>();
+    private ArrayList<CotizacionDetalle> cotizacionDetalles;
     private CotizacionDetalle cotizacionDetalle = new CotizacionDetalle();
     private int numCotizacion = 0;
     private double subtotalGeneral;
@@ -86,17 +73,19 @@ public class MbRequisiciones implements Serializable {
     private ArrayList<CotizacionEncabezado> cotizacionesEncabezado;
     private CotizacionEncabezado cotizacionEncabezado = new CotizacionEncabezado();
     private double subtotalBruto;
+    private String subtotalBrutoF;
+    //  DAORequisiciones daoReq;
+    private String navega;
 
     //GETS Y SETS
     public MbRequisiciones() throws NamingException {
         this.mbMiniEmpresa = new MbMiniEmpresa();
         this.mbDepto = new MbDepto();
         this.mbUsuarios = new MbUsuarios();
-        this.mbBuscarProd = new MbBuscarProd();
         this.mbMiniProveedor = new MbMiniProveedor();
-      //  this.mbBuscarProd = new MbBuscar
         this.mbMonedas = new MbMonedas();
-
+        this.mbBuscar = new MbBuscarEmpaques();
+        //  this.daoReq = new DAORequisiciones();
     }
 
     //GET Y SETS REQUISICIONES
@@ -169,47 +158,6 @@ public class MbRequisiciones implements Serializable {
         this.requisicionesFiltradas = requisicionesFiltradas;
     }
 
-    public ArrayList<RequisicionProducto> getRequisicionProductos() {
-        return requisicionProductos;
-    }
-
-    public void setRequisicionProductos(ArrayList<RequisicionProducto> requisicionProductos) {
-        this.requisicionProductos = requisicionProductos;
-    }
-
-    public MbBuscarProd getMbBuscarProd() {
-        return mbBuscarProd;
-    }
-
-    public void setMbBuscarProd(MbBuscarProd mbBuscarProd) {
-        this.mbBuscarProd = mbBuscarProd;
-    }
-
-    public Producto getProducto() {
-        return producto;
-    }
-
-    public void setProducto(Producto producto) {
-        this.producto = producto;
-    }
-
-    public ProdStr getProdStr() {
-        return prodStr;
-    }
-
-    public void setProdStr(ProdStr prodStr) {
-        this.prodStr = prodStr;
-    }
-
-    public RequisicionProducto getRequisicionProducto() {
-        return requisicionProducto;
-    }
-
-    public void setRequisicionProducto(RequisicionProducto requisicionProducto) {
-        this.requisicionProducto = requisicionProducto;
-
-    }
-
     public ArrayList<SelectItem> getListaMini() throws SQLException {
         listaMini = this.mbMiniEmpresa.obtenerListaMiniEmpresas();
         return listaMini;
@@ -235,12 +183,12 @@ public class MbRequisiciones implements Serializable {
         this.numCotizacion = numCotizacion;
     }
 
-    public ArrayList<CotizacionDetalle> getCotizacionProductos() {
-        return cotizacionProductos;
+    public ArrayList<CotizacionDetalle> getCotizacionDetalles() {
+        return cotizacionDetalles;
     }
 
-    public void setCotizacionProductos(ArrayList<CotizacionDetalle> cotizacionProductos) {
-        this.cotizacionProductos = cotizacionProductos;
+    public void setCotizacionDetalles(ArrayList<CotizacionDetalle> cotizacionDetalles) {
+        this.cotizacionDetalles = cotizacionDetalles;
     }
 
     public double getSubtotalGeneral() {
@@ -369,34 +317,78 @@ public class MbRequisiciones implements Serializable {
         this.subtotalBruto = subtotalBruto;
     }
 
-//    public MbBuscarEmpaques getMbBuscar() {
-//        return mbBuscar;
-//    }
-//
-//    public void setMbBuscar(MbBuscarEmpaques mbBuscar) {
-//        this.mbBuscar = mbBuscar;
-//    }
-//
-    public MbBuscarEmpaques getMbBuscarEmpaques() {
-        return mbBuscarEmpaques;
+    public MbMonedas getMbMonedas() {
+        return mbMonedas;
     }
 
-    public void setMbBuscarEmpaques(MbBuscarEmpaques mbBuscarEmpaques) {
-        this.mbBuscarEmpaques = mbBuscarEmpaques;
+    public void setMbMonedas(MbMonedas mbMonedas) {
+        this.mbMonedas = mbMonedas;
     }
 
+    public String getSubtotalBrutoF() {
+        subtotalBrutoF = utilerias.Utilerias.formatoMonedas(this.getSubtotalBruto());
+        return subtotalBrutoF;
+    }
+
+    public void setSubtotalBrutoF(String subtotalBrutoF) {
+        
+        this.subtotalBrutoF = subtotalBrutoF;
+    }
     
-    
-    
+     
+
+    //EMPAQUES
+    public MbBuscarEmpaques getMbBuscar() {
+        return mbBuscar;
+    }
+
+    public void setMbBuscar(MbBuscarEmpaques mbBuscar) {
+        this.mbBuscar = mbBuscar;
+    }
+
+    public ArrayList<Empaque> getListaEmpaque() {
+        return listaEmpaque;
+    }
+
+    public void setListaEmpaque(ArrayList<Empaque> listaEmpaque) {
+        this.listaEmpaque = listaEmpaque;
+    }
+
+    public Empaque getEmpaque() {
+        return empaque;
+    }
+
+    public void setEmpaque(Empaque empaque) {
+        this.empaque = empaque;
+    }
+
+    public RequisicionDetalle getRequisicionDetalle() {
+        return requisicionDetalle;
+    }
+
+    public void setRequisicionDetalle(RequisicionDetalle requisicionDetalle) {
+        this.requisicionDetalle = requisicionDetalle;
+    }
+
+    public ArrayList<RequisicionDetalle> getRequisicionDetalles() {
+        return requisicionDetalles;
+    }
+
+    public void setRequisicionDetalles(ArrayList<RequisicionDetalle> requisicionDetalles) {
+        this.requisicionDetalles = requisicionDetalles;
+    }
+
+    public RequisicionDetalle getEmpaqueElegido() {
+        return empaqueElegido;
+    }
+
+    public void setEmpaqueElegido(RequisicionDetalle empaqueElegido) {
+        this.empaqueElegido = empaqueElegido;
+    }
 
 //------------------------------------------------------------------------------------------------------------------------------------------
 //------------------------------------------------------------------------------------------------------------------------------------------
     //METODOS REQUISICIONES
-    public void actualizaProductoSeleccionado() {
-        RequisicionProducto rp = new RequisicionProducto(this.mbBuscarProd.obtenerSeleccionado());
-        this.requisicionProductos.add(rp);
-    }
-
     public void cargaSubUsuarios() throws SQLException {
         this.listaSubUsuarios = new ArrayList<SelectItem>();
         Usuario usu = new Usuario(0, "Seleccione un usuario: ");
@@ -406,7 +398,7 @@ public class MbRequisiciones implements Serializable {
         }
     }
 
-    public void agregarRequisicion() throws NamingException, SQLException {
+    public void guardaRequisicion() throws NamingException, SQLException {
         int idEmpresa;
         int idDepto;
         int idUsuario;
@@ -430,196 +422,124 @@ public class MbRequisiciones implements Serializable {
             fMsg = new FacesMessage(FacesMessage.SEVERITY_WARN, "Aviso:", "Seleccione un depto.");
         } else if (idUsuario == 0) {
             fMsg = new FacesMessage(FacesMessage.SEVERITY_WARN, "Aviso:", "Seleccione un Usuario.");
-        } else if (this.requisicionProductos.isEmpty()) {
+        } else if (this.requisicionDetalles.isEmpty()) {
             fMsg = new FacesMessage(FacesMessage.SEVERITY_WARN, "Aviso:", "Especificar detalle");
         } else {
             boolean control = false;
-            for (RequisicionProducto p : this.requisicionProductos) {
+            for (RequisicionDetalle p : this.requisicionDetalles) {
                 if (p.getCantidad() <= 0) {
-                    fMsg = new FacesMessage(FacesMessage.SEVERITY_WARN, "Aviso: Para el producto " + p.getProducto().toString(), " Capture una cantidad numérica y positiva. ");
+                    fMsg = new FacesMessage(FacesMessage.SEVERITY_WARN, "Aviso: Para el producto " + p.getEmpaque().toString(), " Capture una cantidad numérica y positiva. ");
                     control = true;
                     break;
                 }
             }
             if (control == false) {
-                daoReq.guardarRequisicion(idEmpresa, idDepto, idUsuario, this.requisicionProductos);
+                daoReq.guardarRequisicion(idEmpresa, idDepto, idUsuario, this.requisicionDetalles);
                 this.limpiaRequisicion();
                 fMsg = new FacesMessage(FacesMessage.SEVERITY_INFO, "Aviso:", "La requisición se ha generado...");
             }
         }
         FacesContext.getCurrentInstance().addMessage(null, fMsg);
-
     }
 
     public void cargaRequisiciones() throws NamingException, SQLException {
         listaRequisicionesEncabezado = new ArrayList<RequisicionEncabezado>();
-        DAORequisiciones daoLista = new DAORequisiciones();
-        ArrayList<TORequisicionEncabezado> toLista = daoLista.dameRequisicion();
-
-        for (TORequisicionEncabezado e : toLista) {
-            listaRequisicionesEncabezado.add(convertir(e));
+        DAORequisiciones daoReq = new DAORequisiciones();
+        ArrayList<RequisicionEncabezado> toLista = daoReq.dameRequisicion();
+        for (RequisicionEncabezado e : toLista) {
+            listaRequisicionesEncabezado.add(e);
         }
+
     }
 
     private void cargaRequisicionesDetalle(int id) throws NamingException, SQLException {
-        requisicionProductos = new ArrayList<RequisicionProducto>();
-        DAORequisiciones daoListaDetalle = new DAORequisiciones();
-        ArrayList<TORequisicionProducto> toLista = daoListaDetalle.dameRequisicionDetalle(id);
-        DAOProductos daoPro = new DAOProductos();
-        for (TORequisicionProducto e : toLista) {
-            requisicionProductos.add(convertir(e, daoPro));
+        requisicionDetalles = new ArrayList<RequisicionDetalle>();
+        DAORequisiciones daoReq = new DAORequisiciones();
+        ArrayList<RequisicionDetalle> detallado = daoReq.dameRequisicionDetalle(id);
+        for (RequisicionDetalle rd : detallado) {
+            requisicionDetalles.add(rd);
         }
     }
 
     public void cargaRequisicionesDetalleAprobar(int id) throws NamingException, SQLException {
-        requisicionProductos = new ArrayList<RequisicionProducto>();
-        DAORequisiciones daoListaDetalle = new DAORequisiciones();
-        ArrayList<TORequisicionProducto> toLista = daoListaDetalle.dameRequisicionDetalleAprobar(id);
-        DAOProductos daoPro = new DAOProductos();
-        for (TORequisicionProducto e : toLista) {
-            requisicionProductos.add(convertir(e, daoPro));
+        requisicionDetalles = new ArrayList<RequisicionDetalle>();
+        DAORequisiciones daoReq = new DAORequisiciones();
+        ArrayList<RequisicionDetalle> rsDetalle = daoReq.dameRequisicionDetalleAprobar(id);
+        for (RequisicionDetalle rd : rsDetalle) {
+            requisicionDetalles.add(rd);
         }
-    }
-
-    private RequisicionProducto convertir(TORequisicionProducto to, DAOProductos daoPro) throws SQLException, NamingException {
-        RequisicionProducto rd = new RequisicionProducto(daoPro.obtenerProducto(to.getIdProducto()));
-        rd.setIdRequisicion(to.getIdRequisicion());
-        rd.setCantidad(to.getCantidad());
-        rd.setCantidadAutorizada(to.getCantidadAutorizada());
-        return rd;
-    }
-
-    private RequisicionEncabezado convertir(TORequisicionEncabezado to) throws SQLException, NamingException {
-        DAOUsuarioRequisiciones daoU = new DAOUsuarioRequisiciones();
-        DAODepto daoD = new DAODepto();
-        DAOMiniEmpresas daoM = new DAOMiniEmpresas();
-        RequisicionEncabezado re = new RequisicionEncabezado();
-        re.setIdRequisicion(to.getIdRequisicion());
-        re.setFechaRequisicion(utilerias.Utilerias.date2String(to.getFechaRequisicion()));
-
-        re.setMiniEmpresa(daoM.obtenerMiniEmpresa(to.getIdEmpresa()));
-        re.setDepto(daoD.obtenerDeptoConverter(to.getIdDepto()));
-        re.setUsuario(daoU.obtenerUsuarioConverter(to.getIdSolicito()));
-        int state = to.getStatus();
-        re.setStatus(state);
-        String estado;
-
-
-        switch (state) {
-            case 0:
-                estado = "Rechazado";
-                re.setEstado(estado);
-                re.setEmpleadoAprobo(to.getEmpleadoAprobo());
-                re.setFechaAprobacion(utilerias.Utilerias.date2String(to.getFechaAprobacion()));
-                break;
-            case 1:
-                estado = "Solicitado";
-                re.setEstado(estado);
-                break;
-            case 2:
-                estado = "Aprobado";
-                re.setEstado(estado);
-                re.setEmpleadoAprobo(to.getEmpleadoAprobo());
-                re.setFechaAprobacion(utilerias.Utilerias.date2String(to.getFechaAprobacion()));
-                break;
-            default:
-                String noAprobado = "No Aprobado";
-
-        }
-
-        return re;
-
     }
 
     public String salir() throws NamingException {
+
         this.limpiaRequisicion();
-        String navega = "menuRequisiciones.xhtml";
+        navega = "menuRequisiciones.xhtml";
         return navega;
     }
 
     public String salirCotizacion() throws NamingException {
         this.limpiaRequisicion();
-        
-        String navega = "menuCotizaciones.xhtml";
+        this.listaRequisicionesEncabezado=null;
+        navega = "menuCotizaciones.xhtml";
         return navega;
     }
 
     public String nuevo() throws NamingException {
         this.limpiaRequisicion();
-        String navega = "requisiciones.xhtml";
+        navega = "requisiciones.xhtml";
         return navega;
     }
 
     public void limpiaRequisicion() throws NamingException {
-        this.requisicionProducto = new RequisicionProducto();
-        this.requisicionProductos = new ArrayList<RequisicionProducto>();
+        navega = "";
+        this.requisicionDetalle = new RequisicionDetalle();
+        requisicionDetalles = new ArrayList<RequisicionDetalle>();
         this.listaRequisicionesEncabezado = null;
         this.requisicionesFiltradas = null;
         this.mbMiniEmpresa = new MbMiniEmpresa();
         this.mbDepto = new MbDepto();
         this.mbUsuarios = new MbUsuarios();
-        this.mbBuscarProd = new MbBuscarProd();
+        
     }
 
     public void requisicionMas(int idRequi) throws NamingException, SQLException {
-        this.requisicionProducto = null;
+        this.requisicionDetalle = null;
         this.cargaRequisicionesDetalle(idRequi);
     }
 
-    public void requisicionAprobar(int idReq) throws NamingException, SQLException {
-        this.requisicionProducto = null;
-        this.cargaRequisicionesDetalleAprobar(idReq);
-    }
-
-    public void eliminarProducto(int idProd) {
-        int longitud = requisicionProductos.size();
-        for (int y = 0; y < longitud; y++) {
-            int idProducto = requisicionProductos.get(y).getProducto().getIdProducto();
-            if (idProducto == idProd) {
-                requisicionProductos.remove(y);
+    public void eliminarProducto(int idEmpaque) {
+        for (RequisicionDetalle d : requisicionDetalles) {
+            if (d.getEmpaque().getIdEmpaque() == idEmpaque) {
+                requisicionDetalles.remove(d);
                 break;
             }
         }
     }
 
-//    public void buscar() {
-//        this.mbBuscarProd.buscarLista();
-//    }
-//    
-    public void buscar() {
-        System.err.println(mbBuscarProd.getParte());
-        this.mbBuscarProd.buscarLista();
-    }
-
-
-    public void aprobarRequisicion(int idReq, int estado) throws SQLException {
-        DAORequisiciones daoReq;
+    public void aprobarRequisicion(int idReq, int estado) throws SQLException, NamingException {
+        DAORequisiciones daoReq = new DAORequisiciones();
         FacesMessage msg = null;
         try {
-            int longitud = requisicionProductos.size();
+            int longitud = requisicionDetalles.size();
             for (int y = 0; y < longitud; y++) {
-                int ca = requisicionProductos.get(y).getCantidadAutorizada();
+                int ca = requisicionDetalles.get(y).getCantidadAutorizada();
                 if (ca < 0) {
                     msg = new FacesMessage(FacesMessage.SEVERITY_INFO, "Aviso:", "No sé realizó la operación de aprobación");
                     break;
                 } else if (estado == 2) {
-                    daoReq = new DAORequisiciones();
                     daoReq.actualizaRequisicion(idReq, estado);
                     this.requisicionEncabezado.setStatus(estado);
                     msg = new FacesMessage(FacesMessage.SEVERITY_INFO, "Aviso:", "La aprobación se ha realizado..");
                     this.cargaRequisiciones();
                     this.cargaRequisicionesDetalle(idReq);
                 } else if (estado == 0) {
-                    daoReq = new DAORequisiciones();
                     daoReq.actualizaRequisicion(idReq, estado);
                     this.requisicionEncabezado.setStatus(estado);
                     msg = new FacesMessage(FacesMessage.SEVERITY_INFO, "Aviso:", "La requisición ha sido RECHAZADA..");
                     this.cargaRequisiciones();
                     this.cargaRequisicionesDetalle(idReq);
-
                 }
             }
-
         } catch (NamingException ex) {
             Logger.getLogger(MbRequisiciones.class.getName()).log(Level.SEVERE, null, ex);
             msg = new FacesMessage(FacesMessage.SEVERITY_INFO, "Aviso:", "Error en la aprobación, verifique su información...");
@@ -628,64 +548,60 @@ public class MbRequisiciones implements Serializable {
     }
 
     public void eliminaProductoAprobar(int idReq, int idProd) throws NamingException, SQLException {
-        int longitud = requisicionProductos.size();
-        DAORequisiciones daoR = new DAORequisiciones();
+        DAORequisiciones daoReq = new DAORequisiciones();
+        int longitud = requisicionDetalles.size();
         for (int y = 0; y < longitud; y++) {
-            int idProducto = requisicionProductos.get(y).getProducto().getIdProducto();
+            int idProducto = requisicionDetalles.get(y).getEmpaque().getIdEmpaque();
             if (idProducto == idProd) {
-                requisicionProductos.remove(y);
-                daoR.eliminaProductoAprobar(idReq, idProd);
+                requisicionDetalles.remove(y);
+                daoReq.eliminaProductoAprobar(idReq, idProd);
                 break;
             }
         }
     }
 
     public void modificaProductoAprobar(int idReq, int idProd) throws NamingException, SQLException {
-        int longitud = requisicionProductos.size();
-        DAORequisiciones daoR = new DAORequisiciones();
+        DAORequisiciones daoReq = new DAORequisiciones();
+        int longitud = requisicionDetalles.size();
         for (int y = 0; y < longitud; y++) {
-            int idProducto = requisicionProductos.get(y).getProducto().getIdProducto();
-            int idRequi = requisicionProductos.get(y).getIdRequisicion();
+            int idProducto = requisicionDetalles.get(y).getEmpaque().getIdEmpaque();
+            int idRequi = requisicionDetalles.get(y).getIdRequisicion();
             if (idProducto == idProd || idRequi == idReq) {
-                int cantidad = requisicionProductos.get(y).getCantidadAutorizada();
-                daoR.modificaProductoAprobar(idReq, idProd, cantidad);
+                int cantidad = requisicionDetalles.get(y).getCantidadAutorizada();
+                daoReq.modificaProductoAprobar(idReq, idProd, cantidad);
                 break;
             }
         }
     }
 
     public void onEdit(RowEditEvent event) throws NamingException, SQLException {
-        DAORequisiciones daoR = new DAORequisiciones();
+        DAORequisiciones daoReq = new DAORequisiciones();
         RequisicionEncabezado encab = new RequisicionEncabezado();
-        RequisicionProducto produc = (RequisicionProducto) event.getObject();
+        RequisicionDetalle deta = (RequisicionDetalle) event.getObject();
         FacesMessage msg = null;
-        int idReq = produc.getIdRequisicion();
-        int idProd = produc.getProducto().getIdProducto();
-        int cantidad = produc.getCantidadAutorizada();
-
+        int idReq = deta.getIdRequisicion();
+        int idProd = deta.getEmpaque().getIdEmpaque();
+        int cantidad = deta.getCantidadAutorizada();
         if (cantidad > 0) {
-            daoR.modificaProductoAprobar(idReq, idProd, cantidad);
+            daoReq.modificaProductoAprobar(idReq, idProd, cantidad);
             msg = new FacesMessage(FacesMessage.SEVERITY_INFO, "Aviso: ", "Modificación exitosa");
         } else if (cantidad < 0) {
             msg = new FacesMessage(FacesMessage.SEVERITY_INFO, "Aviso: ", "Capture cantidades positivas");
-            produc.getCantidadAutorizada();
+            deta.getCantidadAutorizada();
         } else if (cantidad == 0) {
-            daoR.modificaProductoAprobar(idReq, idProd, cantidad);
+            daoReq.modificaProductoAprobar(idReq, idProd, cantidad);
             msg = new FacesMessage(FacesMessage.SEVERITY_INFO, "Aviso: ", "El producto ha sido eliminado");
         }
-
     }
 
-    public void modificarRequisicionStatus(int idReq, int status, int cant) throws SQLException {
-        DAORequisiciones daoR;
+    public void modificarRequisicionStatus(int idReq, int status, int cant) throws SQLException, NamingException {
+        DAORequisiciones daoReq = new DAORequisiciones();
         FacesMessage msg;
         try {
-            daoR = new DAORequisiciones();
-            daoR.modificarAprobacion(idReq, status, cant);
+            daoReq.modificarAprobacion(idReq, status, cant);
             this.cargaRequisiciones();
-            this.requisicionProducto = null;
+            this.requisicionDetalle = null;
             this.cargaRequisicionesDetalleAprobar(idReq);
-
             msg = new FacesMessage(FacesMessage.SEVERITY_INFO, "Aviso: ", "Modificación de status exitosa");
         } catch (NamingException ex) {
             Logger.getLogger(MbRequisiciones.class.getName()).log(Level.SEVERE, null, ex);
@@ -695,37 +611,34 @@ public class MbRequisiciones implements Serializable {
     }
 
     //COTIZACIONES
-    public void guardaCotizacion(int idReq, double dc, double dpp) throws SQLException {
-        DAORequisiciones daoReq;
+    public void guardaCotizacion(int idReq, double dc, double dpp) throws SQLException, NamingException {
+        DAORequisiciones daoReq = new DAORequisiciones();
         FacesMessage msg;
         try {
-
             int idProv = this.mbMiniProveedor.getMiniProveedor().getIdProveedor();
             int idMon = this.mbMonedas.getMoneda().getIdMoneda();
-
-            daoReq = new DAORequisiciones();
             if (idProv != 0 && idMon != 0) {
                 if (this.total != 0) {
+                    numCotizacion += 1;
                     this.cotizacionEncabezado.setIdRequisicion(idReq);
                     this.cotizacionEncabezado.setIdProveedor(idProv);
                     this.cotizacionEncabezado.setDescuentoCotizacion(dc);
                     this.cotizacionEncabezado.setDescuentoProntoPago(dpp);
                     this.cotizacionEncabezado.setIdMoneda(idMon);
-                    daoReq.grabarCotizacion(this.cotizacionEncabezado, this.cotizacionProductos);
+                     this.cotizacionEncabezado.setNumCotizaciones(numCotizacion);
+                    daoReq.grabarCotizacion(this.cotizacionEncabezado, this.cotizacionDetalles);
                     msg = new FacesMessage(FacesMessage.SEVERITY_INFO, "Aviso:", "La cotización ha sido registrada..");
-                    numCotizacion += 1;
                     this.setNumCotizacion(numCotizacion);
                     this.limpiaCotizacion();
                     mbMiniProveedor.getMiniProveedor().setIdProveedor(0);
                     mbMonedas.getMoneda().setIdMoneda(0);
                 } else {
-                    msg = new FacesMessage(FacesMessage.SEVERITY_INFO, "Aviso:", "Capture al menos la cotización para un producto..");
+                    msg = new FacesMessage(FacesMessage.SEVERITY_INFO, "Aviso:", "Capture al menos la cotización para un empaque..");
                 }
 
             } else {
                 msg = new FacesMessage(FacesMessage.SEVERITY_INFO, "Aviso:", "Falta información para realizar la cotización");
             }
-
         } catch (NamingException ex) {
             Logger.getLogger(MbRequisiciones.class.getName()).log(Level.SEVERE, null, ex);
             msg = new FacesMessage(FacesMessage.SEVERITY_INFO, "Aviso:", "Error en la aprobación, verifique su información...");
@@ -734,87 +647,45 @@ public class MbRequisiciones implements Serializable {
     }
 
     public void limpiaCotizacion() throws NamingException {
-        
-        
         //ACTUALIZACION DE CODIGO
-        for(CotizacionDetalle d: cotizacionProductos){
+        for (CotizacionDetalle d : cotizacionDetalles) {
             d.setCantidadCotizada(0);
             d.setCostoCotizado(0);
             d.setDescuentoProducto(0);
             d.setDescuentoProducto2(0);
             d.setNeto(0);
             d.setSubtotal(0);
-        
         }
-        
-//        int longitud = this.cotizacionProductos.size();
-//        for (int x = 0; x < longitud; x++) {
-//            cotizacionProductos.get(x).setCantidadCotizada(0);
-//            cotizacionProductos.get(x).setCostoCotizado(0);
-//            cotizacionProductos.get(x).setDescuentoProducto(0);
-//            cotizacionProductos.get(x).setDescuentoProducto2(0);
-//            cotizacionProductos.get(x).setNeto(0);
-//            cotizacionProductos.get(x).setSubtotal(0);
-//        }
-
         this.subtotalGeneral = 0;
-
         this.sumaDescuentosProductos = 0;
         this.descuentoGeneralAplicado = 0;
         this.sumaDescuentoTotales = 0;
-
         this.impuesto = 0;
-
         this.total = 0;
-
         this.mbMiniProveedor = new MbMiniProveedor();
-
     }
 
     ///nueva propuesta
     public void cargaRequisicionesDetalleCotizar(int id, int modi) throws NamingException, SQLException {
-            this.numCotizacion = 0;
-            this.subtotalGeneral = 0;
-            this.sumaDescuentosProductos = 0;
-            this.descuentoGeneralAplicado = 0;
-            this.sumaDescuentoTotales = 0;
-            this.impuesto = 0;
-            this.total = 0;
-            mbMiniProveedor = new MbMiniProveedor();
-
-        cotizacionProductos = new ArrayList<CotizacionDetalle>();
-        DAORequisiciones daoListaDetalle = new DAORequisiciones();
-        ArrayList<TORequisicionProducto> toLista = daoListaDetalle.dameRequisicionDetalleCotizar(id);
-
-        DAOProductos daoPro = new DAOProductos();
-
-        for (TORequisicionProducto e : toLista) {
-            requisicionProductos.add(convertir(e, daoPro));
-            cotizacionProductos.add(convertirCotizar(e, daoPro, modi));
+        DAORequisiciones daoReq = new DAORequisiciones();
+        this.numCotizacion = 0;
+        this.subtotalGeneral = 0;
+        this.sumaDescuentosProductos = 0;
+        this.descuentoGeneralAplicado = 0;
+        this.sumaDescuentoTotales = 0;
+        this.impuesto = 0;
+        this.total = 0;
+        mbMiniProveedor = new MbMiniProveedor();
+        cotizacionDetalles = new ArrayList<CotizacionDetalle>();
+        ArrayList<CotizacionDetalle> lc = daoReq.dameRequisicionDetalleCotizar(id);
+        for (CotizacionDetalle rd : lc) {
+            cotizacionDetalles.add(rd);
         }
-    }
-
-    private CotizacionDetalle convertirCotizar(TORequisicionProducto to, DAOProductos daoPro, int modi) throws SQLException, NamingException {
-        RequisicionProducto rd;
-        rd = new RequisicionProducto(daoPro.obtenerProducto(to.getIdProducto()));
-        CotizacionDetalle cd = new CotizacionDetalle();
-        cd.setProducto(rd.getProducto());
-        cd.setCantidadAutorizada(to.getCantidadAutorizada());
-        cd.setCantidadCotizada(to.getCantidadAutorizada());
-
-        cd.setCostoCotizado(0);
-        cd.setNeto(0);
-        cd.setSubtotal(0);
-        cd.setDescuentoProducto(0);
-        cd.setDescuentoProducto2(0);
-
-
-        return cd;
     }
 
     public void calculoSubtotalGeneral() {
         subtotalGeneral = 0;
-        for (CotizacionDetalle e : cotizacionProductos) {
+        for (CotizacionDetalle e : cotizacionDetalles) {
             subtotalGeneral = subtotalGeneral + e.getSubtotal();
         }
     }
@@ -845,7 +716,7 @@ public class MbRequisiciones implements Serializable {
         double descuentoC;
         double descuentoPP;
         double descuentoGA;
-        for (CotizacionDetalle e : cotizacionProductos) {
+        for (CotizacionDetalle e : cotizacionDetalles) {
             sumaCostoCotizado += (e.getCantidadCotizada() * e.getNeto());
         }
         descuentoC = sumaCostoCotizado * (this.mbMiniProveedor.getMiniProveedor().getDesctoComercial() / 100);
@@ -855,11 +726,11 @@ public class MbRequisiciones implements Serializable {
         this.setDescuentoGeneralAplicado(descuentoGA);
     }
 
-    public void calculaPrecioDescuento(int idProd) {
+    public void calculaPrecioDescuento(int idEmp) {
         subtotalGeneral = 0;
         try {
-            for (CotizacionDetalle e : cotizacionProductos) {
-                if (e.getProducto().getIdProducto() == idProd) {
+            for (CotizacionDetalle e : cotizacionDetalles) {
+                if (e.getEmpaque().getIdEmpaque() == idEmp) {
                     double neto = e.getCostoCotizado() - (e.getCostoCotizado() * (e.getDescuentoProducto() / 100));
 
                     double neto2 = neto - neto * (e.getDescuentoProducto2() / 100);
@@ -875,7 +746,7 @@ public class MbRequisiciones implements Serializable {
 
     public void calculoDescuentoProducto() {
         sumaDescuentosProductos = 0;
-        for (CotizacionDetalle e : cotizacionProductos) {
+        for (CotizacionDetalle e : cotizacionDetalles) {
             sumaDescuentosProductos += (e.getCantidadCotizada() * (e.getCostoCotizado() - e.getNeto()));
         }
     }
@@ -886,69 +757,47 @@ public class MbRequisiciones implements Serializable {
     }
 
     public void limpiaDetalle() throws NamingException {
-        
         //ACTUALIZACION CODIGO
-        for(CotizacionDetalle d: cotizacionProductos ){
+        for (CotizacionDetalle d : cotizacionDetalles) {
             d.setCostoCotizado(0);
             d.setDescuentoProducto(0);
             d.setNeto(0);
             d.setSubtotal(0);
         }
-        
-//        int longitud = this.cotizacionProductos.size();
-//        for (int x = 0; x < longitud; x++) {
-//            cotizacionProductos.get(x).setCostoCotizado(0);
-//            cotizacionProductos.get(x).setDescuentoProducto(0);
-//            cotizacionProductos.get(x).setNeto(0);
-//            cotizacionProductos.get(x).setSubtotal(0);
-//        }
-
         this.subtotalGeneral = 0;
-
         this.sumaDescuentosProductos = 0;
         this.descuentoGeneralAplicado = 0;
         this.sumaDescuentoTotales = 0;
-
         this.impuesto = 0;
-
         this.total = 0;
-//        ArrayList<SelectItem> listaMonedas = new ArrayList<SelectItem>();
-//
-//        this.mbMonedas.setListaMonedas(listaMonedas);
     }
 
     public void calcularSubtotalBruto() {
         subtotalBruto = this.subtotalGeneral - this.descuentoGeneralAplicado;
-
-    }
-    public void irMenuCotizaciones(){
-    
-        
     }
 
-    public MbMonedas getMbMonedas() {
-        return mbMonedas;
+    public void irMenuCotizaciones() {
+    }
+    // EMPAQUES
+
+    public void buscar() {
+        this.mbBuscar.buscarLista();
     }
 
-    public void setMbMonedas(MbMonedas mbMonedas) {
-        this.mbMonedas = mbMonedas;
+    public void actualizaProductoSeleccionado() {
+        boolean nuevo = true;
+        RequisicionDetalle rd = new RequisicionDetalle();
+        int idEmp = this.mbBuscar.getProducto().getIdEmpaque();
+        rd.setEmpaque(this.mbBuscar.getProducto());
+        for (RequisicionDetalle p : this.requisicionDetalles) {
+            if (p.getEmpaque().getIdEmpaque() == idEmp) {
+                System.out.println("somos iguales");
+                nuevo = false;
+                break;
+            }
+        }
+        if (nuevo) {
+            this.requisicionDetalles.add(rd);
+        }
     }
-
-//    public ArrayList<Empaque> getListaEmpaque() {
-//        return listaEmpaque;
-//    }
-//
-//    public void setListaEmpaque(ArrayList<Empaque> listaEmpaque) {
-//        this.listaEmpaque = listaEmpaque;
-//    }
-//
-//    public Empaque getEmpaque() {
-//        return empaque;
-//    }
-//
-//    public void setEmpaque(Empaque empaque) {
-//        this.empaque = empaque;
-//    }
-    
-    
 }

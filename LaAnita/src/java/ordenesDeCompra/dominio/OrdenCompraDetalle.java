@@ -1,13 +1,14 @@
 package ordenesDeCompra.dominio;
 
 import cotizaciones.dominio.CotizacionDetalle;
+import cotizaciones.dominio.CotizacionEncabezado;
 import java.io.Serializable;
 import productos.dominio.Empaque;
-import productos.dominio.Producto;
 
 public class OrdenCompraDetalle implements Serializable {
 
-    private Producto producto;
+ //   private Empaque producto;
+     private Empaque empaque;
     private CotizacionDetalle cotizacionDetalle;
     private int idOrdenCompra;
     private int idEmpaque;
@@ -31,13 +32,14 @@ public class OrdenCompraDetalle implements Serializable {
     private String subtotalF;
     private String costoOrdenadoF;
     private String nombreProducto;
-    private Empaque empaque;
+   
 
     public OrdenCompraDetalle() {
     }
 
-    public OrdenCompraDetalle(Producto producto, CotizacionDetalle cotizacionDetalle, int idOrdenCompra, int idEmpaque, String sku, double cantOrdenada, double cantidadSolicitada, double costoOrdenado, double descuentoProducto, double descuentoProducto2, double desctoConfidencial, int sinCargoBase, int sinCargoCant, double ptjeOferte, double margen, int IdImpuestosGrupo, int idMarca, double neto, double subtotal) {
-        this.producto = producto;
+    public OrdenCompraDetalle(Empaque empaque, CotizacionDetalle cotizacionDetalle, int idOrdenCompra, int idEmpaque, String sku, double cantOrdenada, double cantidadSolicitada, double costoOrdenado, double descuentoProducto, double descuentoProducto2, double desctoConfidencial, int sinCargoBase, int sinCargoCant, double ptjeOferte, double margen, int IdImpuestosGrupo, int idMarca, double neto, double subtotal) {
+     //   this.producto = producto;
+        this.empaque=empaque;
         this.cotizacionDetalle = cotizacionDetalle;
         this.idOrdenCompra = 0;
         this.idEmpaque = 0;
@@ -60,13 +62,7 @@ public class OrdenCompraDetalle implements Serializable {
         
     }
 
-    public Producto getProducto() {
-        return producto;
-    }
-
-    public void setProducto(Producto producto) {
-        this.producto = producto;
-    }
+//   
 
     public CotizacionDetalle getCotizacionDetalle() {
         return cotizacionDetalle;

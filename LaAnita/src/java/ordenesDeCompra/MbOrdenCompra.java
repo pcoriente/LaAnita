@@ -4,6 +4,7 @@ import cedis.MbMiniCedis;
 import cedis.dominio.Cedis;
 import contactos.dominio.Contacto;
 import cotizaciones.MbCotizaciones;
+import direccion.dao.DAODireccion;
 import empresas.MbEmpresas;
 import empresas.dominio.Empresa;
 import java.io.File;
@@ -77,7 +78,6 @@ public class MbOrdenCompra implements Serializable {
     private double iva = 0.16;
     private double sumaDescuentoTotales;
     private String sumaDescuentosTotalesF;
-    DAOOrdenDeCompra daoO = new DAOOrdenDeCompra();
     private transient Correo correo;
     private ArrayList<Contacto> listaContactos;
     private transient Contacto contactoElegido;
@@ -193,7 +193,7 @@ public class MbOrdenCompra implements Serializable {
             ArrayList<OrdenCompraDetalle> lista = daoOC.consultaOrdenCompra(idOC);
             for (OrdenCompraDetalle d : lista) {
                 listaOrdenDetalle.add(d);
-                this.calculosOrdenCompra(d.getProducto().getIdProducto());
+                this.calculosOrdenCompra(d.getEmpaque().getIdEmpaque());
             }
         } catch (NamingException ex) {
             Logger.getLogger(MbOrdenCompra.class.getName()).log(Level.SEVERE, null, ex);
@@ -210,14 +210,15 @@ public class MbOrdenCompra implements Serializable {
 
         try {
             int idOC = ordenElegida.getIdOrdenCompra();
-            
+
+
             DAOOrdenDeCompra daoOC = new DAOOrdenDeCompra();
-         
+
             ArrayList<OrdenCompraDetalle> lista = daoOC.consultaOrdenCompra(idOC);
             for (OrdenCompraDetalle d : lista) {
                 listaOrdenDetalle.add(d);
-                this.calculosOrdenCompra(d.getProducto().getIdProducto());
-                d.setNombreProducto(d.getProducto().toString());
+                this.calculosOrdenCompra(d.getEmpaque().getIdEmpaque());
+                d.setNombreProducto(d.getEmpaque().toString());
             }
         } catch (NamingException ex) {
             Logger.getLogger(MbOrdenCompra.class.getName()).log(Level.SEVERE, null, ex);
@@ -226,12 +227,12 @@ public class MbOrdenCompra implements Serializable {
         }
     }
 
-    public void calculosOrdenCompra(int idProd) {
-
+    public void calculosOrdenCompra(int idProd) throws NamingException {
+        DAOOrdenDeCompra daoO = new DAOOrdenDeCompra();
         try {
 
             for (OrdenCompraDetalle e : listaOrdenDetalle) {
-                int idProducto = e.getProducto().getIdProducto();
+                int idProducto = e.getEmpaque().getIdEmpaque();
                 if (idProd == idProducto) {
                     double neto = e.getCostoOrdenado() - (e.getCostoOrdenado() * (e.getDescuentoProducto() / 100));
                     double neto2 = neto - neto * (e.getDescuentoProducto2() / 100);
@@ -314,6 +315,7 @@ public class MbOrdenCompra implements Serializable {
 
     public void guardarOrden(int idOrden, int estado) throws NamingException {
         FacesMessage msg = null;
+        DAOOrdenDeCompra daoO = new DAOOrdenDeCompra();
         try {
             if (estado == 1) {
 //                Ima=this.mbMonedas.getMoneda().getIdMoneda();
@@ -335,7 +337,9 @@ public class MbOrdenCompra implements Serializable {
 
     public void cancelarOrden(int idOrden, int estado) throws NamingException {
         Boolean correcto = false;
-        FacesMessage msg = null;
+        //    FacesMessage msg = null;
+        FacesMessage msg = new FacesMessage(FacesMessage.SEVERITY_WARN, "Aviso:", null);
+        DAOOrdenDeCompra daoO = new DAOOrdenDeCompra();
         try {
             if (estado == 0) {
                 daoO.cancelarOrdenCompra(idOrden);
@@ -551,12 +555,14 @@ public class MbOrdenCompra implements Serializable {
     }
 
     public void cargaDatosProveedor() throws NamingException {
+
         int idProve = this.mbProveedores.getMiniProveedor().getIdProveedor();
+        DAODireccion daoD = new DAODireccion();
         DAOProveedores daoProv = new DAOProveedores();
         try {
             provee = daoProv.obtenerProveedor(idProve);
             int idDirProv = provee.getDireccionEntrega().getIdDireccion();
-            this.provee.setDireccionEntrega(daoO.obtenerDireccion(idDirProv));
+            this.provee.setDireccionEntrega(daoD.obtenerDireccion(idDirProv));
         } catch (SQLException ex) {
             Logger.getLogger(MbOrdenCompra.class.getName()).log(Level.SEVERE, null, ex);
         }

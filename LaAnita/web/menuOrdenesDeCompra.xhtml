@@ -49,9 +49,10 @@
                                      selectionMode="single"
                                      selection="#{mbOrdenCompra.ordenElegida}"
                                      >
-                            <p:ajax event="rowSelect" listener="#{mbOrdenCompra.dameOrdenCompra}"   
+                            <p:ajax event="rowSelect" 
+                                    listener="#{mbOrdenCompra.dameOrdenCompra}"   
                                     oncomplete="odec.show()" 
-                                    update=":form:dialogoOC "
+                                    update=":form:dialogoOC :form:OCDetalle"
                                     process="@this"
                                     > 
                             </p:ajax>
@@ -163,13 +164,14 @@
                                     <h:outputLabel value="Empresa: " styleClass="textoEtiquetas"/> 
                                 </p:column>
                                 <p:column styleClass="fondoCelda"  >
-                                    <h:outputLabel  value="#{mbOrdenCompra.ordenElegida.empresa.empresa}" styleClass="textoContenido" /> 
+                                    <h:outputLabel  value="#{mbOrdenCompra.ordenElegida.nombreComercial}" styleClass="textoContenido" /> 
                                 </p:column>
                                 <p:column styleClass="fondoCelda"   >
                                     <h:outputLabel value="Dirección entrega: " styleClass="textoEtiquetas" /> 
                                 </p:column>
                                 <p:column styleClass="fondoCelda"  colspan="4" >
-                                    <h:outputLabel  value="#{mbOrdenCompra.ordenElegida.proveedor.direccionEntrega.toString()}" styleClass="textoContenido"  /> 
+                                    <h:outputLabel  value="#{mbOrdenCompra.ordenElegida.empresa.direccion.toString()}" 
+                                                    styleClass="textoContenido"  /> 
                                 </p:column>
                             </p:row>
                             <p:row>
@@ -183,7 +185,8 @@
                                     <h:outputLabel value="Dirección: " styleClass="textoEtiquetas"    /> 
                                 </p:column>
                                 <p:column styleClass="fondoCelda" colspan="4">
-                                    <h:outputLabel  value="#{mbOrdenCompra.ordenElegida.proveedor.contribuyente.direccion.toString()}" styleClass="textoContenido" /> 
+                                    <h:outputLabel  value="#{mbOrdenCompra.ordenElegida.proveedor.direccionFiscal.referencia}"
+                                                    styleClass="textoContenido" /> 
                                 </p:column>
                             </p:row>
                             <p:row>
@@ -211,7 +214,7 @@
 
                                      >
                             <p:column headerText="Producto"  >
-                                #{det.producto.toString()}
+                                #{det.empaque.toString()}
                             </p:column>
                             <p:column headerText="Cant. Ordenada" styleClass="alineacionD" >
                                 #{det.cantOrdenada}
@@ -222,7 +225,7 @@
                                                  disabled="#{mbOrdenCompra.ordenElegida.estado eq 2 }"
                                                  >
                                     <p:ajax event="change" 
-                                            listener="#{mbOrdenCompra.calculosOrdenCompra(det.producto.idProducto)}"
+                                            listener="#{mbOrdenCompra.calculosOrdenCompra(det.empaque.idEmpaque)}"
                                             process="@this"
                                             update="OCDetalle"
                                             />
@@ -284,7 +287,7 @@
                         <p:ajax event="close" 
                                 listener="#{mbOrdenCompra.handleClose()}"
                                 process="@this"
-                                 update=":form:empresaD :form:proveedorD :form:monedaD :form:dirEmpD :form:dirProvD :form:fEmision :form:fEntrega :form:dcD :form:ppD"/> 
+                                update=":form:empresaD :form:proveedorD :form:monedaD :form:dirEmpD :form:dirProvD :form:fEmision :form:fEntrega :form:dcD :form:ppD"/> 
                         <p:panelGrid id="encabezadoOCD" style="width: 900px; height: auto; margin:0 auto; "  >
                             <p:row>
                                 <p:column styleClass="fondoCelda"  >
@@ -369,7 +372,7 @@
                                 </p:column>
                             </p:row>
                         </p:panelGrid>
-                   
+
                         <p:toolbar  id="tbD" style="width: 900px; height: auto; margin:0 auto; " >  
                             <p:toolbarGroup id="toolbarD" align="right">  
                                 <p:commandButton
@@ -424,7 +427,7 @@
                             </p:toolbarGroup>  
                         </p:toolbar>
                         <p:dataTable id="detalleOCD" style="width: 900px"
-                                     
+
                                      value="#{mbOrdenCompra.listaEmpaque}"
                                      var="detD" rowKey="#{detD.idEmpaque}"
                                      selectionMode="single" 

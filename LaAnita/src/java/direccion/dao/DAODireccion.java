@@ -1,5 +1,6 @@
 package direccion.dao;
 
+import direccion.dominio.Direccion;
 import direccion.to.TODireccion;
 import java.sql.Connection;
 import java.sql.ResultSet;
@@ -105,4 +106,37 @@ public class DAODireccion {
         toDir.setNumeroLocalizacion(rs.getString("numeroLocalizacion"));
         return toDir;
     }
+    public Direccion obtenerDireccion(int idDireccion) throws SQLException, NamingException {
+        Direccion toDir = null;
+        Connection cn = this.ds.getConnection();
+        Statement st = cn.createStatement();
+        try {
+            ResultSet rs = st.executeQuery("SELECT * FROM direcciones WHERE idDireccion=" + idDireccion);
+            if (rs.next()) {
+                toDir = construirDireccion(rs);
+            }
+        } finally {
+            cn.close();
+        }
+        return toDir;
+    }
+
+    private Direccion construirDireccion(ResultSet rs) throws SQLException, NamingException {
+        Direccion toDir = new Direccion();
+        DAOPais daoP = new DAOPais();
+        toDir.setIdDireccion(rs.getInt("idDireccion"));
+        toDir.setCalle(rs.getString("calle"));
+        toDir.setNumeroExterior(rs.getString("numeroExterior"));
+        toDir.setNumeroInterior(rs.getString("numeroInterior"));
+        toDir.setReferencia(rs.getString("referencia"));
+        toDir.setPais(daoP.obtener(rs.getInt("idPais")));
+        toDir.setCodigoPostal(rs.getString("codigoPostal"));
+        toDir.setEstado(rs.getString("estado"));
+        toDir.setMunicipio(rs.getString("municipio"));
+        toDir.setLocalidad(rs.getString("localidad"));
+        toDir.setColonia(rs.getString("colonia"));
+        toDir.setNumeroLocalizacion(rs.getString("numeroLocalizacion"));
+        return toDir;
+    }
+
 }

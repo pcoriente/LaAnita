@@ -130,27 +130,27 @@
                                 <h:outputLabel value="Cotización :"  styleClass="textoEtiquetas" />
                             </p:column>
                             <p:column  width="10" >
-                                <h:outputText id="numCotizacion" value="#{mbRequisiciones.numCotizacion}" style="font-weight: bold; color: blueviolet; font-size: 18px"/>  
+                                <h:outputText id="numCotizacion" value="#{mbRequisiciones.cotizacionEncabezado.numCotizaciones}" style="font-weight: bold; color: blueviolet; font-size: 18px"/>  
                             </p:column>
 
                         </h:panelGrid >
 
 
-                        <p:dataTable id="detalleCotizacion" value="#{mbRequisiciones.cotizacionProductos}" 
-                                     var="cot" scrollable="true" scrollHeight="200" style="width: 850px; margin:0 auto; font-size: 12px;" styleClass="sinBorde"
-                                     rowKey="#{cot.producto.idProducto}" rowIndexVar="fila"
+                        <p:dataTable id="detalleCotizacion" value="#{mbRequisiciones.cotizacionDetalles}" 
+                                     var="cot" scrollable="true" scrollHeight="200" style="width: 900px; margin:0 auto; font-size: 12px;" styleClass="sinBorde"
+                                     rowKey="#{cot.empaque.idEmpaque}" rowIndexVar="fila"
                                      >
                             <p:column  headerText="Num." width="20" >
                                 <h:outputText value="#{fila+1}" />
                             </p:column>
-                            <p:column  headerText="Cod." width="20" >
-                                <h:outputText value="#{cot.producto.idProducto}" />
+                            <p:column  headerText="Cod." width="30" >
+                                <h:outputText value="#{cot.empaque.cod_pro}" />
                             </p:column>
                             <p:column  headerText="Descripción" width="250" >
-                                <h:outputText value="#{cot.producto.toString()}"   />
+                                <h:outputText value="#{cot.empaque.toString()}"   />
                             </p:column>
-                            <p:column headerText="Unidad" width="30" >
-                                <h:outputText value="#{cot.producto.presentacion.toString()}" />
+                            <p:column headerText="Unidad" width="20" >
+                                <h:outputText value="#{cot.empaque.unidadEmpaque.abreviatura}" />
                             </p:column>
                             <p:column headerText="Cant. Aut." width="30" >
                                 <h:outputText value="#{cot.cantidadAutorizada}" />
@@ -160,7 +160,7 @@
                                 <pe:inputNumber  value="#{cot.cantidadCotizada}"  id="cotizada"  
                                                  decimalPlaces="3" maxValue="#{cot.cantidadAutorizada}" minValue="0">
                                     <p:ajax event="blur" 
-                                            listener="#{mbRequisiciones.calculaPrecioDescuento(cot.producto.idProducto)}"
+                                            listener="#{mbRequisiciones.calculaPrecioDescuento(cot.empaque.idEmpaque)}"
                                             process="@this"
                                             update="neto subtotal importe detalleCotizacion sumaDescuentosTotales "
                                             />
@@ -172,7 +172,7 @@
                                 <pe:inputNumber value="#{cot.costoCotizado}" id="costo"
                                                 decimalPlaces="2" minValue="0" decimalSeparator="."> 
                                     <p:ajax event="blur" 
-                                            listener="#{mbRequisiciones.calculaPrecioDescuento(cot.producto.idProducto)}"
+                                            listener="#{mbRequisiciones.calculaPrecioDescuento(cot.empaque.idEmpaque)}"
                                             process="@this"
                                             update="neto subtotal importe detalleCotizacion sumaDescuentosTotales "
                                             />
@@ -184,7 +184,7 @@
                                 <pe:inputNumber value="#{cot.descuentoProducto}"   id="descuento"
                                                 decimalPlaces="2" minValue="0" maxValue="100">
                                     <p:ajax event="blur" 
-                                            listener="#{mbRequisiciones.calculaPrecioDescuento(cot.producto.idProducto)}"
+                                            listener="#{mbRequisiciones.calculaPrecioDescuento(cot.empaque.idEmpaque)}"
 
                                             update="neto subtotal importe detalleCotizacion sumaDescuentosTotales "
                                             process="@this"/>
@@ -196,7 +196,7 @@
                                 <pe:inputNumber value="#{cot.descuentoProducto2}"   id="descuento2"
                                                 decimalPlaces="2" minValue="0" maxValue="100">
                                     <p:ajax event="blur" 
-                                            listener="#{mbRequisiciones.calculaPrecioDescuento(cot.producto.idProducto)}"
+                                            listener="#{mbRequisiciones.calculaPrecioDescuento(cot.empaque.idEmpaque)}"
 
                                             update="neto subtotal importe detalleCotizacion sumaDescuentosTotales "
                                             process="@this"/>
@@ -234,7 +234,7 @@
                                 </p:row>
                                 <p:row>
                                     <p:column colspan="9" style="text-align:right; font-size: 14px;" footerText="Subtotal :"/>
-                                    <p:column footerText=" #{mbRequisiciones.subtotalBruto}"  id="subtotalBruto"/>
+                                    <p:column footerText=" #{mbRequisiciones.subtotalBrutoF}"  id="subtotalBruto"/>
                                 </p:row>
                                 <p:row>
                                     <p:column colspan="9" style="text-align:right; font-size: 14px;" footerText="IVA :"/>
