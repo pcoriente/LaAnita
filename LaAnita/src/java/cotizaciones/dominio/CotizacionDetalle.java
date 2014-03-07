@@ -1,15 +1,19 @@
 package cotizaciones.dominio;
 
 import java.io.Serializable;
-import productos.dominio.Producto;
+import productos.dominio.Empaque;
 import proveedores.dominio.Proveedor;
+import requisiciones.dominio.RequisicionDetalle;
 
 public class CotizacionDetalle implements Serializable {
 
-    private int idCotizacion;
-    private int RequisicionProducto;
+    //  private RequisicionDetalle requisicionDetalle;
+    private CotizacionEncabezado cotizacionEncabezado;
+    private Proveedor proveedor = new Proveedor();
+    private int idCotizacion;  //??
+    private int idRequisicion; //??
+    private Empaque empaque;  //??
     private String sku;
-    private Producto producto;
     private double cantidadAutorizada;
     private double cantidadCotizada;
     private double costoCotizado;
@@ -19,28 +23,49 @@ public class CotizacionDetalle implements Serializable {
     private double subtotal;
     private double iva;
     private double total;
-    private CotizacionEncabezado cotizacionEncabezado;
-    private Proveedor proveedor = new Proveedor();
     private String costoCotizadoF;
     private String netoF;
     private String subtotalF;
     private String ivaF;
     private String totalF;
 
-    public int getIdCotizacion() {
-        return idCotizacion;
+//    public RequisicionDetalle getRequisicionDetalle() {
+//        return requisicionDetalle;
+//    }
+//
+//    public void setRequisicionDetalle(RequisicionDetalle requisicionDetalle) {
+//        this.requisicionDetalle = requisicionDetalle;
+//    }
+    public CotizacionEncabezado getCotizacionEncabezado() {
+        return cotizacionEncabezado;
     }
 
-    public void setIdCotizacion(int idCotizacion) {
-        this.idCotizacion = idCotizacion;
+    public void setCotizacionEncabezado(CotizacionEncabezado cotizacionEncabezado) {
+        this.cotizacionEncabezado = cotizacionEncabezado;
     }
 
-    public Producto getProducto() {
-        return producto;
+    public Proveedor getProveedor() {
+        return proveedor;
     }
 
-    public void setProducto(Producto producto) {
-        this.producto = producto;
+    public void setProveedor(Proveedor proveedor) {
+        this.proveedor = proveedor;
+    }
+
+    public String getSku() {
+        return sku;
+    }
+
+    public void setSku(String sku) {
+        this.sku = sku;
+    }
+
+    public double getCantidadAutorizada() {
+        return cantidadAutorizada;
+    }
+
+    public void setCantidadAutorizada(double cantidadAutorizada) {
+        this.cantidadAutorizada = cantidadAutorizada;
     }
 
     public double getCantidadCotizada() {
@@ -76,13 +101,10 @@ public class CotizacionDetalle implements Serializable {
     }
 
     public double getNeto() {
-
-
         return neto;
     }
 
     public void setNeto(double neto) {
-
         this.neto = neto;
     }
 
@@ -94,49 +116,7 @@ public class CotizacionDetalle implements Serializable {
         this.subtotal = subtotal;
     }
 
-    public double getCantidadAutorizada() {
-        return cantidadAutorizada;
-    }
-
-    public void setCantidadAutorizada(double cantidadAutorizada) {
-        this.cantidadAutorizada = cantidadAutorizada;
-    }
-
-    public int getRequisicionProducto() {
-        return RequisicionProducto;
-    }
-
-    public void setRequisicionProducto(int RequisicionProducto) {
-        this.RequisicionProducto = RequisicionProducto;
-    }
-
-    public CotizacionEncabezado getCotizacionEncabezado() {
-        return cotizacionEncabezado;
-    }
-
-    public void setCotizacionEncabezado(CotizacionEncabezado cotizacionEncabezado) {
-        this.cotizacionEncabezado = cotizacionEncabezado;
-    }
-
-    public Proveedor getProveedor() {
-        return proveedor;
-    }
-
-    public void setProveedor(Proveedor proveedor) {
-        this.proveedor = proveedor;
-    }
-
-    public String getSku() {
-        return sku;
-    }
-
-    public void setSku(String sku) {
-        this.sku = sku;
-    }
-
-   
     public double getIva() {
-
         return iva;
     }
 
@@ -151,10 +131,14 @@ public class CotizacionDetalle implements Serializable {
     public void setTotal(double total) {
         this.total = total;
     }
-    
-     public String getCostoCotizadoF() {
-          costoCotizadoF = utilerias.Utilerias.formatoMonedas(this.getCostoCotizado());
+
+    public String getCostoCotizadoF() {
+        costoCotizadoF = utilerias.Utilerias.formatoMonedas(this.getCostoCotizado());
         return costoCotizadoF;
+    }
+
+    public void setCostoCotizadoF(String costoCotizadoF) {
+        this.costoCotizadoF = costoCotizadoF;
     }
 
     public String getNetoF() {
@@ -162,20 +146,58 @@ public class CotizacionDetalle implements Serializable {
         return netoF;
     }
 
+    public void setNetoF(String netoF) {
+        this.netoF = netoF;
+    }
+
     public String getSubtotalF() {
-         subtotalF = utilerias.Utilerias.formatoMonedas(this.subtotal);
+        subtotalF = utilerias.Utilerias.formatoMonedas(this.subtotal);
         return subtotalF;
     }
 
+    public void setSubtotalF(String subtotalF) {
+        this.subtotalF = subtotalF;
+    }
+
     public String getIvaF() {
-         ivaF = utilerias.Utilerias.formatoMonedas(this.getIva());
+        ivaF = utilerias.Utilerias.formatoMonedas(this.getIva());
         return ivaF;
     }
 
+    public void setIvaF(String ivaF) {
+        this.ivaF = ivaF;
+    }
+
     public String getTotalF() {
-         totalF = utilerias.Utilerias.formatoMonedas(this.getTotal());
+        totalF = utilerias.Utilerias.formatoMonedas(this.getTotal());
         return totalF;
     }
-    
-    
+
+    public void setTotalF(String totalF) {
+        this.totalF = totalF;
+    }
+
+    public int getIdCotizacion() {
+        return idCotizacion;
+    }
+
+    public void setIdCotizacion(int idCotizacion) {
+        this.idCotizacion = idCotizacion;
+    }
+
+    public int getIdRequisicion() {
+        return idRequisicion;
+    }
+
+    public void setIdRequisicion(int idRequisicion) {
+        this.idRequisicion = idRequisicion;
+    }
+
+    public Empaque getEmpaque() {
+        return empaque;
+    }
+
+    public void setEmpaque(Empaque empaque) {
+        this.empaque = empaque;
+    }
 }

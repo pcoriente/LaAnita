@@ -172,8 +172,7 @@ public class CotizacionEncabezado {
         this.idMoneda = idMoneda;
     }
 
-    
-    
+   
 
    
 }

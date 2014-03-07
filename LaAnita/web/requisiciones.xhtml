@@ -67,9 +67,23 @@
                                 <p:commandButton
                                     icon="ui-icon-disk"
                                     title="Guardar requerimiento"
-                                    actionListener="#{mbRequisiciones.agregarRequisicion()}"
+                                    actionListener="#{mbRequisiciones.guardaRequisicion()}"
+                                    process="@this main"
                                     update="departamento empresa solicitante detalle"
+
                                     />
+                                <p:separator />
+                                <p:commandButton icon="ui-icon-trash"
+                                                 title="Eliminar Producto"
+                                                 process="@this"
+                                                 actionListener="#{mbRequisiciones.eliminarProducto()}" 
+                                                 update="detalle" 
+                                                 />
+                                <p:commandButton  icon="ui-icon-search" title="Buscar Productos" 
+                                                  process="@this" actionListener="#{mbRequisiciones.mbBuscar.inicializar()}" 
+                                                  update="buscarProductos listaBuscarProductos " oncomplete="buscarProductoDlg.show()"
+                                                  />
+                                <p:separator />
                                 <p:commandButton id="Limpiar"
                                                  icon="ui-icon-refresh"
                                                  title="Cancelar requerimiento"
@@ -78,44 +92,44 @@
                                                  />
 
                                 <p:separator />
-                                <p:commandButton  icon="ui-icon-search" title="Buscar Productos" 
-                                                  process="@this" actionListener="#{mbRequisiciones.mbBuscarProd.inicializar()}" 
-                                                  update="buscarProductos listaProductos" oncomplete="buscarProductoDlg.show()"
-                                                  />
-                                <p:separator />
                                 <p:commandButton id="salir"
-                                                 icon="ui-icon-document"
+                                                 icon="ui-icon-arrowreturnthick-1-w"
                                                  title="ir a Menu Requisiciones"
                                                  action="#{mbRequisiciones.salir()}"
                                                  update="detalle solicitante departamento empresa cabecero"
+                                                 process="@this"
                                                  />
 
                             </p:toolbarGroup>  
                         </p:toolbar>  
 
 
-                        <p:dataTable id="detalle" value="#{mbRequisiciones.requisicionProductos}" 
-                                     var="prod" scrollable="true" scrollHeight="200" style="width: 850px; margin:0 auto;" styleClass="sinBorde"
-                                     rowKey="#{prod.producto.idProducto}"  selection="#{mbRequisiciones.mbBuscarEmpaques.producto}"  >
+                        <p:dataTable id="detalle"
+                                     value="#{mbRequisiciones.requisicionDetalles}"
+                                     var="det"
+                                     rowKey="#{det.empaque.idEmpaque}"
+                                     >
                             
-                            <p:column  headerText="Descripción" style="width: 200px;" >
-                                <h:outputText value="#{prod.producto.toString()}"  />
+                            <p:column  headerText="Descripcion" style="width: 200px;">
+                                <h:outputText value="#{det.empaque.toString()}"  />
                             </p:column>
                             <p:column headerText="Unidad" style="width: 50px;" >
-                                <h:outputText value="#{prod.producto.unidadMedida}" />
+                                <h:outputText value="#{det.empaque.unidadEmpaque.unidad}" />
                             </p:column>
                             <p:column headerText="Cantidad" style="width: 50px;" >
+
                                 <p:inplace id="ajaxInplace" editor="true" >  
-                                    <p:inputText value="#{prod.cantidad}"
+                                    <p:inputText value="#{det.cantidad}"
                                                  required="true"
                                                  requiredMessage="Capture una cantidad numérica y positiva..."/>  
                                 </p:inplace> 
+
                             </p:column>
-                            <p:column headerText="Editar" style="width: 50px;" >
+                            <p:column headerText="Eliminar" style="width: 50px;" >
                                 <p:commandButton icon="ui-icon-trash"
                                                  title="Eliminar Producto"
                                                  process="@this"
-                                                 actionListener="#{mbRequisiciones.eliminarProducto(prod.producto.idProducto)}" 
+                                                 actionListener="#{mbRequisiciones.eliminarProducto(det.empaque.idEmpaque)}" 
                                                  update="detalle" 
                                                  />
                             </p:column>
@@ -125,84 +139,73 @@
 
                     <!-- B U S C A D O R  DE  P R O D U C T O S... -->
                     <p:dialog header="BUSCADOR DE PRODUCTOS" widgetVar="buscarProductoDlg" resizable="false" style="width: 600px;" modal="true" >
-                        <p:messages id="messages4" showDetail="true" autoUpdate="true" closable="true" />
+                        <p:messages id="msgBuscar" showDetail="true" autoUpdate="true" closable="true" />
                         <p:panelGrid id="buscarProductos" styleClass="sinBorde" >
                             <p:row >
                                 <p:column >
                                     <h:outputLabel for="opciones" value="OPCIONES :" style="font-weight: bold; color: red;" />
                                 </p:column>
                                 <p:column >
-                                    <p:selectOneRadio id="opciones" value="#{mbRequisiciones.mbBuscarProd.tipoBuscar}" style="background-color: #ccc" >
-                                        <f:selectItem itemLabel="UPC" itemValue="1" />
-                                        <f:selectItem itemLabel="Parte" itemValue="2" />
-                                        <p:ajax listener="#{mbRequisiciones.mbBuscarProd.verCambio()}" update="buscarProductos listaProductos" />
+                                    <p:selectOneRadio id="opciones" value="#{mbRequisiciones.mbBuscar.tipoBuscar}" style="background-color: #ccc" >
+                                        <f:selectItem itemLabel="SKU" itemValue="1" />
+                                        <f:selectItem itemLabel="Genérico" itemValue="2" />
+                                        <p:ajax listener="#{mbRequisiciones.mbBuscar.verCambio()}" update="buscarProductos listaBuscarProductos" />
                                     </p:selectOneRadio>
                                 </p:column>
-                                <p:column rendered="#{mbRequisiciones.mbBuscarProd.tipoBuscar=='1'}" >
-                                    <p:inputText id="opcionUPC" value="#{mbRequisiciones.mbBuscarProd.strBuscar}" maxlength="13" size="15" />
-                                    <p:commandButton id="btnBuscarUPC" value="Buscar" 
-                                                     process="@this opcionUPC" actionListener="#{mbRequisiciones.buscar()}" 
-                                                     update=":main:mttoProductos" oncomplete="handleBuscar(xhr, status, args)" />
+                                <p:column rendered="#{mbRequisiciones.mbBuscar.tipoBuscar=='1'}" >
+                                    <p:inputText id="opcionSKU" value="#{mbRequisiciones.mbBuscar.strBuscar}" maxlength="8" size="10" />
+                                    <p:commandButton id="btnBuscarSKU" icon="ui-icon-check" title="Buscar" 
+                                                     process="@this opcionSKU" actionListener="#{mbRequisiciones.buscar()}" 
+                                                     oncomplete="handleBuscar(xhr, status, args)" />
+                                    <!--update=":main:mttoProductos"-->
                                 </p:column>
-                                <p:column rendered="#{mbRequisiciones.mbBuscarProd.tipoBuscar=='2'}" >
-                                    <p:autoComplete id="opcionParte" value="#{mbRequisiciones.mbBuscarProd.parte}" maxlength="50" size="30"
-                                                    completeMethod="#{mbRequisiciones.mbBuscarProd.completePartes}" process="@this"
+                                <p:column rendered="#{mbRequisiciones.mbBuscar.tipoBuscar=='2'}" >
+                                    <p:autoComplete id="opcionParte" value="#{mbRequisiciones.mbBuscar.parte}" maxlength="50" size="30"
+                                                    completeMethod="#{mbRequisiciones.mbBuscar.completePartes}"
                                                     var="p" itemLabel="#{p.parte}" itemValue="#{p}" converter="converters.ParteBuscar" 
-                                                    forceSelection="true" maxResults="8"  />
-                                    <p:commandButton id="btnBuscarLista" value="Buscar" 
+                                                    forceSelection="true" />
+                                    <p:commandButton id="btnBuscarLista" icon="ui-icon-check" title="Buscar" 
                                                      process="@this opcionParte" actionListener="#{mbRequisiciones.buscar()}" 
-                                                     update="listaProductos" oncomplete="handleBuscar(xhr, status, args)" />
+                                                     update="listaBuscarProductos" oncomplete="handleBuscar(xhr, status, args)" />
                                 </p:column>
                             </p:row>
                         </p:panelGrid>
-                        <p:dataTable id="listaProductos" value="#{mbRequisiciones.mbBuscarProd.productos}" 
-                                     filteredValue="#{mbRequisiciones.mbBuscarProd.filtrados}"
+                        <p:dataTable id="listaBuscarProductos" value="#{mbRequisiciones.mbBuscar.productos}" 
                                      var="prod" scrollable="true" scrollHeight="200" style="width: 800px;"
-                                     rowKey="#{prod.idProducto}" selectionMode="single" selection="#{mbRequisiciones.mbBuscarProd.prodStr}" >
+                                     rowKey="#{prod.idEmpaque}" selectionMode="single" selection="#{mbRequisiciones.mbBuscar.producto}" >
                             <p:ajax event = "rowSelect" update="seleccion" />
 
-                            <f:facet name="header">  
+                            <f:facet name="header">
                                 Seleccione un producto  
                             </f:facet>
 
-                            <p:column id="idListaTipos" headerText="Tipo Inventario" style="width: 150px;" 
-                                      filterBy="#{prod.tipo}" filterOptions="#{mbRequisiciones.mbBuscarProd.arrayTipos}" filterMatchMode="exact" >
-                                <h:outputText value="#{prod.tipo}" />
-                            </p:column>
-
-                            <p:column id="idListaGrupos" headerText="Grupo" style="width: 150px;" 
-                                      filterBy="#{prod.grupo}" filterOptions="#{mbRequisiciones.mbBuscarProd.arrayGrupos}" filterMatchMode="exact" >
-                                <h:outputText value="#{prod.grupo}" />
-                            </p:column>
-
-                            <p:column id="idListaSubGrupos" headerText="SubGrupo" style="width: 150px;" 
-                                      filterBy="#{prod.subGrupo}" filterOptions="#{mbRequisiciones.mbBuscarProd.arraySubGrupos}" filterMatchMode="exact" >
-                                <h:outputText value="#{prod.subGrupo}" />
+                            <p:column headerText="SKU" style="width: 250px;" >
+                                <h:outputText value="#{prod.cod_pro}" />
                             </p:column>
 
                             <p:column headerText="Producto" style="width: 250px;" >
-                                <h:outputText value="#{prod.producto}" />
+                                <h:outputText value="#{prod.toString()}" />
                             </p:column>
 
                             <f:facet name="footer">
                                 <p:commandButton id="seleccion" value="Seleccionar" 
-                                                 disabled="#{mbRequisiciones.mbBuscarProd.prodStr==null}"
-                                                 actionListener="#{mbRequisiciones.actualizaProductoSeleccionado()}"
-                                                 update=":main:detalle" oncomplete="buscarProductoDlg.hide()"
-
-                                                 />
+                                                 disabled="#{mbRequisiciones.mbBuscar.producto==null}"
+                                                 actionListener="#{mbRequisiciones.actualizaProductoSeleccionado()}"  
+                                                 process="@this"
+                                                 oncomplete="buscarProductoDlg.hide()" 
+                                                 update=":main:detalle :main:listaBuscarProductos :main:messages"/>
                             </f:facet>
                         </p:dataTable>
                     </p:dialog>
 
-                </h:form>
-                <script type="text/javascript">
-                    function handleBuscar(xhr, status, args) {
-                        if (!(args.validationFailed || !args.okBuscar)) {
-                            buscarProductoDlg.hide();
+                    <script type="text/javascript">
+                        function handleBuscar(xhr, status, args) {
+                            if (!(args.validationFailed || !args.okBuscar)) {
+                                buscarProductoDlg.hide();
+                            }
                         }
-                    }
-                </script>
+                    </script>
+                </h:form>
             </div>
             <ui:include src="footer.html" />
         </div>

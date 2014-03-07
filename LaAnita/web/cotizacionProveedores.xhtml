@@ -95,7 +95,7 @@
                             <p:ajax event="rowSelect" 
                                     listener="#{mbCotizaciones.ordCompra()}"
                                     update=":form:ordenDeCompra :form:listaProveedores"
-                                    oncomplete="cotizaciones.hide();"/>
+                                  />
                             <p:column headerText="Nombre Comercial" styleClass="anchoCol">
                                 #{producto.proveedor.nombreComercial}
                             </p:column>

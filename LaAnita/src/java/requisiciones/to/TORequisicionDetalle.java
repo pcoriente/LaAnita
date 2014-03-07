@@ -4,11 +4,11 @@
  */
 package requisiciones.to;
 
-public class TORequisicionProducto {
+public class TORequisicionDetalle {
     
    
     private int idRequisicion;
-    private int idProducto;
+    private int idEmpaque;
     private int cantidad;
     private int cantidadAutorizada;
 
@@ -20,14 +20,13 @@ public class TORequisicionProducto {
     public void setIdRequisicion(int idRequisicion) {
         this.idRequisicion = idRequisicion;
     }
-    
-    public int getIdProducto() {
-        return idProducto;
+
+    public int getIdEmpaque() {
+        return idEmpaque;
     }
 
-   
-    public void setIdProducto(int idProducto) {
-        this.idProducto = idProducto;
+    public void setIdEmpaque(int idEmpaque) {
+        this.idEmpaque = idEmpaque;
     }
 
     public int getCantidad() {

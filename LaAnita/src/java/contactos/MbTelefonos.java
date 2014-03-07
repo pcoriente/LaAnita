@@ -26,7 +26,7 @@ public class MbTelefonos implements Serializable {
     private Telefono telefono;
     private ArrayList<Telefono> telefonos;
     private ArrayList<SelectItem> listaTelefonos;
-    private TelefonoTipo tipo;
+    private TelefonoTipo tipo = new TelefonoTipo(false);
     private ArrayList<SelectItem> listaTipos;
     private DAOTelefonos dao;
 

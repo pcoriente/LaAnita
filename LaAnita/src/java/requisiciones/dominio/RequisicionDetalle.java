@@ -1,19 +1,15 @@
+
 package requisiciones.dominio;
 
-import productos.dominio.Producto;
+import productos.dominio.Empaque;
 
-public class RequisicionProducto {
+
+public class RequisicionDetalle {
+
     private int idRequisicion;
-    private Producto producto;
+    private Empaque empaque;
     private int cantidad;
     private int cantidadAutorizada;
-
-    public RequisicionProducto(Producto producto) {
-        this.producto = producto;
-    }
-
-    public RequisicionProducto() {
-    }
 
     public int getIdRequisicion() {
         return idRequisicion;
@@ -23,12 +19,12 @@ public class RequisicionProducto {
         this.idRequisicion = idRequisicion;
     }
 
-    public Producto getProducto() {
-        return producto;
+    public Empaque getEmpaque() {
+        return empaque;
     }
 
-    public void setProducto(Producto producto) {
-        this.producto = producto;
+    public void setEmpaque(Empaque empaque) {
+        this.empaque = empaque;
     }
 
     public int getCantidad() {
@@ -46,4 +42,7 @@ public class RequisicionProducto {
     public void setCantidadAutorizada(int cantidadAutorizada) {
         this.cantidadAutorizada = cantidadAutorizada;
     }
+    
+    
+    
 }

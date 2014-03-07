@@ -1,5 +1,6 @@
 package empresas.dao;
 
+import direccion.dao.DAODireccion;
 import empresas.dominio.Empresa;
 import empresas.to.TOEmpresa;
 import java.sql.Connection;
@@ -14,7 +15,6 @@ import javax.naming.InitialContext;
 import javax.naming.NamingException;
 import javax.servlet.http.HttpSession;
 import javax.sql.DataSource;
-import ordenesDeCompra.dao.DAOOrdenDeCompra;
 import usuarios.UsuarioSesion;
 
 public class DAOEmpresas {
@@ -102,7 +102,7 @@ public class DAOEmpresas {
 
     private Empresa construirCombo(ResultSet rs) throws SQLException, NamingException {
         Empresa to = new Empresa();
-        DAOOrdenDeCompra daoOC = new DAOOrdenDeCompra();
+        DAODireccion daoD = new DAODireccion();
 
         to.setIdEmpresa(rs.getInt("idEmpresa"));
         to.setCodigoEmpresa(rs.getInt("codigoEmpresa"));
@@ -114,7 +114,7 @@ public class DAOEmpresas {
         to.seteMail(rs.getString("eMail"));
         to.setRepresentanteLegal(rs.getString("representanteLegal"));
       //  to.setIdDireccion(rs.getInt("idDireccion"));
-        to.setDireccion(daoOC.obtenerDireccion(rs.getInt("idDireccion")));
+        to.setDireccion(daoD.obtenerDireccion(rs.getInt("idDireccion")));
         return to;
     }
 //FIN DAVID
