@@ -68,7 +68,7 @@ public class DAOTelefonos {
         Connection cn = this.ds.getConnection();
         Statement st = cn.createStatement();
         String strSQL = "UPDATE telefonosTipos "
-                + "SET tipo='" + t.getTipo() + " "
+                + "SET tipo='" + t.getTipo() + "'"
                 + "WHERE idTipo=" + t.getIdTipo();
         try {
             st.executeUpdate(strSQL);

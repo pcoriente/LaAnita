@@ -1,5 +1,4 @@
 package contactos.dominio;
-
 import java.io.Serializable;
 
 /**
@@ -11,7 +10,7 @@ public class Telefono implements Serializable {
     private String lada;
     private String telefono;
     private String extension;
-    private TelefonoTipo tipo;
+    private TelefonoTipo tipo = new TelefonoTipo(false);
 
     public Telefono() {
         this.idTelefono=0;

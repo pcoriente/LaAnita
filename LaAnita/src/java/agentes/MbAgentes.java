@@ -7,20 +7,17 @@ package agentes;
 import agentes.dao.DaoAgentes;
 import agentes.dominio.Agentes;
 import cedis.MbMiniCedis;
-import cedis.dao.DAOCedis;
 import cedis.dao.DAOMiniCedis;
 import cedis.dominio.MiniCedis;
 import contactos.MbContactos;
 import contactos.dao.DAOContactos;
 import contactos.dao.DAOTelefonos;
-import contactos.dominio.Contacto;
 import contactos.dominio.Telefono;
 import contactos.dominio.TelefonoTipo;
 import contribuyentes.DAOContribuyentes;
 import contribuyentes.MbContribuyentes;
 import direccion.MbDireccion;
 import direccion.dao.DAODireccion;
-import direccion.dominio.Asentamiento;
 import direccion.dominio.Direccion;
 import java.io.Serializable;
 import java.sql.SQLException;
@@ -456,6 +453,10 @@ public class MbAgentes implements Serializable {
         this.cargaListaTelefonos();
     }
 
+    public String salir() {
+        return "index.xhtml";
+    }
+
     public void validarTelefonos() {
         boolean ok = false;
         ok = this.mbContactos.getMbTelefonos().validarTelefonos();
@@ -686,6 +687,4 @@ public class MbAgentes implements Serializable {
     public void setColonia(String colonia) {
         this.colonia = colonia;
     }
-    
-    
 }

@@ -37,6 +37,10 @@
                                                          title="Actualizar Agente"
                                                          disabled="#{mbAgentes.actualizar==0}"
                                                          />
+                                        <p:commandButton icon="ui-icon-arrowreturnthick-1-w"
+                                                         ajax="false"
+                                                         title="Salir"
+                                                         action="#{mbAgentes.salir()}"/>
                                     </f:facet>
                                     <p:dataTable
                                         id="listaAgentes"
@@ -45,7 +49,7 @@
                                         selection="#{mbAgentes.seleccionListaAgentes}"
                                         selectionMode="single"
                                         rowKey="#{agentes}"
-                                        emptyMessage="No hay AGENTES disponibles">
+                                        emptyMessage="No hay agentes disponibles">
                                         <p:ajax event="rowSelect"
                                                 listener="#{mbAgentes.cargarDatosActualizar()}"
                                                 process="@this"
@@ -146,7 +150,7 @@
                         <p:inputText  id="correo" 
                                       value="#{mbAgentes.agente.contacto.correo}"/>
                         <h:outputLabel/>
-                        <h:outputLabel value="Telefonos"/>
+
 
                     </h:panelGrid>
                     <p:commandButton  icon="#{mbAgentes.lblnuevoAgente}" 
@@ -330,7 +334,6 @@
                     </f:facet>
                 </p:panelGrid>
             </p:dialog>
-
         </h:form>
 
         <script type="text/javascript">
@@ -358,7 +361,6 @@
                     mttoContactosDialog.hide();
                 }
             }
-
             function nuevoTelefono(xhr, status, args) {
                 if (args.validationFailed || !args.okTelefono) {
                     mttoTelefonosDialog.jq.effect("shake", {times: 5}, 100);
@@ -367,10 +369,6 @@
                     mttoTelefonosDialog.hide();
                 }
             }
-
-
-
         </script>
     </h:body>
 </html>
-

@@ -13,6 +13,12 @@ public class Tipo {
         this.tipo = tipo;
     }
 
+    public Tipo() {
+    }
+    
+    
+    
+
     @Override
     public String toString() {
         return tipo;
