@@ -548,6 +548,8 @@ public class MbOrdenCompra implements Serializable {
         Matcher matcher = pattern.matcher(email);
         validar = matcher.matches();
         return validar;
+        
+        
     }
 
     public void buscar() {
