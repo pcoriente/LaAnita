@@ -1,7 +1,5 @@
 package empresas.dominio;
 
-import direccion.dominio.Direccion;
-
 /**
  *
  * @author JULIOS
@@ -10,7 +8,7 @@ public class MiniEmpresa {
     private int idEmpresa;
     private String codigoEmpresa;
     private String nombreComercial;
-    private Direccion direccion;
+    //private Direccion direccion;
 
     public MiniEmpresa() {
         this.idEmpresa=0;
@@ -69,13 +67,13 @@ public class MiniEmpresa {
         this.nombreComercial = nombreComercial;
     }
 
-    public Direccion getDireccion() {
-        return direccion;
-    }
-
-    public void setDireccion(Direccion direccion) {
-        this.direccion = direccion;
-    }
+//    public Direccion getDireccion() {
+//        return direccion;
+//    }
+//
+//    public void setDireccion(Direccion direccion) {
+//        this.direccion = direccion;
+//    }
     
     
 }

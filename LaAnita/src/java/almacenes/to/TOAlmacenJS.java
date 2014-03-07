@@ -1,43 +1,35 @@
-package almacenes.dominio;
-import direccion.dominio.Direccion;
-import java.io.Serializable;
+package almacenes.to;
 
 /**
  *
- * @author julios
+ * @author jesc
  */
-public class Almacen implements Serializable{
+public class TOAlmacenJS {
     private int idAlmacen;
     private String almacen;
     private int idCedis;
     private int idEmpresa;
-    private Direccion direccion;
+    private String empresa;
+    private int idDireccion;
     
-    public Almacen() {
+    public TOAlmacenJS() {
         this.idAlmacen=0;
         this.almacen="";
         this.idCedis=0;
         this.idEmpresa=0;
-        this.direccion=new Direccion();
+        this.empresa="";
+        this.idDireccion=0;
     }
     
-    public Almacen(int idCedis, int idEmpresa) {
-        this.idAlmacen = 0;
-        this.almacen = "";
-        this.idCedis = idCedis;
-        this.idEmpresa = idEmpresa;
-        this.direccion = new Direccion();
-    }
-
     @Override
     public String toString() {
-        return this.almacen;
+        return (this.idEmpresa==0?"":this.empresa+" - ")+this.almacen;
     }
 
     @Override
     public int hashCode() {
-        int hash = 7;
-        hash = 97 * hash + this.idAlmacen;
+        int hash = 5;
+        hash = 43 * hash + this.idAlmacen;
         return hash;
     }
 
@@ -49,7 +41,7 @@ public class Almacen implements Serializable{
         if (getClass() != obj.getClass()) {
             return false;
         }
-        final Almacen other = (Almacen) obj;
+        final TOAlmacenJS other = (TOAlmacenJS) obj;
         if (this.idAlmacen != other.idAlmacen) {
             return false;
         }
@@ -88,11 +80,19 @@ public class Almacen implements Serializable{
         this.idEmpresa = idEmpresa;
     }
 
-    public Direccion getDireccion() {
-        return direccion;
+    public String getEmpresa() {
+        return empresa;
     }
 
-    public void setDireccion(Direccion direccion) {
-        this.direccion = direccion;
+    public void setEmpresa(String empresa) {
+        this.empresa = empresa;
+    }
+
+    public int getIdDireccion() {
+        return idDireccion;
+    }
+
+    public void setIdDireccion(int idDireccion) {
+        this.idDireccion = idDireccion;
     }
 }

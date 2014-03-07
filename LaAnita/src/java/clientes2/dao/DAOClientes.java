@@ -1,7 +1,7 @@
-package clientes.dao;
+package clientes2.dao;
 
-import clientes.dominio.ClienteSEA;
-import clientes.to.TOCliente;
+import clientes2.dominio.ClienteSEA;
+import clientes2.to.TOCliente;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.sql.*;

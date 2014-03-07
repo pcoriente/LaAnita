@@ -27,6 +27,27 @@ public class MbMiniCedis implements Serializable {
         this.cedis=new MiniCedis();
     }
     
+    public MiniCedis obtenerCedis(int idCedis) {
+        boolean ok=false;
+        FacesMessage fMsg = new FacesMessage(FacesMessage.SEVERITY_WARN, "Aviso:", "obtenerCedis");
+        MiniCedis c=null;
+        try {
+            this.dao=new DAOMiniCedis();
+            c=this.dao.obtenerMiniCedis(idCedis);
+            ok=true;
+        } catch (NamingException ex) {
+            fMsg.setSeverity(FacesMessage.SEVERITY_ERROR);
+            fMsg.setDetail(ex.getMessage());
+        } catch (SQLException ex) {
+            fMsg.setSeverity(FacesMessage.SEVERITY_ERROR);
+            fMsg.setDetail(ex.getErrorCode() + " " + ex.getMessage());
+        }
+        if (!ok) {
+            FacesContext.getCurrentInstance().addMessage(null, fMsg);
+        }
+        return c;
+    }
+    
     private void obtenerListaMiniCedis() {
         boolean ok=false;
         FacesMessage fMsg = new FacesMessage(FacesMessage.SEVERITY_WARN, "Aviso:", "");

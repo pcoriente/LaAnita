@@ -1,11 +1,11 @@
-package clientes;
+package clientes2;
 
 import bancos.dao.DAOBancos;
-import clientes.dao.DAOClientes;
+import clientes2.dao.DAOClientes;
 import bancos.dominio.Banco;
-import clientes.dominio.Cliente;
-import clientes.dominio.ClienteSEA;
-import clientes.to.TOCliente;
+import clientes2.dominio.Cliente;
+import clientes2.dominio.ClienteSEA;
+import clientes2.to.TOCliente;
 import java.io.Serializable;
 import java.sql.SQLException;
 import java.util.ArrayList;

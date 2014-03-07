@@ -1,7 +1,7 @@
 package bancos.dao;
 
 import bancos.dominio.Banco;
-import clientes.dominio.Cliente;
+import clientes2.dominio.Cliente;
 import java.sql.*;
 import javax.faces.context.ExternalContext;
 import javax.faces.context.FacesContext;

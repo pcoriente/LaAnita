@@ -50,22 +50,22 @@
                                     <p:selectOneMenu id="almacen" value="#{mbEntradas.almacen}" style="width: 250px;" >
                                         <f:converter converterId="converters.AlmacenConverter" />
                                         <f:selectItems value="#{mbEntradas.listaAlmacenes}" />
-                                        <p:ajax event="change" />
+                                        <p:ajax event="change" update="proveedor" />
                                     </p:selectOneMenu>
                                 </p:column>
                                 <p:column >
                                     <h:outputLabel for="txtIniPeriodo" value="PERIODO DEL:" style="font-weight: bold; color: red; width: 100px; text-align: right;" />
                                 </p:column>
-                                <p:column >
+                                <p:column style="width: 120px;" >
                                     <p:inputText id="txtIniPeriodo" value="#{mbEntradas.fechaIniPeriodo}" maxlength="8" size="10" >
                                         <f:convertDateTime pattern="dd/MM/yyyy" />
                                     </p:inputText>
                                 </p:column>
-                                <p:column style="width: 30px;" >
-                                    <h:outputLabel for="txtFinPeriodo" value="AL :" style="font-weight: bold; color: red; width: 30px; text-align: right;" />
+                                <p:column >
+                                    <h:outputLabel for="txtFinPeriodo" value="AL :" style="font-weight: bold; color: red; width: 25px; text-align: right;" />
                                 </p:column>
                                 <p:column colspan="2" >
-                                    <p:inputText id="txtFinPeriodo" value="#{mbEntradas.fechaFinPeriodo}" maxlength="8" size="10" style="width: 70px;" >
+                                    <p:inputText id="txtFinPeriodo" value="#{mbEntradas.fechaFinPeriodo}" maxlength="8" size="10" style="width: 75px;" >
                                         <f:convertDateTime pattern="dd/MM/yyyy" />
                                     </p:inputText>
                                 </p:column>
@@ -79,8 +79,7 @@
                                                      filter="true" filterMatchMode="contains" >
                                         <f:converter converterId="converters.miniProveedor" />
                                         <f:selectItems value="#{mbEntradas.mbProveedores.listaMiniProveedores}" />
-                                        <p:ajax event="change" update="factura" 
-                                                listener="#{mbEntradas.mbFacturas.obtenerListaFacturas(mbEntradas.mbProveedores.miniProveedor.idProveedor)}" />
+                                        <p:ajax event="change" update="factura" />
                                     </p:selectOneMenu>
                                 </p:column>
                                 <p:column >
@@ -110,8 +109,7 @@
                                 <p:row >
                                     <p:column colspan="7" style="text-align: right;" >
                                         <p:commandLink id="lnkEditarFactura" styleClass="nueva" value="Editar" 
-                                                       disabled="#{mbEntradas.factura.cerradaAlmacen or mbEntradas.factura.idFactura==0}"
-                                                       update="main" actionListener="#{mbEntradas.entradas()}" process="@this" />|
+                                                       update="main" actionListener="#{mbEntradas.entradas2()}" process="@this" />|
                                         <p:commandLink styleClass="nueva" action="#{mbEntradas.terminar()}" value="Salir" ajax="false" />
                                     </p:column>
                                 </p:row>
@@ -125,7 +123,7 @@
                                 <p:column colspan="3" >
                                     <p:inputText value="#{mbEntradas.mbCedis.cedis.cedis}" maxlength="64" size="35" readonly="true" />
                                 </p:column>
-                                <p:column style="font-weight: bold; color: red; width: 60px; text-align: right;" >Almacén :</p:column>
+                                <p:column style="font-weight: bold; color: red; width: 80px; text-align: right;" >Almacén :</p:column>
                                 <p:column colspan="4" >
                                     <p:inputText value="#{mbEntradas.almacen.almacen}" maxlength="64" size="50" readonly="true" />
                                 </p:column>
@@ -135,16 +133,9 @@
                                 <p:column colspan="3" >
                                     <p:inputText value="#{mbEntradas.mbProveedores.miniProveedor.proveedor}" maxlength="64" size="35" readonly="true" />
                                 </p:column>
-                                <p:column style="font-weight: bold; color: red; text-align: right;" >Factura :</p:column>
-                                <p:column colspan="2" style="width: 90px;" >
-                                    <p:inputText value="#{mbEntradas.factura.serie}" maxlength="3" size="5" title="Serie" readonly="true" />
-                                    <p:inputText value="#{mbEntradas.factura.numero}" maxlength="8" size="10" title="No. de Factura" readonly="true" />
-                                </p:column>
-                                <p:column style="font-weight: bold; color: red; width: 40px; text-align: right;" >Fecha :</p:column>
-                                <p:column style="width: 80px;" >
-                                    <p:inputText value="#{mbEntradas.factura.fecha}" maxlength="10" size="12" style="width: 70px;" readonly="true" >
-                                        <f:convertDateTime pattern="dd/MM/yyyy" />
-                                    </p:inputText>
+                                <p:column style="font-weight: bold; color: red; text-align: right;" >Documento :</p:column>
+                                <p:column colspan="4" style="width: 90px;" >
+                                    <p:inputText value="#{mbEntradas.entrada.documento}" maxlength="30" size="20" title="Documento de entrada" readonly="true" />
                                 </p:column>
                             </p:row>
                             <p:row >
@@ -164,7 +155,7 @@
                                         <p:ajax update=":main:btnEquivalencias btnBuscarOC" />
                                     </p:selectBooleanCheckbox>
                                 </p:column>
-                                <p:column colspan="5" style="text-align: right;" >
+                                <p:column colspan="6" style="text-align: right;" >
                                     <p:commandButton id="btnGrabarEntrada" icon="ui-icon-disk" title="Grabar Entrada" 
                                                      disabled="#{mbEntradas.factura.cerradaAlmacen}"
                                                      process="@this" actionListener="#{mbEntradas.grabarEntradaAlmacen()}" 
@@ -174,8 +165,7 @@
                                                      process="@this" actionListener="#{mbEntradas.mbBuscar.inicializar()}" 
                                                      update="buscarProductos listaBuscarProductos" oncomplete="buscarProductoDlg.show()" />
                                     <p:commandButton icon="ui-icon-arrowreturnthick-1-w" title="Terminar"
-                                                     update="main" 
-                                                     actionListener="#{mbEntradas.salir()}" process="@this" />
+                                                     update="main" actionListener="#{mbEntradas.salir()}" process="@this" />
                                 </p:column>
                             </p:row>
                         </p:panelGrid>
@@ -190,23 +180,13 @@
                             <p:column headerText="Producto" width="272" >
                                 <h:outputText value="#{prod.empaque.toString()}" />
                             </p:column>
-                            <p:column headerText="Ordenada" width="64" >
+                            <p:column headerText="Pendiente" width="64" >
                                 <h:outputText value="#{prod.cantOrdenada}" >
                                     <f:convertNumber type="number" maxFractionDigits="3" />
                                 </h:outputText>
                             </p:column>
-                            <p:column headerText="Facturada" width="64" >
-                                <h:outputText value="#{prod.cantFacturada}" >
-                                    <f:convertNumber type="number" maxFractionDigits="3" />
-                                </h:outputText>
-                            </p:column>
-                            <p:column headerText="Sin Cargo" width="64" >
-                                <h:outputText value="#{prod.cantSinCargo}" >
-                                    <f:convertNumber type="number" maxFractionDigits="3" />
-                                </h:outputText>
-                            </p:column>
                             <p:column headerText="Recibida" width="64" >
-                                <pe:inputNumber value="#{prod.cantRecibida}" decimalPlaces="3" minValue="0"
+                                <pe:inputNumber value="#{prod.cantFacturada}" decimalPlaces="3" minValue="0"
                                                 disabled="#{prod.empaque.idEmpaque!=mbEntradas.entradaProducto.empaque.idEmpaque}" >
                                     <p:ajax event="change" listener="#{mbEntradas.validaCantidadRecibida()}" process="@this" update=":main:msgs detalleEntrada" />
                                 </pe:inputNumber>
@@ -304,7 +284,6 @@
                                     <p:commandButton id="btnBuscarSKU" icon="ui-icon-check" title="Buscar" 
                                                      process="@this opcionSKU" actionListener="#{mbEntradas.buscar()}" 
                                                      oncomplete="handleBuscar(xhr, status, args)" />
-                                    <!--update=":main:mttoProductos"-->
                                 </p:column>
                                 <p:column rendered="#{mbEntradas.mbBuscar.tipoBuscar=='2'}" >
                                     <p:autoComplete id="opcionParte" value="#{mbEntradas.mbBuscar.parte}" maxlength="50" size="30"

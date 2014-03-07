@@ -1,4 +1,4 @@
-package clientes.dominio;
+package clientes2.dominio;
 
 public class ClienteSEA {
 

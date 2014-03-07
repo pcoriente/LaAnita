@@ -1,7 +1,7 @@
-package clientes.converters;
+package clientes2.converters;
 
-import clientes.dao.DAOClientes;
-import clientes.dominio.ClienteSEA;
+import clientes2.dao.DAOClientes;
+import clientes2.dominio.ClienteSEA;
 import java.util.ResourceBundle;
 import javax.faces.application.FacesMessage;
 import javax.faces.component.UIComponent;

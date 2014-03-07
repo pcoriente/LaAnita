@@ -1,7 +1,7 @@
-package empresas.converters;
+package almacenes.converters;
 
-import empresas.dao.DAOMiniEmpresas;
-import empresas.dominio.MiniEmpresa;
+import almacenes.dao.DAOAlmacenesJS;
+import almacenes.to.TOAlmacenJS;
 import java.util.ResourceBundle;
 import javax.faces.application.FacesMessage;
 import javax.faces.component.UIComponent;
@@ -11,24 +11,25 @@ import javax.faces.convert.ConverterException;
 
 /**
  *
- * @author JULIOS
+ * @author jesc
  */
-public class MiniEmpresaConverter implements Converter {
+public class TOAlmacenJSConverter implements Converter {
 
     @Override
     public Object getAsObject(FacesContext context, UIComponent component, String value) {
-        MiniEmpresa mini = null;
+        TOAlmacenJS mini = null;
         try {
-            int idMini=Integer.parseInt(value);
-            if(idMini==0) {
-                mini=new MiniEmpresa();
+            int idAlmacen = Integer.parseInt(value);
+            if (idAlmacen == 0) {
+                mini = new TOAlmacenJS();
+                mini.setAlmacen("Seleccione un Almacén");
             } else {
-                DAOMiniEmpresas dao=new DAOMiniEmpresas();
-                mini=dao.obtenerMiniEmpresa(idMini);
+                DAOAlmacenesJS dao = new DAOAlmacenesJS();
+                mini = dao.obtenerAlmacen(idAlmacen);
             }
-        } catch(Throwable ex) {
+        } catch (Throwable ex) {
             ResourceBundle bundle = ResourceBundle.getBundle("messages");
-            FacesMessage msg = new FacesMessage(bundle.getString("Mensaje_conversion_Pais_getAsObject"));
+            FacesMessage msg = new FacesMessage(bundle.getString("Mensaje_conversion_AlmacenJSConverter_getAsObject"));
             msg.setSeverity(FacesMessage.SEVERITY_ERROR);
             throw new ConverterException(msg);
         }
@@ -39,14 +40,15 @@ public class MiniEmpresaConverter implements Converter {
     public String getAsString(FacesContext context, UIComponent component, Object value) {
         String val = null;
         try {
-            MiniEmpresa mini = (MiniEmpresa) value;
-            val = Integer.toString(mini.getIdEmpresa());
-        }catch(Throwable ex) {
+            TOAlmacenJS mini = (TOAlmacenJS) value;
+            val = Integer.toString(mini.getIdAlmacen());
+        } catch (Exception ex) {
             ResourceBundle bundle = ResourceBundle.getBundle("messages");
-            FacesMessage msg = new FacesMessage(bundle.getString("Mensaje_conversion_Pedido_getAsString"));
+            FacesMessage msg = new FacesMessage(bundle.getString("Mensaje_conversion_TOAlmacenJS_getAsString"));
             msg.setSeverity(FacesMessage.SEVERITY_ERROR);
             throw new ConverterException(msg);
         }
         return val;
     }
+    
 }
