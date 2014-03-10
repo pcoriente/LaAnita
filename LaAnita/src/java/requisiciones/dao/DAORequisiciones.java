@@ -50,7 +50,7 @@ public class DAORequisiciones {
         PreparedStatement ps2;
 
         try {
-            //  st.executeUpdate("begin transaction");
+            st.executeUpdate("BEGIN TRANSACTION");
             //CABECERO
             String strSQL1 = "INSERT INTO requisiciones(idEmpresa, idDepto, idSolicito,fechaRequisicion) VALUES (" + idEmpresa + ", " + idDepto + ", " + idSolicito + ",GETDATE())";
             String strSQLIdentity = "SELECT @@IDENTITY as idReq";
@@ -75,8 +75,9 @@ public class DAORequisiciones {
                 ps2.setInt(4, e.getCantidad());
                 ps2.executeUpdate();
             }
+            st.executeUpdate("COMMIT TRANSACTION");
         } catch (SQLException e) {
-            // st.executeUpdate("rollback transaction");
+            st.executeUpdate("ROLLBACK TRANSACTION");
             throw (e);
         } finally {
             cn.close();
@@ -324,7 +325,7 @@ public class DAORequisiciones {
             st.executeUpdate("begin transaction");
             //CABECERO
             String strSQL1 = "INSERT INTO cotizaciones(idRequisicion, idProveedor, idMoneda, folioProveedor, fechaCotizacion, descuentoCotizacion,descuentoProntoPago, observaciones,numCotizaciones)"
-                    + " VALUES (" + ce.getIdRequisicion() + ", " + idProv + ", " + ce.getIdMoneda() + ",'Folio' ,GETDATE(), " + ce.getDescuentoCotizacion() + ", " + ce.getDescuentoProntoPago() + ", 'hola'," + ce.getNumCotizaciones()+")";
+                    + " VALUES (" + ce.getIdRequisicion() + ", " + idProv + ", " + ce.getIdMoneda() + ",'Folio' ,GETDATE(), " + ce.getDescuentoCotizacion() + ", " + ce.getDescuentoProntoPago() + ", 'hola'," + ce.getNumCotizaciones() + ")";
             String strSQLIdentity = "SELECT @@IDENTITY as idCot";
             ps1 = cn.prepareStatement(strSQL1);
             ps1.executeUpdate();
@@ -341,7 +342,7 @@ public class DAORequisiciones {
 
             for (CotizacionDetalle e : cd) {
                 ps2.setInt(1, identity);
-                ps2.setInt(2, e.getEmpaque().getIdEmpaque()); 
+                ps2.setInt(2, e.getEmpaque().getIdEmpaque());
                 ps2.setDouble(3, e.getCantidadCotizada());
                 ps2.setDouble(4, e.getCostoCotizado());
                 ps2.setDouble(5, e.getDescuentoProducto());
@@ -387,10 +388,9 @@ public class DAORequisiciones {
         }
         return lista;
     }
-    
-    
-    public CotizacionDetalle construirCotizacionDetalle(ResultSet rs) throws NamingException, SQLException{
-        CotizacionDetalle cd= new CotizacionDetalle();
+
+    public CotizacionDetalle construirCotizacionDetalle(ResultSet rs) throws NamingException, SQLException {
+        CotizacionDetalle cd = new CotizacionDetalle();
         RequisicionDetalle rd = new RequisicionDetalle();
         DAOEmpaques daoEmp = new DAOEmpaques();
         //REQUISICION
@@ -399,7 +399,7 @@ public class DAORequisiciones {
 //        rd.setCantidad(rs.getInt("cantidadSolicitada"));
 //        rd.setCantidadAutorizada(rs.getInt("cantidadAutorizada"));
         //COTIZACION
-       // cd.setRequisicionDetalle(rd);
+        // cd.setRequisicionDetalle(rd);
         cd.setCantidadAutorizada(rs.getInt("cantidadAutorizada"));
         cd.setCantidadCotizada(rs.getDouble("cantidadAutorizada"));
         cd.setCostoCotizado(0);
@@ -407,11 +407,11 @@ public class DAORequisiciones {
         cd.setSubtotal(0);
         cd.setDescuentoProducto(0);
         cd.setDescuentoProducto2(0);
-        
+
         return cd;
-    
-    
-    
+
+
+
     }
 
     public void actualizarCantidadCotizada(int idCot, int idEmp, int cc) throws SQLException {

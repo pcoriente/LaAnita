@@ -563,7 +563,7 @@ public class MbOrdenCompra implements Serializable {
         DAOProveedores daoProv = new DAOProveedores();
         try {
             provee = daoProv.obtenerProveedor(idProve);
-            int idDirProv = provee.getDireccionEntrega().getIdDireccion();
+            int idDirProv = provee.getContribuyente().getDireccion().getIdDireccion(); //CAMBIAR CUANDO TENGAMOS LA DIRECCION DE ENTREGA
             this.provee.setDireccionEntrega(daoD.obtenerDireccion(idDirProv));
         } catch (SQLException ex) {
             Logger.getLogger(MbOrdenCompra.class.getName()).log(Level.SEVERE, null, ex);
