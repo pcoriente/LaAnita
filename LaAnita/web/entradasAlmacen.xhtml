@@ -218,7 +218,8 @@
                                 </p:column>
                             </p:row>
                             <p:row >
-                                <p:column colspan="14" style="text-align: right;" >
+                                <p:column colspan="10" >.</p:column>
+                                <p:column colspan="3" style="text-align: left;" >
                                     <p:commandButton id="btnGrabarEntrada" icon="ui-icon-disk" title="Grabar Entrada" 
                                                      process="@this" actionListener="#{mbEntradas.grabarEntradaAlmacen()}" update="@this main :main:msgs" />
                                     <p:commandButton id="btnEquivalencias" icon="ui-icon-search" title="Buscar Productos" 
@@ -275,6 +276,7 @@
                                     <p:selectOneRadio id="opciones" value="#{mbEntradas.mbBuscar.tipoBuscar}" style="background-color: #ccc" >
                                         <f:selectItem itemLabel="SKU" itemValue="1" />
                                         <f:selectItem itemLabel="Genérico" itemValue="2" />
+                                        <f:selectItem itemLabel="Descripcion" itemValue="3" />
                                         <p:ajax listener="#{mbEntradas.mbBuscar.verCambio()}" update="buscarProductos listaBuscarProductos" />
                                     </p:selectOneRadio>
                                 </p:column>
@@ -282,17 +284,22 @@
                                     <p:inputText id="opcionSKU" value="#{mbEntradas.mbBuscar.strBuscar}" maxlength="8" size="10" />
                                     <p:commandButton id="btnBuscarSKU" icon="ui-icon-check" title="Buscar" 
                                                      process="@this opcionSKU" actionListener="#{mbEntradas.buscar()}" 
-                                                     oncomplete="handleBuscar(xhr, status, args)" />
-                                    <!--update=":main:mttoProductos"-->
+                                                     update=":main:detalleEntrada" oncomplete="handleBuscar(xhr, status, args)" />
                                 </p:column>
                                 <p:column rendered="#{mbEntradas.mbBuscar.tipoBuscar=='2'}" >
-                                    <p:autoComplete id="opcionParte" value="#{mbEntradas.mbBuscar.parte}" maxlength="50" size="30"
+                                    <p:autoComplete id="opcionParte" value="#{mbEntradas.mbBuscar.parte}" maxlength="24" size="24"
                                                     completeMethod="#{mbEntradas.mbBuscar.completePartes}" process="@this"
                                                     var="p" itemLabel="#{p.parte}" itemValue="#{p}" converter="converters.ParteBuscar" 
                                                     forceSelection="true" />
                                     <p:commandButton id="btnBuscarLista" icon="ui-icon-check" title="Buscar" 
                                                      process="@this opcionParte" actionListener="#{mbEntradas.buscar()}" 
-                                                     update="listaBuscarProductos" oncomplete="handleBuscar(xhr, status, args)" />
+                                                     update="listaBuscarProductos"  />
+                                </p:column>
+                                <p:column rendered="#{mbEntradas.mbBuscar.tipoBuscar=='3'}" >
+                                    <p:inputText id="opcionDescripcion" value="#{mbEntradas.mbBuscar.strBuscar}" maxlength="24" size="24" />
+                                    <p:commandButton id="btnBuscarDescripcion" icon="ui-icon-check" title="Buscar" 
+                                                     process="@this opcionDescripcion" actionListener="#{mbEntradas.buscar()}" 
+                                                     update="listaBuscarProductos" />
                                 </p:column>
                             </p:row>
                         </p:panelGrid>
@@ -327,7 +334,7 @@
                                      var="orden" rowKey="#{orden.idOrdenCompra}" selectionMode="single" 
                                      emptyMessage="No hay elementos que desplegar" scrollable="true" scrollHeight="220" >
                             <p:ajax process="@this" event="rowSelect" listener="#{mbEntradas.cargaDetalleOrdenCompra}" 
-                                    update=":main:txtOrdenCompra :main:txtDesctoComercial :main:txtDesctoProntoPago :main:msgs :main:chkSinOrden :main:btnBuscarOC :main:cboMoneda :main:detalleEntrada :main:mttoEntradasTotales" 
+                                    update=":main:txtOrdenCompra :main:txtDesctoComercial :main:txtDesctoProntoPago :main:msgs :main:chkSinOrden :main:btnBuscarOC :main:cboMoneda :main:detalleEntrada" 
                                     oncomplete="listaOrdenesDlg.hide();" />
                             <p:column headerText="OC" style="width: 60px;" >
                                 <h:outputText value="#{orden.idOrdenCompra}" style="width: 60px;" />
