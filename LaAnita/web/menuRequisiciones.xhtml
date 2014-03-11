@@ -137,8 +137,8 @@
                             <f:facet name="header">  
                                 DETALLE DE PRODUCTOS REQUISITADOS  
                             </f:facet>
-                            <p:column  headerText="Código" width="30" >
-                                <h:outputText value="#{det.empaque.idEmpaque}"  />
+                            <p:column  headerText="Código" width="45" >
+                                <h:outputText value="#{det.empaque.cod_pro}"  />
                             </p:column>
                             <p:column headerText="Descripción del Producto " width="250" >
                                 <h:outputText value="#{det.empaque.toString()}" />
@@ -201,7 +201,7 @@
                             <p:ajax event="rowEditCancel"  update="detalleAprobar" />
 
                             <p:column  headerText="Cod." width="20">
-                                <h:outputText value="#{da.empaque.idEmpaque}"  />
+                                <h:outputText value="#{da.empaque.cod_pro}"  />
                             </p:column>
                             <p:column headerText="Descripción Producto" width="300" >
                                 <h:outputText value="#{da.empaque.toString()}" />
