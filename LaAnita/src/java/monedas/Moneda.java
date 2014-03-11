@@ -19,7 +19,7 @@ public class Moneda implements Serializable {
    
 
     public Moneda() {
-        this.idMoneda=0;
+        this.idMoneda=1;
         this.moneda="";
         this.codigoIso="";
     }

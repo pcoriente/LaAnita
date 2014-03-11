@@ -41,7 +41,7 @@ public class DAOImpuestosProducto {
         Connection cn = this.ds.getConnection();
         Statement st = cn.createStatement();
         try {
-            String strSQL="select idImpuesto, impuesto, valor, aplicable, modo, acreditable, importe\n" +
+            String strSQL="select idImpuesto, impuesto, valor, aplicable, modo, acreditable, importe, acumulable\n" +
                             "from movimientosDetalleImpuestos\n" +
                             "where idMovto="+idMovto+" and idEmpaque="+idEmpaque;
             ResultSet rs=st.executeQuery(strSQL);
@@ -79,6 +79,7 @@ public class DAOImpuestosProducto {
         ip.setModo(rs.getInt("modo"));
         ip.setAcreditable(rs.getBoolean("acreditable"));
         ip.setImporte(rs.getDouble("importe"));
+        ip.setAcumulable(rs.getBoolean("acumulable"));
         return ip;
     }
 }

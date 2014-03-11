@@ -101,16 +101,34 @@ public class DAOProductos {
         return idProducto;
     }
     
-    public Producto obtenerProducto(String codBar) throws SQLException, NamingException {
+    public Producto obtenerProductoSKU(String codigo) throws SQLException, NamingException {
         Producto producto=null;
-        int idProducto=this.obtenerIdProducto(codBar);
+        String strSQL=sqlProducto() + " WHERE p.codigoProducto='"+codigo+"'";
+        Connection cn=ds.getConnection();
+        Statement st=cn.createStatement();
+        try {
+            ResultSet rs=st.executeQuery(strSQL);
+            if(rs.next()) {
+                producto=construir(rs);
+                DAOUpcs daoUpcs=new DAOUpcs();
+                producto.setUpcs(daoUpcs.obtenerUpcs(producto.getIdProducto()));
+            }
+        } finally {
+            cn.close();
+        }
+        return producto;
+    }
+    
+    public Producto obtenerProductoUPC(String codBar) throws SQLException, NamingException {
+        Producto producto=null;
+        int idProducto=this.obtenerIdProductoUPC(codBar);
         if(idProducto!=0) {
             producto=this.obtenerProducto(idProducto);
         }
         return producto;
     }
     
-    private int obtenerIdProducto(String codBar) throws SQLException {
+    private int obtenerIdProductoUPC(String codBar) throws SQLException {
         int idProducto=0;
         Connection cn=ds.getConnection();
         Statement st=cn.createStatement();
@@ -144,6 +162,26 @@ public class DAOProductos {
                 + "LEFT JOIN productosMarcas m on m.idMarca=p.idMarca "
                 + "INNER JOIN impuestosGrupos i ON i.idGrupo=p.idImpuesto";
         return strSQL;
+    }
+    
+    public ArrayList<Producto> obtenerProductos(String strDescripcion) throws SQLException, NamingException {
+        ArrayList<Producto> productos=new ArrayList<Producto>();
+        String strSQL=sqlProducto() +" WHERE p.descripcion like '%"+strDescripcion+"%'";
+        Connection cn=ds.getConnection();
+        Statement st=cn.createStatement();
+        try {
+            Producto producto;
+            DAOUpcs daoUpcs=new DAOUpcs();
+            ResultSet rs=st.executeQuery(strSQL);
+            while(rs.next()) {
+                producto=construir(rs);
+                producto.setUpcs(daoUpcs.obtenerUpcs(producto.getIdProducto()));
+                productos.add(producto);
+            }
+        } finally {
+            cn.close();
+        }
+        return productos;
     }
     
     public ArrayList<Producto> obtenerProductos(int idParte) throws SQLException, NamingException {

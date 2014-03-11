@@ -27,9 +27,30 @@ public class MbMiniEmpresas implements Serializable {
         this.empresa=new MiniEmpresa();
     }
     
+    public MiniEmpresa obtenerEmpresa(int idEmpresa) {
+        boolean ok=false;
+        FacesMessage fMsg = new FacesMessage(FacesMessage.SEVERITY_WARN, "Aviso:", "obtenerEmpresa");
+        MiniEmpresa e=null;
+        try {
+            this.dao=new DAOMiniEmpresas();
+            e=this.dao.obtenerMiniEmpresa(idEmpresa);
+            ok=true;
+        } catch (NamingException ex) {
+            fMsg.setSeverity(FacesMessage.SEVERITY_ERROR);
+            fMsg.setDetail(ex.getMessage());
+        } catch (SQLException ex) {
+            fMsg.setSeverity(FacesMessage.SEVERITY_ERROR);
+            fMsg.setDetail(ex.getErrorCode() + " " + ex.getMessage());
+        }
+        if (!ok) {
+            FacesContext.getCurrentInstance().addMessage(null, fMsg);
+        }
+        return e;
+    }
+    
     private void cargaListaMiniEmpresas() {
         boolean ok=false;
-        FacesMessage fMsg = new FacesMessage(FacesMessage.SEVERITY_WARN, "Aviso:", "");
+        FacesMessage fMsg = new FacesMessage(FacesMessage.SEVERITY_WARN, "Aviso:", "cargaListaMiniEmpresas");
         this.listaEmpresas=new ArrayList<SelectItem>();
         try {
             MiniEmpresa e0=new MiniEmpresa();

@@ -8,7 +8,7 @@ import productos.dominio.Empaque;
  *
  * @author jsolis
  */
-public class EntradaProducto {
+public class MovimientoProducto {
     private Empaque empaque;
     private double costoOrdenado;
     private double cantOrdenada;
@@ -24,7 +24,7 @@ public class EntradaProducto {
     private double neto;
     private double importe;
 
-    public EntradaProducto() {
+    public MovimientoProducto() {
         this.empaque=new Empaque(0);
         this.costoOrdenado=0.00;
         this.cantOrdenada=0.00;
@@ -60,7 +60,7 @@ public class EntradaProducto {
         if (getClass() != obj.getClass()) {
             return false;
         }
-        final EntradaProducto other = (EntradaProducto) obj;
+        final MovimientoProducto other = (MovimientoProducto) obj;
         if (this.empaque != other.empaque && (this.empaque == null || !this.empaque.equals(other.empaque))) {
             return false;
         }

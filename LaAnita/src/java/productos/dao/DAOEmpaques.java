@@ -96,16 +96,47 @@ public class DAOEmpaques {
         return idEmpaque;
     }
     
+    public ArrayList<Empaque> obtenerEmpaquesDescripcion(String descripcion) throws NamingException, SQLException {
+        Producto p;
+        Empaque epq;
+        ArrayList<Empaque> lstEmpaques=new ArrayList<Empaque>();
+        DAOProductos daoProductos=new DAOProductos();
+        String strSQL=sqlEmpaque()+" "+
+            "INNER JOIN productos p on p.idProducto=e.idProducto" +
+            "LEFT JOIN productosPartes pp on pp.idParte=p.idParte" +
+            "WHERE p.descripcion like '%"+descripcion+"%'" +
+            "ORDER BY pp.parte, p.descripcion";
+        Connection cn=ds.getConnection();
+        Statement st=cn.createStatement();
+        try {
+            p=null;
+            int idProducto=0;
+            ResultSet rs=st.executeQuery(strSQL);
+            while(rs.next()) {
+                if(idProducto!=rs.getInt("idProducto")) {
+                    idProducto=rs.getInt("idProducto");
+                    p=daoProductos.obtenerProducto(idProducto);
+                }
+                epq=construir(rs);
+                epq.setProducto(p);
+                lstEmpaques.add(epq);
+            }
+        } finally {
+            cn.close();
+        }
+        return lstEmpaques;
+    }
+    
     public ArrayList<Empaque> obtenerEmpaquesParte(int idParte) throws NamingException, SQLException {
         Producto p;
         Empaque epq;
         ArrayList<Empaque> lstEmpaques=new ArrayList<Empaque>();
         DAOProductos daoProductos=new DAOProductos();
         String strSQL=sqlEmpaque()+" "+
-            "INNER JOIN productos p on p.idProducto=e.idProducto\n" +
-            "LEFT JOIN productosPartes pp on pp.idParte=p.idParte\n" +
-            "WHERE pp.idParte="+idParte+"\n" +
-            "ORDER BY p.idProducto, pp.parte";
+            "INNER JOIN productos p on p.idProducto=e.idProducto" +
+            "LEFT JOIN productosPartes pp on pp.idParte=p.idParte" +
+            "WHERE pp.idParte="+idParte+"" +
+            "ORDER BY pp.parte";
         Connection cn=ds.getConnection();
         Statement st=cn.createStatement();
         try {

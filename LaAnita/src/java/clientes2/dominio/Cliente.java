@@ -1,4 +1,4 @@
-package clientes.dominio;
+package clientes2.dominio;
 
 import bancos.dominio.Banco;
 

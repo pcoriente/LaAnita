@@ -15,11 +15,30 @@ import javax.sql.DataSource;
  * @author jesc
  */
 public class DAOMonedas {
+    int idUsuario;
+    private DataSource ds = null;
+    
+    public DAOMonedas() throws NamingException {
+        try {
+//            FacesContext context = FacesContext.getCurrentInstance();
+//            ExternalContext externalContext = context.getExternalContext();
+//            HttpSession httpSession = (HttpSession) externalContext.getSession(false);
+//            UsuarioSesion usuarioSesion = (UsuarioSesion) httpSession.getAttribute("usuarioSesion");
+//            this.idUsuario=usuarioSesion.getUsuario().getId();
+
+            Context cI = new InitialContext();
+//            ds = (DataSource) cI.lookup("java:comp/env/" + usuarioSesion.getJndi());
+            ds = (DataSource) cI.lookup("java:comp/env/jdbc/__webSystem");
+        } catch (NamingException ex) {
+            throw (ex);
+        }
+    }
+    
     public Moneda obtenerMoneda(int idMoneda) throws SQLException, NamingException {
-        Context cI = new InitialContext();
-        DataSource ds1 = (DataSource) cI.lookup("java:comp/env/jdbc/__webSystem");
+//        Context cI = new InitialContext();
+//        DataSource ds1 = (DataSource) cI.lookup("java:comp/env/jdbc/__webSystem");
         Moneda mon = null;
-        Connection cn = ds1.getConnection();
+        Connection cn = ds.getConnection();
         Statement st = cn.createStatement();
         try {
             ResultSet rs = st.executeQuery("SELECT idMoneda, moneda, codigoIso FROM Monedas\n"
@@ -42,17 +61,16 @@ public class DAOMonedas {
     }
 
     public ArrayList<Moneda> obtenerMonedas() throws NamingException, SQLException {
-        Context cI = new InitialContext();
-        DataSource ds2 = (DataSource) cI.lookup("java:comp/env/jdbc/__webSystem");
+//        Context cI = new InitialContext();
+//        DataSource ds2 = (DataSource) cI.lookup("java:comp/env/jdbc/__webSystem");
         ArrayList<Moneda> lista = new ArrayList<Moneda>();
-        ResultSet rs;
-        Connection cn = ds2.getConnection();
+        Connection cn = ds.getConnection();
         try {
 
             String stringSQL = "SELECT idMoneda, moneda, codigoIso FROM monedas where idMoneda between 0 and 4";
 
             Statement sentencia = cn.createStatement();
-            rs = sentencia.executeQuery(stringSQL);
+            ResultSet rs = sentencia.executeQuery(stringSQL);
             while (rs.next()) {
                 lista.add(construirMoneda(rs));
             }
@@ -60,6 +78,5 @@ public class DAOMonedas {
             cn.close();
         }
         return lista;
-
     }
 }

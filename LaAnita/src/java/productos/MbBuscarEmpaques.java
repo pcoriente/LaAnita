@@ -45,9 +45,12 @@ public class MbBuscarEmpaques implements Serializable {
                 } else {
                     ok = true;
                 }
-            } else {
+            } else if(this.tipoBuscar.equals("2")){
                 this.producto = null;
                 this.productos = dao.obtenerEmpaquesParte(this.parte.getIdParte());
+            } else {
+                this.producto = null;
+                this.productos = dao.obtenerEmpaquesDescripcion(this.strBuscar);
             }
         } catch (NamingException ex) {
             fMsg.setSeverity(FacesMessage.SEVERITY_ERROR);

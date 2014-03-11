@@ -7,6 +7,8 @@ import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.enterprise.context.SessionScoped;
+import javax.faces.application.FacesMessage;
+import javax.faces.context.FacesContext;
 import javax.faces.model.SelectItem;
 import javax.inject.Named;
 import javax.naming.NamingException;
@@ -21,8 +23,30 @@ public class MbMiniProveedor implements Serializable {
     private MiniProveedor miniProveedor = new MiniProveedor();
     private ArrayList<SelectItem> listaMonedas = new ArrayList<SelectItem>();
     private Moneda moneda = new Moneda();
+    private DAOMiniProveedores dao;
 
     public MbMiniProveedor() {
+    }
+    
+    public MiniProveedor obtenerProveedor(int idProveedor) {
+        boolean ok=false;
+        FacesMessage fMsg = new FacesMessage(FacesMessage.SEVERITY_WARN, "Aviso:", "obtenerProveedor");
+        MiniProveedor p=null;
+        try {
+            this.dao=new DAOMiniProveedores();
+            p=this.dao.obtenerProveedor(idProveedor);
+            ok=true;
+        } catch (NamingException ex) {
+            fMsg.setSeverity(FacesMessage.SEVERITY_ERROR);
+            fMsg.setDetail(ex.getMessage());
+        } catch (SQLException ex) {
+            fMsg.setSeverity(FacesMessage.SEVERITY_ERROR);
+            fMsg.setDetail(ex.getErrorCode() + " " + ex.getMessage());
+        }
+        if (!ok) {
+            FacesContext.getCurrentInstance().addMessage(null, fMsg);
+        }
+        return p;
     }
 
     //////////////////////////////M E T O D O S
@@ -35,8 +59,8 @@ public class MbMiniProveedor implements Serializable {
             p0.setProveedor("Proveedor....");
             listaMiniProveedores.add(new SelectItem(p0, p0.toString()));
             
-            DAOMiniProveedores daoP = new DAOMiniProveedores();
-            ArrayList<MiniProveedor> proveedores = daoP.obtenerProveedores();
+            this.dao = new DAOMiniProveedores();
+            ArrayList<MiniProveedor> proveedores = this.dao.obtenerProveedores();
             for (MiniProveedor e : proveedores) {
                 listaMiniProveedores.add(new SelectItem(e, e.toString()));
             }

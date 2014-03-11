@@ -1,7 +1,7 @@
 package entradas.dao;
 
 import entradas.dominio.Entrada;
-import entradas.dominio.EntradaProducto;
+import entradas.dominio.MovimientoProducto;
 import impuestos.dominio.ImpuestosProducto;
 import java.sql.Connection;
 import java.sql.Date;
@@ -50,7 +50,7 @@ public class DAOEntradas {
         return i;
     }
     
-    public boolean grabarEntradaAlmacen(int idAlmacen, int idMovto, double tipoCambio, int idFactura, ArrayList<EntradaProducto> productos) throws SQLException {
+    public boolean grabarEntradaAlmacen(int idAlmacen, int idMovto, double tipoCambio, int idFactura, ArrayList<MovimientoProducto> productos) throws SQLException {
         int capturados;
         boolean ok=false;
         int idLote;
@@ -93,7 +93,7 @@ public class DAOEntradas {
                 idLote = 0;
             }
             
-            for(EntradaProducto p: productos) {
+            for(MovimientoProducto p: productos) {
                 idEmpaque=p.getEmpaque().getIdEmpaque();
 //                fechaCaducidad=utilerias.Utilerias.addDays(fechaCaducidad, p.getEmpaque().getProducto().getDiasCaducidad);
 //                fechaCaducidad=utilerias.Utilerias.addDays(fechaCaducidad, 365);
@@ -142,7 +142,7 @@ public class DAOEntradas {
         return ok;
     }
     
-    public boolean grabarEntradaOficina(int idAlmacen, int idMovto, double tipoCambio, int idFactura, ArrayList<EntradaProducto> productos) throws SQLException {
+    public boolean grabarEntradaOficina(int idAlmacen, int idMovto, double tipoCambio, int idFactura, ArrayList<MovimientoProducto> productos) throws SQLException {
         int capturados;
         boolean ok=false;
         ArrayList<ImpuestosProducto> impuestos;
@@ -185,7 +185,7 @@ public class DAOEntradas {
             //rs=st.executeQuery("select DATEPART(weekday, getdate()-1) AS DIA, DATEPART(week, GETDATE()) AS SEM, DATEPART(YEAR, GETDATE())%10 AS ANIO");
             //lote=""+rs.getInt("DIA")+String.format("%02d", rs.getInt("SEM"))+rs.getInt("ANIO")+"1";
             
-            for(EntradaProducto p: productos) {
+            for(MovimientoProducto p: productos) {
                 idEmpaque=p.getEmpaque().getIdEmpaque();
                 
                 if(p.getCantFacturada()> 0) {
@@ -251,61 +251,61 @@ public class DAOEntradas {
         return ok;
     }
     
-    public int agregarEntrada(Entrada entrada, ArrayList<EntradaProducto> productos, int idImpuestoZona) throws SQLException, NamingException {
-        int idMovto=0;
-        int idEmpaque;
-//        double unitario;
-        int idImpuestoGrupo;
-//        DAOImpuestosProducto daoImps=new DAOImpuestosProducto();
-        
-        Connection cn=this.ds.getConnection();
-        String strSQL="INSERT INTO movimientosDetalle (idMovto, idEmpaque, costo, desctoProducto1, desctoProducto2, desctoConfidencial, unitario, cantOrdenada, cantRecibida, idImpuestoGrupo, cantSinCargo, fecha) "
-                + "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, getdate())";
-        PreparedStatement ps=cn.prepareStatement(strSQL);
-        Statement st=cn.createStatement();
-        try {
-            st.executeUpdate("BEGIN TRANSACTION");
-            
-            strSQL="INSERT INTO movimientos (idTipo, idAlmacen, idFactura, idOrdenCompra, idMoneda, tipoCambio, desctoComercial, desctoProntoPago, idUsuario) "
-                    + "VALUES (1, "+entrada.getIdAlmacen()+", "+entrada.getIdFactura()+", "+entrada.getIdOrdenCompra()+", 0, 1, "+entrada.getDesctoComercial()+", "+entrada.getDesctoProntoPago()+", "+this.idUsuario+")";
-            st.executeUpdate(strSQL);
-            
-            ResultSet rs=st.executeQuery("SELECT @@IDENTITY AS idMovto");
-            if(rs.next()) {
-                idMovto=rs.getInt("idMovto");
-            }
-            strSQL="INSERT INTO facturasOrdenesCompra (idFactura, idOrdenCompra, idEntrada) " +
-                   "VALUES ("+entrada.getIdFactura()+", "+entrada.getIdOrdenCompra()+", "+idMovto+")";
-            st.executeUpdate(strSQL);
-            
-            for(EntradaProducto p: productos) {
-                ps.setInt(1, idMovto);
-                ps.setInt(2, p.getEmpaque().getIdEmpaque());
-                ps.setDouble(3, p.getPrecio());
-                ps.setDouble(4, p.getDesctoProducto1());
-                ps.setDouble(5, p.getDesctoProducto2());
-                ps.setDouble(6, p.getDesctoConfidencial());
-                ps.setDouble(7, p.getUnitario());
-                ps.setDouble(8, p.getCantOrdenada());
-                ps.setDouble(9, 0);
-                ps.setInt(10, p.getEmpaque().getProducto().getImpuestoGrupo().getIdGrupo());
-                ps.setDouble(11, p.getCantSinCargo());
-                ps.executeUpdate();
-                
-                idEmpaque=p.getEmpaque().getIdEmpaque();
-                idImpuestoGrupo=p.getEmpaque().getProducto().getImpuestoGrupo().getIdGrupo();
-                this.agregarImpuestosProducto(cn, idImpuestoGrupo, idImpuestoZona, idMovto, idEmpaque);
-                this.calculaImpuestosProducto(cn, idMovto, idEmpaque, p.getUnitario(), p.getEmpaque().getPiezas());
-            }
-            st.executeUpdate("COMMIT TRANSACTION");
-        } catch(SQLException e) {
-            st.executeUpdate("ROLLBACK TRANSACTION");
-            throw(e);
-        } finally {
-            cn.close();
-        }
-        return idMovto;
-    }
+//    public int agregarEntrada(Entrada entrada, ArrayList<MovimientoProducto> productos, int idAlmacen) throws SQLException, NamingException {
+//        int idMovto=0;
+//        int idEmpaque;
+////        double unitario;
+//        int idImpuestoGrupo;
+////        DAOImpuestosProducto daoImps=new DAOImpuestosProducto();
+//        
+//        Connection cn=this.ds.getConnection();
+//        String strSQL="INSERT INTO movimientosDetalle (idMovto, idEmpaque, costo, desctoProducto1, desctoProducto2, desctoConfidencial, unitario, cantOrdenada, cantRecibida, idImpuestoGrupo, cantSinCargo, fecha) "
+//                + "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, getdate())";
+//        PreparedStatement ps=cn.prepareStatement(strSQL);
+//        Statement st=cn.createStatement();
+//        try {
+//            st.executeUpdate("BEGIN TRANSACTION");
+//            
+//            strSQL="INSERT INTO movimientos (idTipo, idAlmacen, idComprobante, idOrdenCompra, idMoneda, tipoCambio, desctoComercial, desctoProntoPago, idUsuario) "
+//                    + "VALUES (1, "+idAlmacen+", "+entrada.getComprobante().getIdComprobante()+", "+entrada.getIdOrdenCompra()+", 0, 1, "+entrada.getDesctoComercial()+", "+entrada.getDesctoProntoPago()+", "+this.idUsuario+")";
+//            st.executeUpdate(strSQL);
+//            
+//            ResultSet rs=st.executeQuery("SELECT @@IDENTITY AS idMovto");
+//            if(rs.next()) {
+//                idMovto=rs.getInt("idMovto");
+//            }
+//            strSQL="INSERT INTO comprobantesOrdenesCompra (idComprobante, idOrdenCompra, idEntrada) " +
+//                   "VALUES ("+entrada.getComprobante().getIdComprobante()+", "+entrada.getIdOrdenCompra()+", "+idMovto+")";
+//            st.executeUpdate(strSQL);
+//            
+//            for(MovimientoProducto p: productos) {
+//                ps.setInt(1, idMovto);
+//                ps.setInt(2, p.getEmpaque().getIdEmpaque());
+//                ps.setDouble(3, p.getPrecio());
+//                ps.setDouble(4, p.getDesctoProducto1());
+//                ps.setDouble(5, p.getDesctoProducto2());
+//                ps.setDouble(6, p.getDesctoConfidencial());
+//                ps.setDouble(7, p.getUnitario());
+//                ps.setDouble(8, p.getCantOrdenada());
+//                ps.setDouble(9, 0);
+//                ps.setInt(10, p.getEmpaque().getProducto().getImpuestoGrupo().getIdGrupo());
+//                ps.setDouble(11, p.getCantSinCargo());
+//                ps.executeUpdate();
+//                
+//                idEmpaque=p.getEmpaque().getIdEmpaque();
+//                idImpuestoGrupo=p.getEmpaque().getProducto().getImpuestoGrupo().getIdGrupo();
+//                this.agregarImpuestosProducto(cn, idImpuestoGrupo, entrada.getIdImpuestoZona(), idMovto, idEmpaque);
+//                this.calculaImpuestosProducto(cn, idMovto, idEmpaque, p.getUnitario(), p.getEmpaque().getPiezas());
+//            }
+//            st.executeUpdate("COMMIT TRANSACTION");
+//        } catch(SQLException e) {
+//            st.executeUpdate("ROLLBACK TRANSACTION");
+//            throw(e);
+//        } finally {
+//            cn.close();
+//        }
+//        return idMovto;
+//    }
     
     private void calculaImpuestosProducto(Connection cn, int idMovto, int idEmpaque, double unitario, double piezas) throws SQLException {
         Statement st=cn.createStatement();
@@ -327,13 +327,13 @@ public class DAOEntradas {
         st.executeUpdate(strSQL);
     }
     
-    public int buscarEntrada(int idFactura, int idOrdenCompra) throws SQLException {
+    public int buscarEntrada(int idComprobante, int idOrdenCompra) throws SQLException {
         int idEntrada=0;
         Connection cn=this.ds.getConnection();
         Statement st=cn.createStatement();
         try {
-            ResultSet rs=st.executeQuery("SELECT idEntrada FROM facturasOrdenesCompra " +
-                                         "WHERE idFactura="+idFactura+" AND idOrdenCompra="+idOrdenCompra);
+            ResultSet rs=st.executeQuery("SELECT idEntrada FROM comprobantesOrdenesCompra " +
+                                         "WHERE idComprobante="+idComprobante+" AND idOrdenCompra="+idOrdenCompra);
             if(rs.next()) {
                 idEntrada=rs.getInt("idEntrada");
             }
@@ -343,12 +343,12 @@ public class DAOEntradas {
         return idEntrada;
     }
     
-    public ArrayList<EntradaProducto> obtenerDetalleEntrada(int idMovto) throws SQLException, NamingException {
-        ArrayList<EntradaProducto> lstProductos=new ArrayList<EntradaProducto>();
+    public ArrayList<MovimientoProducto> obtenerDetalleEntrada(int idMovto) throws SQLException, NamingException {
+        ArrayList<MovimientoProducto> lstProductos=new ArrayList<MovimientoProducto>();
         Connection cn=this.ds.getConnection();
         Statement st=cn.createStatement();
         try {
-            EntradaProducto prod;
+            MovimientoProducto prod;
             ResultSet rs=st.executeQuery("SELECT * FROM movimientosDetalle WHERE idMovto="+idMovto);
             while(rs.next()) {
                 prod=construirProducto(rs);
@@ -377,39 +377,22 @@ public class DAOEntradas {
         return idMovto;
     }
     
-    public ArrayList<Entrada> obtenerEntradas(int idFactura) throws SQLException {
-        ArrayList<Entrada> entradas=new ArrayList<Entrada>();
-        Connection cn=this.ds.getConnection();
-        Statement st=cn.createStatement();
-        try {
-            ResultSet rs=st.executeQuery("SELECT idMovto, idTipo, idAlmacen, idFactura, idOrdenCompra, idMoneda, tipoCambio, desctoComercial, desctoProntoPago, fecha, idUsuario "
-                    + "FROM movimientos "
-                    + "WHERE idTipo=1 AND idFactura="+idFactura);
-            while(rs.next()) {
-                entradas.add(construir(rs));
-            }
-        } finally {
-            cn.close();
-        }
-        return entradas;
-    }
-    
-    public Entrada obtenerMovimiento(int idMovto) throws SQLException {
-        Entrada entrada=null;
-        Connection cn=this.ds.getConnection();
-        Statement st=cn.createStatement();
-        try {
-             ResultSet rs=st.executeQuery("SELECT idMovto, idTipo, idAlmacen, idFactura, idOrdenCompra, idMoneda, tipoCambio, desctoComercial, desctoProntoPago, fecha, idUsuario "
-                        + "FROM movimientos "
-                        + "WHERE idMovto="+idMovto);
-            if(rs.next()) {
-                entrada=construir(rs);
-            }
-        } finally {
-            cn.close();
-        }
-        return entrada;
-    }
+//    public ArrayList<Entrada> obtenerEntradas(int idFactura) throws SQLException {
+//        ArrayList<Entrada> entradas=new ArrayList<Entrada>();
+//        Connection cn=this.ds.getConnection();
+//        Statement st=cn.createStatement();
+//        try {
+//            ResultSet rs=st.executeQuery("SELECT idMovto, idTipo, idAlmacen, idFactura, idOrdenCompra, idMoneda, tipoCambio, desctoComercial, desctoProntoPago, fecha, idUsuario "
+//                    + "FROM movimientos "
+//                    + "WHERE idTipo=1 AND idFactura="+idFactura);
+//            while(rs.next()) {
+//                entradas.add(construir(rs));
+//            }
+//        } finally {
+//            cn.close();
+//        }
+//        return entradas;
+//    }
     
     public int agregarMovimiento(int idAlmacen, int idFactura, int idOrdenCompra) throws SQLException {
         int idMovto=0;
@@ -417,8 +400,8 @@ public class DAOEntradas {
         Statement st=cn.createStatement();
         try {
             st.executeUpdate("BEGIN TRANSACTION");
-            st.executeUpdate("INSERT INTO movimientos (idTipo, idAlmacen, idFactura, idOrdenCompra, idMoneda, tipoCambio, desctoComercial, desctoProntoPago, idUsuario) "
-                    + "VALUES (1, "+idAlmacen+", "+idFactura+", "+idOrdenCompra+",0, 1, 0.00, 0.00, "+this.idUsuario+")");
+            st.executeUpdate("INSERT INTO movimientos (idTipo, idAlmacen, idFactura, idOrdenCompra, idMoneda, tipoCambio, desctoComercial, desctoProntoPago, idUsuario, tipoComprobante) "
+                    + "VALUES (1, "+idAlmacen+", "+idFactura+", "+idOrdenCompra+",0, 1, 0.00, 0.00, "+this.idUsuario+", 0)");
             ResultSet rs=st.executeQuery("SELECT @@IDENTITY AS idMovto");
             if(rs.next()) {
                 idMovto=rs.getInt("idMovto");
@@ -433,57 +416,50 @@ public class DAOEntradas {
         return idMovto;
     }
     
-    public Entrada modificarEntrada(int idAlmacen, int idFactura, int idOrdenCompra) throws SQLException {
-        Entrada entrada=null;
-        Connection cn=this.ds.getConnection();
-        Statement st=cn.createStatement();
-        try {
-            st.executeUpdate("BEGIN TRANSACTION");
-            ResultSet rs=st.executeQuery("SELECT idMovto, idTipo, idAlmacen, idFactura, idOrdenCompra, idMoneda, tipoCambio, desctoComercial, desctoProntoPago, fecha, idUsuario "
-                        + "FROM movimientos "
-                        + "WHERE idTipo=1 AND idAlmacen="+idAlmacen+" AND idFactura="+idFactura+" AND idOrdenCompra="+idOrdenCompra);
-            if(rs.next()) {
-                entrada=construir(rs);
-            } else {
-                st.executeUpdate("INSERT INTO movimientos (idTipo, idAlmacen, idFactura, idOrdenCompra, idMoneda, tipoCambio, desctoComercial, desctoProntoPago, idUsuario) "
-                        + "VALUES (1, "+idAlmacen+", "+idFactura+", "+idOrdenCompra+", 0, 1, 0.00, 0.00, "+this.idUsuario+")");
-                rs=st.executeQuery("SELECT @@IDENTITY AS idMovto");
-                if(rs.next()) {
-                    entrada=new Entrada();
-                    entrada.setIdEntrada(rs.getInt("idMovto"));
-                    entrada.setDesctoComercial(0.00);
-                    entrada.setDesctoProntoPago(0.00);
-                    entrada.setIdUsuario(this.idUsuario);
-                }
-            }
-            st.executeUpdate("COMMIT TRANSACTION");
-        } catch(SQLException e) {
-            st.executeUpdate("ROLLBACK TRANSACTION");
-            throw(e);
-        } finally {
-            cn.close();
-        }
-        return entrada;
-    }
+//    public Entrada modificarEntrada(int idAlmacen, int idFactura, int idOrdenCompra) throws SQLException {
+//        Entrada entrada=null;
+//        Connection cn=this.ds.getConnection();
+//        Statement st=cn.createStatement();
+//        try {
+//            st.executeUpdate("BEGIN TRANSACTION");
+//            ResultSet rs=st.executeQuery("SELECT idMovto, idTipo, idAlmacen, idFactura, idOrdenCompra, idMoneda, tipoCambio, desctoComercial, desctoProntoPago, fecha, idUsuario "
+//                        + "FROM movimientos "
+//                        + "WHERE idTipo=1 AND idAlmacen="+idAlmacen+" AND idFactura="+idFactura+" AND idOrdenCompra="+idOrdenCompra);
+//            if(rs.next()) {
+//                entrada=construir(rs);
+//            } else {
+//                st.executeUpdate("INSERT INTO movimientos (idTipo, idAlmacen, idFactura, idOrdenCompra, idMoneda, tipoCambio, desctoComercial, desctoProntoPago, idUsuario) "
+//                        + "VALUES (1, "+idAlmacen+", "+idFactura+", "+idOrdenCompra+", 0, 1, 0.00, 0.00, "+this.idUsuario+")");
+//                rs=st.executeQuery("SELECT @@IDENTITY AS idMovto");
+//                if(rs.next()) {
+//                    entrada=new Entrada();
+//                    entrada.setIdEntrada(rs.getInt("idMovto"));
+//                    entrada.setDesctoComercial(0.00);
+//                    entrada.setDesctoProntoPago(0.00);
+//                    entrada.setIdUsuario(this.idUsuario);
+//                }
+//            }
+//            st.executeUpdate("COMMIT TRANSACTION");
+//        } catch(SQLException e) {
+//            st.executeUpdate("ROLLBACK TRANSACTION");
+//            throw(e);
+//        } finally {
+//            cn.close();
+//        }
+//        return entrada;
+//    }
     
-    private Entrada construir(ResultSet rs) throws SQLException {
-        Entrada entrada=new Entrada();
-        entrada.setIdEntrada(rs.getInt("idMovto"));
-        entrada.setDesctoComercial(rs.getDouble("desctoComercial"));
-        entrada.setDesctoProntoPago(rs.getDouble("desctoprontoPago"));
-        Date fechaEntrada=rs.getDate("fecha");
-        entrada.setFecha(new java.util.Date(fechaEntrada.getTime()));
-        entrada.setIdUsuario(rs.getInt("idUsuario"));
-        return entrada;
-    }
+    
+    
+    
     /*
     public int agregarEntrada(int idProveedor, int idEmpresa, int idAlmacen, int idFactura) {
         int idEntrada=0;
         return idEntrada;
     }
     */
-    public EntradaProducto obtenerProducto(int idEntrada, int idEmpaque) throws SQLException {
-        EntradaProducto producto=null;
+    public MovimientoProducto obtenerProducto(int idEntrada, int idEmpaque) throws SQLException {
+        MovimientoProducto producto=null;
         Connection cn=this.ds.getConnection();
         Statement st=cn.createStatement();
         try {
@@ -497,8 +473,8 @@ public class DAOEntradas {
         return producto;
     }
     
-    public EntradaProducto construirProducto(ResultSet rs) throws SQLException {
-        EntradaProducto producto=new EntradaProducto();
+    public MovimientoProducto construirProducto(ResultSet rs) throws SQLException {
+        MovimientoProducto producto=new MovimientoProducto();
         producto.setEmpaque(new Empaque(rs.getInt("idEmpaque")));
         producto.setDesctoProducto1(rs.getDouble("desctoProducto1"));
         producto.setDesctoProducto2(rs.getDouble("desctoProducto2"));

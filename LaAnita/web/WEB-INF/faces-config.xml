@@ -310,8 +310,22 @@
     </converter>
     
     <converter>
+        <converter-id>converters.MiniAlmacenConverter</converter-id>
+        <converter-class>almacenes.converters.MiniAlmacenConverter</converter-class>
+    </converter>
+    
+    <converter>
+        <converter-id>converters.TOAlmacenJSConverter</converter-id>
+        <converter-class>almacenes.converters.TOAlmacenJSConverter</converter-class>
+    </converter>
+    
+    <converter>
         <converter-id>converters.FacturaConverter</converter-id>
         <converter-class>entradas.converters.FacturaConverter</converter-class>
+    </converter>
+    <converter>
+        <converter-id>converters.ComprobanteConverter</converter-id>
+        <converter-class>entradas.converters.ComprobanteConverter</converter-class>
     </converter>
     <converter>
         <converter-id>converters.Pedido</converter-id>
@@ -320,7 +334,7 @@
     
     <converter>
         <converter-id>converters.Cliente</converter-id>
-        <converter-class>clientes.converters.ClienteConverter</converter-class>
+        <converter-class>clientes2.converters.ClienteConverter</converter-class>
     </converter>
     
     <converter>

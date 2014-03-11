@@ -83,20 +83,34 @@ public class MbBuscarProd implements Serializable {
         try {
             DAOProductos dao = new DAOProductos();
             if (this.tipoBuscar.equals("1")) {
-                this.producto = dao.obtenerProducto(this.strBuscar);
+                this.producto = dao.obtenerProductoUPC(this.strBuscar);
                 if (this.producto == null) {
                     fMsg.setDetail("No se encontró producto con el código de barras proporcionado");
                     FacesContext.getCurrentInstance().addMessage(null, fMsg);
                 } else {
                     ok = true;
                 }
+//            } else if(this.tipoBuscar.equals("4")) {
+//                this.producto=dao.obtenerProductoSKU(this.strBuscar);
+//                if(this.producto == null) {
+//                    fMsg.setDetail("No se encontró producto con el código proporcionado");
+//                    FacesContext.getCurrentInstance().addMessage(null, fMsg);
+//                } else {
+//                    ok = true;
+//                }
             } else {
                 this.producto = null;
                 this.productos = new ArrayList<ProdStr>();
                 ArrayList<Tipo> lstTipos = new ArrayList<Tipo>();
                 ArrayList<Grupo> lstGrupos = new ArrayList<Grupo>();
                 ArrayList<SubGrupo> lstSubGrupos = new ArrayList<SubGrupo>();
-                for (Producto p : dao.obtenerProductos(this.parte.getIdParte())) {
+                ArrayList<Producto> lstProductos;
+                if(this.tipoBuscar.equals("2")) {
+                    lstProductos=dao.obtenerProductos(this.parte.getIdParte());
+                } else {   // this.tipoBuscar.equals("3") ==> Descripcion
+                    lstProductos=dao.obtenerProductos(this.strBuscar);
+                }
+                for (Producto p : lstProductos) {
                     if (lstTipos.indexOf(p.getTipo()) == -1) {
                         lstTipos.add(p.getTipo());
                     }

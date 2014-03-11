@@ -1,4 +1,4 @@
-package clientes.to;
+package clientes2.to;
 
 public class TOClienteSEA {
     private String cod_cli;

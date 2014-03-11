@@ -1,4 +1,4 @@
-package clientes.dao;
+package clientes2.dao;
 
 import clientes2.dominio.ClienteSEA;
 import clientes2.to.TOCliente;
@@ -45,11 +45,7 @@ public class DAOClientes {
         Connection cn = ds.getConnection();
         try {
             //  String stringSQL = "SELECT * FROM clientesBancos";
-            String stringSQL = "SELECT cb.*, bs.*, cl.* "
-                    + "FROM clientesBancos cb, bancosSat bs, Clientes cl "
-                    + "WHERE cb.idBanco=bs.idBanco "
-                    + "and cl.cod_cli=cb.codigoCliente "
-                    + "ORDER BY nombre";
+            String stringSQL = "SELECT cb.*, bs.*, cl.* FROM clientesBancos cb, bancosSat bs, Clientes cl WHERE cb.idBanco=bs.idBanco and cl.cod_cli=cb.codigoCliente ORDER BY nombre";
             Statement sentencia = cn.createStatement();
             rs = sentencia.executeQuery(stringSQL);
             while (rs.next()) {

@@ -183,7 +183,7 @@
                                     <h:outputLabel for="impuesto" value="IMPUESTO :"  style="font-weight: bold; color: red; width: 120px;" />
                                 </p:column>
                                 <p:column colspan="2" >
-                                    <p:selectOneMenu id="impuesto" value="#{frmProducto.mbProducto.producto.impuesto}" style="width: 300px" >
+                                    <p:selectOneMenu id="impuesto" value="#{frmProducto.mbProducto.producto.impuestoGrupo}" style="width: 300px" >
                                         <f:converter converterId="converters.ImpuestoGrupo" />
                                         <f:selectItems value="#{frmProducto.mbProducto.mbImpuesto.mbGrupos.listaGrupos}" />
                                     </p:selectOneMenu>
@@ -373,25 +373,32 @@
                                 </p:column>
                                 <p:column >
                                     <p:selectOneRadio id="opciones" value="#{frmProducto.mbBuscarProd.tipoBuscar}" style="background-color: #ccc" >
-                                        <f:selectItem itemLabel="UPC" itemValue="1" />
                                         <f:selectItem itemLabel="Genérico" itemValue="2" />
+                                        <f:selectItem itemLabel="Descripcion" itemValue="3" />
+                                        <f:selectItem itemLabel="UPC" itemValue="1" />
                                         <p:ajax listener="#{frmProducto.mbBuscarProd.verCambio()}" update="buscarProductos listaProductos" />
                                     </p:selectOneRadio>
                                 </p:column>
-                                <p:column rendered="#{frmProducto.mbBuscarProd.tipoBuscar=='1'}" >
-                                    <p:inputText id="opcionUPC" value="#{frmProducto.mbBuscarProd.strBuscar}" maxlength="13" size="15" />
-                                    <p:commandButton id="btnBuscarUPC" icon="ui-icon-check" title="Buscar" 
-                                                     process="@this opcionUPC" actionListener="#{frmProducto.buscar()}" 
-                                                     update=":main:mttoProductos" oncomplete="handleBuscar(xhr, status, args)" />
-                                </p:column>
                                 <p:column rendered="#{frmProducto.mbBuscarProd.tipoBuscar=='2'}" >
-                                    <p:autoComplete id="opcionParte" value="#{frmProducto.mbBuscarProd.parte}" maxlength="50" size="30"
+                                    <p:autoComplete id="opcionParte" value="#{frmProducto.mbBuscarProd.parte}" size="24" maxlength="24"
                                                     completeMethod="#{frmProducto.mbBuscarProd.completePartes}" process="@this"
                                                     var="p" itemLabel="#{p.parte}" itemValue="#{p}" converter="converters.ParteBuscar" 
                                                     forceSelection="true" />
                                     <p:commandButton id="btnBuscarLista" icon="ui-icon-check" title="Buscar" 
                                                      process="@this opcionParte" actionListener="#{frmProducto.buscar()}" 
                                                      update="listaProductos" oncomplete="handleBuscar(xhr, status, args)" />
+                                </p:column>
+                                <p:column rendered="#{frmProducto.mbBuscarProd.tipoBuscar=='3'}" >
+                                    <p:inputText id="opcionDescripcion" value="#{frmProducto.mbBuscarProd.strBuscar}" size="24" maxlength="24" />
+                                    <p:commandButton id="btnBuscarDescripcion" icon="ui-icon-check" title="buscar" 
+                                                     process="@this opcionDescripcion" actionListener="#{frmProducto.buscar()}"
+                                                     update="listaProductos" />
+                                </p:column>
+                                <p:column rendered="#{frmProducto.mbBuscarProd.tipoBuscar=='1'}" >
+                                    <p:inputText id="opcionUPC" value="#{frmProducto.mbBuscarProd.strBuscar}" maxlength="13" size="15" title="Codigo de Barras" />
+                                    <p:commandButton id="btnBuscarUPC" icon="ui-icon-check" title="Buscar" 
+                                                     process="@this opcionUPC" actionListener="#{frmProducto.buscar()}" 
+                                                     update=":main:mttoProductos" oncomplete="handleBuscar(xhr, status, args)" />
                                 </p:column>
                             </p:row>
                         </p:panelGrid>
