@@ -102,16 +102,29 @@ public class DAOEmpaques {
         ArrayList<Empaque> lstEmpaques=new ArrayList<Empaque>();
         DAOProductos daoProductos=new DAOProductos();
         String strSQL=sqlEmpaque()+" "+
-            "INNER JOIN productos p on p.idProducto=e.idProducto" +
-            "LEFT JOIN productosPartes pp on pp.idParte=p.idParte" +
-            "WHERE p.descripcion like '%"+descripcion+"%'" +
+//<<<<<<< HEAD
+//            "INNER JOIN productos p on p.idProducto=e.idProducto" +
+//            "LEFT JOIN productosPartes pp on pp.idParte=p.idParte" +
+//            "WHERE p.descripcion like '%"+descripcion+"%'" +
+//            "ORDER BY pp.parte, p.descripcion";
+//        Connection cn=ds.getConnection();
+//        Statement st=cn.createStatement();
+//        try {
+//            p=null;
+//            int idProducto=0;
+//            ResultSet rs=st.executeQuery(strSQL);
+//=======
+            "INNER JOIN productos p on p.idProducto=e.idProducto " +
+            "LEFT JOIN productosPartes pp on pp.idParte=p.idParte " +
+            "WHERE p.descripcion like '%"+descripcion+"%' " +
             "ORDER BY pp.parte, p.descripcion";
         Connection cn=ds.getConnection();
         Statement st=cn.createStatement();
         try {
             p=null;
             int idProducto=0;
-            ResultSet rs=st.executeQuery(strSQL);
+            ResultSet rs=st.executeQuery(strSQL); 
+//>>>>>>> branch 'master' of https://github.com/pcoriente/LaAnita.git
             while(rs.next()) {
                 if(idProducto!=rs.getInt("idProducto")) {
                     idProducto=rs.getInt("idProducto");
@@ -133,9 +146,15 @@ public class DAOEmpaques {
         ArrayList<Empaque> lstEmpaques=new ArrayList<Empaque>();
         DAOProductos daoProductos=new DAOProductos();
         String strSQL=sqlEmpaque()+" "+
-            "INNER JOIN productos p on p.idProducto=e.idProducto" +
-            "LEFT JOIN productosPartes pp on pp.idParte=p.idParte" +
-            "WHERE pp.idParte="+idParte+"" +
+//<<<<<<< HEAD
+//            "INNER JOIN productos p on p.idProducto=e.idProducto" +
+//            "LEFT JOIN productosPartes pp on pp.idParte=p.idParte" +
+//            "WHERE pp.idParte="+idParte+"" +
+//=======
+            "INNER JOIN productos p on p.idProducto=e.idProducto " +
+            "LEFT JOIN productosPartes pp on pp.idParte=p.idParte " +
+            "WHERE pp.idParte="+idParte+" " +
+//>>>>>>> branch 'master' of https://github.com/pcoriente/LaAnita.git
             "ORDER BY pp.parte";
         Connection cn=ds.getConnection();
         Statement st=cn.createStatement();

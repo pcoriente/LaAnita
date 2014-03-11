@@ -501,6 +501,9 @@ public class MbEntradas implements Serializable {
     
     public void buscar() {
         this.mbBuscar.buscarLista();
+        if(this.mbBuscar.getProducto()!=null) {
+            this.actualizaProductoSeleccionado();
+        }
     }
     
 //    public void cargaOrdenes() {
