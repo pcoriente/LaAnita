@@ -331,11 +331,9 @@ public class MbRequisiciones implements Serializable {
     }
 
     public void setSubtotalBrutoF(String subtotalBrutoF) {
-        
+
         this.subtotalBrutoF = subtotalBrutoF;
     }
-    
-     
 
     //EMPAQUES
     public MbBuscarEmpaques getMbBuscar() {
@@ -477,10 +475,16 @@ public class MbRequisiciones implements Serializable {
         return navega;
     }
 
-    public String salirCotizacion() throws NamingException {
+    public String salirMenu(int opcion) throws NamingException {
         this.limpiaRequisicion();
-        this.listaRequisicionesEncabezado=null;
-        navega = "menuCotizaciones.xhtml";
+        this.listaRequisicionesEncabezado = null;
+        if (opcion == 0) {
+            navega = "index.xhtml";
+        } else if (opcion == 1) {
+            navega = "menuRequisiciones.xhtml";
+        } else if (opcion == 2) {
+            navega = "menuCotizaciones.xhtml";
+        }
         return navega;
     }
 
@@ -499,7 +503,7 @@ public class MbRequisiciones implements Serializable {
         this.mbMiniEmpresa = new MbMiniEmpresa();
         this.mbDepto = new MbDepto();
         this.mbUsuarios = new MbUsuarios();
-        
+
     }
 
     public void requisicionMas(int idRequi) throws NamingException, SQLException {
@@ -619,19 +623,22 @@ public class MbRequisiciones implements Serializable {
             int idMon = this.mbMonedas.getMoneda().getIdMoneda();
             if (idProv != 0 && idMon != 0) {
                 if (this.total != 0) {
-                    numCotizacion += 1;
+                    //         numCotizacion += 1;
                     this.cotizacionEncabezado.setIdRequisicion(idReq);
                     this.cotizacionEncabezado.setIdProveedor(idProv);
                     this.cotizacionEncabezado.setDescuentoCotizacion(dc);
                     this.cotizacionEncabezado.setDescuentoProntoPago(dpp);
                     this.cotizacionEncabezado.setIdMoneda(idMon);
-                     this.cotizacionEncabezado.setNumCotizaciones(numCotizacion);
+                    //  this.cotizacionEncabezado.setNumCotizaciones(numCotizacion);
                     daoReq.grabarCotizacion(this.cotizacionEncabezado, this.cotizacionDetalles);
                     msg = new FacesMessage(FacesMessage.SEVERITY_INFO, "Aviso:", "La cotización ha sido registrada..");
-                    this.setNumCotizacion(numCotizacion);
+                    //     this.setNumCotizacion(numCotizacion);
                     this.limpiaCotizacion();
                     mbMiniProveedor.getMiniProveedor().setIdProveedor(0);
                     mbMonedas.getMoneda().setIdMoneda(0);
+
+                    int coti = daoReq.numCotizaciones(idReq);
+                    this.setNumCotizacion(coti);
                 } else {
                     msg = new FacesMessage(FacesMessage.SEVERITY_INFO, "Aviso:", "Capture al menos la cotización para un empaque..");
                 }
@@ -668,7 +675,7 @@ public class MbRequisiciones implements Serializable {
     ///nueva propuesta
     public void cargaRequisicionesDetalleCotizar(int id, int modi) throws NamingException, SQLException {
         DAORequisiciones daoReq = new DAORequisiciones();
-        this.numCotizacion = 0;
+        this.setNumCotizacion(0);
         this.subtotalGeneral = 0;
         this.sumaDescuentosProductos = 0;
         this.descuentoGeneralAplicado = 0;
@@ -681,6 +688,11 @@ public class MbRequisiciones implements Serializable {
         for (CotizacionDetalle rd : lc) {
             cotizacionDetalles.add(rd);
         }
+        //  cotizacionEncabezado= new CotizacionEncabezado(); ;
+        int coti = daoReq.numCotizaciones(id);
+        this.setNumCotizacion(coti);
+
+
     }
 
     public void calculoSubtotalGeneral() {
@@ -782,6 +794,9 @@ public class MbRequisiciones implements Serializable {
 
     public void buscar() {
         this.mbBuscar.buscarLista();
+        if (this.mbBuscar.getProducto() != null) {
+            this.actualizaProductoSeleccionado();
+        }
     }
 
     public void actualizaProductoSeleccionado() {
@@ -798,6 +813,30 @@ public class MbRequisiciones implements Serializable {
         }
         if (nuevo) {
             this.requisicionDetalles.add(rd);
+
         }
+    }
+
+    public void cerrarCotizacion(int idReq) throws SQLException {
+
+        FacesMessage msg = null;
+        try {
+            if (numCotizacion == 0) {
+                msg = new FacesMessage(FacesMessage.SEVERITY_INFO, "Aviso:", "No ha realizado ninguna cotización, por lo que no puede ser CERRADA..");
+            } else {
+                DAORequisiciones daoReq = new DAORequisiciones();
+                daoReq.cerrarCotizacion(idReq);
+                msg = new FacesMessage(FacesMessage.SEVERITY_INFO, "Aviso:", "La cotización ha sido CERRADA..");
+                //    this.setNumCotizacion(numCotizacion);
+                this.limpiaCotizacion();
+                mbMiniProveedor.getMiniProveedor().setIdProveedor(0);
+                mbMonedas.getMoneda().setIdMoneda(0);
+            }
+
+        } catch (NamingException ex) {
+            Logger.getLogger(MbRequisiciones.class.getName()).log(Level.SEVERE, null, ex);
+            msg = new FacesMessage(FacesMessage.SEVERITY_INFO, "Aviso:", "Error en la aprobación, verifique su información...");
+        }
+        FacesContext.getCurrentInstance().addMessage(null, msg);
     }
 }

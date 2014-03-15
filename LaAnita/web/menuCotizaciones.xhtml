@@ -20,17 +20,17 @@
                         <p:commandButton id="Nuevo"
                                          icon="ui-icon-note"
                                          title="Ir al Menu de Requisiciones"
-                                         action="menuRequisiciones.xhtml"
+                                         action="#{mbCotizaciones.menu(1)}"
                                          />
                         <p:commandButton id="Menu"
                                          icon="ui-icon-document"
-                                         title="Ir a menu cotizaciones"
-                                         action="menuOrdenesDeCompra.xhtml"
+                                         title="Ir a menu Ordenes de Compra"
+                                         action="#{mbCotizaciones.menu(3)}"
                                          />
                         <p:commandButton id="salir"
                                          icon="ui-icon-arrowreturnthick-1-w"
                                          title="Salir de Listado de Requisiciones"
-                                         action="index.xhtml"
+                                         action="#{mbCotizaciones.menu(0)}"
                                          />
                     </div>
 

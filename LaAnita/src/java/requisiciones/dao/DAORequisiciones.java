@@ -324,8 +324,8 @@ public class DAORequisiciones {
         try {
             st.executeUpdate("begin transaction");
             //CABECERO
-            String strSQL1 = "INSERT INTO cotizaciones(idRequisicion, idProveedor, idMoneda, folioProveedor, fechaCotizacion, descuentoCotizacion,descuentoProntoPago, observaciones,numCotizaciones)"
-                    + " VALUES (" + ce.getIdRequisicion() + ", " + idProv + ", " + ce.getIdMoneda() + ",'Folio' ,GETDATE(), " + ce.getDescuentoCotizacion() + ", " + ce.getDescuentoProntoPago() + ", 'hola'," + ce.getNumCotizaciones() + ")";
+            String strSQL1 = "INSERT INTO cotizaciones(idRequisicion, idProveedor, idMoneda, folioProveedor, fechaCotizacion, descuentoCotizacion,descuentoProntoPago, observaciones)"
+                    + " VALUES (" + ce.getIdRequisicion() + ", " + idProv + ", " + ce.getIdMoneda() + ",'Folio' ,GETDATE(), " + ce.getDescuentoCotizacion() + ", " + ce.getDescuentoProntoPago() + ", 'hola')";
             String strSQLIdentity = "SELECT @@IDENTITY as idCot";
             ps1 = cn.prepareStatement(strSQL1);
             ps1.executeUpdate();
@@ -353,9 +353,9 @@ public class DAORequisiciones {
             }
 
 
-            String strSQL3 = "UPDATE requisiciones SET estado=3  WHERE idRequisicion=" + ce.getIdRequisicion();
-            ps4 = cn.prepareStatement(strSQL3);
-            ps4.executeUpdate();
+//            String strSQL3 = "UPDATE requisiciones SET estado=3  WHERE idRequisicion=" + ce.getIdRequisicion();
+//            ps4 = cn.prepareStatement(strSQL3);
+//            ps4.executeUpdate();
 
             st.executeUpdate("commit transaction");
         } catch (SQLException e) {
@@ -450,4 +450,53 @@ public class DAORequisiciones {
         }
 
     }
+
+    public void cerrarCotizacion(int idReq) throws SQLException {
+        Connection cn = this.ds.getConnection();
+        Statement st = cn.createStatement();
+        PreparedStatement ps4;
+        try {
+            String strSQL3 = "UPDATE requisiciones SET estado=3  WHERE idRequisicion=" + idReq;
+            ps4 = cn.prepareStatement(strSQL3);
+            ps4.executeUpdate();
+        } catch (SQLException ex) {
+            Logger.getLogger(DAORequisiciones.class.getName()).log(Level.SEVERE, null, ex);
+        } finally {
+            cn.close();
+        }
+
+
+
+    }
+
+    public int numCotizaciones(int idReq) throws SQLException {
+        // CotizacionEncabezado ce = new CotizacionEncabezado();
+        int coti = 0;
+        ResultSet rs;
+        Connection cn = ds.getConnection();
+        try {
+
+            String stringSQL = "select  count(numCotizaciones) as numCotiza\n"
+                    + " from cotizaciones where idRequisicion=" + idReq;
+
+            Statement sentencia = cn.createStatement();
+            rs = sentencia.executeQuery(stringSQL);
+            while (rs.next()) {
+                coti = rs.getInt("numCotiza");
+            }
+            // ce = cotizaciones(rs);
+        } finally {
+            cn.close();
+        }
+        return coti;
+
+    }
+//
+//    private CotizacionEncabezado cotizaciones(ResultSet rs) throws SQLException {
+//        CotizacionEncabezado ce = new CotizacionEncabezado();
+//
+//        ce.setNumCotizaciones(rs.getInt("numCotiza"));
+//
+//        return ce;
+//    }
 }
