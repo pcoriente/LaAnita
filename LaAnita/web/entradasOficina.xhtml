@@ -217,7 +217,8 @@
                                 </p:column>
                             </p:row>
                             <p:row >
-                                <p:column colspan="14" style="text-align: right;" >
+                                <p:column colspan="10" ></p:column>
+                                <p:column colspan="3" style="text-align: left;" >
                                     <p:commandButton id="btnGrabarEntrada" icon="ui-icon-disk" title="Grabar Entrada" 
                                                      process="@this" actionListener="#{mbEntradas.grabarEntradaOficina()}" update="@this main :main:msgs" />
                                     <p:commandButton id="btnEquivalencias" icon="ui-icon-search" title="Buscar Productos" 
@@ -229,7 +230,7 @@
                                 </p:column>
                             </p:row>
                         </p:panelGrid>
-                        <p:dataTable id="detalleEntrada" widgetVar="detalleEntrada" value="#{mbEntradas.entradaDetalle}" style="border:solid 1px"
+                        <p:dataTable id="detalleEntrada" widgetVar="detalleEntrada" value="#{mbEntradas.entradaDetalle}" style="border:solid 1px; width: 1015px;"
                                      var="prod" rowKey="#{prod.empaque.idEmpaque}" selection="#{mbEntradas.entradaProducto}" selectionMode="single" 
                                      emptyMessage="No hay elementos que desplegar" scrollable="true" scrollRows="10" >
                             <p:ajax event="rowSelect" listener="#{mbEntradas.respaldaFila()}" update="detalleEntrada" />
