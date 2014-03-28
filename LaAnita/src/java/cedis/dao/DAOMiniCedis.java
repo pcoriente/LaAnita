@@ -21,6 +21,7 @@ import usuarios.UsuarioSesion;
  */
 public class DAOMiniCedis {
     private int idZona;
+    private int idCedis;
     private DataSource ds;
     
     public DAOMiniCedis() throws NamingException {
@@ -30,12 +31,28 @@ public class DAOMiniCedis {
             HttpSession httpSession = (HttpSession) externalContext.getSession(false);
             UsuarioSesion usuarioSesion = (UsuarioSesion) httpSession.getAttribute("usuarioSesion");
             this.idZona=usuarioSesion.getUsuario().getIdCedisZona();
+            this.idCedis=usuarioSesion.getUsuario().getIdCedis();
             
             Context cI = new InitialContext();
             ds = (DataSource) cI.lookup("java:comp/env/"+usuarioSesion.getJndi());
         } catch (NamingException ex) {
             throw(ex);
         }
+    }
+    
+    public MiniCedis obtenerDefaultMiniCedis() throws SQLException {
+        MiniCedis to=null;
+        Connection cn=this.ds.getConnection();
+        Statement st=cn.createStatement();
+        try {
+            ResultSet rs=st.executeQuery("SELECT idCedis, cedis FROM cedis WHERE idCedis="+this.idCedis);
+            if(rs.next()) {
+                to=construirMini(rs);
+            }
+        } finally {
+            cn.close();
+        }
+        return to;
     }
     
     public MiniCedis obtenerMiniCedis(int idCedis) throws SQLException {
@@ -53,7 +70,26 @@ public class DAOMiniCedis {
         return to;
     }
     
-    public ArrayList<MiniCedis> obtenerListaMiniCedis() throws SQLException {
+    public ArrayList<MiniCedis> obtenerListaMiniCedisTodos() throws SQLException {
+        ArrayList<MiniCedis> lstMiniCedis=new ArrayList<MiniCedis>();
+        
+        Connection cn=ds.getConnection();
+        Statement sentencia = cn.createStatement();
+        String strSQL="select * \n" +
+                        "from cedis \n" +
+                        "order by cedis";
+        try {
+            ResultSet rs = sentencia.executeQuery(strSQL);
+            while(rs.next()) {
+                lstMiniCedis.add(construirMini(rs));
+            }
+        } finally {
+            cn.close();
+        }
+        return lstMiniCedis;
+    }
+    
+    public ArrayList<MiniCedis> obtenerListaMiniCedisZona() throws SQLException {
         ArrayList<MiniCedis> lstMiniCedis=new ArrayList<MiniCedis>();
         
         Connection cn=ds.getConnection();

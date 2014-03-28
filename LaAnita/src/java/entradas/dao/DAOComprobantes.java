@@ -91,7 +91,7 @@ public class DAOComprobantes {
             st.executeUpdate("BEGIN TRANSACTION");
             Date fechaFactura=new java.sql.Date(c.getFecha().getTime());
             st.executeUpdate("INSERT INTO comprobantes (idAlmacen, idProveedor, tipoComprobante, serie, numero, fecha, idUsuario, cerradaOficina, cerradaAlmacen) "
-                            + "VALUES ("+c.getIdAlmacen()+", "+c.getIdProveedor()+", "+c.getTipoComprobante()+", '"+c.getSerie()+"', '"+c.getNumero()+"', '"+fechaFactura.toString()+"', "+this.idUsuario+", 0, 0)");
+                            + "VALUES ("+c.getIdAlmacen()+", "+c.getIdProveedor()+", 1, '"+c.getSerie()+"', '"+c.getNumero()+"', '"+fechaFactura.toString()+"', "+this.idUsuario+", 0, 0)");
             ResultSet rs=st.executeQuery("SELECT @@IDENTITY AS idComprobante");
             if(rs.next()) {
                 idComprobante=rs.getInt("idComprobante");
@@ -155,14 +155,35 @@ public class DAOComprobantes {
         return comprobantes;
     }
     
+    public ArrayList<TOComprobante> obtenerSolicitudes(int idAlmacen) throws SQLException {
+        Connection cn=this.ds.getConnection();
+        Statement st=cn.createStatement();
+        ArrayList<TOComprobante> comprobantes=new ArrayList<TOComprobante>();
+        String strSQL="SELECT c.idComprobante, m.idAlmacen, c.idProveedor, c.tipoComprobante, c.serie, c.numero, c.idUsuario, c.fecha, c.cerradaOficina, c.cerradaAlmacen " +
+                        "FROM movimientos m " +
+                        "INNER JOIN comprobantes c ON c.idComprobante=m.idReferencia " +
+                        "WHERE m.idTipo=2 AND m.status=1 AND c.idAlmacen="+idAlmacen+" " +
+                        "ORDER BY c.fecha DESC";
+        try {
+            ResultSet rs=st.executeQuery(strSQL);
+            while(rs.next()) {
+                comprobantes.add(construir(rs));
+            }
+        } finally {
+            cn.close();
+        }
+        return comprobantes;
+    }
+    
     public ArrayList<TOComprobante> obtenerComprobantes(int idAlmacen, int idProveedor, int tipoComprobante) throws SQLException {
         Connection cn=this.ds.getConnection();
         Statement st=cn.createStatement();
         ArrayList<TOComprobante> comprobantes=new ArrayList<TOComprobante>();
         try {
-            ResultSet rs=st.executeQuery("SELECT * FROM comprobantes "
-                    + "WHERE idAlmacen="+idAlmacen+" AND idProveedor="+idProveedor+" AND tipoComprobante="+tipoComprobante+" "
-                    + "ORDER BY FECHA DESC");
+            String strSQL="SELECT * FROM comprobantes " +
+                            "WHERE idAlmacen="+idAlmacen+" AND idProveedor="+idProveedor+" AND tipoComprobante="+tipoComprobante+ " " +
+                            "ORDER BY FECHA DESC";
+            ResultSet rs=st.executeQuery(strSQL);
             while(rs.next()) {
                 comprobantes.add(construir(rs));
             }

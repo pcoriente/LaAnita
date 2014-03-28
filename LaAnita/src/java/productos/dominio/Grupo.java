@@ -8,6 +8,12 @@ public class Grupo {
     private int idGrupo;
     private int codigo;
     private String grupo;
+    
+    public Grupo() {
+        this.idGrupo=0;
+        this.codigo=0;
+        this.grupo="";
+    }
 
     public Grupo(int idGrupo, int codigo, String grupo) {
         this.idGrupo = idGrupo;

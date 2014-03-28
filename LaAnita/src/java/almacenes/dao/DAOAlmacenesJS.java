@@ -89,6 +89,26 @@ public class DAOAlmacenesJS {
         return almacen;
     }
     
+    public ArrayList<TOAlmacenJS> obtenerAlmacenesEmpresa(int idCedis, int idEmpresa) throws SQLException {
+        ArrayList<TOAlmacenJS> lista = new ArrayList<TOAlmacenJS>();
+        String stringSQL = "SELECT a.idAlmacen, a.almacen, a.idCedis, a.idEmpresa, e.nombreComercial, a.idDireccion "
+                    + "FROM almacenes a "
+                    + "INNER JOIN empresasGrupo e ON e.idEmpresa=a.idEmpresa "
+                    + "WHERE a.idCedis="+idCedis+" AND a.idEmpresa="+idEmpresa+" "
+                    + "ORDER BY e.empresa";
+        Connection cn = ds.getConnection();
+        try {
+            Statement sentencia = cn.createStatement();
+            ResultSet rs = sentencia.executeQuery(stringSQL);
+            while (rs.next()) {
+                lista.add(construir(rs));
+            }
+        } finally {
+            cn.close();
+        }
+        return lista;
+    }
+    
     public ArrayList<TOAlmacenJS> obtenerAlmacenes(int idCedis) throws SQLException {
         ArrayList<TOAlmacenJS> lista = new ArrayList<TOAlmacenJS>();
         String stringSQL = "SELECT a.idAlmacen, a.almacen, a.idCedis, a.idEmpresa, e.nombreComercial, a.idDireccion "

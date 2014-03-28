@@ -1,74 +1,49 @@
-package entradas.to;
+package devolucionesProv;
 
+import entradas.dominio.Comprobante;
 import java.util.Date;
+import monedas.Moneda;
 
 /**
  *
  * @author jesc
  */
-public class TOMovimiento {
-    private int idMovto;
-    private int idTipo;
-    private int idCedis;
-    private int idEmpresa;
-    private int idAlmacen;
-    private int idReferencia;
+public class Devolucion {
+    private int idEntrada;
+    private Comprobante comprobante;
     private int idImpuestoZona;
     private int idOrdenCompra;
-    private int idMoneda;
+    private Moneda moneda;
     private double tipoCambio;
     private double desctoComercial;
     private double desctoProntoPago;
     private Date fecha;
     private int idUsuario;
-
-    public TOMovimiento() {
-        this.idMovto=0;
-        this.idTipo=0;
-        this.idCedis=0;
-        this.idEmpresa=0;
-        this.idAlmacen=0;
-        this.idReferencia=0;
-        this.idImpuestoZona=1;
-        this.idOrdenCompra=0;
-        this.idMoneda=0;
-        this.tipoCambio=0;
-        this.desctoComercial=0;
-        this.desctoProntoPago=0;
+    private double subTotal;
+    private double descuento;
+    private double impuesto;
+    private double total;
+    
+    public Devolucion() {
+        this.comprobante=new Comprobante();
+        this.moneda=new Moneda();
         this.fecha=new Date();
-        this.idUsuario=0;
     }
 
-    public int getIdMovto() {
-        return idMovto;
+    public int getIdEntrada() {
+        return idEntrada;
     }
 
-    public void setIdMovto(int idMovto) {
-        this.idMovto = idMovto;
+    public void setIdEntrada(int idEntrada) {
+        this.idEntrada = idEntrada;
     }
 
-    public int getIdTipo() {
-        return idTipo;
+    public Comprobante getComprobante() {
+        return comprobante;
     }
 
-    public void setIdTipo(int idTipo) {
-        this.idTipo = idTipo;
-    }
-
-    public int getIdAlmacen() {
-        return idAlmacen;
-    }
-
-    public void setIdAlmacen(int idAlmacen) {
-        this.idAlmacen = idAlmacen;
-    }
-
-    public int getIdReferencia() {
-        return idReferencia;
-    }
-
-    public void setIdReferencia(int idReferencia) {
-        this.idReferencia = idReferencia;
+    public void setComprobante(Comprobante comprobante) {
+        this.comprobante = comprobante;
     }
 
     public int getIdImpuestoZona() {
@@ -87,12 +62,12 @@ public class TOMovimiento {
         this.idOrdenCompra = idOrdenCompra;
     }
 
-    public int getIdMoneda() {
-        return idMoneda;
+    public Moneda getMoneda() {
+        return moneda;
     }
 
-    public void setIdMoneda(int idMoneda) {
-        this.idMoneda = idMoneda;
+    public void setMoneda(Moneda moneda) {
+        this.moneda = moneda;
     }
 
     public double getTipoCambio() {
@@ -135,19 +110,35 @@ public class TOMovimiento {
         this.idUsuario = idUsuario;
     }
 
-    public int getIdCedis() {
-        return idCedis;
+    public double getSubTotal() {
+        return subTotal;
     }
 
-    public void setIdCedis(int idCedis) {
-        this.idCedis = idCedis;
+    public void setSubTotal(double subTotal) {
+        this.subTotal = subTotal;
     }
 
-    public int getIdEmpresa() {
-        return idEmpresa;
+    public double getDescuento() {
+        return descuento;
     }
 
-    public void setIdEmpresa(int idEmpresa) {
-        this.idEmpresa = idEmpresa;
+    public void setDescuento(double descuento) {
+        this.descuento = descuento;
+    }
+
+    public double getImpuesto() {
+        return impuesto;
+    }
+
+    public void setImpuesto(double impuesto) {
+        this.impuesto = impuesto;
+    }
+
+    public double getTotal() {
+        return total;
+    }
+
+    public void setTotal(double total) {
+        this.total = total;
     }
 }

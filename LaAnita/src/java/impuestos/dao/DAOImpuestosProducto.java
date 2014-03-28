@@ -35,7 +35,22 @@ public class DAOImpuestosProducto {
             throw (ex);
         }
     }
-    
+    /*
+    public void agregarImpuestosProducto(int idImpuestoGrupo, int idZona, int idMovto, int idEmpaque) throws SQLException {
+        Connection cn = this.ds.getConnection();
+        Statement st = cn.createStatement();
+        try {
+            String strSQL="insert into movimientosDetalleImpuestos (idMovto, idEmpaque, idImpuesto, impuesto, valor, aplicable, modo, acreditable, importe) " +
+                            "select "+idMovto+", "+idEmpaque+", id.idImpuesto, i.impuesto, id.valor, i.aplicable, i.modo, i.acreditable, 0.00 as importe " +
+                            "from impuestosDetalle id " +
+                            "inner join impuestos i on i.idImpuesto=id.idImpuesto " +
+                            "where id.idGrupo="+idImpuestoGrupo+" and id.idZona="+idZona+" and GETDATE() between fechaInicial and fechaFinal";
+            st.executeUpdate(strSQL);
+        } finally {
+            cn.close();
+        }
+    }
+    * */
     public ArrayList<ImpuestosProducto> obtenerImpuestosProducto(int idMovto, int idEmpaque) throws SQLException {
         ArrayList<ImpuestosProducto> impuestos=new ArrayList<ImpuestosProducto>();
         Connection cn = this.ds.getConnection();
@@ -53,22 +68,6 @@ public class DAOImpuestosProducto {
         }
         return impuestos;
     }
-    /*
-    public void agregarImpuestosProducto(int idImpuestoGrupo, int idZona, int idMovto, int idEmpaque) throws SQLException {
-        Connection cn = this.ds.getConnection();
-        Statement st = cn.createStatement();
-        try {
-            String strSQL="insert into movimientosDetalleImpuestos (idMovto, idEmpaque, idImpuesto, impuesto, valor, aplicable, modo, acreditable, importe) " +
-                            "select "+idMovto+", "+idEmpaque+", id.idImpuesto, i.impuesto, id.valor, i.aplicable, i.modo, i.acreditable, 0.00 as importe " +
-                            "from impuestosDetalle id " +
-                            "inner join impuestos i on i.idImpuesto=id.idImpuesto " +
-                            "where id.idGrupo="+idImpuestoGrupo+" and id.idZona="+idZona+" and GETDATE() between fechaInicial and fechaFinal";
-            st.executeUpdate(strSQL);
-        } finally {
-            cn.close();
-        }
-    }
-    * */
     
     private ImpuestosProducto construir(ResultSet rs) throws SQLException {
         ImpuestosProducto ip=new ImpuestosProducto();

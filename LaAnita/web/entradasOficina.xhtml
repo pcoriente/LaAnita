@@ -24,7 +24,7 @@
                                 <p:column >
                                     <h:outputLabel for="cedis" value="CEDIS :" style="font-weight: bold; color: red;" />
                                 </p:column>
-                                <p:column colspan="3" >
+                                <p:column colspan="2" >
                                     <p:selectOneMenu id="cedis" value="#{mbEntradas.mbComprobantes.mbAlmacenes.mbCedis.cedis}" style="width: 450px;" >
                                         <f:converter converterId="converters.MiniCedis" />
                                         <f:selectItems value="#{mbEntradas.mbComprobantes.mbAlmacenes.mbCedis.listaMiniCedis}" />
@@ -40,11 +40,11 @@
                                 <p:column >
                                     <h:outputLabel for="almacen" value="ALMACEN :" style="font-weight: bold; color: red;" />
                                 </p:column>
-                                <p:column colspan="3" >
+                                <p:column colspan="2" >
                                     <p:selectOneMenu id="almacen" value="#{mbEntradas.mbComprobantes.mbAlmacenes.toAlmacen}" style="width: 450px;" >
                                         <f:converter converterId="converters.TOAlmacenJSConverter" />
                                         <f:selectItems value="#{mbEntradas.mbComprobantes.mbAlmacenes.listaAlmacenes}" />
-                                        <p:ajax event="change" listener="#{mbEntradas.mbComprobantes.cargaListaComprobantes()}" 
+                                        <p:ajax event="change" listener="#{mbEntradas.cargaListaComprobantes()}" 
                                                 update=":main:msgs cmbComprobante" />
                                     </p:selectOneMenu>
                                 </p:column>
@@ -61,12 +61,12 @@
                                 <p:column >
                                     <h:outputLabel value="PROVEEDOR :" style="font-weight: bold; color: red;" />
                                 </p:column>
-                                <p:column colspan="3" >
+                                <p:column colspan="2" >
                                     <p:selectOneMenu id="proveedor" value="#{mbEntradas.mbComprobantes.mbProveedores.miniProveedor}" style="width: 550px;"
                                                      filter="true" filterMatchMode="contains" >
                                         <f:converter converterId="converters.miniProveedor" />
                                         <f:selectItems value="#{mbEntradas.mbComprobantes.mbProveedores.listaMiniProveedores}" />
-                                        <p:ajax event="change" listener="#{mbEntradas.mbComprobantes.cargaListaComprobantes()}" 
+                                        <p:ajax event="change" listener="#{mbEntradas.cargaListaComprobantes()}" 
                                                 update=":main:msgs cmbComprobante" />
                                     </p:selectOneMenu>
                                 </p:column>
@@ -84,15 +84,6 @@
                                     <h:outputLabel value="COMPROBANTE :" style="font-weight: bold; color: red; width: 120px;" />
                                 </p:column>
                                 <p:column >
-                                    <p:selectOneMenu id="cmbTipoComprobante" value="#{mbEntradas.mbComprobantes.tipoComprobante}" style="width: 200px;" >
-                                        <f:selectItem itemLabel="Seleccione" itemValue="0" />
-                                        <f:selectItem itemLabel="FACTURA PROVEEDOR" itemValue="1" />
-                                        <f:selectItem itemLabel="FACTURA EDICOM" itemValue="2" />
-                                        <p:ajax event="change" listener="#{mbEntradas.mbComprobantes.cargaListaComprobantes()}" 
-                                                update=":main:msgs cmbComprobante" />
-                                    </p:selectOneMenu>
-                                </p:column>
-                                <p:column >
                                     <p:selectOneMenu id="cmbComprobante" value="#{mbEntradas.mbComprobantes.toComprobante}" 
                                                      filter="true" filterMatchMode="contains" style="width: 220px;" >
                                         <f:converter converterId="converters.ComprobanteConverter" />
@@ -100,10 +91,10 @@
                                         <p:ajax event="change" update="btnMttoComprobante lnkEditarComprobante" />
                                     </p:selectOneMenu>
                                 </p:column>
-                                <p:column >
+                                <p:column style="width: 310px;" >
                                     <p:commandButton id="btnMttoComprobante" icon="ui-icon-pencil" title="Mantenimiento de Facturas" 
                                                      disabled="#{mbEntradas.mbComprobantes.toComprobante.cerradaOficina}"
-                                                     actionListener="#{mbEntradas.mbComprobantes.mttoComprobante()}" process="@this" 
+                                                     actionListener="#{mbEntradas.mttoComprobanteOficina()}" process="@this" 
                                                      oncomplete="handleAbrirMttoComprobanteDlg(xhr, status, args);" 
                                                      update=":main:msgs mttoComprobanteDlg" />
                                     <p:commandButton id="btnImprimirFactura" icon="ui-icon-print" title="Imprimir Factura" />
@@ -202,8 +193,8 @@
                                 </p:column>
                                 <p:column style="width: 85px;" >
                                     <pe:inputNumber id="txtDesctoComercial" value="#{mbEntradas.entrada.desctoComercial}" disabled="#{not mbEntradas.sinOrden}"
-                                                    decimalPlaces="2" minValue="0" maxValue="99.99" maxlength="5" style="width: 65px;"  >
-                                        <p:ajax event="change" process="@this" listener="#{mbEntradas.cambiaPrecios()}" />
+                                                    decimalPlaces="2" minValue="0" maxValue="99.99" maxlength="5" style="width: 65px;" emptyValue="zero" >
+                                        <p:ajax event="change" process="@this" listener="#{mbEntradas.cambiaPrecios()}" update="detalleEntrada :main:mttoEntradasTotales" />
                                     </pe:inputNumber>
                                 </p:column>
                                 <p:column colspan="2" >
@@ -211,8 +202,8 @@
                                 </p:column>
                                 <p:column colspan="2" >
                                     <pe:inputNumber id="txtDesctoProntoPago" value="#{mbEntradas.entrada.desctoProntoPago}" disabled="#{not mbEntradas.sinOrden}"
-                                                    decimalPlaces="2"  minValue="0" maxValue="99.99" maxlength="5" style="width: 65px;" >
-                                        <p:ajax event="change" process="@this" listener="#{mbEntradas.cambiaPrecios()}" />
+                                                    decimalPlaces="2"  minValue="0" maxValue="99.99" maxlength="5" style="width: 65px;" emptyValue="zero" >
+                                        <p:ajax event="change" process="@this" listener="#{mbEntradas.cambiaPrecios()}" update="detalleEntrada :main:mttoEntradasTotales" />
                                     </pe:inputNumber>
                                 </p:column>
                             </p:row>
@@ -224,7 +215,8 @@
                                     <p:commandButton id="btnEquivalencias" icon="ui-icon-search" title="Buscar Productos" 
                                                      disabled="#{not mbEntradas.sinOrden}"
                                                      process="@this" actionListener="#{mbEntradas.mbBuscar.inicializar()}" 
-                                                     update="buscarProductos listaBuscarProductos" oncomplete="buscarProductoDlg.show()" />
+                                                     update="buscarProductos multipleSelectProductos" 
+                                                     oncomplete="buscarProductoDlg.show()" />
                                     <p:commandButton icon="ui-icon-arrowreturnthick-1-w" title="Terminar"
                                                      process="@this" actionListener="#{mbEntradas.salir()}" update="main" />
                                 </p:column>
@@ -247,42 +239,42 @@
                                 </h:outputText>
                             </p:column>
                             <p:column headerText="Facturada" width="64" >
-                                <pe:inputNumber value="#{prod.cantFacturada}" decimalPlaces="3"  minValue="0" 
+                                <pe:inputNumber value="#{prod.cantFacturada}" decimalPlaces="3"  minValue="0" emptyValue="zero"
                                                 disabled="#{prod.empaque.idEmpaque!=mbEntradas.entradaProducto.empaque.idEmpaque}" >
                                     <p:ajax event="change" listener="#{mbEntradas.cambiaCantFacturada()}" 
                                             process="@this" update=":main:msgs detalleEntrada :main:mttoEntradasTotales" />
                                 </pe:inputNumber>
                             </p:column>
                             <p:column headerText="Sin Cargo" width="64" >
-                                <pe:inputNumber value="#{prod.cantSinCargo}" decimalPlaces="3"  minValue="0" 
+                                <pe:inputNumber value="#{prod.cantSinCargo}" decimalPlaces="3"  minValue="0" emptyValue="zero"
                                                 disabled="#{prod.empaque.idEmpaque!=mbEntradas.entradaProducto.empaque.idEmpaque}" >
                                     <p:ajax event="change" listener="#{mbEntradas.cambiaCantSinCargo()}" 
                                             process="@this" update=":main:msgs" />
                                 </pe:inputNumber>
                             </p:column>
                             <p:column headerText="P.Lista" width="64" >
-                                <pe:inputNumber value="#{prod.precio}" decimalPlaces="3"  minValue="0"  
+                                <pe:inputNumber value="#{prod.precio}" decimalPlaces="3"  minValue="0" emptyValue="zero"
                                                 disabled="#{prod.empaque.idEmpaque!=mbEntradas.entradaProducto.empaque.idEmpaque}" >
                                     <p:ajax event="change" listener="#{mbEntradas.cambiaPrecio()}" 
                                             process="@this" update="detalleEntrada :main:mttoEntradasTotales" />
                                 </pe:inputNumber>
                             </p:column>
                             <p:column headerText="(%)Descto1" width="64" >
-                                <pe:inputNumber value="#{prod.desctoProducto1}" decimalPlaces="2"  minValue="0" maxValue="99.99" 
+                                <pe:inputNumber value="#{prod.desctoProducto1}" decimalPlaces="2"  minValue="0" maxValue="99.99" emptyValue="zero"
                                                 disabled="#{prod.empaque.idEmpaque!=mbEntradas.entradaProducto.empaque.idEmpaque or not mbEntradas.sinOrden}" >
                                     <p:ajax event="change" listener="#{mbEntradas.cambiaDescto()}" 
                                             process="@this" update="detalleEntrada :main:mttoEntradasTotales" />
                                 </pe:inputNumber>
                             </p:column>
                             <p:column headerText="(%)Descto2" width="64" >
-                                <pe:inputNumber  value="#{prod.desctoProducto2}" decimalPlaces="2"  minValue="0" maxValue="99.99" 
+                                <pe:inputNumber  value="#{prod.desctoProducto2}" decimalPlaces="2"  minValue="0" maxValue="99.99" emptyValue="zero"
                                                  disabled="#{prod.empaque.idEmpaque!=mbEntradas.entradaProducto.empaque.idEmpaque or not mbEntradas.sinOrden}" >
                                     <p:ajax event="change" listener="#{mbEntradas.cambiaDescto()}" 
                                             process="@this" update="detalleEntrada :main:mttoEntradasTotales" />
                                 </pe:inputNumber>
                             </p:column>
                             <p:column headerText="(%)Descto3" width="64" >
-                                <pe:inputNumber  value="#{prod.desctoConfidencial}" decimalPlaces="2"  minValue="0" maxValue="99.99" 
+                                <pe:inputNumber  value="#{prod.desctoConfidencial}" decimalPlaces="2"  minValue="0" maxValue="99.99" emptyValue="zero"
                                                  disabled="#{prod.empaque.idEmpaque!=mbEntradas.entradaProducto.empaque.idEmpaque or not mbEntradas.sinOrden}" >
                                     <p:ajax event="change" listener="#{mbEntradas.cambiaDescto()}" 
                                             process="@this" update="detalleEntrada :main:mttoEntradasTotales" />
@@ -338,16 +330,19 @@
                         <p:messages id="msgBuscar" showDetail="true" autoUpdate="true" closable="true" />
                         <p:panelGrid id="buscarProductos" styleClass="sinBorde" >
                             <p:row >
-                                <p:column >
-                                    <h:outputLabel for="opciones" value="OPCIONES :" style="font-weight: bold; color: red;" />
-                                </p:column>
-                                <p:column >
+                                <p:column colspan="6" >
                                     <p:selectOneRadio id="opciones" value="#{mbEntradas.mbBuscar.tipoBuscar}" style="background-color: #ccc" >
                                         <f:selectItem itemLabel="SKU" itemValue="1" />
                                         <f:selectItem itemLabel="Genérico" itemValue="2" />
                                         <f:selectItem itemLabel="Descripcion" itemValue="3" />
-                                        <p:ajax listener="#{mbEntradas.mbBuscar.verCambio()}" update="buscarProductos listaBuscarProductos" />
+                                        <f:selectItem itemLabel="Clasificacion" itemValue="4" />
+                                        <p:ajax listener="#{mbEntradas.mbBuscar.verCambio()}" update="buscarProductos" />
                                     </p:selectOneRadio>
+                                </p:column>
+                            </p:row>
+                            <p:row >
+                                <p:column style="width: 70px;" >
+                                    <h:outputLabel value="BUSCAR :" style="font-weight: bold; color: red; width: 70px;" />
                                 </p:column>
                                 <p:column rendered="#{mbEntradas.mbBuscar.tipoBuscar=='1'}" >
                                     <p:inputText id="opcionSKU" value="#{mbEntradas.mbBuscar.strBuscar}" maxlength="8" size="10" />
@@ -362,37 +357,51 @@
                                                     forceSelection="true" />
                                     <p:commandButton id="btnBuscarLista" icon="ui-icon-check" title="Buscar" 
                                                      process="@this opcionParte" actionListener="#{mbEntradas.buscar()}" 
-                                                     update="listaBuscarProductos"  />
+                                                     update="multipleSelectProductos"  />
                                 </p:column>
                                 <p:column rendered="#{mbEntradas.mbBuscar.tipoBuscar=='3'}" >
                                     <p:inputText id="opcionDescripcion" value="#{mbEntradas.mbBuscar.strBuscar}" maxlength="24" size="24" />
                                     <p:commandButton id="btnBuscarDescripcion" icon="ui-icon-check" title="Buscar" 
                                                      process="@this opcionDescripcion" actionListener="#{mbEntradas.buscar()}" 
-                                                     update="listaBuscarProductos" />
+                                                     update="multipleSelectProductos" />
+                                </p:column>
+                                <p:column rendered="#{mbEntradas.mbBuscar.tipoBuscar=='4'}" >
+                                    <p:selectOneMenu id="grupo" value="#{mbEntradas.mbBuscar.grupo}" style="width: 250px;" >
+                                        <f:converter converterId="converters.Grupos" />
+                                        <f:selectItems value="#{mbEntradas.mbBuscar.listaGrupos}" />
+                                        <p:ajax event="change" listener="#{mbEntradas.mbBuscar.cargaSubGrupos()}" 
+                                                update="subGrupo" />
+                                    </p:selectOneMenu>
+                                </p:column>
+                                <p:column rendered="#{mbEntradas.mbBuscar.tipoBuscar=='4'}" >
+                                    <p:selectOneMenu id="subGrupo" value="#{mbEntradas.mbBuscar.subGrupo}" style="width: 250px;" >
+                                        <f:converter converterId="converters.SubGrupos" />
+                                        <f:selectItems value="#{mbEntradas.mbBuscar.listaSubGrupos}" />
+                                        <p:ajax event="change" />
+                                    </p:selectOneMenu>
+                                </p:column>
+                                <p:column rendered="#{mbEntradas.mbBuscar.tipoBuscar=='4'}" >
+                                    <p:commandButton id="btnBuscarClasificacion" icon="ui-icon-check" title="Buscar" 
+                                                     process="@this opcionDescripcion" actionListener="#{mbEntradas.buscar()}" 
+                                                     update="multipleSelectProductos" />
                                 </p:column>
                             </p:row>
                         </p:panelGrid>
-                        <p:dataTable id="listaBuscarProductos" value="#{mbEntradas.mbBuscar.productos}" 
-                                     var="prod" scrollable="true" scrollHeight="200" style="width: 800px;"
-                                     rowKey="#{prod.idEmpaque}" selectionMode="single" selection="#{mbEntradas.mbBuscar.producto}" >
-                            <p:ajax event = "rowSelect" update="seleccion" />
-
-                            <f:facet name="header">
-                                Seleccione un producto  
-                            </f:facet>
-
-                            <p:column headerText="SKU" style="width: 250px;" >
-                                <h:outputText value="#{prod.cod_pro}" />
+                        <p:dataTable id="multipleSelectProductos" var="e" rowKey="#{e.cod_pro}"
+                                     value="#{mbEntradas.mbBuscar.productos}" 
+                                     selection="#{mbEntradas.mbBuscar.seleccionados}" >
+                            
+                            <p:column selectionMode="multiple" style="width: 40px;" />
+                            <p:column headerText="SKU" style="width: 70px;" >
+                                <h:outputText value="#{e.cod_pro}" />
                             </p:column>
-
-                            <p:column headerText="Producto" style="width: 250px;" >
-                                <h:outputText value="#{prod.toString()}" />
+                            <p:column headerText="Producto" style="width: 575px;" >
+                                <h:outputText value="#{e.toString()}" />
                             </p:column>
-
+                            
                             <f:facet name="footer">
-                                <p:commandButton id="seleccion" value="Seleccionar" 
-                                                 disabled="#{mbEntradas.mbBuscar.producto==null}"
-                                                 actionListener="#{mbEntradas.actualizaProductoSeleccionado()}"
+                                <p:commandButton id="seleccionMultiple" value="Seleccionar" 
+                                                 actionListener="#{mbEntradas.actualizaProductosSeleccionados()}"
                                                  update=":main:detalleEntrada" oncomplete="buscarProductoDlg.hide()" />
                             </f:facet>
                         </p:dataTable>

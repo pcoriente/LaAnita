@@ -23,6 +23,33 @@ public class AlmacenJS {
         this.direccion=new Direccion();
     }
 
+    @Override
+    public String toString() {
+        return (this.empresa.getIdEmpresa()==0?"":this.empresa.getNombreComercial()+" - ")+this.almacen;
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 5;
+        hash = 47 * hash + this.idAlmacen;
+        return hash;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final AlmacenJS other = (AlmacenJS) obj;
+        if (this.idAlmacen != other.idAlmacen) {
+            return false;
+        }
+        return true;
+    }
+
     public int getIdAlmacen() {
         return idAlmacen;
     }
