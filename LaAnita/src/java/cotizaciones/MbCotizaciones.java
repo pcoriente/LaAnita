@@ -17,6 +17,7 @@ import javax.faces.context.FacesContext;
 import javax.inject.Named;
 import javax.naming.NamingException;
 import proveedores.MbProveedores;
+import requisiciones.mb.MbRequisiciones;
 
 @Named(value = "mbCotizaciones")
 @SessionScoped
@@ -36,6 +37,7 @@ public class MbCotizaciones implements Serializable {
     private MbProveedores mbProveedores;
     private String nombreProduc;
     private CotizacionEncabezado cotizacionesEncabezadoToOrden;
+    private String navega;
 
     //CONSTRUCTORES-------------------------------------------------------------------------------------------------------------------------------------------------------
     public MbCotizaciones() {
@@ -58,7 +60,7 @@ public class MbCotizaciones implements Serializable {
         listaCotizacionDetalleProductos = new ArrayList<CotizacionDetalle>();
         listaCotizacionDetalle = new ArrayList<CotizacionDetalle>();
         DAOCotizaciones daoCot = new DAOCotizaciones();
-       ArrayList<CotizacionDetalle> lista = daoCot.dameProductoCotizacionesProveedores(idReq);
+        ArrayList<CotizacionDetalle> lista = daoCot.dameProductoCotizacionesProveedores(idReq);
         for (CotizacionDetalle d : lista) {
             listaCotizacionDetalle.add(d);
         }
@@ -160,10 +162,10 @@ public class MbCotizaciones implements Serializable {
         try {
             DAOCotizaciones daoCot = new DAOCotizaciones();
             try {
-                
+
                 longCots = listaCotizacionDetalle.size();
                 if (longCots == 0) {
-                    daoCot.guardarOrdenCompraTotal(cotizacionesEncabezadoToOrden,ordenCompra);
+                    daoCot.guardarOrdenCompraTotal(cotizacionesEncabezadoToOrden, ordenCompra);
                     msg = new FacesMessage(FacesMessage.SEVERITY_INFO, "Aviso:", "La orden de compra ha sido generada...");
                     //      this.salirMenuCotizaciones();
                     this.listaCotizacionEncabezado = null;
@@ -171,8 +173,6 @@ public class MbCotizaciones implements Serializable {
                 } else {
                     msg = new FacesMessage(FacesMessage.SEVERITY_INFO, "Aviso:", "La orden de compra está incompleta, faltan productos por integrar...");
                 }
-
-
             } catch (SQLException ex) {
                 Logger.getLogger(MbCotizaciones.class.getName()).log(Level.SEVERE, null, ex);
             }
@@ -210,6 +210,20 @@ public class MbCotizaciones implements Serializable {
                 break;
             }
         }
+    }
+
+    public String menu(int opcion) throws NamingException {
+        if (opcion == 0) {
+            navega = "index.xhtml";
+        } else if (opcion == 1) {
+            navega = "menuRequisiciones.xhtml";
+        } else if (opcion == 2) {
+            navega = "menuCotizaciones.xhtml";
+        } else if (opcion == 3) {
+            navega = "menuOrdenesDeCompra.xhtml";
+        }
+
+        return navega;
     }
 
     //GETS Y SETS------------------------------------------------------------------------------------------------------------------------------------------------------
