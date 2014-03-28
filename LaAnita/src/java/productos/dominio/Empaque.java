@@ -1,10 +1,12 @@
 package productos.dominio;
 
+import java.io.Serializable;
+
 /**
  *
  * @author JULIOS
  */
-public class Empaque {
+public class Empaque implements Serializable {
     private int idEmpaque;
     private int idEmpresa;
     private String cod_pro;

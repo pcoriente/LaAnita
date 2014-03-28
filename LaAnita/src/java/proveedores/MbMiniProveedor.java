@@ -50,6 +50,31 @@ public class MbMiniProveedor implements Serializable {
     }
 
     //////////////////////////////M E T O D O S
+    public void inicializaProveedor() {
+        this.miniProveedor=(MiniProveedor)this.listaMiniProveedores.get(0).getValue();
+    }
+    
+    public void cargaListaProveedores() {
+        try {
+            this.listaMiniProveedores=new ArrayList<SelectItem>();
+            
+            MiniProveedor p0 = new MiniProveedor();
+            p0.setIdProveedor(0);
+            p0.setProveedor("Proveedor....");
+            listaMiniProveedores.add(new SelectItem(p0, p0.toString()));
+            
+            this.dao = new DAOMiniProveedores();
+            ArrayList<MiniProveedor> proveedores = this.dao.obtenerProveedores();
+            for (MiniProveedor e : proveedores) {
+                listaMiniProveedores.add(new SelectItem(e, e.toString()));
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(MbMiniProveedor.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (NamingException ex) {
+            Logger.getLogger(MbMiniProveedor.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+    
     public ArrayList<SelectItem> obtenerListaMiniProveedor() throws NamingException {
         try {
             this.listaMiniProveedores=new ArrayList<SelectItem>();

@@ -27,6 +27,25 @@ public class MbMiniCedis implements Serializable {
         this.cedis=new MiniCedis();
     }
     
+    public void obtenerDefaultCedis() {
+        boolean ok=false;
+        FacesMessage fMsg = new FacesMessage(FacesMessage.SEVERITY_WARN, "Aviso:", "obtenerCedis");
+        try {
+            this.dao=new DAOMiniCedis();
+            this.cedis=this.dao.obtenerDefaultMiniCedis();
+            ok=true;
+        } catch (NamingException ex) {
+            fMsg.setSeverity(FacesMessage.SEVERITY_ERROR);
+            fMsg.setDetail(ex.getMessage());
+        } catch (SQLException ex) {
+            fMsg.setSeverity(FacesMessage.SEVERITY_ERROR);
+            fMsg.setDetail(ex.getErrorCode() + " " + ex.getMessage());
+        }
+        if (!ok) {
+            FacesContext.getCurrentInstance().addMessage(null, fMsg);
+        }
+    }
+    
     public MiniCedis obtenerCedis(int idCedis) {
         boolean ok=false;
         FacesMessage fMsg = new FacesMessage(FacesMessage.SEVERITY_WARN, "Aviso:", "obtenerCedis");
@@ -48,7 +67,35 @@ public class MbMiniCedis implements Serializable {
         return c;
     }
     
-    private void obtenerListaMiniCedis() {
+    public void cargaMiniCedisTodos() {
+        boolean ok=false;
+        FacesMessage fMsg = new FacesMessage(FacesMessage.SEVERITY_WARN, "Aviso:", "");
+        this.listaMiniCedis=new ArrayList<SelectItem>();
+        try {
+            MiniCedis p0 = new MiniCedis();
+            p0.setIdCedis(0);
+            p0.setCedis("Seleccione un CEDIS");
+            SelectItem cero = new SelectItem(p0, p0.toString());
+            this.listaMiniCedis.add(cero);
+            
+            this.dao=new DAOMiniCedis();
+            for (MiniCedis m : this.dao.obtenerListaMiniCedisTodos()) {
+                this.listaMiniCedis.add(new SelectItem(m, m.toString()));
+            }
+            ok=true;
+        } catch (NamingException ex) {
+            fMsg.setSeverity(FacesMessage.SEVERITY_ERROR);
+            fMsg.setDetail(ex.getMessage());
+        } catch (SQLException ex) {
+            fMsg.setSeverity(FacesMessage.SEVERITY_ERROR);
+            fMsg.setDetail(ex.getErrorCode() + " " + ex.getMessage());
+        }
+        if (!ok) {
+            FacesContext.getCurrentInstance().addMessage(null, fMsg);
+        }
+    }
+    
+    public void cargaMiniCedisZona() {
         boolean ok=false;
         FacesMessage fMsg = new FacesMessage(FacesMessage.SEVERITY_WARN, "Aviso:", "");
         this.listaMiniCedis=new ArrayList<SelectItem>();
@@ -60,7 +107,7 @@ public class MbMiniCedis implements Serializable {
             listaMiniCedis.add(cero);
             
             this.dao=new DAOMiniCedis();
-            for (MiniCedis m : this.dao.obtenerListaMiniCedis()) {
+            for (MiniCedis m : this.dao.obtenerListaMiniCedisZona()) {
                 listaMiniCedis.add(new SelectItem(m, m.toString()));
             }
             ok=true;
@@ -86,7 +133,7 @@ public class MbMiniCedis implements Serializable {
 
     public ArrayList<SelectItem> getListaMiniCedis() {
         if(this.listaMiniCedis==null) {
-            this.obtenerListaMiniCedis();
+            this.cargaMiniCedisZona();
         }
         return listaMiniCedis;
     }

@@ -20,9 +20,11 @@ import monedas.MbMonedas;
 import ordenesDeCompra.MbOrdenCompra;
 import ordenesDeCompra.dominio.OrdenCompraDetalle;
 import ordenesDeCompra.dominio.OrdenCompraEncabezado;
+import org.primefaces.context.RequestContext;
 import org.primefaces.event.SelectEvent;
 import productos.MbBuscarEmpaques;
 import productos.dao.DAOEmpaques;
+import productos.dominio.Empaque;
 import proveedores.dominio.MiniProveedor;
 import usuarios.MbAcciones;
 import usuarios.dominio.Accion;
@@ -35,9 +37,7 @@ import usuarios.dominio.Accion;
 @SessionScoped
 public class MbEntradas implements Serializable {
     private boolean modoEdicion;
-    
     private ArrayList<Accion> acciones;
-    private ArrayList<Accion> acciones2;
     @ManagedProperty(value = "#{mbAcciones}")
     private MbAcciones mbAcciones;
     @ManagedProperty(value="#{mbBuscarEmpaques}")
@@ -49,14 +49,7 @@ public class MbEntradas implements Serializable {
     @ManagedProperty(value="#{mbMonedas}")
     private MbMonedas mbMonedas;
     
-//    private DAOAlmacenes daoAlmacenes;
-//    private ArrayList<SelectItem> listaAlmacenes;
-//    private ArrayList<Almacen> almacenes;
-//    private Almacen almacen;
-    
     private OrdenCompraEncabezado ordenCompra;
-//    private Comprobante comprobante; 
-    //private TOComprobante comprobante;
     private Entrada entrada;
     private ArrayList<Entrada> entradas;
     private MovimientoProducto entradaProducto;
@@ -69,9 +62,7 @@ public class MbEntradas implements Serializable {
     private DAOImpuestosProducto daoImps;
     private boolean sinOrden;
     private double tipoCambio;  // Solo sirve para cuando hay cambio en el valor del tipo de cambio
-//    private String documento;   // Documento que ampara la entrada por almacen
     private int idModulo;
-//    private int tipoComprobante;
     
     public MbEntradas() throws NamingException {
         this.mbAcciones = new MbAcciones();
@@ -81,13 +72,44 @@ public class MbEntradas implements Serializable {
         this.mbMonedas=new MbMonedas();
         
         this.modoEdicion = false;
-//        this.comprobante=new Comprobante();
         this.entrada=new Entrada();
         this.resEntradaProducto=new MovimientoProducto();
         this.ordenCompra=new OrdenCompraEncabezado();
-//        this.tipoCambio=1.00;
-//        this.tipoComprobante=0;
-//        this.documento="";
+    }
+    
+//    private boolean validaEntradaOficina1x() {
+//        boolean ok = false;
+//        FacesMessage fMsg = new FacesMessage(FacesMessage.SEVERITY_WARN, "Aviso:", "validaComprobante");
+//        if(this.mbComprobantes.getMbAlmacenes().getToAlmacen().getIdAlmacen()==0) {
+//            fMsg.setDetail("Se requiere tener seleccionado un almacen");
+//        } else if(this.mbComprobantes.getMbProveedores().getMiniProveedor().getIdProveedor()==0) {
+//            fMsg.setDetail("Se requiere tener seleccionado un proveedor");
+//        } else {
+//            this.mbComprobantes.setTipoComprobante(1);
+//            ok=true;
+//        }
+//        if(!ok) {
+//            FacesContext.getCurrentInstance().addMessage(null, fMsg);
+//        }
+//        return ok;
+//    }
+    
+    public void cargaListaComprobantes() {
+        if(this.mbComprobantes.validaComprobante()) {
+            this.mbComprobantes.setTipoComprobante(1);
+            this.mbComprobantes.cargaListaComprobantes();
+        }
+    }
+    
+    public void mttoComprobanteOficina() {
+        boolean ok=false;
+        RequestContext context = RequestContext.getCurrentInstance();
+        if(this.mbComprobantes.validaComprobante()) {
+            this.mbComprobantes.setTipoComprobante(1);
+            this.mbComprobantes.mttoComprobante();
+            ok=true;
+        }
+        context.addCallbackParam("okComprobante", ok);
     }
     
     public void cargaOrdenes() {
@@ -147,7 +169,6 @@ public class MbEntradas implements Serializable {
                 fMsg.setSeverity(FacesMessage.SEVERITY_INFO);
                 fMsg.setDetail("La entrada se grabo correctamente !!!");
                 this.mbComprobantes.cargaListaComprobantes();
-                //this.mbComprobantes.setToComprobante(this.mbComprobantes.convertirTO(this.entrada.getComprobante()));
                 this.modoEdicion=false;
                 ok=true;
             }
@@ -200,7 +221,6 @@ public class MbEntradas implements Serializable {
                         unitario*=(1-prod.getDesctoProducto1()/100.00);
                         unitario*=(1-prod.getDesctoProducto2()/100.00);
                         unitario*=(1-prod.getDesctoConfidencial()/100.00);
-//                        unitario=Math.round(unitario*100.00)/100.00;
                         prod.setUnitario(unitario);
                     } else {
                         prod.setCantOrdenada(d.getCantOrdenada()-d.getCantRecibida());
@@ -243,6 +263,8 @@ public class MbEntradas implements Serializable {
         TOMovimiento to=new TOMovimiento();
         to.setIdMovto(entrada.getIdEntrada());
         to.setIdTipo(1);
+        to.setIdCedis(entrada.getComprobante().getAlmacen().getCedis().getIdCedis());
+        to.setIdEmpresa(entrada.getComprobante().getAlmacen().getEmpresa().getIdEmpresa());
         to.setIdAlmacen(entrada.getComprobante().getAlmacen().getIdAlmacen());
         to.setIdReferencia(entrada.getComprobante().getIdComprobante());
         to.setIdImpuestoZona(entrada.getIdImpuestoZona());
@@ -268,53 +290,6 @@ public class MbEntradas implements Serializable {
         e.setIdUsuario(to.getIdUsuario());
         return e;
     }
-    
-//    public void grabarComprobante() {
-//        if(this.mbComprobantes.grabarComprobante()) {
-//            this.comprobante.setSerie(this.mbComprobantes.getComprobante().getSerie());
-//            this.comprobante.setNumero(this.mbComprobantes.getComprobante().getNumero());
-//            this.comprobante.setFecha(this.mbComprobantes.getComprobante().getFecha());
-//            this.comprobante.setCerradaOficina(this.mbComprobantes.getComprobante().isCerradaOficina());
-//            this.comprobante.setCerradaAlmacen(this.mbComprobantes.getComprobante().isCerradaAlmacen());
-//        }
-//    }
-    
-//    public void buscarFacturas() {
-//        boolean ok = false;
-//        boolean abrir = false;
-//        RequestContext context = RequestContext.getCurrentInstance();
-//        int idAlmacen=this.almacen.getIdAlmacen();
-//        int idProveedor=this.mbProveedores.getMiniProveedor().getIdProveedor();
-//        int tipoComprobante=this.mbComprobantes.getComprobante().getTipoComprobante();
-//        FacesMessage fMsg = new FacesMessage(FacesMessage.SEVERITY_WARN, "Aviso:", "");
-//        if(idProveedor==0) {
-//            fMsg.setDetail("Se requiere seleccionar un proveedor");
-//        } else if(idAlmacen==0) {
-//            fMsg.setDetail("Se requiere seleccionar un almacen");
-//        } else {
-//            if(this.comprobante.getSerie().isEmpty() && this.comprobante.getNumero().isEmpty()) {
-//                this.mbComprobantes.obtenerComprobantes(idAlmacen, idProveedor, tipoComprobante);
-//                if(this.mbComprobantes.getComprobantes().isEmpty()) {
-//                    fMsg.setDetail("No se encontraron facturas del proveedor");
-//                } else {
-//                    ok=true;
-//                    abrir=true;
-//                }
-//            } else {
-//                Comprobante c=this.mbComprobantes.obtenerComprobante(idAlmacen, idProveedor, tipoComprobante, this.comprobante.getSerie(), this.comprobante.getNumero());
-//                if(c==null) {
-//                    fMsg.setDetail("No se encontro la factura con el proveedor especificado");
-//                } else {
-//                    this.comprobante=c;
-//                    ok=true;
-//                }
-//            }
-//        }
-//        if(!ok) {
-//            FacesContext.getCurrentInstance().addMessage(null, fMsg);
-//        }
-//        context.addCallbackParam("okBuscarComprobante", abrir);
-//    }
     
     public void cambiaPrecios() {
         this.entrada.setSubTotal(0.00);
@@ -435,14 +410,9 @@ public class MbEntradas implements Serializable {
     public void cambiaCantFacturada() {
         boolean ok=true;
         FacesMessage fMsg = new FacesMessage(FacesMessage.SEVERITY_WARN, "Aviso:", "");
-//        if(!isSinOrden() && this.entradaProducto.getCantOrdenada() < this.entradaProducto.getCantFacturada()) {
-//            ok=false;
-//            fMsg.setDetail("La cantidad recibida no puede ser mayor a la cantidad pendiente por recibir");
-//        } else {
-            restaTotales();
-            calculaProducto();
-            sumaTotales();
-//        }
+        restaTotales();
+        calculaProducto();
+        sumaTotales();
         if(!ok) {
             this.entradaProducto.setCantFacturada(0.00);
             FacesContext.getCurrentInstance().addMessage(null, fMsg);
@@ -470,15 +440,19 @@ public class MbEntradas implements Serializable {
         unitario*=(1-this.entradaProducto.getDesctoProducto1()/100.00);
         unitario*=(1-this.entradaProducto.getDesctoProducto2()/100.00);
         unitario*=(1-this.entradaProducto.getDesctoConfidencial()/100.00);
-        //unitario=Math.round(unitario*100.00)/100.00;
         this.entradaProducto.setUnitario(unitario);
-        //double neto=Math.round((this.entradaProducto.getUnitario()+calculaImpuestos())*100.00)/100.00;
         double neto=unitario+calculaImpuestos();
         this.entradaProducto.setNeto(neto);
-        //double subTotal=Math.round(this.entradaProducto.getUnitario()*this.entradaProducto.getCantFacturada()*100.00)/100.00;
         double subTotal=this.entradaProducto.getUnitario()*this.entradaProducto.getCantFacturada();
         this.entradaProducto.setImporte(subTotal);
         this.respaldaFila();
+    }
+    
+    public void actualizaProductosSeleccionados() {
+        for(Empaque e:this.mbBuscar.getSeleccionados()) {
+            this.mbBuscar.setProducto(e);
+            this.actualizaProductoSeleccionado();
+        }
     }
     
     public void actualizaProductoSeleccionado() {
@@ -493,10 +467,27 @@ public class MbEntradas implements Serializable {
             }
         }
         if(nuevo) {
-            this.entradaDetalle.add(producto);
-            this.entradaProducto=producto;
+            boolean ok=false;
+            FacesMessage fMsg = new FacesMessage(FacesMessage.SEVERITY_WARN, "Aviso:", "");
+            try {
+                this.dao=new DAOMovimientos();
+                producto.setImpuestos(this.dao.generarImpuestosProducto(producto.getEmpaque().getProducto().getImpuestoGrupo().getIdGrupo(), this.entrada.getIdImpuestoZona()));
+                producto.setPrecio(this.dao.obtenerPrecioUltimaCompra(this.entrada.getComprobante().getAlmacen().getEmpresa().getIdEmpresa(), producto.getEmpaque().getIdEmpaque()));
+                this.entradaDetalle.add(producto);
+                this.entradaProducto=producto;
+                this.calculaProducto();
+                ok=true;
+            } catch (SQLException ex) {
+                fMsg.setSeverity(FacesMessage.SEVERITY_ERROR);
+                fMsg.setDetail(ex.getErrorCode() + " " + ex.getMessage());
+            } catch (NamingException ex) {
+                fMsg.setSeverity(FacesMessage.SEVERITY_ERROR);
+                fMsg.setDetail(ex.getMessage());
+            }
+            if (!ok) {
+                FacesContext.getCurrentInstance().addMessage(null, fMsg);
+            }
         }
-        this.respaldaFila();
     }
     
     public void buscar() {
@@ -506,14 +497,11 @@ public class MbEntradas implements Serializable {
         }
     }
     
-//    public void cargaOrdenes() {
-//        
-//    }
-    
     public void entradas() {
         this.mbComprobantes.convertirComprobante();
         this.entrada=new Entrada();
         this.entrada.setComprobante(this.mbComprobantes.getComprobante());
+        this.entrada.setIdImpuestoZona(this.mbComprobantes.getMbProveedores().getMiniProveedor().getIdImpuestoZona());
         this.entradaDetalle=new ArrayList<MovimientoProducto>();
         this.ordenCompra=new OrdenCompraEncabezado();
         this.tipoCambio=1;
@@ -521,69 +509,11 @@ public class MbEntradas implements Serializable {
         this.modoEdicion=true;
     }
     
-//    public void entradas2() {
-//        boolean ok = false;
-//        RequestContext context = RequestContext.getCurrentInstance();
-//        FacesMessage fMsg = new FacesMessage(FacesMessage.SEVERITY_WARN, "Aviso:", "");
-//        if(this.mbAlmacenes.getAlmacen().getIdAlmacen()==0) {
-//            fMsg.setDetail("Se requiere seleccionar un almacen !!");
-//        } else if(this.mbProveedores.getMiniProveedor().getIdProveedor()==0) {
-//            fMsg.setDetail("Se requiere seleccionar un proveedor !!");
-////        } else if(this.documento.isEmpty()) {
-////            fMsg.setDetail("Se requiere capturar el documento de recepcion !!");
-//        } else {
-//            this.entrada=new Entrada();
-//            this.entrada.setIdEntrada(0);
-//            //this.entrada.setIdEmpresa(this.mbEmpresas.getEmpresa().getIdEmpresa());
-////            this.entrada.setIdProveedor(this.mbProveedores.getMiniProveedor().getIdProveedor());
-////            this.entrada.setIdAlmacen(this.mbAlmacenes.getToAlmacen().getIdAlmacen());
-//            //this.entrada.setDocumento(this.documento);
-//            this.entradaDetalle=new ArrayList<EntradaProducto>();
-//            this.ordenCompra=new OrdenCompraEncabezado();
-//            this.sinOrden=false;
-//            this.modoEdicion=true;
-//            ok=true;
-//        }
-//        if(!ok) {
-//            FacesContext.getCurrentInstance().addMessage(null, fMsg);
-//        }
-//        context.addCallbackParam("okFactura", ok);
-//    }
-    
-//    public void mttoComprobantes() {
-//        boolean ok = false;
-//        int idAlmacen=this.comprobante.getAlmacen().getIdAlmacen();
-//        int idProveedor=this.comprobante.getProveedor().getIdProveedor();
-////        int tipoComprobante=this.tipoComprobante;
-//        
-//        RequestContext context = RequestContext.getCurrentInstance();
-//        FacesMessage fMsg = new FacesMessage(FacesMessage.SEVERITY_WARN, "Aviso:", "");
-//        if(idAlmacen==0) {
-//            fMsg.setDetail("Se requiere seleccionar un almacen !!");
-//        } else if(idProveedor==0) {
-//            fMsg.setDetail("Se requiere seleccionar un proveedor !!");
-//        } else if(this.tipoComprobante==0) {
-//            fMsg.setDetail("Se requiere seleccionar un tipo de comprobante !!");
-//        } else if(this.comprobante.getIdComprobante()==0) {
-////            this.mbComprobantes.setComprobante(new TOComprobante(idAlmacen, idProveedor, this.tipoComprobante));
-//            ok=true;
-//         } else {
-//            this.mbComprobantes.copia(this.comprobante);
-//            ok=true;
-//        }
-//        if(!ok) {
-//            FacesContext.getCurrentInstance().addMessage(null, fMsg);
-//        }
-//        context.addCallbackParam("okComprobante", ok);
-//    }
-    
     // Este metodo se ejecutaba al seleccionar un almacen de la lista
     public void inicializarEntrada() {
         this.modoEdicion=true;
         this.entrada=new Entrada();
         this.ordenCompra=new OrdenCompraEncabezado();
-//        this.entrada.setIdProveedor(this.mbProveedores.getMiniProveedor().getIdProveedor());
-//        this.tipoComprobante=0;
         this.entradaDetalle=new ArrayList<MovimientoProducto>();
     }
     
@@ -591,7 +521,6 @@ public class MbEntradas implements Serializable {
         this.modoEdicion=false;
         this.ordenCompra=new OrdenCompraEncabezado();
         this.entrada=new Entrada();
-        //return "entradas.xhtml";
     }
     
     public String terminar() {
@@ -600,97 +529,8 @@ public class MbEntradas implements Serializable {
         
         this.mbComprobantes.getMbAlmacenes().inicializaAlmacen();
         this.mbComprobantes.getMbProveedores().setMiniProveedor(new MiniProveedor());
-//        this.tipoComprobante=0;
-//        this.comprobante=new Comprobante();
         return "index.xhtml";
     }
-    
-//    public void cargaListaAlmacenes() {
-//        boolean ok = false;
-//        FacesMessage fMsg = new FacesMessage(FacesMessage.SEVERITY_WARN, "Aviso:", "");
-//        try {
-//            if (this.mbCedis.getCedis().getIdCedis() != 0 && this.mbEmpresas.getEmpresa().getIdEmpresa() != 0) {
-//                this.daoAlmacenes = new DAOAlmacenes();
-//                this.almacenes = this.daoAlmacenes.obtenerAlmacenes(this.mbCedis.getCedis().getIdCedis(), this.mbEmpresas.getEmpresa().getIdEmpresa());
-//            } else {
-//                this.almacenes=new ArrayList<Almacen>();
-//            }
-//            this.listaAlmacenes=new ArrayList<SelectItem>();
-//            Almacen xAlm=new Almacen();
-//            xAlm.setAlmacen("Seleccione un Almacén");
-//            SelectItem a0=new SelectItem(xAlm, xAlm.toString());
-//            this.listaAlmacenes.add(a0);
-//            
-//            for(Almacen a: this.almacenes) {
-//                this.listaAlmacenes.add(new SelectItem(a, a.toString()));
-//            }
-//            ok = true;
-//        } catch (SQLException ex) {
-//            fMsg.setSeverity(FacesMessage.SEVERITY_ERROR);
-//            fMsg.setDetail(ex.getErrorCode() + " " + ex.getMessage());
-//        } catch (NamingException ex) {
-//            fMsg.setSeverity(FacesMessage.SEVERITY_ERROR);
-//            fMsg.setDetail(ex.getMessage());
-//        }
-//        if (!ok) {
-//            FacesContext.getCurrentInstance().addMessage(null, fMsg);
-//        }
-//    }
-    
-//    public void obtenerListaComprobantes() {
-//        boolean ok = false;
-//        FacesMessage fMsg = new FacesMessage(FacesMessage.SEVERITY_WARN, "Aviso:", "");
-//        if(validaComprobante()) {
-//            
-//        }
-//        if(this.mbAlmacenes.getAlmacen().getIdAlmacen()==0) {
-//            this.tipoComprobante=0;
-//            this.mbComprobantes.setListaComprobantes(null);
-//            fMsg.setDetail("Se requiere tener seleccionado un almacen");
-//        } else if(this.mbProveedores.getMiniProveedor().getIdProveedor()==0) {
-//            this.tipoComprobante=0;
-//            this.mbComprobantes.setListaComprobantes(null);
-//            fMsg.setDetail("Se requiere tener seleccionado un proveedor");
-//        } else if(this.tipoComprobante==0) {
-//            this.mbComprobantes.setListaComprobantes(null);
-//            fMsg.setDetail("Se requiere tener seleccionado un tipo de comprobante");
-//        } else {
-////            this.mbComprobantes.obtenerListaComprobantes(this.mbAlmacenes.getAlmacen().getIdAlmacen(), this.mbProveedores.getMiniProveedor().getIdProveedor(), this.tipoComprobante);
-//            ok=true;
-//        }
-//        if(!ok) {
-//            FacesContext.getCurrentInstance().addMessage(null, fMsg);
-//        }
-//    }
-    
-//    public void inicializaDocumentos() {
-//        this.almacen=new Almacen();
-//        this.listaAlmacenes=null;
-//        this.entrada.setTipoComprobante(0);
-//        this.mbComprobantes.setListaComprobantes(null);
-//    }
-    
-//    public void obtenerAlmacen() {
-////        this.comprobante.getAlmacen().setIdAlmacen(this.mbAlmacenes.getToAlmacen().getIdAlmacen());
-////        this.comprobante.getAlmacen().setAlmacen(this.mbAlmacenes.getToAlmacen().getAlmacen());
-//        this.obtenerListaComprobantes();
-//    }
-
-//    public ArrayList<Almacen> getAlmacenes() {
-//        return almacenes;
-//    }
-//
-//    public void setAlmacenes(ArrayList<Almacen> almacenes) {
-//        this.almacenes = almacenes;
-//    }
-//
-//    public Almacen getAlmacen() {
-//        return almacen;
-//    }
-//
-//    public void setAlmacen(Almacen almacen) {
-//        this.almacen = almacen;
-//    }
 
     public boolean isModoEdicion() {
         return modoEdicion;
@@ -727,22 +567,6 @@ public class MbEntradas implements Serializable {
         this.mbAcciones = mbAcciones;
     }
 
-//    public MbMiniCedis getMbCedis() {
-//        return mbCedis;
-//    }
-//
-//    public void setMbCedis(MbMiniCedis mbCedis) {
-//        this.mbCedis = mbCedis;
-//    }
-//
-//    public MbMiniEmpresas getMbEmpresas() {
-//        return mbEmpresas;
-//    }
-//
-//    public void setMbEmpresas(MbMiniEmpresas mbEmpresas) {
-//        this.mbEmpresas = mbEmpresas;
-//    }
-
     public OrdenCompraEncabezado getOrdenCompra() {
         return ordenCompra;
     }
@@ -750,14 +574,6 @@ public class MbEntradas implements Serializable {
     public void setOrdenCompra(OrdenCompraEncabezado ordenCompra) {
         this.ordenCompra = ordenCompra;
     }
-
-//    public Comprobante getComprobante() {
-//        return comprobante;
-//    }
-//
-//    public void setComprobante(Comprobante comprobante) {
-//        this.comprobante = comprobante;
-//    }
 
     public Entrada getEntrada() {
         return entrada;
@@ -807,17 +623,6 @@ public class MbEntradas implements Serializable {
         this.mbComprobantes = mbComprobantes;
     }
 
-//    public ArrayList<SelectItem> getListaAlmacenes() {
-//        if(this.listaAlmacenes==null) {
-//            this.cargaListaAlmacenes();
-//        }
-//        return listaAlmacenes;
-//    }
-//
-//    public void setListaAlmacenes(ArrayList<SelectItem> listaAlmacenes) {
-//        this.listaAlmacenes = listaAlmacenes;
-//    }
-
     public Date getFechaIniPeriodo() {
         return fechaIniPeriodo;
     }
@@ -865,28 +670,4 @@ public class MbEntradas implements Serializable {
     public void setMbMonedas(MbMonedas mbMonedas) {
         this.mbMonedas = mbMonedas;
     }
-
-//    public String getDocumento() {
-//        return documento;
-//    }
-//
-//    public void setDocumento(String documento) {
-//        this.documento = documento;
-//    }
-
-//    public MbMiniAlmacenes getMbAlmacenes() {
-//        return mbAlmacenes;
-//    }
-//
-//    public void setMbAlmacenes(MbMiniAlmacenes mbAlmacenes) {
-//        this.mbAlmacenes = mbAlmacenes;
-//    }
-
-//    public int getTipoComprobante() {
-//        return tipoComprobante;
-//    }
-//
-//    public void setTipoComprobante(int tipoComprobante) {
-//        this.tipoComprobante = tipoComprobante;
-//    }
 }

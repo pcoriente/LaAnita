@@ -96,6 +96,37 @@ public class DAOEmpaques {
         return idEmpaque;
     }
     
+    public ArrayList<Empaque> obtenerEmpaquesClasificacion(int idGrupo, int idSubGrupo) throws NamingException, SQLException {
+        Producto p;
+        Empaque epq;
+        ArrayList<Empaque> lstEmpaques=new ArrayList<Empaque>();
+        DAOProductos daoProductos=new DAOProductos();
+        String strSQL=sqlEmpaque()+" "+
+            "INNER JOIN productos p on p.idProducto=e.idProducto " +
+            "LEFT JOIN productosPartes pp on pp.idParte=p.idParte " +
+            "WHERE p.idGrupo="+idGrupo+" OR p.idSubGrupo="+idSubGrupo+" " +
+            "ORDER BY pp.parte, p.descripcion";
+        Connection cn=ds.getConnection();
+        Statement st=cn.createStatement();
+        try {
+            p=null;
+            int idProducto=0;
+            ResultSet rs=st.executeQuery(strSQL); 
+            while(rs.next()) {
+                if(idProducto!=rs.getInt("idProducto")) {
+                    idProducto=rs.getInt("idProducto");
+                    p=daoProductos.obtenerProducto(idProducto);
+                }
+                epq=construir(rs);
+                epq.setProducto(p);
+                lstEmpaques.add(epq);
+            }
+        } finally {
+            cn.close();
+        }
+        return lstEmpaques;
+    }
+    
     public ArrayList<Empaque> obtenerEmpaquesDescripcion(String descripcion) throws NamingException, SQLException {
         Producto p;
         Empaque epq;

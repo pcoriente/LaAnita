@@ -48,17 +48,38 @@ public class MbComprobantes implements Serializable {
     }
     
     public void mttoComprobante() {
+//        boolean ok = false;
+//        RequestContext context = RequestContext.getCurrentInstance();
+//        if(this.validaComprobante()) {
+//            if(this.toComprobante.getIdComprobante()==0) {
+//                this.inicializa();
+//            } else {
+//                this.respalda();
+//            }
+//            ok=true;
+//        }
+//        context.addCallbackParam("okComprobante", ok);
+        if(this.toComprobante.getIdComprobante()==0) {
+            this.inicializa();
+        } else {
+            this.respalda();
+        }
+    }
+    
+    public boolean validaComprobante() {
         boolean ok = false;
-        RequestContext context = RequestContext.getCurrentInstance();
-        if(this.validaComprobante()) {
-            if(this.toComprobante.getIdComprobante()==0) {
-                this.inicializa();
-            } else {
-                this.respalda();
-            }
+        FacesMessage fMsg = new FacesMessage(FacesMessage.SEVERITY_WARN, "Aviso:", "validaComprobante");
+        if(this.mbAlmacenes.getToAlmacen().getIdAlmacen()==0) {
+            fMsg.setDetail("Se requiere tener seleccionado un almacen");
+        } else if(this.mbProveedores.getMiniProveedor().getIdProveedor()==0) {
+            fMsg.setDetail("Se requiere tener seleccionado un proveedor");
+        } else {
             ok=true;
         }
-        context.addCallbackParam("okComprobante", ok);
+        if(!ok) {
+            FacesContext.getCurrentInstance().addMessage(null, fMsg);
+        }
+        return ok;
     }
     
     public void cargaAlmacenes() {
@@ -164,8 +185,6 @@ public class MbComprobantes implements Serializable {
         c.setIdComprobante(to.getIdComprobante());
         c.setAlmacen(this.mbAlmacenes.obtenerAlmacen(to.getIdAlmacen()));
         c.setProveedor(this.mbProveedores.obtenerProveedor(to.getIdProveedor()));
-//        c.setAlmacen(this.mbAlmacenes.getAlmacen());
-//        c.setProveedor(this.mbProveedores.getMiniProveedor());
         c.setTipoComprobante(to.getTipoComprobante());
         c.setSerie(to.getSerie());
         c.setNumero(to.getNumero());
@@ -235,13 +254,21 @@ public class MbComprobantes implements Serializable {
         return ok;
     }
     
-    private void obtenerComprobantes() throws NamingException, SQLException {
+    public void obtenerSolicitudes() throws NamingException, SQLException {
         this.comprobantes = new ArrayList<Comprobante>();
         this.dao = new DAOComprobantes();
-        for (TOComprobante to : this.dao.obtenerComprobantes(this.mbAlmacenes.getToAlmacen().getIdAlmacen(), this.mbProveedores.getMiniProveedor().getIdProveedor(), this.tipoComprobante)) {
+        for (TOComprobante to : this.dao.obtenerSolicitudes(this.mbAlmacenes.getToAlmacen().getIdAlmacen())) {
             this.comprobantes.add(this.convertir(to));
         }
     }
+    
+//    private void obtenerComprobantes() throws NamingException, SQLException {
+//        this.comprobantes = new ArrayList<Comprobante>();
+//        this.dao = new DAOComprobantes();
+//        for (TOComprobante to : this.dao.obtenerComprobantes(this.mbAlmacenes.getToAlmacen().getIdAlmacen(), this.mbProveedores.getMiniProveedor().getIdProveedor(), this.tipoComprobante)) {
+//            this.comprobantes.add(this.convertir(to));
+//        }
+//    }
     
     private void obtenerListaComprobantes() {
         boolean ok = false;
@@ -253,12 +280,9 @@ public class MbComprobantes implements Serializable {
             c0.setNumero("Seleccione");
             this.listaComprobantes.add(new SelectItem(c0, c0.toString()));
 
-//            this.obtenerComprobantes();
-            if(this.validaComprobante()) {
-                this.dao=new DAOComprobantes();
-                for (TOComprobante c : this.dao.obtenerComprobantes(this.mbAlmacenes.getToAlmacen().getIdAlmacen(), this.mbProveedores.getMiniProveedor().getIdProveedor(), this.tipoComprobante)) {
-                    listaComprobantes.add(new SelectItem(c, c.toString()));
-                }
+            this.dao=new DAOComprobantes();
+            for (TOComprobante c : this.dao.obtenerComprobantes(this.mbAlmacenes.getToAlmacen().getIdAlmacen(), this.mbProveedores.getMiniProveedor().getIdProveedor(), this.tipoComprobante)) {
+                listaComprobantes.add(new SelectItem(c, c.toString()));
             }
             ok = true;
         } catch (NamingException ex) {
@@ -274,21 +298,7 @@ public class MbComprobantes implements Serializable {
         context.addCallbackParam("okComprobante", ok);
     }
     
-//    public boolean validaEdicion() {
-//        boolean ok=false;
-//        FacesMessage fMsg = new FacesMessage(FacesMessage.SEVERITY_WARN, "Aviso:", "");
-//        if(this.edicion.getNumero().equals("")) {
-//            fMsg.setDetail("Se requiere el numero de la factura");
-//        } else {
-//            ok=true;
-//        }
-//        if(!ok) {
-//            FacesContext.getCurrentInstance().addMessage(null, fMsg);
-//        }
-//        return ok;
-//    }
-    
-    public boolean validaComprobante() {
+    public boolean validaComprobante1x() {
         boolean ok = false;
         FacesMessage fMsg = new FacesMessage(FacesMessage.SEVERITY_WARN, "Aviso:", "validaComprobante");
         if(this.mbAlmacenes.getToAlmacen().getIdAlmacen()==0) {
@@ -307,23 +317,8 @@ public class MbComprobantes implements Serializable {
     }
     
     public void cargaListaComprobantes() {
-//        this.validaComprobante();
         this.obtenerListaComprobantes();
         this.toComprobante=(TOComprobante)this.listaComprobantes.get(0).getValue();
-        
-//        //this.toComprobante=new TOComprobante(this.mbAlmacenes.getToAlmacen().getIdAlmacen(), this.mbProveedores.getMiniProveedor().getIdProveedor(), this.tipoComprobante);
-//        this.toComprobante.setIdComprobante(0);
-//        this.toComprobante.setIdAlmacen(this.mbAlmacenes.getToAlmacen().getIdAlmacen());
-//        this.toComprobante.setIdProveedor(this.mbProveedores.getMiniProveedor().getIdProveedor());
-//        this.toComprobante.setTipoComprobante(this.tipoComprobante);
-//        
-////        if(validaComprobante()) {
-//////            this.toComprobante=new TOComprobante();
-////            this.obtenerListaComprobantes();
-////        } else {
-////            this.toComprobante=null;
-////            this.listaComprobantes=null;
-////        }
     }
     
     public Comprobante obtenerComprobante(int idComprobante) {
