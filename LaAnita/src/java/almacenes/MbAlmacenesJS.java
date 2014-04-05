@@ -78,11 +78,10 @@ public class MbAlmacenesJS implements Serializable {
         boolean ok=false;
         FacesMessage fMsg = new FacesMessage(FacesMessage.SEVERITY_WARN, "Aviso:", "cargaAlmacenes");
         try {
-            if(this.mbCedis.getCedis().getIdCedis()!=0) {
+//            if(this.mbCedis.getCedis().getIdCedis()!=0) {
                 this.dao=new DAOAlmacenesJS();
                 this.cargaListaAlmacenes(this.dao.obtenerAlmacenes(this.mbCedis.getCedis().getIdCedis()));
-//                this.almacen=new AlmacenJS();
-            }
+//            }
             ok=true;
         } catch (NamingException ex) {
             fMsg.setSeverity(FacesMessage.SEVERITY_ERROR);

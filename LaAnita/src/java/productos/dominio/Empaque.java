@@ -43,7 +43,7 @@ public class Empaque implements Serializable {
     public String toString() {
         String empaque=producto.toString();
         if(this.piezas > 1) {
-            empaque+=" " + this.unidadEmpaque.toString() + " x "+Integer.toString(this.piezas);
+            empaque+=" " + this.unidadEmpaque.toString() + " x "+Integer.toString(this.piezas)+(this.subEmpaque==null?"":" "+this.subEmpaque.getUnidadEmpaque().getAbreviatura());
         }
         return empaque;
     }

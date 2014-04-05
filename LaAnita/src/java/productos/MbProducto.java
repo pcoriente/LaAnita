@@ -122,6 +122,7 @@ public class MbProducto implements Serializable {
         if (this.mbPresentacion.grabar()) {
             this.producto.setPresentacion(this.mbPresentacion.getPresentacion());
             this.producto.setContenido(1);
+            this.mbPresentacion.setListaPresentaciones(null);
             this.listaUnidades = null;
         }
     }
@@ -227,7 +228,8 @@ public class MbProducto implements Serializable {
     public void cambioGrupo() {
         this.producto.getSubGrupo().setIdSubGrupo(0);
         this.producto.getSubGrupo().setSubGrupo("");
-        this.cargaSubGrupos();
+        this.mbSubGrupo.cargaSubGrupos(this.producto.getGrupo().getIdGrupo());
+        //this.cargaSubGrupos();
     }
 
     public void mttoGrupo() {

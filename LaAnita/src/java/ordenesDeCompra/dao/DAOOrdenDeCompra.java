@@ -43,6 +43,32 @@ public class DAOOrdenDeCompra {
             throw (ex);
         }
     }
+    
+    public int aseguraOrdenCompra(int idOrdenCompra) throws SQLException {
+        int propietario=0;
+        Connection cn = ds.getConnection();
+        Statement st = cn.createStatement();
+        try {
+            st.executeUpdate("BEGIN TRANSACTION");
+            
+            ResultSet rs=st.executeQuery("SELECT propietario FROM ordenCompra WHERE idOrdenCompra="+idOrdenCompra);
+            if(rs.next()) {
+                propietario=rs.getInt("propietario");
+                if(propietario==0 ) {
+                    propietario=this.usuarioSesion.getUsuario().getId();
+                    st.executeUpdate("UPDATE ordenCompra SET propietario="+propietario+", estado=5 " +
+                                     "WHERE idOrdenCompra="+idOrdenCompra);
+                }
+            }
+            st.executeUpdate("COMMIT TRANSACTION");
+        } catch(SQLException e) {
+            st.executeUpdate("ROLLBACK TRANSACTION");
+            throw(e);
+        } finally {
+            cn.close();
+        }
+        return propietario;
+    }
 
     public ArrayList<OrdenCompraEncabezado> listaOrdenes() throws SQLException, NamingException {
         ArrayList<OrdenCompraEncabezado> lista = new ArrayList<OrdenCompraEncabezado>();
@@ -166,8 +192,14 @@ public class DAOOrdenDeCompra {
             case 3:
                 oce.setStatus("No Aprobado");
                 break;
-            default:
+            case 4:
                 oce.setStatus("Cerrado");
+                break;
+            case 5:
+                oce.setStatus("Recibiendo");
+                break;
+            default:
+                oce.setStatus("Desconocido");
         }
         oce.setMoneda(moneda);
         return oce;
@@ -299,5 +331,9 @@ public class DAOOrdenDeCompra {
         Contacto cont = new Contacto();
         cont.setCorreo(rs.getString("correo"));
         return cont;
+    }
+    
+    public int obtenerIdUsuario() {
+        return this.usuarioSesion.getUsuario().getId();
     }
 }

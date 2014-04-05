@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import javax.enterprise.context.SessionScoped;
 import javax.faces.application.FacesMessage;
 import javax.faces.context.FacesContext;
+import javax.faces.model.SelectItem;
 import javax.inject.Named;
 import javax.naming.NamingException;
 import org.primefaces.context.RequestContext;
@@ -20,6 +21,7 @@ import productos.dominio.SubGrupo;
 @SessionScoped
 public class MbSubGrupo implements Serializable {
     private SubGrupo subGrupo;
+    private ArrayList<SelectItem> listaSubGrupos;
     private ArrayList<SubGrupo> subGrupos;
     private DAOSubGrupos dao;
     
@@ -84,7 +86,18 @@ public class MbSubGrupo implements Serializable {
     
     public SubGrupo copia(SubGrupo s) {
         return new SubGrupo(s.getIdSubGrupo(), s.getSubGrupo());
-    } 
+    }
+    
+    public void cargaSubGrupos(int idGrupo) {
+        this.listaSubGrupos=new ArrayList<SelectItem>();
+        SubGrupo sg0=new SubGrupo();
+        sg0.setIdSubGrupo(0);
+        sg0.setSubGrupo("Seleccione");
+        this.listaSubGrupos.add(new SelectItem(sg0, sg0.toString()));
+        for(SubGrupo sg: this.obtenerSubGrupos(idGrupo)) {
+            this.listaSubGrupos.add(new SelectItem(sg, sg.toString()));
+        }
+    }
     
     public ArrayList<SubGrupo> obtenerSubGrupos(int idGrupo) {
         boolean ok = false;
@@ -123,5 +136,13 @@ public class MbSubGrupo implements Serializable {
 
     public void setSubGrupos(ArrayList<SubGrupo> subGrupos) {
         this.subGrupos = subGrupos;
+    }
+
+    public ArrayList<SelectItem> getListaSubGrupos() {
+        return listaSubGrupos;
+    }
+
+    public void setListaSubGrupos(ArrayList<SelectItem> listaSubGrupos) {
+        this.listaSubGrupos = listaSubGrupos;
     }
 }

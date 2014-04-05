@@ -109,7 +109,7 @@
                                 <p:column >
                                     <p:selectOneMenu id="subGrupo" value="#{frmProducto.mbProducto.producto.subGrupo}" style="width: 300px;" >
                                         <f:converter converterId="converters.SubGrupos" />
-                                        <f:selectItems value="#{frmProducto.mbProducto.listaSubGrupos}" />
+                                        <f:selectItems value="#{frmProducto.mbProducto.mbSubGrupo.listaSubGrupos}" />
                                     </p:selectOneMenu>
                                 </p:column>
                                 <p:column >
@@ -332,7 +332,7 @@
                         <p:panelGrid id="mttoUnidadesProducto" styleClass="sinBorde">
                             <p:row >
                                 <p:column >
-                                    <h:outputLabel for="txtUnidadProducto" value="EMPAQUE :" style="font-weight: bold; color: red; width: 90px;" />
+                                    <h:outputLabel for="txtUnidadProducto" value="EMPAQUE :" style="font-weight: bold; color: red; width: 105px;" />
                                 </p:column>
                                 <p:column >
                                     <p:inputText id="txtUnidadProducto" value="#{frmProducto.mbProducto.mbPresentacion.presentacion.presentacion}" 
@@ -341,7 +341,7 @@
                             </p:row>
                             <p:row >
                                 <p:column >
-                                    <h:outputLabel for="txtUnidadProductoAbrev" value="EMPAQUE :" style="font-weight: bold; color: red; width: 90px;" />
+                                    <h:outputLabel for="txtUnidadProductoAbrev" value="ABREVIATURA :" style="font-weight: bold; color: red; width: 105px;" />
                                 </p:column>
                                 <p:column >
                                     <p:inputText id="txtUnidadProductoAbrev" value="#{frmProducto.mbProducto.mbPresentacion.presentacion.abreviatura}" 
@@ -354,7 +354,8 @@
                                         <p:commandButton id="btnGrabarUnidadProducto" value="Grabar" 
                                                          process="@this txtUnidadProducto txtUnidadProductoAbrev" 
                                                          actionListener="#{frmProducto.mbProducto.grabarUnidadProducto()}"
-                                                         update="unidad contenido unimed" oncomplete="handlePresentacion(xhr, status, args)" />
+                                                         update=":main:unidad :main:contenido :main:unimed" 
+                                                         oncomplete="handlePresentacion(xhr, status, args)" />
                                         <p:commandButton id="btnEliminarUnidadProducto" value="Eliminar" 
                                                          disabled="#{frmProducto.mbProducto.mbPresentacion.presentacion.idPresentacion==0}" 
                                                          process="@this" actionListener="#{frmProducto.mbProducto.eliminarUnidadProducto()}"
@@ -530,15 +531,22 @@
                                     <p:column colspan="4" >
                                         <p:commandButton id="nuevoEmpaque" icon="ui-icon-document" title="Nuevo Empaque" 
                                                          process="mttoEmpaques" actionListener="#{frmProducto.nuevoEmpaque()}" 
-                                                         update="messages2" />
+                                                         update="messages2 mttoEmpaques" />
                                         <p:commandButton id="grabarEmpaque" icon="ui-icon-disk" title="Grabar Empaque" 
                                                          process="mttoEmpaques" actionListener="#{frmProducto.mbEmpaque.grabar()}" 
                                                          update="messages2" />
+                                        <p:commandButton id="eliminarEmpaque" icon="ui-icon-trash" title="Eliminar Empaque" 
+                                                         process="mttoEmpaques" onclick="eEmpaque.show();" />
                                     </p:column>
                                 </p:row>
                             </f:facet>
                         </p:panelGrid>
                     </p:dialog>
+                    <p:confirmDialog message="Esta seguro de eliminar el empaque ?" header="Eliminar un empaque" widgetVar="eEmpaque" >
+                        <p:commandButton value="No, cancelar" onclick="eEmpaque.hide();" type="button" />
+                        <p:commandButton value="Si, seguro" actionListener="#{frmProducto.mbEmpaque.eliminar()}" 
+                                         update="messages2" oncomplete="eEmpaque.hide();handleEmpaque(xhr, status, args);"/>
+                    </p:confirmDialog>
                     <p:dialog header="MANTENIMIENTO DE UNIDADES DE EMPAQUE" widgetVar="mttoUnidadesEmpaqueDlg" resizable="false" style="width: 500px;" modal="true" >
                         <p:messages id="messages6" showDetail="true" autoUpdate="true" closable="true" />
                         <p:panelGrid id="mttoUnidadesEmpaque" styleClass="sinBorde" >
@@ -605,6 +613,14 @@
                     </p:dialog>
                 </h:form>
                 <script type="text/javascript">
+                    function handleEmpaque(xhr, status, args) {
+                        if(args.validationFailed || !args.okBuscar) {
+                            mttoEmpaquesDlg.jq.effect("shake", { times: 5}, 100);
+                        } else {
+                            mttoEmpaquesDlg.hide();
+                        }
+                    }
+                    
                     function handlePresentacion(xhr, status, args) {
                         if(args.validationFailed || !args.okPresentacion) {
                             mttoPresentacionDlg.jq.effect("shake", { times: 5}, 100);

@@ -9,6 +9,7 @@ import monedas.Moneda;
  */
 public class Entrada {
     private int idEntrada;
+    private int folio;
     private Comprobante comprobante;
     private int idImpuestoZona;
     private int idOrdenCompra;
@@ -25,6 +26,7 @@ public class Entrada {
 
     public Entrada() {
         this.idEntrada=0;
+        this.folio=0;
         this.comprobante=new Comprobante();
         this.idImpuestoZona=0;
         this.idOrdenCompra=0;
@@ -150,5 +152,13 @@ public class Entrada {
 
     public void setTotal(double total) {
         this.total = total;
+    }
+
+    public int getFolio() {
+        return folio;
+    }
+
+    public void setFolio(int folio) {
+        this.folio = folio;
     }
 }
