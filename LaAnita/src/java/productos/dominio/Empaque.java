@@ -1,6 +1,7 @@
 package productos.dominio;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 
 /**
  *
@@ -11,10 +12,10 @@ public class Empaque implements Serializable {
     private int idEmpresa;
     private String cod_pro;
     private Producto producto;
-    //private Marca marca;
     private int piezas;
     private UnidadEmpaque unidadEmpaque;
     private SubEmpaque subEmpaque;
+    private ArrayList<SubEmpaque> subEmpaques;
     private String dun14;
     private double peso;
     private double volumen;
@@ -24,10 +25,10 @@ public class Empaque implements Serializable {
         this.idEmpresa=0;
         this.cod_pro="";
         this.producto=new Producto(0);
-        //this.marca=new Marca();
         this.piezas=0;
         this.unidadEmpaque=new UnidadEmpaque();
         this.subEmpaque=new SubEmpaque(0);
+        this.subEmpaques=new ArrayList<SubEmpaque>();
         this.dun14="";
         this.peso=0;
         this.volumen=0;
@@ -43,7 +44,12 @@ public class Empaque implements Serializable {
     public String toString() {
         String empaque=producto.toString();
         if(this.piezas > 1) {
-            empaque+=" " + this.unidadEmpaque.toString() + " x "+Integer.toString(this.piezas)+(this.subEmpaque==null?"":" "+this.subEmpaque.getUnidadEmpaque().getAbreviatura());
+            empaque+=" " + this.unidadEmpaque.toString()+" C/"+Integer.toString(this.piezas);
+            if(this.subEmpaque.getIdEmpaque()==0) {
+                empaque+="";
+            } else if(this.subEmpaque.getIdEmpaque()!=0) {
+                empaque+=" "+this.subEmpaque.getUnidadEmpaque().getAbreviatura()+" x "+Integer.toString(this.subEmpaque.getPiezas());
+            }
         }
         return empaque;
     }
@@ -149,13 +155,12 @@ public class Empaque implements Serializable {
     public void setVolumen(double volumen) {
         this.volumen = volumen;
     }
-    /*
-    public Marca getMarca() {
-        return marca;
+
+    public ArrayList<SubEmpaque> getSubEmpaques() {
+        return subEmpaques;
     }
 
-    public void setMarca(Marca marca) {
-        this.marca = marca;
+    public void setSubEmpaques(ArrayList<SubEmpaque> subEmpaques) {
+        this.subEmpaques = subEmpaques;
     }
-    * */
 }

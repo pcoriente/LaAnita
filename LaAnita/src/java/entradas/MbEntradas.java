@@ -24,7 +24,10 @@ import org.primefaces.context.RequestContext;
 import org.primefaces.event.SelectEvent;
 import productos.MbBuscarEmpaques;
 import productos.dao.DAOEmpaques;
+import productos.dao.DAOProductos;
 import productos.dominio.Empaque;
+import productos.dominio.Producto;
+import productos.to.TOEmpaque;
 import proveedores.dominio.MiniProveedor;
 import usuarios.MbAcciones;
 import usuarios.dominio.Accion;
@@ -183,6 +186,20 @@ public class MbEntradas implements Serializable {
             FacesContext.getCurrentInstance().addMessage(null, fMsg);
         }
     }
+    
+    private Empaque convertir(TOEmpaque to, Producto p) throws SQLException {
+        Empaque e=new Empaque();
+        e.setIdEmpaque(to.getIdEmpaque());
+        e.setCod_pro(to.getCod_pro());
+        e.setProducto(p);
+        e.setPiezas(to.getPiezas());
+        e.setUnidadEmpaque(to.getUnidadEmpaque());
+        e.setSubEmpaque(to.getSubEmpaque());
+        e.setDun14(to.getDun14());
+        e.setPeso(to.getPeso());
+        e.setVolumen(to.getVolumen());
+        return e;
+    }
 
     public void cargaDetalleOrdenCompra(SelectEvent event) {
         boolean ok = false;
@@ -192,6 +209,7 @@ public class MbEntradas implements Serializable {
         try {
             double unitario;
             this.dao = new DAOMovimientos();
+            
             this.daoImps = new DAOImpuestosProducto();
             this.daoEmpaques = new DAOEmpaques();
             idMovto = this.dao.buscarEntrada(this.entrada.getComprobante().getIdComprobante(), this.ordenCompra.getIdOrdenCompra());
@@ -229,7 +247,8 @@ public class MbEntradas implements Serializable {
                             prod.setCantOrdenada(d.getCantOrdenada() - d.getCantRecibida());
                             prod.setCantFacturada(0);
                         }
-                        prod.setEmpaque(this.daoEmpaques.obtenerEmpaque(d.getSku()));
+//                        prod.setEmpaque(convertir(this.daoEmpaques.obtenerEmpaque(d.getSku()),daoProds.obtenerProducto(d.getEmpaque().getProducto().getIdProducto())));
+                        prod.setEmpaque(d.getEmpaque());
                         this.entradaDetalle.add(prod);
                     }
                     TOMovimiento toMovimiento = convertirTO(this.entrada);
@@ -258,9 +277,12 @@ public class MbEntradas implements Serializable {
     }
 
     private void cargaDatosFactura(int idEntrada) throws NamingException, SQLException {
+        TOEmpaque to;
+        DAOProductos daoProds=new DAOProductos();
         this.entradaDetalle = this.dao.obtenerDetalleMovimiento(idEntrada);
         for (MovimientoProducto p : this.entradaDetalle) {
-            p.setEmpaque(this.daoEmpaques.obtenerEmpaque(p.getEmpaque().getIdEmpaque()));
+            to=this.daoEmpaques.obtenerEmpaque(p.getEmpaque().getIdEmpaque());
+            p.setEmpaque(convertir(to, daoProds.obtenerProducto(to.getIdProducto())));
             p.setImpuestos(this.daoImps.obtenerImpuestosProducto(idEntrada, p.getEmpaque().getIdEmpaque()));
         }
     }

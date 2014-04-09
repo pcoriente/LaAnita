@@ -596,11 +596,14 @@
                                 Seleccione un empaque
                             </f:facet>
                             
-                            <p:column id="epqSku" headerText="SKU" >
-                                <h:outputText value="#{epq.cod_pro}" />
+                            <p:column id="epqSku" headerText="SKU" width="80" >
+                                <h:outputText value="#{epq.cod_pro}" style="width: 80px;" />
                             </p:column>
-                            <p:column id="epqProducto" headerText="PRODUCTO" >
-                                <h:outputText value="#{epq.toString()}" />
+                            <p:column id="epqProducto" headerText="PRODUCTO" width="600" >
+                                <h:outputText value="#{epq.toString()}" style="width: 270px;" />
+                            </p:column >
+                            <p:column id="epqCombo" headerText="Combo" width="50" >
+                                <p:commandButton icon="ui-icon-check" disabled="#{frmProducto.mbEmpaque.empaque.subEmpaques.size()==0}" />
                             </p:column>
                             
                             <f:facet name="footer" >

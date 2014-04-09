@@ -1,7 +1,5 @@
 package movimientos;
 
-import almacenes.to.TOAlmacenJS;
-import cedis.dominio.MiniCedis;
 import entradas.MbComprobantes;
 import entradas.dao.DAOMovimientos;
 import entradas.dominio.Comprobante;
@@ -15,11 +13,13 @@ import java.util.ArrayList;
 import javax.faces.application.FacesMessage;
 import javax.faces.bean.ManagedProperty;
 import javax.faces.context.FacesContext;
-import javax.faces.model.SelectItem;
 import javax.naming.NamingException;
 import org.primefaces.event.SelectEvent;
-import productos.MbBuscarEmpaques;
 import productos.dao.DAOEmpaques;
+import productos.dao.DAOProductos;
+import productos.dominio.Empaque;
+import productos.dominio.Producto;
+import productos.to.TOEmpaque;
 import usuarios.MbAcciones;
 import usuarios.dominio.Accion;
 
@@ -68,6 +68,20 @@ public class MbEnvios implements Serializable {
         }
     }
     
+    private Empaque convertir(TOEmpaque to, Producto p) throws SQLException {
+        Empaque e=new Empaque();
+        e.setIdEmpaque(to.getIdEmpaque());
+        e.setCod_pro(to.getCod_pro());
+        e.setProducto(p);
+        e.setPiezas(to.getPiezas());
+        e.setUnidadEmpaque(to.getUnidadEmpaque());
+        e.setSubEmpaque(to.getSubEmpaque());
+        e.setDun14(to.getDun14());
+        e.setPeso(to.getPeso());
+        e.setVolumen(to.getVolumen());
+        return e;
+    }
+    
     public void cargaDetalleSolicitud(SelectEvent event) {
         this.mbComprobantes.setComprobante((Comprobante) event.getObject());
         
@@ -75,6 +89,7 @@ public class MbEnvios implements Serializable {
         FacesMessage fMsg = new FacesMessage(FacesMessage.SEVERITY_WARN, "Aviso:", "");
         try {
             this.dao=new DAOMovimientos();
+            DAOProductos daoProds=new DAOProductos();
             this.envio=this.dao.obtenerSolicitudTraspaso(this.mbComprobantes.getComprobante().getIdComprobante());
             this.envio.setIdAlmacen(this.mbComprobantes.getMbAlmacenes().getToAlmacen().getIdAlmacen());
             this.envio.setIdTipo(3);
@@ -82,7 +97,7 @@ public class MbEnvios implements Serializable {
             
             this.daoEmpaques=new DAOEmpaques();
             for(MovimientoProducto p: this.envioDetalle) {
-                p.setEmpaque(this.daoEmpaques.obtenerEmpaque(p.getEmpaque().getIdEmpaque()));
+                p.setEmpaque(convertir(this.daoEmpaques.obtenerEmpaque(p.getEmpaque().getIdEmpaque()),daoProds.obtenerProducto(p.getEmpaque().getProducto().getIdProducto())));
             }
             this.envioProducto=new MovimientoProducto();
             this.modoEdicion=true;

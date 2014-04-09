@@ -13,11 +13,16 @@ import org.primefaces.context.RequestContext;
 import productos.dao.DAOEmpaques;
 import productos.dao.DAOGrupos;
 import productos.dao.DAOPartes;
+import productos.dao.DAOProductos;
 import productos.dao.DAOSubGrupos;
 import productos.dominio.Empaque;
 import productos.dominio.Grupo;
 import productos.dominio.Parte2;
+import productos.dominio.Producto;
+import productos.dominio.SubEmpaque;
 import productos.dominio.SubGrupo;
+import productos.dominio.UnidadEmpaque;
+import productos.to.TOEmpaque;
 
 /**
  *
@@ -36,10 +41,24 @@ public class MbBuscarEmpaques implements Serializable {
     private SubGrupo subGrupo;
     private ArrayList<SelectItem> listaSubGrupos;
     private Empaque[] seleccionados;
-//    private EmpaqueDataModel empaquesModelo;
+    private DAOEmpaques dao;
     
     public MbBuscarEmpaques() {
         this.inicializa();
+    }
+    
+    private Empaque convertir(TOEmpaque to, Producto p) throws SQLException {
+        Empaque e=new Empaque();
+        e.setIdEmpaque(to.getIdEmpaque());
+        e.setCod_pro(to.getCod_pro());
+        e.setProducto(p);
+        e.setPiezas(to.getPiezas());
+        e.setUnidadEmpaque(to.getUnidadEmpaque());
+        e.setSubEmpaque(to.getSubEmpaque());
+        e.setDun14(to.getDun14());
+        e.setPeso(to.getPeso());
+        e.setVolumen(to.getVolumen());
+        return e;
     }
     
     public void buscarLista() {
@@ -47,26 +66,38 @@ public class MbBuscarEmpaques implements Serializable {
         RequestContext context = RequestContext.getCurrentInstance();
         FacesMessage fMsg = new FacesMessage(FacesMessage.SEVERITY_WARN, "Aviso:", "");
         try {
-            DAOEmpaques dao=new DAOEmpaques();
+            this.dao=new DAOEmpaques();
+            DAOProductos daoProds=new DAOProductos();
             if (this.tipoBuscar.equals("1")) {
-                this.producto=dao.obtenerEmpaque(this.strBuscar);
-                if (this.producto == null) {
+                TOEmpaque to=dao.obtenerEmpaque(this.strBuscar);
+                if (to == null) {
                     fMsg.setDetail("No se encontró producto con el SKU proporcionado");
                     FacesContext.getCurrentInstance().addMessage(null, fMsg);
                 } else {
+                    this.producto=this.convertir(to, daoProds.obtenerProducto(to.getIdProducto()));
                     ok = true;
                 }
-            } else if(this.tipoBuscar.equals("2")){
-                this.producto = null;
-                this.productos = dao.obtenerEmpaquesParte(this.parte.getIdParte());
-            } else if(this.tipoBuscar.equals("3")) {
-                this.producto = null;
-                this.productos = dao.obtenerEmpaquesDescripcion(this.strBuscar);
             } else {
-                this.producto = null;
-                this.productos = dao.obtenerEmpaquesClasificacion(this.grupo.getIdGrupo(), this.subGrupo.getIdSubGrupo());
-////                this.seleccionados=new Empaque[];
-//                this.empaquesModelo=new EmpaqueDataModel(productos);
+                Producto p=null;
+                int idProducto=0;
+                ArrayList<TOEmpaque> tos;
+                
+                this.producto=null;
+                this.productos=new ArrayList<Empaque>();
+                if(this.tipoBuscar.equals("2")){
+                    tos = dao.obtenerEmpaquesParte(this.parte.getIdParte());
+                } else if(this.tipoBuscar.equals("3")) {
+                    tos = dao.obtenerEmpaquesDescripcion(this.strBuscar);
+                } else {
+                    tos = dao.obtenerEmpaquesClasificacion(this.grupo.getIdGrupo(), this.subGrupo.getIdSubGrupo());
+                }
+                for(TOEmpaque to: tos) {
+                    if(to.getIdProducto()!=idProducto) {
+                        idProducto=to.getIdProducto();
+                        p=daoProds.obtenerProducto(idProducto);
+                    }
+                    this.productos.add(convertir(to, p));
+                }
             }
         } catch (NamingException ex) {
             fMsg.setSeverity(FacesMessage.SEVERITY_ERROR);
@@ -94,8 +125,8 @@ public class MbBuscarEmpaques implements Serializable {
         ArrayList<Parte2> partes = null;
         FacesMessage fMsg = new FacesMessage(FacesMessage.SEVERITY_WARN, "Aviso:", "");
         try {
-            DAOPartes dao = new DAOPartes();
-            partes = dao.completePartes(query);
+            DAOPartes daoPartes = new DAOPartes();
+            partes = daoPartes.completePartes(query);
             ok=true;
         } catch (NamingException ex) {
             fMsg.setSeverity(FacesMessage.SEVERITY_ERROR);
@@ -120,7 +151,6 @@ public class MbBuscarEmpaques implements Serializable {
         this.parte = new Parte2(0, "");
         this.productos = new ArrayList<Empaque>();
         this.seleccionados = new Empaque[]{};
-//        this.empaquesModelo=new EmpaqueDataModel(productos);
         this.cargaGrupos();
         this.cargaSubGrupos();
     }
@@ -266,12 +296,4 @@ public class MbBuscarEmpaques implements Serializable {
     public void setSeleccionados(Empaque[] seleccionados) {
         this.seleccionados = seleccionados;
     }
-
-//    public EmpaqueDataModel getEmpaquesModelo() {
-//        return empaquesModelo;
-//    }
-//
-//    public void setEmpaquesModelo(EmpaqueDataModel empaquesModelo) {
-//        this.empaquesModelo = empaquesModelo;
-//    }
 }

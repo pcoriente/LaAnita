@@ -5,20 +5,17 @@ package productos.dominio;
  * @author JULIOS
  */
 public class SubEmpaque {
-    //private int idEmpresa;
     private int idEmpaque;
     private int piezas;
     private UnidadEmpaque unidadEmpaque;
 
     public SubEmpaque(int idEmpaque) {
-        //this.idEmpresa = idEmpresa;
         this.idEmpaque = idEmpaque;
-        this.piezas=0;
+        this.piezas=1;
         this.unidadEmpaque=new UnidadEmpaque();
     }
 
     public SubEmpaque(int idEmpaque, int piezas, UnidadEmpaque unidadEmpaque) {
-        //this.idEmpresa = idEmpresa;
         this.idEmpaque = idEmpaque;
         this.piezas = piezas;
         this.unidadEmpaque = unidadEmpaque;
@@ -62,15 +59,7 @@ public class SubEmpaque {
     public void setIdEmpaque(int idEmpaque) {
         this.idEmpaque = idEmpaque;
     }
-    /*
-    public int getIdEmpresa() {
-        return idEmpresa;
-    }
-
-    public void setIdEmpresa(int idEmpresa) {
-        this.idEmpresa = idEmpresa;
-    }
-    * */
+    
     public int getPiezas() {
         return piezas;
     }

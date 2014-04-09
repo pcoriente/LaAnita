@@ -23,10 +23,14 @@ import productos.MbPresentacion;
 import productos.dao.DAOEmpaques;
 import productos.dao.DAOMarcas;
 import productos.dao.DAOPresentaciones;
+import productos.dao.DAOProductos;
 import productos.dao.DAOUnidadesEmpaque;
+import productos.dominio.Empaque;
 import productos.dominio.Marca;
 import productos.dominio.Presentacion;
+import productos.dominio.Producto;
 import productos.dominio.UnidadEmpaque;
+import productos.to.TOEmpaque;
 import proveedores.dao.DAOProveedoresProductos;
 import proveedores.dominio.ProveedorProducto;
 import unidadesMedida.DAOUnidadesMedida;
@@ -119,6 +123,20 @@ public class MbProveedorProducto implements Serializable {
         context.addCallbackParam("okProveedorProducto", resultado);
         return resultado;
     }
+    
+    private Empaque convertir(TOEmpaque to, Producto p) throws SQLException {
+        Empaque e=new Empaque();
+        e.setIdEmpaque(to.getIdEmpaque());
+        e.setCod_pro(to.getCod_pro());
+        e.setProducto(p);
+        e.setPiezas(to.getPiezas());
+        e.setUnidadEmpaque(to.getUnidadEmpaque());
+        e.setSubEmpaque(to.getSubEmpaque());
+        e.setDun14(to.getDun14());
+        e.setPeso(to.getPeso());
+        e.setVolumen(to.getVolumen());
+        return e;
+    }
 
     public ArrayList<ProveedorProducto> obtenerProductos(int idProveedor) {
         boolean resultado=false;
@@ -126,13 +144,14 @@ public class MbProveedorProducto implements Serializable {
         ArrayList<ProveedorProducto> productos=new ArrayList<ProveedorProducto>();
         try {
             int idEmpaque;
+            DAOProductos daoProds=new DAOProductos();
             this.dao = new DAOProveedoresProductos();
             productos = this.dao.obtenerProductos(idProveedor);
             DAOEmpaques daoEpq=new DAOEmpaques();
             for(ProveedorProducto pp: productos) {
                 idEmpaque=pp.getEquivalencia().getIdEmpaque();
                 if(idEmpaque!=0) {
-                    pp.setEquivalencia(daoEpq.obtenerEmpaque(idEmpaque));
+                    pp.setEquivalencia(convertir(daoEpq.obtenerEmpaque(idEmpaque),daoProds.obtenerProducto(idProveedor)));
                 }
             }
             resultado=true;

@@ -13,6 +13,7 @@ import javax.naming.NamingException;
 import org.primefaces.context.RequestContext;
 import productos.dao.DAOEmpaques;
 import productos.dao.DAOMarcas;
+import productos.dao.DAOProductos;
 import productos.dao.DAOUnidadesEmpaque;
 import productos.dominio.Empaque;
 import productos.dominio.Marca;
@@ -20,6 +21,7 @@ import productos.dominio.Producto;
 import productos.dominio.SubEmpaque;
 import productos.dominio.UnidadEmpaque;
 import productos.dominio.Upc;
+import productos.to.TOEmpaque;
 
 /**
  *
@@ -28,13 +30,10 @@ import productos.dominio.Upc;
 @ManagedBean(name = "mbEmpaque")
 @SessionScoped
 public class MbEmpaque implements Serializable {
-
-    //private boolean ok;
     private String cod_emp;
     private Empaque empaque;
     private Empaque selEpq;
     private ArrayList<Empaque> empaques;
-    
     
     @ManagedProperty(value = "#{mbUnidadEmpaque}")
     private MbUnidadEmpaque mbUnidadEmpaque;
@@ -42,23 +41,13 @@ public class MbEmpaque implements Serializable {
     private ArrayList<SelectItem> listaUpcs;
     private ArrayList<SelectItem> listaUnidades;
     private ArrayList<SelectItem> listaSubEmpaques;
-    //private boolean old;
     private DAOEmpaques dao;
+    private DAOProductos daoProds;
 
     public MbEmpaque() {
-        //try {
-        //this.mbProducto = new MbProducto();
-        //this.mbBuscar = new MbBuscarProd();
-        //this.mbMarca = new MbMarca();
         this.mbUnidadEmpaque = new MbUnidadEmpaque();
         this.empaque = new Empaque(0);
-        //this.old=false;
         this.cod_emp = "";    // Sirve para el traspaso en la captura de catalogo viejo a nuevo.
-        //this.ok = true;
-        //this.dao = new DAOEmpaques();
-        //} catch (NamingException ex) {
-        //    Logger.getLogger(DAOEmpaques.class.getName()).log(Level.SEVERE, null, ex);
-        //}
     }
     
     public void nuevoEmpaque(Producto producto) {
@@ -69,8 +58,6 @@ public class MbEmpaque implements Serializable {
     public String salir() {
         String destino = "productosOld.menu";
         this.empaque = new Empaque(0);
-        //this.mbProducto = new MbProducto();
-        //this.mbMarca = new MbMarca();
         this.mbUnidadEmpaque = new MbUnidadEmpaque();
         return destino;
     }
@@ -111,7 +98,7 @@ public class MbEmpaque implements Serializable {
 
         try {
             this.dao = new DAOEmpaques();
-            ArrayList<SubEmpaque> lstSubEmpaques = dao.obtenerListaSubEmpaques(this.empaque.getProducto().getIdProducto(), this.empaque.getPiezas());
+            ArrayList<SubEmpaque> lstSubEmpaques = dao.obtenerListaSubEmpaques(this.empaque.getProducto().getIdProducto());
             for (SubEmpaque u : lstSubEmpaques) {
                 if (u.getIdEmpaque() != this.empaque.getIdEmpaque()) {
                     listaSubEmpaques.add(new SelectItem(u, u.toString()));
@@ -168,8 +155,6 @@ public class MbEmpaque implements Serializable {
             fMsg.setDetail("Se requiere una parte !!");
         } else if (this.empaque.getProducto() == null || this.empaque.getProducto().getIdProducto() == 0) {
             fMsg.setDetail("Se requiere un producto !!");
-        //} else if (this.empaque.getMarca() == null || this.empaque.getMarca().getIdMarca() == 0) {
-        //    fMsg.setDetail("Se requiere una marca !!");
         } else if (this.empaque.getUnidadEmpaque() == null || this.empaque.getUnidadEmpaque().getIdUnidad() == 0) {
             fMsg.setDetail("Se requiere la unidad de empaque !!");
         } else if (this.empaque.getPiezas() <= 0) {
@@ -208,6 +193,20 @@ public class MbEmpaque implements Serializable {
         Producto prod = new Producto(0);
         this.empaque.setProducto(prod);
     }
+    
+    private Empaque convertir(TOEmpaque to, Producto p) {
+        Empaque e=new Empaque();
+        e.setIdEmpaque(to.getIdEmpaque());
+        e.setCod_pro(to.getCod_pro());
+        e.setProducto(p);
+        e.setPiezas(to.getPiezas());
+        e.setUnidadEmpaque(to.getUnidadEmpaque());
+        e.setSubEmpaque(to.getSubEmpaque());
+        e.setDun14(to.getDun14());
+        e.setPeso(to.getPeso());
+        e.setVolumen(to.getVolumen());
+        return e;
+    }
 
     public Empaque obtenerEmpaque(String cod_pro) {
         boolean oki=false;
@@ -215,7 +214,9 @@ public class MbEmpaque implements Serializable {
         Empaque epq = null;
         try {
             this.dao=new DAOEmpaques();
-            epq = this.dao.obtenerEmpaque(cod_pro);
+            this.daoProds=new DAOProductos();
+            TOEmpaque to=this.dao.obtenerEmpaque(cod_pro);
+            epq=convertir(to, this.daoProds.obtenerProducto(to.getIdProducto()));
             oki=true;
         } catch (NamingException ex) {
             fMsg.setSeverity(FacesMessage.SEVERITY_ERROR);
@@ -235,11 +236,15 @@ public class MbEmpaque implements Serializable {
         FacesMessage fMsg = new FacesMessage(FacesMessage.SEVERITY_WARN, "Aviso:", "");
         RequestContext context = RequestContext.getCurrentInstance();
         try {
-            this.dao=new DAOEmpaques();
             if(this.empaque.getProducto().getIdProducto()==0) {
                 fMsg.setDetail("Se requiere tener un producto");
             } else {
-                this.empaques=this.dao.obtenerEmpaques(this.empaque.getProducto().getIdProducto());
+                this.dao=new DAOEmpaques();
+                this.daoProds=new DAOProductos();
+                Producto p=this.daoProds.obtenerProducto(this.empaque.getProducto().getIdProducto());
+                for(TOEmpaque to:this.dao.obtenerEmpaques(this.empaque.getProducto().getIdProducto())) {
+                    this.empaques.add(this.convertir(to, p));
+                }
                 if(this.empaques.isEmpty()) {
                     fMsg.setDetail("No se encontraron empaques con el producto seleccionado");
                 } else {
@@ -306,24 +311,7 @@ public class MbEmpaque implements Serializable {
     public void setEmpaque(Empaque empaque) {
         this.empaque = empaque;
     }
-    /*
-    public ArrayList<Empaque> getEmpaques() {
-        return empaques;
-    }
-
-    public void setEmpaques(ArrayList<Empaque> empaques) {
-        this.empaques = empaques;
-    }
-    * */
-    /*
-    public MbProducto getMbProducto() {
-        return mbProducto;
-    }
-
-    public void setMbProducto(MbProducto mbProducto) {
-        this.mbProducto = mbProducto;
-    }
-    */
+    
     public ArrayList<SelectItem> getListaUnidades() {
         if (this.listaUnidades == null) {
             this.cargaUnidadesEmpaque();
@@ -345,32 +333,6 @@ public class MbEmpaque implements Serializable {
     public void setListaSubEmpaques(ArrayList<SelectItem> listaSubEmpaques) {
         this.listaSubEmpaques = listaSubEmpaques;
     }
-    /*
-    public MbBuscarProd getMbBuscarProd() {
-        return mbBuscarProd;
-    }
-
-    public void setMbBuscarProd(MbBuscarProd mbBuscarProd) {
-        this.mbBuscarProd = mbBuscarProd;
-    }
-    * */
-    /*
-    public boolean isOk() {
-        return ok;
-    }
-
-    public void setOk(boolean ok) {
-        this.ok = ok;
-    }
-    
-     public boolean isOld() {
-        return old;
-     }
-
-     public void setOld(boolean old) {
-        this.old = old;
-     }
-     * */
 
     public String getCod_emp() {
         return cod_emp;

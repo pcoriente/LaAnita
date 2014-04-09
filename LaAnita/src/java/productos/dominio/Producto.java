@@ -48,8 +48,8 @@ public class Producto implements Serializable {
         return (this.marca==null || this.marca.getIdMarca()==0 ? "" : this.marca.toString()+" ")
                 + this.parte + (this.descripcion.equals("") ? "" : " "+this.descripcion) 
                 + (this.presentacion==null || this.presentacion.getIdPresentacion()==1 ? "" : " " + this.presentacion.getAbreviatura()) 
-                + (this.contenido == 0 ? "" : " " + Double.toString(this.contenido))
-                + (this.contenido == 0 || this.unidadMedida == null ? "" : " " + this.unidadMedida.getAbreviatura());
+                + (this.contenido < 2 ? "" : " " + Double.toString(this.contenido))
+                + (this.contenido < 2 || this.unidadMedida == null ? "" : " " + this.unidadMedida.getAbreviatura());
     }
 
     public int getIdProducto() {
