@@ -77,7 +77,7 @@ public class MbRequisiciones implements Serializable {
     //  DAORequisiciones daoReq;
     private String navega;
 
-    //GETS Y SETS
+    //CONSTRUCTOR
     public MbRequisiciones() throws NamingException {
         this.mbMiniEmpresa = new MbMiniEmpresa();
         this.mbDepto = new MbDepto();
@@ -85,7 +85,8 @@ public class MbRequisiciones implements Serializable {
         this.mbMiniProveedor = new MbMiniProveedor();
         this.mbMonedas = new MbMonedas();
         this.mbBuscar = new MbBuscarEmpaques();
-        //  this.daoReq = new DAORequisiciones();
+
+
     }
 
     //GET Y SETS REQUISICIONES
@@ -799,7 +800,15 @@ public class MbRequisiciones implements Serializable {
         }
     }
 
+    public void actualizaProductosSeleccionados() {
+        for (Empaque e : this.mbBuscar.getSeleccionados()) {
+            this.mbBuscar.setProducto(e);
+            this.actualizaProductoSeleccionado();
+        }
+    }
+
     public void actualizaProductoSeleccionado() {
+          FacesMessage msg = null;
         boolean nuevo = true;
         RequisicionDetalle rd = new RequisicionDetalle();
         int idEmp = this.mbBuscar.getProducto().getIdEmpaque();
@@ -808,17 +817,17 @@ public class MbRequisiciones implements Serializable {
             if (p.getEmpaque().getIdEmpaque() == idEmp) {
                 System.out.println("somos iguales");
                 nuevo = false;
+                 msg = new FacesMessage(FacesMessage.SEVERITY_INFO, "Aviso:", "Ya existe el producto..");
                 break;
             }
         }
         if (nuevo) {
             this.requisicionDetalles.add(rd);
-
         }
+        FacesContext.getCurrentInstance().addMessage(null, msg);
     }
 
     public void cerrarCotizacion(int idReq) throws SQLException {
-
         FacesMessage msg = null;
         try {
             if (numCotizacion == 0) {
@@ -832,7 +841,6 @@ public class MbRequisiciones implements Serializable {
                 mbMiniProveedor.getMiniProveedor().setIdProveedor(0);
                 mbMonedas.getMoneda().setIdMoneda(0);
             }
-
         } catch (NamingException ex) {
             Logger.getLogger(MbRequisiciones.class.getName()).log(Level.SEVERE, null, ex);
             msg = new FacesMessage(FacesMessage.SEVERITY_INFO, "Aviso:", "Error en la aprobación, verifique su información...");

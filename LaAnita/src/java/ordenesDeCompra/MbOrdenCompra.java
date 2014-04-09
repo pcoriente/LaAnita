@@ -45,11 +45,14 @@ import ordenesDeCompra.dominio.OrdenCompraEncabezado;
 import ordenesDeCompra.dominio.OrdenCompraDetalle;
 import ordenesDeCompra.dominio.TotalesOrdenCompra;
 import org.primefaces.event.SelectEvent;
+import productos.FrmProducto;
 import productos.MbBuscarEmpaques;
+import productos.dao.DAOEmpaques;
 import productos.dominio.Empaque;
 import proveedores.MbMiniProveedor;
 import proveedores.dao.DAOProveedores;
 import proveedores.dominio.Proveedor;
+import requisiciones.dominio.RequisicionDetalle;
 
 @Named(value = "mbOrdenCompra")
 @SessionScoped
@@ -123,7 +126,7 @@ public class MbOrdenCompra implements Serializable {
 
     //M E T O D O S  ////////////////////////////////////////////////////////////////////////////////////////////
     public void cargaOrdenesEncabezado() throws NamingException, SQLException {
-        this.listaOrdenesEncabezado = new ArrayList<OrdenCompraEncabezado>();
+        listaOrdenesEncabezado = new ArrayList<OrdenCompraEncabezado>();
         DAOOrdenDeCompra daoOC = new DAOOrdenDeCompra();
         ArrayList<OrdenCompraEncabezado> lista = daoOC.listaOrdenes();
         for (OrdenCompraEncabezado d : lista) {
@@ -141,7 +144,6 @@ public class MbOrdenCompra implements Serializable {
     }
 
     public void dameEmpaqueSeleccionado() {
-//         listaEmpaque.add(mbBuscar.getProducto());
         Boolean ok = false;
         FacesMessage fMsg = new FacesMessage(FacesMessage.SEVERITY_WARN, "Aviso:", null);
         boolean verifi = verificacion(mbBuscar.getProducto());
@@ -577,12 +579,15 @@ public class MbOrdenCompra implements Serializable {
         Matcher matcher = pattern.matcher(email);
         validar = matcher.matches();
         return validar;
-        
-        
+
+
     }
 
-    public void buscar() {
+    public void buscar() throws NamingException, SQLException {
         this.mbBuscar.buscarLista();
+        if (this.mbBuscar.getProducto() != null) {
+            this.dameEmpaqueSeleccionado();
+        }
     }
 
     public void cargaDatosProveedor() throws NamingException {
@@ -656,13 +661,12 @@ public class MbOrdenCompra implements Serializable {
     }
 
     public ArrayList<OrdenCompraEncabezado> getListaOrdenesEncabezado() throws NamingException {
-        if (listaOrdenesEncabezado == null) {
-            try {
+        try {
+            if (listaOrdenesEncabezado == null) {
                 this.cargaOrdenesEncabezado();
-            } catch (SQLException ex) {
-                Logger.getLogger(MbOrdenCompra.class
-                        .getName()).log(Level.SEVERE, null, ex);
             }
+        } catch (SQLException ex) {
+            Logger.getLogger(MbOrdenCompra.class.getName()).log(Level.SEVERE, null, ex);
         }
         return listaOrdenesEncabezado;
     }
