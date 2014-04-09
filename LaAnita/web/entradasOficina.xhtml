@@ -29,7 +29,7 @@
                                         <f:converter converterId="converters.MiniCedis" />
                                         <f:selectItems value="#{mbEntradas.mbComprobantes.mbAlmacenes.mbCedis.listaMiniCedis}" />
                                         <p:ajax event="change" listener="#{mbEntradas.mbComprobantes.cargaAlmacenes()}" 
-                                                update=":main:msgs almacen" />
+                                                update=":main:msgs almacen cmbComprobante" />
                                     </p:selectOneMenu>
                                 </p:column>
                                 <p:column colspan="2" >
@@ -44,7 +44,7 @@
                                     <p:selectOneMenu id="almacen" value="#{mbEntradas.mbComprobantes.mbAlmacenes.toAlmacen}" style="width: 450px;" >
                                         <f:converter converterId="converters.TOAlmacenJSConverter" />
                                         <f:selectItems value="#{mbEntradas.mbComprobantes.mbAlmacenes.listaAlmacenes}" />
-                                        <p:ajax event="change" listener="#{mbEntradas.cargaListaComprobantes()}" 
+                                        <p:ajax event="change" listener="#{mbEntradas.mbComprobantes.cargaListaComprobantes()}" 
                                                 update=":main:msgs cmbComprobante" />
                                     </p:selectOneMenu>
                                 </p:column>
@@ -66,7 +66,7 @@
                                                      filter="true" filterMatchMode="contains" >
                                         <f:converter converterId="converters.miniProveedor" />
                                         <f:selectItems value="#{mbEntradas.mbComprobantes.mbProveedores.listaMiniProveedores}" />
-                                        <p:ajax event="change" listener="#{mbEntradas.cargaListaComprobantes()}" 
+                                        <p:ajax event="change" listener="#{mbEntradas.mbComprobantes.cargaListaComprobantes()}" 
                                                 update=":main:msgs cmbComprobante" />
                                     </p:selectOneMenu>
                                 </p:column>
@@ -88,15 +88,19 @@
                                                      filter="true" filterMatchMode="contains" style="width: 220px;" >
                                         <f:converter converterId="converters.ComprobanteConverter" />
                                         <f:selectItems value="#{mbEntradas.mbComprobantes.listaComprobantes}" />
-                                        <p:ajax event="change" update="btnMttoComprobante lnkEditarComprobante" />
+                                        <p:ajax event="change" update="btnMttoComprobante lnkEditarComprobante btnCancelarMovimiento" />
                                     </p:selectOneMenu>
                                 </p:column>
                                 <p:column style="width: 310px;" >
                                     <p:commandButton id="btnMttoComprobante" icon="ui-icon-pencil" title="Mantenimiento de Facturas" 
                                                      disabled="#{mbEntradas.mbComprobantes.toComprobante.cerradaOficina}"
-                                                     actionListener="#{mbEntradas.mttoComprobanteOficina()}" process="@this" 
+                                                     actionListener="#{mbEntradas.mbComprobantes.mttoComprobanteOficina()}" process="@this" 
                                                      oncomplete="handleAbrirMttoComprobanteDlg(xhr, status, args);" 
                                                      update=":main:msgs mttoComprobanteDlg" />
+                                    <p:commandButton id="btnCancelarMovimiento" icon="ui-icon-cancel" title="Cancelacion de Movimiento" 
+                                                     actionListener="#{mbEntradas.obtenerEntradas()}" process="@this"
+                                                     oncomplete="handleAbrirListaEntradasDlg(xhr,status,args);" 
+                                                     update=":main:msgs :main:listaEntradas" />
                                     <p:commandButton id="btnImprimirFactura" icon="ui-icon-print" title="Imprimir Factura" />
                                 </p:column>
                                 <p:column colspan="2" style="text-align: right;" >
@@ -326,6 +330,68 @@
                             </p:row>
                         </p:panelGrid>
                     </p:panel>
+                    <p:dialog header="LISTA DE ENTRADAS" widgetVar="abrirListaEntradasDlg" resizable="false" style="width: 250px;" modal="true" >
+                        <p:dataTable id="listaEntradas" widgetVar="listaEntradas" value="#{mbEntradas.entradas}" style="border:solid 1px"
+                                     var="e" rowKey="#{e.idEntrada}" selection="#{mbEntradas.selEntrada}" selectionMode="single" 
+                                     emptyMessage="No hay elementos que desplegar" scrollable="true" scrollHeight="220" >
+                            <p:column headerText="OC" style="width: 80px;" >
+                                <h:outputText value="#{e.idOrdenCompra}" style="width: 60px;" />
+                            </p:column>
+                            <p:column headerText="Folio" style="width: 80px;" >
+                                <h:outputText value="#{e.folio}" />
+                            </p:column>
+                            <p:column headerText="Fecha Factura" style="width: 85px;" >
+                                <h:outputText value="#{e.comprobante.fecha}" >
+                                    <f:convertDateTime pattern="dd/MM/yyyy" />
+                                </h:outputText>
+                            </p:column>
+                            <p:column headerText="Capturada" style="width: 85px;" >
+                                <h:outputText value="#{e.fecha}" >
+                                    <f:convertDateTime pattern="dd/MM/yyyy" />
+                                </h:outputText>
+                            </p:column>
+                            <f:facet name="footer">
+                                <p:commandButton id="verEntrada" value="Ver" 
+                                                 actionListener="#{mbEntradas.cargaFactura()}"
+                                                 update=":main:msgs :main:verDetalleEntrada" 
+                                                 oncomplete="handleVerDetalleEntradaDlg(xhr, status, args);" />
+                                <p:commandButton id="cancelEntrada" value="Cancelar" update=":main:msgs"
+                                                 actionListener="#{mbEntradas.cancelarEntrada()}"
+                                                 oncomplete="abrirListaEntradasDlg.hide();" />
+                            </f:facet>
+                        </p:dataTable>
+                    </p:dialog>
+                    <p:dialog header="DETALLE ENTRADA" widgetVar="verDetalleEntradaDlg" resizable="false" modal="true" >
+                        <p:dataTable id="verDetalleEntrada" value="#{mbEntradas.entradaDetalle}" var="prod" style="border: solid 1px;" scrollable="true" scrollHeight="220" >
+                            <p:column headerText="SKU" style="width: 80px;" >
+                                <h:outputText value="#{prod.empaque.cod_pro}" style="width: 75px;" />
+                            </p:column>
+                            <p:column headerText="Producto" style="width: 275px;" >
+                                <h:outputText value="#{prod.empaque.toString()}" style="width: 270px;" />
+                            </p:column>
+                            <p:column headerText="Facturada" style="width: 80px;" >
+                                <h:outputText value="#{prod.cantFacturada}" style="width: 75px;" />
+                            </p:column>
+                            <p:column headerText="Sin Cargo" style="width: 80px;" >
+                                <h:outputText value="#{prod.cantSinCargo}" style="width: 75px;" />
+                            </p:column>
+                            <p:column headerText="P.Lista" style="width: 80px;" >
+                                <h:outputText value="#{prod.precio}" style="width: 75px;" />
+                            </p:column>
+                            <p:column headerText="(%)Descto1" style="width: 90px;" >
+                                <h:outputText value="#{prod.desctoProducto1}" style="width: 75px;" />
+                            </p:column>
+                            <p:column headerText="(%)Descto2" style="width: 90px;" >
+                                <h:outputText value="#{prod.desctoProducto2}" style="width: 75px;" />
+                            </p:column>
+                            <p:column headerText="(%)Descto3" style="width: 90px;" >
+                                <h:outputText value="#{prod.desctoConfidencial}" style="width: 75px;" />
+                            </p:column>
+                            <p:column headerText="P.Neto" style="width: 80px;" >
+                                <h:outputText value="#{prod.neto}" style="width: 75px;" />
+                            </p:column>
+                        </p:dataTable>
+                    </p:dialog>
                     <p:dialog header="BUSCADOR DE PRODUCTOS" widgetVar="buscarProductoDlg" resizable="false" style="width: 600px;" modal="true" >
                         <p:messages id="msgBuscar" showDetail="true" autoUpdate="true" closable="true" />
                         <p:panelGrid id="buscarProductos" styleClass="sinBorde" >
@@ -473,6 +539,16 @@
                     </p:dialog>
                 </h:form>
                 <script type="text/javascript">
+                    function handleVerDetalleEntradaDlg(xhr, status, args) {
+                        if (!(args.validationFailed || !args.okBuscar)) {
+                            verDetalleEntradaDlg.show();
+                        }
+                    }
+                    function handleAbrirListaEntradasDlg(xhr, status, args) {
+                        if (!(args.validationFailed || !args.okBuscar)) {
+                            abrirListaEntradasDlg.show();
+                        }
+                    }
                     function handleBuscar(xhr, status, args) {
                         if (!(args.validationFailed || !args.okBuscar)) {
                             buscarProductoDlg.hide();

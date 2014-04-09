@@ -129,6 +129,37 @@ public class MbEmpaque implements Serializable {
             FacesContext.getCurrentInstance().addMessage(null, fMsg);
         }
     }
+    
+    public void eliminar() {
+        boolean ok=false;
+        RequestContext context = RequestContext.getCurrentInstance();
+        FacesMessage fMsg = new FacesMessage(FacesMessage.SEVERITY_WARN, "Aviso:", "");
+        try {
+            this.dao=new DAOEmpaques();
+            if(this.dao.eliminar(this.empaque.getIdEmpaque())) {
+                fMsg.setDetail("El empaque se ha eliminado con exito");
+                this.empaque.setIdEmpaque(0);
+                this.empaque.setCod_pro("");
+                this.empaque.setDun14("");
+                this.empaque.setPeso(0);
+                this.empaque.setPiezas(1);
+                this.empaque.setSubEmpaque(new SubEmpaque(0));
+                this.empaque.setUnidadEmpaque(new UnidadEmpaque());
+                this.empaque.setVolumen(0);
+                ok=true;
+            } else {
+                fMsg.setDetail("El empaque no se puede eliminar, esta contenido en otro empaque !!!");
+            }
+        } catch (NamingException ex) {
+            fMsg.setSeverity(FacesMessage.SEVERITY_ERROR);
+            fMsg.setDetail(ex.getMessage());
+        } catch (SQLException ex) {
+            fMsg.setSeverity(FacesMessage.SEVERITY_ERROR);
+            fMsg.setDetail(ex.getErrorCode() + " " + ex.getMessage());
+        }
+        FacesContext.getCurrentInstance().addMessage(null, fMsg);
+        context.addCallbackParam("okBuscar", ok);
+    }
 
     public void grabar() {
         FacesMessage fMsg = new FacesMessage(FacesMessage.SEVERITY_WARN, "Aviso:", "");

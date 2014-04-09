@@ -39,6 +39,34 @@ public class DAOEmpaques {
         }
     }
     
+    public boolean eliminar(int idEmpaque) throws SQLException {
+        ResultSet rs;
+        String strSQL;
+        boolean ok=true;
+        
+        Connection cn=this.ds.getConnection();
+        Statement st=cn.createStatement();
+        try {
+            st.executeUpdate("BEGIN TRANSACTION");
+            
+            strSQL="SELECT * FROM empaques WHERE idSubEmpaque="+idEmpaque;
+            rs=st.executeQuery(strSQL);
+            if(rs.next()) {
+                ok=false;
+            } else {
+                strSQL="DELETE FROM empaques WHERE idEmpaque="+idEmpaque;
+                st.executeUpdate(strSQL);
+            }
+            st.executeUpdate("COMMIT TRANSACTION");
+        } catch(SQLException ex) {
+            st.executeUpdate("ROLLBACK TRANSACTION");
+            throw(ex);
+        } finally {
+            cn.close();
+        }
+        return ok;
+    }
+    
     public void modificar(String cod_emp, Empaque e) throws SQLException {
         Connection cn=this.ds.getConnection();
         Statement st=cn.createStatement();
@@ -68,7 +96,7 @@ public class DAOEmpaques {
     
     public int agregar(String cod_emp, Empaque empaque) throws SQLException {
         int idEmpaque=0;
-        String strSQL="INSERT INTO empaques (cod_pro, idProducto, idMarca, piezas, idUnidadEmpaque, idSubEmpaque, dun14, peso, volumen) "
+        String strSQL="INSERT INTO empaques (cod_pro, idProducto, piezas, idUnidadEmpaque, idSubEmpaque, dun14, peso, volumen) "
                 + "VALUES ('"+empaque.getCod_pro() + "', " + empaque.getProducto().getIdProducto() + ", "
                 + " "+empaque.getPiezas() + ", " + empaque.getUnidadEmpaque().getIdUnidad() + ", " + empaque.getSubEmpaque().getIdEmpaque() + ","
                 + " '"+empaque.getDun14() + "', " + empaque.getPeso() + ", " + empaque.getVolumen() + ")";

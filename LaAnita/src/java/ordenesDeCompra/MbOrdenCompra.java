@@ -184,6 +184,35 @@ public class MbOrdenCompra implements Serializable {
         mbBuscar.setStrBuscar("");
         mbBuscar.setProductos(null);
     }
+    
+    public boolean aseguraOrdenCompra(int idOrdenCompra) {
+        int propietario=0;
+        boolean ok = false;
+        FacesMessage fMsg = new FacesMessage(FacesMessage.SEVERITY_WARN, "Aviso:", "");
+        try {
+            DAOOrdenDeCompra dao=new DAOOrdenDeCompra();
+            propietario=dao.aseguraOrdenCompra(idOrdenCompra);
+            if(propietario==dao.obtenerIdUsuario()) {
+                ok=true;
+            } else if(propietario==0) {
+                fMsg.setSeverity(FacesMessage.SEVERITY_WARN);
+                fMsg.setDetail("No se encontro la orden de compra");
+            } else {
+                fMsg.setSeverity(FacesMessage.SEVERITY_WARN);
+                fMsg.setDetail("La orden de compra esta siendo procesada por otro usuario("+propietario+")");
+            }
+        } catch (SQLException ex) {
+            fMsg.setSeverity(FacesMessage.SEVERITY_ERROR);
+            fMsg.setDetail(ex.getErrorCode() + " " + ex.getMessage());
+        } catch (NamingException ex) {
+            fMsg.setSeverity(FacesMessage.SEVERITY_ERROR);
+            fMsg.setDetail(ex.getMessage());
+        }
+        if (!ok) {
+            FacesContext.getCurrentInstance().addMessage(null, fMsg);
+        }
+        return ok;
+    }
 
     public void obtenerDetalleOrdenCompra() throws SQLException {
         listaOrdenDetalle = new ArrayList<OrdenCompraDetalle>();

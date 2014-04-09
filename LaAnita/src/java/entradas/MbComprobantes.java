@@ -47,23 +47,19 @@ public class MbComprobantes implements Serializable {
         this.mbProveedores=new MbMiniProveedor();
     }
     
-    public void mttoComprobante() {
-//        boolean ok = false;
-//        RequestContext context = RequestContext.getCurrentInstance();
-//        if(this.validaComprobante()) {
-//            if(this.toComprobante.getIdComprobante()==0) {
-//                this.inicializa();
-//            } else {
-//                this.respalda();
-//            }
-//            ok=true;
-//        }
-//        context.addCallbackParam("okComprobante", ok);
-        if(this.toComprobante.getIdComprobante()==0) {
-            this.inicializa();
-        } else {
-            this.respalda();
+    public void mttoComprobanteOficina() {
+        boolean ok = false;
+        RequestContext context = RequestContext.getCurrentInstance();
+        if(this.validaComprobante()) {
+            this.setTipoComprobante(1);
+            if(this.toComprobante.getIdComprobante()==0) {
+                this.inicializa();
+            } else {
+                this.respalda();
+            }
+            ok=true;
         }
+        context.addCallbackParam("okComprobante", ok);
     }
     
     public boolean validaComprobante() {
@@ -84,9 +80,9 @@ public class MbComprobantes implements Serializable {
     
     public void cargaAlmacenes() {
         this.mbAlmacenes.cargaAlmacenes();
-        this.mbProveedores.getMiniProveedor().setIdProveedor(0);
-        this.tipoComprobante=0;
-        this.listaComprobantes=null;
+        this.cargaListaComprobantes();
+//        this.tipoComprobante=0;
+//        this.listaComprobantes=null;
     }
     
     private void inicializa() {
@@ -298,27 +294,39 @@ public class MbComprobantes implements Serializable {
         context.addCallbackParam("okComprobante", ok);
     }
     
-    public boolean validaComprobante1x() {
-        boolean ok = false;
-        FacesMessage fMsg = new FacesMessage(FacesMessage.SEVERITY_WARN, "Aviso:", "validaComprobante");
-        if(this.mbAlmacenes.getToAlmacen().getIdAlmacen()==0) {
-            fMsg.setDetail("Se requiere tener seleccionado un almacen");
-        } else if(this.mbProveedores.getMiniProveedor().getIdProveedor()==0) {
-            fMsg.setDetail("Se requiere tener seleccionado un proveedor");
-        } else if(this.tipoComprobante==0) {
-            fMsg.setDetail("Se requiere tener seleccionado un tipo de comprobante");
-        } else {
-            ok=true;
-        }
-        if(!ok) {
-            FacesContext.getCurrentInstance().addMessage(null, fMsg);
-        }
-        return ok;
-    }
+//    public boolean validaComprobante1x() {
+//        boolean ok = false;
+//        FacesMessage fMsg = new FacesMessage(FacesMessage.SEVERITY_WARN, "Aviso:", "validaComprobante");
+//        if(this.mbAlmacenes.getToAlmacen().getIdAlmacen()==0) {
+//            fMsg.setDetail("Se requiere tener seleccionado un almacen");
+//        } else if(this.mbProveedores.getMiniProveedor().getIdProveedor()==0) {
+//            fMsg.setDetail("Se requiere tener seleccionado un proveedor");
+//        } else if(this.tipoComprobante==0) {
+//            fMsg.setDetail("Se requiere tener seleccionado un tipo de comprobante");
+//        } else {
+//            ok=true;
+//        }
+//        if(!ok) {
+//            FacesContext.getCurrentInstance().addMessage(null, fMsg);
+//        }
+//        return ok;
+//    }
     
     public void cargaListaComprobantes() {
-        this.obtenerListaComprobantes();
-        this.toComprobante=(TOComprobante)this.listaComprobantes.get(0).getValue();
+        if(this.validaComprobante()) {
+            this.setTipoComprobante(1);
+            this.obtenerListaComprobantes();
+            this.toComprobante=(TOComprobante)this.listaComprobantes.get(0).getValue();
+        } else {
+            if(this.listaComprobantes==null) {
+                this.listaComprobantes=new ArrayList<SelectItem>();
+            } else {
+                this.listaComprobantes.clear();
+            }
+            this.toComprobante = new TOComprobante(this.mbAlmacenes.getToAlmacen().getIdAlmacen(), this.mbProveedores.getMiniProveedor().getIdProveedor(), this.tipoComprobante);
+            this.toComprobante.setNumero("Seleccione");
+            this.listaComprobantes.add(new SelectItem(this.toComprobante, this.toComprobante.toString()));
+        }
     }
     
     public Comprobante obtenerComprobante(int idComprobante) {

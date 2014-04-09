@@ -33,9 +33,9 @@ public class FrmProducto implements Serializable {
         this.mbProducto.setProducto(this.mbBuscarProd.obtenerSeleccionado());
         this.mbProducto.cargaListaUpcs();
         if(!this.mbProducto.getProducto().getUpcs().isEmpty()) {
-            //Upc upc=this.mbProducto.getProducto().getUpcs().get(0);
             this.mbProducto.getMbUpc().setUpc(this.mbProducto.getProducto().getUpcs().get(0));
         }
+        this.mbProducto.getMbSubGrupo().cargaSubGrupos(this.mbProducto.getProducto().getGrupo().getIdGrupo());
     }
     
     public void buscar() {

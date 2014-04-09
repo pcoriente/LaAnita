@@ -9,6 +9,7 @@ import java.util.Date;
 public class TOMovimiento {
     private int idMovto;
     private int idTipo;
+    private int folio;
     private int idCedis;
     private int idEmpresa;
     private int idAlmacen;
@@ -25,6 +26,7 @@ public class TOMovimiento {
     public TOMovimiento() {
         this.idMovto=0;
         this.idTipo=0;
+        this.folio=0;
         this.idCedis=0;
         this.idEmpresa=0;
         this.idAlmacen=0;
@@ -149,5 +151,13 @@ public class TOMovimiento {
 
     public void setIdEmpresa(int idEmpresa) {
         this.idEmpresa = idEmpresa;
+    }
+
+    public int getFolio() {
+        return folio;
+    }
+
+    public void setFolio(int folio) {
+        this.folio = folio;
     }
 }
