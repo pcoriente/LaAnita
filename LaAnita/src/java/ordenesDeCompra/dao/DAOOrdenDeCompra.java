@@ -21,6 +21,10 @@ import monedas.Moneda;
 import ordenesDeCompra.dominio.OrdenCompraDetalle;
 import ordenesDeCompra.dominio.OrdenCompraEncabezado;
 import productos.dao.DAOEmpaques;
+import productos.dao.DAOProductos;
+import productos.dominio.Empaque;
+import productos.dominio.Producto;
+import productos.to.TOEmpaque;
 import proveedores.dao.DAOProveedores;
 import proveedores.dominio.Proveedor;
 import usuarios.UsuarioSesion;
@@ -234,7 +238,12 @@ public class DAOOrdenDeCompra {
         DAOCotizaciones daoC = new DAOCotizaciones();
         DAOEmpaques daoEmp = new DAOEmpaques();
         ocd.setCotizacionDetalle(daoC.dameCotizacion(rs.getInt("idCotizacion")));
-        ocd.setEmpaque(daoEmp.obtenerEmpaque(rs.getInt("idEmpaque")));
+        DAOProductos daoProds = new DAOProductos();
+        TOEmpaque to = daoEmp.obtenerEmpaque(rs.getInt("idEmpaque"));
+        Empaque empaque =convertir(to, daoProds.obtenerProducto(to.getIdProducto()));
+        
+        //ocd.setEmpaque(daoEmp.obtenerEmpaque(rs.getInt("idEmpaque")));
+        ocd.setEmpaque(empaque);
         ocd.setSku(rs.getString("sku"));
         ocd.setIdOrdenCompra(rs.getInt("idOrdenCompra"));
         // ocd.setCotizacionEncabezado(daoC.dameCotizacionEncabezado(rs.getInt("idCotizacion")));
@@ -335,5 +344,19 @@ public class DAOOrdenDeCompra {
     
     public int obtenerIdUsuario() {
         return this.usuarioSesion.getUsuario().getId();
+    }
+    
+    private Empaque convertir(TOEmpaque to, Producto p) {
+        Empaque e = new Empaque();
+        e.setIdEmpaque(to.getIdEmpaque());
+        e.setCod_pro(to.getCod_pro());
+        e.setProducto(p);
+        e.setPiezas(to.getPiezas());
+        e.setUnidadEmpaque(to.getUnidadEmpaque());
+        e.setSubEmpaque(to.getSubEmpaque());
+        e.setDun14(to.getDun14());
+        e.setPeso(to.getPeso());
+        e.setVolumen(to.getVolumen());
+        return e;
     }
 }

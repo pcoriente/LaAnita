@@ -16,6 +16,10 @@ import javax.naming.NamingException;
 import javax.servlet.http.HttpSession;
 import javax.sql.DataSource;
 import productos.dao.DAOEmpaques;
+import productos.dao.DAOProductos;
+import productos.dominio.Empaque;
+import productos.dominio.Producto;
+import productos.to.TOEmpaque;
 import usuarios.UsuarioSesion;
 
 public class DAOCotizaciones {
@@ -121,9 +125,10 @@ public class DAOCotizaciones {
 
     private CotizacionDetalle construirConsulta(ResultSet rs) throws SQLException, NamingException {
         CotizacionDetalle cd = new CotizacionDetalle();
-        //DAOProductos daoP = new DAOProductos();
         DAOEmpaques daoE = new DAOEmpaques();
-
+        DAOProductos daoProds = new DAOProductos();
+        TOEmpaque to = daoE.obtenerEmpaque(rs.getInt("idEmpaque"));
+        Empaque empaque = convertir(to, daoProds.obtenerProducto(to.getIdProducto()));
         CotizacionEncabezado ce = new CotizacionEncabezado();
         cd.getProveedor().setNombreComercial(rs.getString("contribuyente"));
         ce.setIdProveedor(rs.getInt("idProveedor"));
@@ -131,7 +136,7 @@ public class DAOCotizaciones {
         ce.setDescuentoProntoPago(rs.getDouble("descuentoProntoPago"));
         cd.setIdCotizacion(rs.getInt("idCotizacion"));
         //   cd.setProducto(daoP.obtenerProducto(rs.getInt("idProducto")));
-        cd.setEmpaque(daoE.obtenerEmpaque(rs.getInt("idEmpaque")));
+        cd.setEmpaque(empaque);
         cd.setCantidadCotizada(rs.getDouble("cantidadCotizada"));
         cd.setCostoCotizado(rs.getDouble("costoCotizado"));
         cd.setDescuentoProducto(rs.getDouble("descuentoProducto"));
@@ -145,12 +150,12 @@ public class DAOCotizaciones {
 
     private CotizacionDetalle construirConsultaProducto(ResultSet rs) throws SQLException, NamingException {
         CotizacionDetalle cd = new CotizacionDetalle();
-        //    DAOProductos daoP = new DAOProductos();
         DAOEmpaques daoE = new DAOEmpaques();
         CotizacionEncabezado ce = new CotizacionEncabezado();
-//        cd.getProducto().setIdProducto(rs.getInt("idProducto"));
-        //   cd.setProducto(daoP.obtenerProducto(rs.getInt("idProducto")));
-        cd.setEmpaque(daoE.obtenerEmpaque(rs.getInt("idEmpaque")));
+        DAOProductos daoProds = new DAOProductos();
+        TOEmpaque to = daoE.obtenerEmpaque(rs.getInt("idEmpaque"));
+        Empaque empaque = convertir(to, daoProds.obtenerProducto(to.getIdProducto()));
+        cd.setEmpaque(empaque);
         cd.setIdCotizacion(rs.getInt("idRequisicion"));
         // cd.setRequisicionProducto(rs.getInt("idRequisicion"));
         return cd;
@@ -181,11 +186,12 @@ public class DAOCotizaciones {
     private CotizacionEncabezado construirConsultaEncabezado(ResultSet rs) throws SQLException, NamingException {
         CotizacionEncabezado ce = new CotizacionEncabezado();
         CotizacionDetalle cd = new CotizacionDetalle();
-        //  DAOProductos daoP = new DAOProductos();
         DAOEmpaques daoE = new DAOEmpaques();
+        DAOProductos daoProds = new DAOProductos();
+        TOEmpaque to = daoE.obtenerEmpaque(rs.getInt("idEmpaque"));
+        Empaque empaque = convertir(to, daoProds.obtenerProducto(to.getIdProducto()));
         cd.setIdCotizacion(rs.getInt("idCotizacion"));
-        //   cd.setProducto(daoP.obtenerProducto(rs.getInt("idProducto")));
-        cd.setEmpaque(daoE.obtenerEmpaque(rs.getInt("idEmpaque")));
+        cd.setEmpaque(empaque);
         cd.setCantidadCotizada(rs.getDouble("cantidadCotizada"));
         cd.setCostoCotizado(rs.getDouble("costoCotizado"));
         cd.setDescuentoProducto(rs.getDouble("descuentoProducto"));
@@ -288,11 +294,12 @@ public class DAOCotizaciones {
 
     public CotizacionDetalle construirCD(ResultSet rs) throws NamingException, SQLException {
         CotizacionDetalle cd = new CotizacionDetalle();
-        //   DAOProductos daoP = new DAOProductos();
         DAOEmpaques daoE = new DAOEmpaques();
+        DAOProductos daoProds = new DAOProductos();
+        TOEmpaque to = daoE.obtenerEmpaque(rs.getInt("idEmpaque"));
+        Empaque empaque = convertir(to, daoProds.obtenerProducto(to.getIdProducto()));
         cd.setIdCotizacion(rs.getInt("idCotizacion"));
-        //  cd.setProducto(daoP.obtenerProducto(rs.getInt("idProducto")));
-        cd.setEmpaque(daoE.obtenerEmpaque(rs.getInt("idEmpaque")));
+        cd.setEmpaque(empaque);
         cd.setCantidadCotizada(rs.getDouble("cantidadCotizada"));
         cd.setCostoCotizado(rs.getDouble("costoCotizado"));
         cd.setDescuentoProducto(rs.getDouble("descuentoProducto"));
@@ -356,4 +363,18 @@ public class DAOCotizaciones {
 //        
 //        return ce;
 //    }
+
+    private Empaque convertir(TOEmpaque to, Producto p) {
+        Empaque e = new Empaque();
+        e.setIdEmpaque(to.getIdEmpaque());
+        e.setCod_pro(to.getCod_pro());
+        e.setProducto(p);
+        e.setPiezas(to.getPiezas());
+        e.setUnidadEmpaque(to.getUnidadEmpaque());
+        e.setSubEmpaque(to.getSubEmpaque());
+        e.setDun14(to.getDun14());
+        e.setPeso(to.getPeso());
+        e.setVolumen(to.getVolumen());
+        return e;
+    }
 }
