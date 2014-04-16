@@ -327,14 +327,22 @@
         <converter-id>converters.ComprobanteConverter</converter-id>
         <converter-class>entradas.converters.ComprobanteConverter</converter-class>
     </converter>
+    
     <converter>
         <converter-id>converters.Pedido</converter-id>
         <converter-class>pedidos.converters.PedidoConverter</converter-class>
     </converter>
     
+    
+    <converter>
+        <converter-id>converters.ClientesBancos</converter-id>
+        <converter-class>clientesBancos.converters.ConverterClientesBancos</converter-class>
+    </converter>
+    
+    
     <converter>
         <converter-id>converters.Cliente</converter-id>
-        <converter-class>clientes2.converters.ClienteConverter</converter-class>
+        <converter-class>cliente.converters2.ClienteConverter</converter-class>
     </converter>
     
     <converter>

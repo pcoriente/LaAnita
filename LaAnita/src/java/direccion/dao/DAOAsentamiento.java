@@ -43,7 +43,6 @@ public class DAOAsentamiento {
         String cEstado=codAsentamiento.substring(0, 2);
         String cMunicipio=codAsentamiento.substring(2,5);
         String cAsenta=codAsentamiento.substring(5);
-        
         Connection cn=ds.getConnection();
         String strSQL="SELECT * FROM "+this.tabla+" "
                 + "WHERE c_estado=? AND c_mnpio=? AND id_asenta_cpcons=?";

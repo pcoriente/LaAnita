@@ -5,7 +5,6 @@
 package mbMenuClientesGrupos;
 
 import contactos.MbContactos;
-import contactos.MbTelefonos;
 import contactos.dao.DAOContactos;
 import contactos.dominio.Contacto;
 import contactos.dominio.Telefono;
@@ -26,7 +25,6 @@ import menuClientesGrupos.dao.DAOClientesGrupo;
 import menuClientesGrupos.dominio.ClientesGrupos;
 import menuClientesGrupos.dominio.ClientesGruposIconos;
 import org.primefaces.context.RequestContext;
-import productos.dominio.Tipo;
 
 /**
  *
@@ -37,7 +35,7 @@ import productos.dominio.Tipo;
 public class MbClientesGrupos implements Serializable {
 
     @ManagedProperty(value = "#{mbContactos}")
-    private MbContactos mbContactos;
+    private MbContactos mbContactos = new MbContactos();
     private ClientesGrupos clientesGrupos = new ClientesGrupos();
     private ArrayList<ClientesGrupos> lstClientesGrupos;
     private ClientesGrupos clienteGrupoSeleccionado = null;
@@ -45,13 +43,14 @@ public class MbClientesGrupos implements Serializable {
     private String lblNuevoContacto = "ui-icon-document";
     private String lblNuevoTelefono = "ui-icon-document";
     private ClientesGruposIconos iconos = new ClientesGruposIconos();
+    private boolean actualizarRfc = false;
 
     public MbClientesGrupos() {
         mbContactos = new MbContactos();
         if (lstClientesGrupos == null) {
             cargarListaGruposClientes();
         }
-        
+
     }
 
     public void cargaContactos() {
@@ -151,7 +150,6 @@ public class MbClientesGrupos implements Serializable {
                     fMsg.setDetail("Exito Grupo de Cliente Actualizado");
                     dao.actualizar(clientesGrupos);
                     clienteGrupoSeleccionado = null;
-
                 }
                 this.getIconos().setLblGuardarContactos("ui-icon-document");
             } catch (NamingException ex) {
@@ -167,7 +165,8 @@ public class MbClientesGrupos implements Serializable {
             lstClientesGrupos = null;
             cargarListaGruposClientes();
         }
-        clienteGrupoSeleccionado = new ClientesGrupos();
+        clienteGrupoSeleccionado = null;
+//        mbContactos.getMbTelefonos().getTelefono().setTipo(new TelefonoTipo(false));
     }
 
     public void cambiarIconoTelefono() {
@@ -186,7 +185,7 @@ public class MbClientesGrupos implements Serializable {
         if (ok == true) {
             this.mbContactos.getMbTelefonos().grabar(this.mbContactos.getContacto().getIdContacto());
             this.mbContactos.getMbTelefonos().cargaTelefonos(this.mbContactos.getContacto().getIdContacto());
-            lblNuevoTelefono="ui-icon-pencil";
+            lblNuevoTelefono = "ui-icon-pencil";
 //            this.mbContactos.getMbTelefonos().setTelefono(new Telefono());
         }
     }
@@ -285,7 +284,7 @@ public class MbClientesGrupos implements Serializable {
         mbContactos.getContacto().setIdContacto(0);
         mbContactos.getMbTelefonos().setListaTelefonos(new ArrayList<SelectItem>());
         this.mbContactos.cargaContactos(4, clientesGrupos.getIdGrupoCte());
-        lblNuevoContacto=("ui-icon-document");
+        lblNuevoContacto = ("ui-icon-document");
         this.setActualizar(true);
     }
 
@@ -319,5 +318,13 @@ public class MbClientesGrupos implements Serializable {
 
     public void setIconos(ClientesGruposIconos iconos) {
         this.iconos = iconos;
+    }
+
+    public boolean isActualizarRfc() {
+        return actualizarRfc;
+    }
+
+    public void setActualizarRfc(boolean actualizarRfc) {
+        this.actualizarRfc = actualizarRfc;
     }
 }

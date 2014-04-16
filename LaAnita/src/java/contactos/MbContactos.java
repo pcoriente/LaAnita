@@ -33,6 +33,8 @@ public class MbContactos implements Serializable {
     public MbContactos() {
         this.contacto = new Contacto();
         this.mbTelefonos = new MbTelefonos();
+        listaContactos = new ArrayList<SelectItem>();
+        mbTelefonos = new MbTelefonos();
     }
 
     public boolean eliminar(int idPadre) {

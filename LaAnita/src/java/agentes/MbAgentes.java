@@ -169,6 +169,7 @@ public class MbAgentes implements Serializable {
                 }
             }
         }
+        context.addCallbackParam("okContribuyente", ok);
     }
 
     public boolean validarAgente() {

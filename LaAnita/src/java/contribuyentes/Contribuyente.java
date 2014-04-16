@@ -8,7 +8,7 @@ import java.io.Serializable;
  *
  * @author jsolis
  */
-public class Contribuyente {
+public class Contribuyente implements Serializable {
 
     private int idContribuyente;
     private String contribuyente;
