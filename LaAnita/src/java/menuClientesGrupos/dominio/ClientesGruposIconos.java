@@ -4,11 +4,13 @@
  */
 package menuClientesGrupos.dominio;
 
+import java.io.Serializable;
+
 /**
  *
  * @author Usuario
  */
-public class ClientesGruposIconos {
+public class ClientesGruposIconos implements Serializable{
     
     private String lblGuardarContactos ="Guardar Contacto";
     private String btnGuardarContactos = "ui-icon-disk";

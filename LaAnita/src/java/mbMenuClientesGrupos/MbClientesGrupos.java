@@ -143,7 +143,7 @@ public class MbClientesGrupos implements Serializable {
                 fMsg.setSeverity(FacesMessage.SEVERITY_INFO);
 
                 DAOClientesGrupo dao = new DAOClientesGrupo();
-                if (clienteGrupoSeleccionado.getIdGrupoCte() == 0) {
+                if (clienteGrupoSeleccionado == null) {
                     fMsg.setDetail("Exito Nuevo Grupo de Clientes Disponible");
                     dao.guardarClientesGrupo(clientesGrupos);
                 } else {
@@ -281,11 +281,11 @@ public class MbClientesGrupos implements Serializable {
     }
 
     public void actualizar() {
-        mbContactos.getContacto().setIdContacto(0);
         mbContactos.getMbTelefonos().setListaTelefonos(new ArrayList<SelectItem>());
         this.mbContactos.cargaContactos(4, clientesGrupos.getIdGrupoCte());
+        mbContactos.getContacto().setIdContacto(0);
         lblNuevoContacto = ("ui-icon-document");
-        this.setActualizar(true);
+        actualizar = true;
     }
 
     public String getLblNuevoContacto() {

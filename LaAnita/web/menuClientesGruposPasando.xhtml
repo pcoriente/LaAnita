@@ -17,24 +17,21 @@
                 <h:form id="form" onkeypress="return event.keyCode !== 13;" >
                     <p:growl id="growl" showDetail="true"/>  
                     <div align="right">
-                        <p:commandButton value="click"
-                                         onclick="click.show();"
-                                         process="@this"/>
                         <p:commandButton icon="ui-icon-document"
                                          oncomplete="dlgClientesGrupos.show();"
                                          actionListener="#{mbMenuClientesGrupos.cargaContactos()}"
                                          process="@this"
-                                         update="form :form:txtClienteGrupo"
+                                         update=":form:txtClienteGrupo"
                                          title="Nuevo Grupo"/>
                         <p:commandButton id="actualizarContacto"
                                          icon="ui-icon-pencil"
                                          actionListener="#{mbMenuClientesGrupos.actualizar()}"
-                                         process="@this cmbContactos"
-                                         update=":form:dlgClientesGrupos 
-                                         :form:cmbContactos 
-                                         :form:cmbTelefonos
-                                         :form:btnContactos
-                                         :form:btnContactosNuevo"
+                                         process="@this"
+                                         update="dlgClientesGrupos 
+                                         cmbContactos 
+                                         cmbTelefonos
+                                         btnContactos
+                                         btnContactosNuevo"
                                          disabled="#{mbMenuClientesGrupos.clienteGrupoSeleccionado==null}"
                                          oncomplete="dlgClientesGrupos.show();"
                                          title="Actualizar Grupo"
@@ -42,10 +39,10 @@
                         <p:commandButton icon="ui-icon-arrowreturnthick-1-w"
                                          ajax="false"
                                          title="Salir"
-                                         immediate="true"
-                                         action="#{mbMenuClientesGrupos.salir()}"/>
+                                         action="#{mbMenuClientesGrupos.salir()}"
+                                         immediate="true"/>
                     </div>
-                    <p:panel header="Grupo de Cliente" 
+                    <p:panel header="Grupo de Clientes" 
                              styleClass="quitaCuadro">
                         <p:dataTable
                             id="tablaClientesGrupos"
@@ -313,12 +310,6 @@
                             </f:facet>
                         </p:panelGrid>
                     </p:dialog>
-                    
-                    
-                    <p:dialog widgetVar="click">
-                        
-                    </p:dialog>
-                    
                 </h:form>
             </div>
             <!-- FIN DE CONTENIDO -->
