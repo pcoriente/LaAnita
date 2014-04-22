@@ -1,11 +1,12 @@
 package bancos.dominio;
 
-public class Banco {
+import java.io.Serializable;
+
+public class Banco implements Serializable{
 
     public int idBanco;
     public String nombreCorto;
-    
-    
+    private int codigoBanco;
 
     public Banco() {
     }
@@ -52,4 +53,13 @@ public class Banco {
         hash = 53 * hash + this.idBanco;
         return hash;
     }
+
+    public int getCodigoBanco() {
+        return codigoBanco;
+    }
+
+    public void setCodigoBanco(int codigoBanco) {
+        this.codigoBanco = codigoBanco;
+    }
+
 }

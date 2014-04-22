@@ -51,11 +51,9 @@ public class MbContribuyentes implements Serializable {
                     fMsg.setDetail("Error! Curp no valido");
                 } else {
                     ok = true;
-//                    fMsg.setDetail(mensaje);
                 }
-            } else if (this.getContribuyente().getRfc().length() == 12&& mensaje.equals("")) {
-                ok=true;
-//                fMsg.setDetail(mensaje);
+            } else if (this.getContribuyente().getRfc().length() == 12 && mensaje.equals("")) {
+                ok = true;
             } else {
                 fMsg.setDetail(mensaje);
             }

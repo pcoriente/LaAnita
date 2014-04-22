@@ -19,6 +19,10 @@ import javax.naming.NamingException;
 import javax.servlet.http.HttpSession;
 import javax.sql.DataSource;
 import productos.dao.DAOEmpaques;
+import productos.dao.DAOProductos;
+import productos.dominio.Empaque;
+import productos.dominio.Producto;
+import productos.to.TOEmpaque;
 import requisiciones.dominio.RequisicionDetalle;
 import requisiciones.dominio.RequisicionEncabezado;
 import requisiciones.to.TORequisicionEncabezado;
@@ -163,8 +167,13 @@ public class DAORequisiciones {
     private RequisicionDetalle construirDetalle(ResultSet rs) throws SQLException, NamingException {
         RequisicionDetalle to = new RequisicionDetalle();
         DAOEmpaques daoEmp = new DAOEmpaques();
+        DAOProductos daoProds = new DAOProductos();
+        TOEmpaque toE = daoEmp.obtenerEmpaque(rs.getInt("idEmpaque"));
+        Empaque empaque = this.convertir(toE, daoProds.obtenerProducto(toE.getIdProducto()));
+        
         to.setIdRequisicion(rs.getInt("idRequisicion"));
-        to.setEmpaque(daoEmp.obtenerEmpaque(rs.getInt("idEmpaque")));
+     //   to.setEmpaque(daoEmp.obtenerEmpaque(rs.getInt("idEmpaque")));
+        to.setEmpaque(empaque);
         to.setCantidad(rs.getInt("cantidadSolicitada"));
         to.setCantidadAutorizada(rs.getInt("cantidadAutorizada"));
         return to;
@@ -393,9 +402,14 @@ public class DAORequisiciones {
         CotizacionDetalle cd = new CotizacionDetalle();
         RequisicionDetalle rd = new RequisicionDetalle();
         DAOEmpaques daoEmp = new DAOEmpaques();
+
         //REQUISICION
+        DAOProductos daoProds = new DAOProductos();
+        TOEmpaque to = daoEmp.obtenerEmpaque(rs.getInt("idEmpaque"));
+        Empaque empaque = this.convertir(to, daoProds.obtenerProducto(to.getIdProducto()));
+
         cd.setIdRequisicion(rs.getInt("idRequisicion"));
-        cd.setEmpaque(daoEmp.obtenerEmpaque(rs.getInt("idEmpaque")));
+        cd.setEmpaque(empaque);
 //        rd.setCantidad(rs.getInt("cantidadSolicitada"));
 //        rd.setCantidadAutorizada(rs.getInt("cantidadAutorizada"));
         //COTIZACION
@@ -499,4 +513,18 @@ public class DAORequisiciones {
 //
 //        return ce;
 //    }
+
+    private Empaque convertir(TOEmpaque to, Producto p) {
+        Empaque e = new Empaque();
+        e.setIdEmpaque(to.getIdEmpaque());
+        e.setCod_pro(to.getCod_pro());
+        e.setProducto(p);
+        e.setPiezas(to.getPiezas());
+        e.setUnidadEmpaque(to.getUnidadEmpaque());
+        e.setSubEmpaque(to.getSubEmpaque());
+        e.setDun14(to.getDun14());
+        e.setPeso(to.getPeso());
+        e.setVolumen(to.getVolumen());
+        return e;
+    }
 }

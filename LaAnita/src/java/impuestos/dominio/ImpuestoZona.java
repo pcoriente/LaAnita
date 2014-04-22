@@ -1,21 +1,23 @@
-
 package impuestos.dominio;
 
-public class ImpuestoZona {
+import java.io.Serializable;
+
+public class ImpuestoZona implements Serializable {
 
     private int idZona;
     private String zona;
 
-    //public ImpuestoZona() {}
+    public ImpuestoZona() {
+    }
 
     public ImpuestoZona(int idZona, String zona) {
         this.idZona = idZona;
         this.zona = zona;
     }
-    
+
     @Override
     public String toString() {
-        return  zona;
+        return zona;
     }
 
     @Override

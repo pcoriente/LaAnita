@@ -364,11 +364,9 @@ public class MbDireccion implements Serializable {
     }
 
     public void buscarAsentamientos() {
-        if (this.direccion.getPais().getIdPais() != 1) {
-            return;
-        }
+
         String codigoPostal = this.direccion.getCodigoPostal();
-        if (!codigoPostal.isEmpty()) {
+        if (!codigoPostal.isEmpty() && this.direccion.getPais().getIdPais() == 1) {
             try {
                 this.listaAsentamientos = obtenerAsentamientos(codigoPostal);
                 this.editarAsentamiento = false;
@@ -499,35 +497,6 @@ public class MbDireccion implements Serializable {
     }
 
     public void setEditarAsentamiento(boolean editarAsentamiento) {
-//        String[] localidades={"08", "15", "18", "20", "23", "24", "25", "26", "27", "28", "29", "32"};
-//        Asentamiento selAsentamiento=this.direccion.getSelAsentamiento();
-//        
-//        if(selAsentamiento != null && !selAsentamiento.getCodAsentamiento().equals("0")) {
-//            this.direccion.setEstado(selAsentamiento.getEstado());
-//            this.direccion.setMunicipio(selAsentamiento.getMunicipio());
-////            this.direccion.setLocalidad(selAsentamiento.getCiudad());
-////            this.direccion.setColonia(selAsentamiento.toString());
-//            if(selAsentamiento.getCiudad().trim().isEmpty()) {
-//                boolean flag=false;
-//                for(String s:localidades) {
-//                    if(s.equals(selAsentamiento.getcTipo())) {
-//                        flag=true;
-//                        break;
-//                    }
-//                }
-//                if(flag) {
-//                    this.direccion.setLocalidad(selAsentamiento.toString());
-//                    this.direccion.setColonia("");
-//                } else {
-//                    this.direccion.setLocalidad("");
-//                    this.direccion.setColonia(selAsentamiento.toString());
-//                }
-//            } else {
-//                this.direccion.setLocalidad(selAsentamiento.getCiudad().trim());
-//                this.direccion.setColonia(selAsentamiento.toString());
-//            }
-//        }
-
         if (!editarAsentamiento && (this.listaAsentamientos == null || this.listaAsentamientos.isEmpty())) {
             FacesMessage fMsg = new FacesMessage(FacesMessage.SEVERITY_WARN, "Aviso:", "No hay asentamientos en la lista, proporcione un código postal y de click al botón BUSCAR");
             FacesContext.getCurrentInstance().addMessage(null, fMsg);

@@ -1,6 +1,8 @@
 package leyenda.dominio;
 
-public class BancoLeyenda {
+import java.io.Serializable;
+
+public class BancoLeyenda implements Serializable {
 
     public int idBanco;
     public String rfc;

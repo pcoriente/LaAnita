@@ -488,7 +488,6 @@ public class MbOrdenCompra implements Serializable {
                         ok = true;
                         File file = new File(ruta);
                         file.delete();
-
                         fMsg.setSeverity(FacesMessage.SEVERITY_INFO);
                         fMsg.setDetail("El correo se envió correctamente !!");
                         limpiarFormulario();

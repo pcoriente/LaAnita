@@ -4,13 +4,15 @@ import contactos.dominio.Contacto;
 import contribuyentes.Contribuyente;
 import direccion.dominio.Direccion;
 import impuestos.dominio.ImpuestoZona;
+import java.io.Serializable;
 import java.util.ArrayList;
 
 /**
  *
  * @author Julio
  */
-public class Proveedor {
+public class Proveedor implements Serializable {
+
     private int idProveedor;
     private String nombreComercial;
     private Contribuyente contribuyente;
@@ -29,23 +31,23 @@ public class Proveedor {
     private double desctoProntoPago;
 
     public Proveedor() {
-        this.idProveedor=0;
-        this.nombreComercial="";
-        this.contribuyente=new Contribuyente();
-        this.clasificacion=new Clasificacion();
-        this.subClasificacion=new SubClasificacion();
-        this.tipoOperacion=new TipoOperacion();
-        this.tipoTercero=new TipoTercero();
-        this.contactos=new ArrayList<Contacto>();
-        this.impuestoZona=new ImpuestoZona(0, "");
-        this.direccionEntrega=new Direccion();
-        this.diasCredito=0;
-        this.limiteCredito=0.00;
-        this.fechaAlta="";
-        this.desctoComercial=0.00;
-        this.desctoProntoPago=0.00;
+        this.idProveedor = 0;
+        this.nombreComercial = "";
+        this.contribuyente = new Contribuyente();
+        this.clasificacion = new Clasificacion();
+        this.subClasificacion = new SubClasificacion();
+        this.tipoOperacion = new TipoOperacion();
+        this.tipoTercero = new TipoTercero();
+        this.contactos = new ArrayList<Contacto>();
+        this.impuestoZona = new ImpuestoZona(0, "");
+        this.direccionEntrega = new Direccion();
+        this.diasCredito = 0;
+        this.limiteCredito = 0.00;
+        this.fechaAlta = "";
+        this.desctoComercial = 0.00;
+        this.desctoProntoPago = 0.00;
     }
-    
+
     @Override
     public String toString() {
         //return this.nombreComercial;

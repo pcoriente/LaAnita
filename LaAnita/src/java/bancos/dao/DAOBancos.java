@@ -3,8 +3,10 @@ package bancos.dao;
 import bancos.dominio.Banco;
 import clientes2.dominio.Cliente;
 import java.sql.*;
+import java.util.ArrayList;
 import javax.faces.context.ExternalContext;
 import javax.faces.context.FacesContext;
+import javax.faces.model.SelectItem;
 import javax.naming.Context;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
@@ -24,14 +26,14 @@ public class DAOBancos {
             UsuarioSesion usuarioSesion = (UsuarioSesion) httpSession.getAttribute("usuarioSesion");
 
             Context cI = new InitialContext();
-            ds = (DataSource) cI.lookup("java:comp/env/"+usuarioSesion.getJndi());
+            ds = (DataSource) cI.lookup("java:comp/env/" + usuarioSesion.getJndi());
         } catch (NamingException ex) {
             throw (ex);
         }
     }
 
     public Banco[] obtenerBancos() throws SQLException {
-        
+
         System.err.println("Entro a buscar los dato en la base d datos");
         Banco[] bancos = null;
         ResultSet rs = null;
@@ -58,18 +60,20 @@ public class DAOBancos {
     }
 
     public Banco obtener(int idBanco) throws SQLException {
-        Banco banco=null;
-        Connection cn=this.ds.getConnection();
-        Statement st=cn.createStatement();
+        Banco banco = null;
+        Connection cn = this.ds.getConnection();
+        Statement st = cn.createStatement();
         try {
-            ResultSet rs=st.executeQuery("SELECT * FROM bancosSat WHERE idBanco="+idBanco);
-            if(rs.next()) banco=construir(rs);
+            ResultSet rs = st.executeQuery("SELECT * FROM bancosSat WHERE idBanco=" + idBanco);
+            if (rs.next()) {
+                banco = construir(rs);
+            }
         } finally {
             cn.close();
         }
-        return banco ;
+        return banco;
     }
-    
+
     private Banco construir(ResultSet rs) throws SQLException {
         Banco banco = new Banco();
         banco.setIdBanco(rs.getInt("idBanco"));
@@ -78,9 +82,9 @@ public class DAOBancos {
     }
 
     public void agregarClientes(Cliente bnClientes) throws SQLException {
-       System.out.println("si entro a la sentencia");
+        System.out.println("si entro a la sentencia");
         String sql;
-        sql="Insert Into clientesBanco (codigoCliente, idBAnco,numCtaPago, mediopago) Values(?,?,?,?)";
+        sql = "Insert Into clientesBanco (codigoCliente, idBAnco,numCtaPago, mediopago) Values(?,?,?,?)";
         Connection cn;
         cn = ds.getConnection();
         PreparedStatement ps = cn.prepareStatement(sql);
@@ -91,5 +95,52 @@ public class DAOBancos {
         ps.executeUpdate();
         ps.close();
     }
-    
+
+    public ArrayList<Banco> dameBancos(int idCliente) throws SQLException {
+        ArrayList<Banco> lstBancos = new ArrayList<Banco>();
+        String sql = "SELECT razonSocial, codigoBanco, nombreCorto FROM bancosSat bs "
+                + " INNER JOIN clientesBancos c "
+                + " on c.idBanco = bs.idBanco"
+                + "  WHERE c.codigoCliente = '" + idCliente + "'";
+        Connection cn = ds.getConnection();
+        Statement st = cn.createStatement();
+        try {
+            ResultSet rs = st.executeQuery(sql);
+
+            while (rs.next()) {
+                Banco banco = new Banco();
+//                banco.setIdBanco(rs.getInt("idBanco"));
+                banco.setNombreCorto(rs.getString("nombreCorto"));
+                banco.setCodigoBanco(rs.getInt("codigoBanco"));
+                lstBancos.add(banco);
+            }
+        } finally {
+            st.close();
+            cn.close();
+        }
+
+        return lstBancos;
     }
+
+    public ArrayList<Banco> dameBancos() throws SQLException {
+        ArrayList<Banco> lstBancos = new ArrayList<Banco>();
+        String sql = "SELECT * FROM bancosSat bs";
+        Connection cn = ds.getConnection();
+        Statement st = cn.createStatement();
+        try {
+            ResultSet rs = st.executeQuery(sql);
+            while (rs.next()) {
+                Banco banco = new Banco();
+                banco.setIdBanco(rs.getInt("idBanco"));
+                banco.setNombreCorto(rs.getString("nombreCorto"));
+                banco.setCodigoBanco(rs.getInt("codigoBanco"));
+                lstBancos.add(banco);
+            }
+        } finally {
+            st.close();
+            cn.close();
+        }
+        return lstBancos;
+    }
+
+}

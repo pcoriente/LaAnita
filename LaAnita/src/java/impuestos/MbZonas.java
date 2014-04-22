@@ -23,7 +23,7 @@ import org.primefaces.context.RequestContext;
 @SessionScoped
 public class MbZonas implements Serializable {
 
-    private ImpuestoZona zona;
+    private ImpuestoZona zona = new ImpuestoZona(0, "");
     private ArrayList<SelectItem> listaZonas;
     private DAOZonas dao;
 
@@ -40,9 +40,9 @@ public class MbZonas implements Serializable {
         } else {
             try {
                 this.dao = new DAOZonas();
-                ok=this.dao.eliminar(this.zona.getIdZona());
-                if(ok) {
-                    this.zona=new ImpuestoZona(0, "");
+                ok = this.dao.eliminar(this.zona.getIdZona());
+                if (ok) {
+                    this.zona = new ImpuestoZona(0, "");
                     this.cargarZonas();
                 } else {
                     fMsg.setDetail("La zona no puede ser eliminada, actualmente está en uso !!");
@@ -127,5 +127,19 @@ public class MbZonas implements Serializable {
 
     public void setListaZonas(ArrayList<SelectItem> listaZonas) {
         this.listaZonas = listaZonas;
+    }
+
+    public boolean validar() {
+        boolean ok = false;
+        if (zona.getIdZona() == 0) {
+            RequestContext context = RequestContext.getCurrentInstance();
+            FacesMessage fMsg = new FacesMessage(FacesMessage.SEVERITY_WARN, "Aviso:", "");
+            fMsg.setDetail("Error! Zona Requerida!!");
+            FacesContext.getCurrentInstance().addMessage(null, fMsg);
+            context.addCallbackParam("okEliminarZona", ok);
+        } else {
+            ok = true;
+        }
+        return ok;
     }
 }

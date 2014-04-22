@@ -11,11 +11,11 @@ import java.io.Serializable;
  *
  * @author Usuario
  */
-public class ClientesGrupos implements Serializable{
+public class ClientesGrupos implements Serializable {
 
     private int idGrupoCte;
     private String grupoCte;
-    private Contacto contaco;
+    private Contacto contaco = new Contacto();
 
     public int getIdGrupoCte() {
         return idGrupoCte;

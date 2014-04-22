@@ -1,21 +1,31 @@
 package bancos;
 
-import leyenda.dao.DAOBancosLeyendas;
-import leyenda.dominio.BancoLeyenda;
+import bancos.dao.DAOBancos;
+import bancos.dominio.Banco;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.faces.application.FacesMessage;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.SessionScoped;
 import javax.faces.context.FacesContext;
 import javax.faces.model.SelectItem;
+import javax.naming.NamingException;
+import leyenda.dao.DAOBancosLeyendas;
+import leyenda.dominio.BancoLeyenda;
 
 @ManagedBean(name = "mbBanco")
 @SessionScoped
 public class MbBanco {
 
     BancoLeyenda b = new BancoLeyenda();
+    private Banco objBanco = new Banco();
+    private ArrayList<Banco> lstBancos = new ArrayList<Banco>();
+    private ArrayList<SelectItem> listaBancos;
+    private ArrayList<SelectItem> listaTodosBancos;
+    BancoLeyenda banco = new BancoLeyenda();
 
     public BancoLeyenda getB() {
         return b;
@@ -24,25 +34,29 @@ public class MbBanco {
     public void setB(BancoLeyenda b) {
         this.b = b;
     }
-    private List<SelectItem> listaBancos;
 
-    public List<SelectItem> getListaBancos() {
-        if (this.listaBancos == null) {
-            try {
-                MbBanco cd = new MbBanco();
-                this.listaBancos = cd.obtenerBancos();
-            } catch (Exception ex) {
-            }
-        }
+    public ArrayList<SelectItem> getListaBancos() {
         return listaBancos;
     }
 
-    public void setListaBancos(List<SelectItem> listaBancos) {
+    public void setListaBancos(ArrayList<SelectItem> listaBancos) {
         this.listaBancos = listaBancos;
     }
-    BancoLeyenda banco = new BancoLeyenda();
-//CONSTRUCTOR DE LA CLASE
 
+//    public List<SelectItem> getListaBancos() {
+////        if (this.listaBancos == null) {
+////            try {
+////                this.listaBancos = this.obtenerBancos();
+////            } catch (Exception ex) {
+////            }
+////        }
+//        return listaBancos;
+//    }
+//
+//    public void setListaBancos(List<SelectItem> listaBancos) {
+//        this.listaBancos = listaBancos;
+//    }
+//CONSTRUCTOR DE LA CLASE
     public MbBanco() {
     }
 
@@ -63,6 +77,21 @@ public class MbBanco {
         String Eliminado = "Dato.eliminado";
         return Eliminado;
 
+    }
+
+    public void cargarBancos(int idCliente) {
+        try {
+            BancoLeyenda banco = new BancoLeyenda();
+            banco.setIdBanco(0);
+            banco.setNombreCorto("Seleccione un país");
+            SelectItem cero = new SelectItem(banco, banco.getNombreCorto());
+            DAOBancos dao = new DAOBancos();
+            ArrayList<Banco> lstBanco = dao.dameBancos(idCliente);
+        } catch (NamingException ex) {
+            Logger.getLogger(MbBanco.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (SQLException ex) {
+            Logger.getLogger(MbBanco.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
 
     //Codigo Pablo//
@@ -94,15 +123,12 @@ public class MbBanco {
             FacesContext.getCurrentInstance().addMessage(null, fMsg2);
         }
 
-
     }
 
     public List<SelectItem> obtenerBancos() throws SQLException {
         List<SelectItem> bancos = new ArrayList<SelectItem>();
-
         BancoLeyenda B = new BancoLeyenda();
         B.setIdBanco(0);
-        B.setNombreCorto("Seleccione un país");
         B.setNombreCorto("Seleccione un país");
         SelectItem cero = new SelectItem(B, B.getNombreCorto());
         bancos.add(cero);
@@ -113,6 +139,24 @@ public class MbBanco {
             bancos.add(new SelectItem(p, p.getNombreCorto()));
         }
         return bancos;
+    }
+
+    public void obtenerBancos(int idCliente) throws SQLException {
+        try {
+            listaBancos = new ArrayList<SelectItem>();
+            Banco objBanco = new Banco();
+            objBanco.setIdBanco(0);
+            objBanco.setNombreCorto("Seleccione un Banco");
+            SelectItem cero = new SelectItem(objBanco, objBanco.getNombreCorto());
+            listaBancos.add(cero);
+            DAOBancos dao = new DAOBancos();
+            ArrayList<Banco> lstBancos = dao.dameBancos(idCliente);
+            for (Banco banco : lstBancos) {
+                listaBancos.add(new SelectItem(banco, banco.getNombreCorto()));
+            }
+        } catch (NamingException ex) {
+            Logger.getLogger(MbBanco.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
 
     public String nuevoBanco() throws SQLException {
@@ -143,4 +187,51 @@ public class MbBanco {
         }
         return navegar;
     }
+
+    public ArrayList<Banco> getLstBancos() {
+        return lstBancos;
+    }
+
+    public void setLstBancos(ArrayList<Banco> lstBancos) {
+        this.lstBancos = lstBancos;
+    }
+
+    public ArrayList<SelectItem> getListaTodosBancos() {
+        if (listaTodosBancos == null) {
+            this.cargarTodosBancos();
+        }
+        return listaTodosBancos;
+    }
+
+    public void setListaTodosBancos(ArrayList<SelectItem> listaTodosBancos) {
+        this.listaTodosBancos = listaTodosBancos;
+    }
+
+    private void cargarTodosBancos() {
+        try {
+            listaTodosBancos = new ArrayList<SelectItem>();
+            DAOBancos dao = new DAOBancos();
+            ArrayList<Banco> lstBanco = dao.dameBancos();
+            Banco banco = new Banco();
+            banco.setIdBanco(0);
+            banco.setNombreCorto("Nuevo Banco");
+            listaTodosBancos.add(new SelectItem(banco, banco.getNombreCorto()));
+            for (Banco b : lstBanco) {
+                listaTodosBancos.add(new SelectItem(b, b.getNombreCorto()));
+            }
+        } catch (NamingException ex) {
+            Logger.getLogger(MbBanco.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (SQLException ex) {
+            Logger.getLogger(MbBanco.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+
+    public Banco getObjBanco() {
+        return objBanco;
+    }
+
+    public void setObjBanco(Banco objBanco) {
+        this.objBanco = objBanco;
+    }
+
 }
