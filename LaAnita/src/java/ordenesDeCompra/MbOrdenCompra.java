@@ -45,14 +45,11 @@ import ordenesDeCompra.dominio.OrdenCompraEncabezado;
 import ordenesDeCompra.dominio.OrdenCompraDetalle;
 import ordenesDeCompra.dominio.TotalesOrdenCompra;
 import org.primefaces.event.SelectEvent;
-import productos.FrmProducto;
-import productos.MbBuscarEmpaques;
-import productos.dao.DAOEmpaques;
-import productos.dominio.Empaque;
+import producto2.MbProductosBuscar;
+import producto2.dominio.Producto;
 import proveedores.MbMiniProveedor;
 import proveedores.dao.DAOProveedores;
 import proveedores.dominio.Proveedor;
-import requisiciones.dominio.RequisicionDetalle;
 
 @Named(value = "mbOrdenCompra")
 @SessionScoped
@@ -86,10 +83,10 @@ public class MbOrdenCompra implements Serializable {
     private transient Contacto contactoElegido;
     private String cadena;
     private transient OrdenCompraReporte ocr;
-    @ManagedProperty(value = "#{mbBuscarEmpaques}")
-    private MbBuscarEmpaques mbBuscar;
-    private ArrayList<Empaque> listaEmpaque = new ArrayList<Empaque>();
-    private Empaque empaque;
+    @ManagedProperty(value = "#{mbProductosBuscar}")
+    private MbProductosBuscar mbBuscar;
+    private ArrayList<Producto> listaEmpaque = new ArrayList<Producto>();
+    private Producto empaque;
     private Empresa empresa = new Empresa();
     private Cedis cedis = new Cedis();
     @ManagedProperty(value = "#{mbMiniCedis}")
@@ -114,8 +111,8 @@ public class MbOrdenCompra implements Serializable {
         this.contactoElegido = new Contacto();
         this.listaContactos = new ArrayList<Contacto>();
         this.ocr = new OrdenCompraReporte();
-        this.mbBuscar = new MbBuscarEmpaques();
-        this.empaque = new Empaque();
+        this.mbBuscar = new MbProductosBuscar();
+        this.empaque = new Producto();
         this.mbProveedores = new MbMiniProveedor();
         this.mbEmpresas = new MbEmpresas();
         this.provee = new Proveedor();
@@ -144,7 +141,7 @@ public class MbOrdenCompra implements Serializable {
     }
 
     public void dameEmpaqueSeleccionado() {
-        Boolean ok = false;
+        boolean ok = false;
         FacesMessage fMsg = new FacesMessage(FacesMessage.SEVERITY_WARN, "Aviso:", null);
         boolean verifi = verificacion(mbBuscar.getProducto());
         if (verifi == false) {
@@ -153,7 +150,6 @@ public class MbOrdenCompra implements Serializable {
             ok = true;
         } else {
             fMsg.setDetail("Este Empaque ya esta en la lista");
-            ok = false;
         }
         if (!ok) {
             FacesContext.getCurrentInstance().addMessage(null, fMsg);
@@ -165,10 +161,10 @@ public class MbOrdenCompra implements Serializable {
         listaEmpaque.remove(empaque);
     }
 
-    public boolean verificacion(Empaque e) {
+    public boolean verificacion(Producto e) {
         boolean verificar = false;
 
-        for (Empaque em : listaEmpaque) {
+        for (Producto em : listaEmpaque) {
             if (em.equals(e)) {
                 verificar = true;
                 break;
@@ -186,7 +182,7 @@ public class MbOrdenCompra implements Serializable {
     }
     
     public boolean aseguraOrdenCompra(int idOrdenCompra) {
-        int propietario=0;
+        int propietario;
         boolean ok = false;
         FacesMessage fMsg = new FacesMessage(FacesMessage.SEVERITY_WARN, "Aviso:", "");
         try {
@@ -224,7 +220,7 @@ public class MbOrdenCompra implements Serializable {
             ArrayList<OrdenCompraDetalle> lista = daoOC.consultaOrdenCompra(idOC);
             for (OrdenCompraDetalle d : lista) {
                 listaOrdenDetalle.add(d);
-                this.calculosOrdenCompra(d.getEmpaque().getIdEmpaque());
+                this.calculosOrdenCompra(d.getProducto().getIdProducto());
             }
         } catch (NamingException ex) {
             Logger.getLogger(MbOrdenCompra.class.getName()).log(Level.SEVERE, null, ex);
@@ -248,8 +244,8 @@ public class MbOrdenCompra implements Serializable {
             ArrayList<OrdenCompraDetalle> lista = daoOC.consultaOrdenCompra(idOC);
             for (OrdenCompraDetalle d : lista) {
                 listaOrdenDetalle.add(d);
-                this.calculosOrdenCompra(d.getEmpaque().getIdEmpaque());
-                d.setNombreProducto(d.getEmpaque().toString());
+                this.calculosOrdenCompra(d.getProducto().getIdProducto());
+                d.setNombreProducto(d.getProducto().toString());
             }
         } catch (NamingException ex) {
             Logger.getLogger(MbOrdenCompra.class.getName()).log(Level.SEVERE, null, ex);
@@ -263,7 +259,7 @@ public class MbOrdenCompra implements Serializable {
         try {
 
             for (OrdenCompraDetalle e : listaOrdenDetalle) {
-                int idProducto = e.getEmpaque().getIdEmpaque();
+                int idProducto = e.getProducto().getIdProducto();
                 if (idProd == idProducto) {
                     double neto = e.getCostoOrdenado() - (e.getCostoOrdenado() * (e.getDescuentoProducto() / 100));
                     double neto2 = neto - neto * (e.getDescuentoProducto2() / 100);
@@ -284,9 +280,9 @@ public class MbOrdenCompra implements Serializable {
         sumaDescuentosProductos = 0;
         sumaDescuentosGenerales = 0;
         double descProds = 0;
-        double descuentoC = 0;
-        double descuentoPP = 0;
-        double subt = 0;
+        double descuentoC;
+        double descuentoPP;
+        double subt;
 
         if (this.listaOrdenDetalle != null) {
             for (OrdenCompraDetalle oc : listaOrdenDetalle) {
@@ -429,7 +425,7 @@ public class MbOrdenCompra implements Serializable {
             fMsg.setDetail("Se requiere un MENSAJE !!");
         } else {
             String verifica = this.validarCadenaCorreos(emails);
-            if (verifica != "") {
+            if (verifica.equals("")) {
                 fMsg.setSeverity(FacesMessage.SEVERITY_WARN);
                 fMsg.setDetail("Es incorrecto el correo " + verifica);
             } else {
@@ -483,7 +479,7 @@ public class MbOrdenCompra implements Serializable {
                     } catch (MessagingException e) {
                     }
 
-                    Transport transport = null;
+                    Transport transport;
                     try {
                         transport = mailSession.getTransport(protocolo);
                         transport.connect(servidorCorreos, puerto, user, passRemitente);
@@ -573,14 +569,12 @@ public class MbOrdenCompra implements Serializable {
     }
 
     public boolean validarEmail(String email) {
-        email.trim();
-        boolean validar = false;
+        email=email.trim();
+        boolean validar;
         Pattern pattern = Pattern.compile("[\\w\\.-]*[a-zA-Z0-9_]@[\\w\\.-]*[a-zA-Z0-9]\\.[a-zA-Z][a-zA-Z\\.]*[a-zA-Z]");
         Matcher matcher = pattern.matcher(email);
         validar = matcher.matches();
         return validar;
-
-
     }
 
     public void buscar() throws NamingException, SQLException {
@@ -825,27 +819,27 @@ public class MbOrdenCompra implements Serializable {
         this.contactoElegido = contactoElegido;
     }
 
-    public MbBuscarEmpaques getMbBuscar() {
+    public MbProductosBuscar getMbBuscar() {
         return mbBuscar;
     }
 
-    public void setMbBuscar(MbBuscarEmpaques mbBuscar) {
+    public void setMbBuscar(MbProductosBuscar mbBuscar) {
         this.mbBuscar = mbBuscar;
     }
 
-    public ArrayList<Empaque> getListaEmpaque() {
+    public ArrayList<Producto> getListaEmpaque() {
         return listaEmpaque;
     }
 
-    public void setListaEmpaque(ArrayList<Empaque> listaEmpaque) {
+    public void setListaEmpaque(ArrayList<Producto> listaEmpaque) {
         this.listaEmpaque = listaEmpaque;
     }
 
-    public Empaque getEmpaque() {
+    public Producto getEmpaque() {
         return empaque;
     }
 
-    public void setEmpaque(Empaque empaque) {
+    public void setEmpaque(Producto empaque) {
         this.empaque = empaque;
     }
 

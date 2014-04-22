@@ -2,6 +2,7 @@ package entradas.dao;
 
 import entradas.dominio.MovimientoProducto;
 import entradas.to.TOMovimiento;
+import entradas.to.TOMovimientoDetalle;
 import impuestos.dominio.ImpuestosProducto;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -18,7 +19,7 @@ import javax.naming.InitialContext;
 import javax.naming.NamingException;
 import javax.servlet.http.HttpSession;
 import javax.sql.DataSource;
-import productos.dominio.Empaque;
+import producto2.dominio.Producto;
 import usuarios.UsuarioSesion;
 
 /**
@@ -201,13 +202,13 @@ public class DAOMovimientos {
                     "VALUES ("+idMovto+", ?, ?, 0, 0, 0, 0, 0, 0, 0, 0, ?, GETDATE())";
             PreparedStatement ps=cn.prepareStatement(strSQL);
             for(MovimientoProducto p: productos) {
-                ps.setInt(1, p.getEmpaque().getIdEmpaque());
+                ps.setInt(1, p.getProducto().getIdProducto());
                 ps.setDouble(2, p.getCantOrdenada());
-                ps.setInt(3, p.getEmpaque().getProducto().getImpuestoGrupo().getIdGrupo());
+                ps.setInt(3, p.getProducto().getArticulo().getImpuestoGrupo().getIdGrupo());
                 ps.executeUpdate();
                 
                 // this.agregarImpuestosProducto(cn, idImpuestoGrupo, m.getIdImpuestoZona(), idMovto, idEmpaque);
-                this.agregarImpuestosProducto(cn, p.getEmpaque().getProducto().getImpuestoGrupo().getIdGrupo(), 1, idMovto, p.getEmpaque().getIdEmpaque());
+                this.agregarImpuestosProducto(cn, p.getProducto().getArticulo().getImpuestoGrupo().getIdGrupo(), 1, idMovto, p.getProducto().getIdProducto());
             }
             
             st.executeUpdate("COMMIT TRANSACTION");
@@ -268,7 +269,7 @@ public class DAOMovimientos {
             st.executeUpdate("BEGIN TRANSACTION");
             
             for(MovimientoProducto p: productos) {
-                idEmpaque=p.getEmpaque().getIdEmpaque();
+                idEmpaque=p.getProducto().getIdProducto();
 //                diasCaducidad=p.getEmpaque().getProducto().getDiasCaducidad();
                 diasCaducidad=365;
                 
@@ -410,7 +411,7 @@ public class DAOMovimientos {
             //lote=""+rs.getInt("DIA")+String.format("%02d", rs.getInt("SEM"))+rs.getInt("ANIO")+"1";
             
             for(MovimientoProducto p: productos) {
-                idEmpaque=p.getEmpaque().getIdEmpaque();
+                idEmpaque=p.getProducto().getIdProducto();
                 
                 if(p.getCantFacturada()> 0) {
                     capturados++;
@@ -426,12 +427,12 @@ public class DAOMovimientos {
                         ps.setDouble(9, p.getUnitario());
                         ps.setDouble(10, p.getCantOrdenada());
                         ps.setDouble(11, 0);
-                        ps.setInt(12, p.getEmpaque().getProducto().getImpuestoGrupo().getIdGrupo());
+                        ps.setInt(12, p.getProducto().getArticulo().getImpuestoGrupo().getIdGrupo());
                         ps.executeUpdate();
 
-                        idImpuestoGrupo=p.getEmpaque().getProducto().getImpuestoGrupo().getIdGrupo();
+                        idImpuestoGrupo=p.getProducto().getArticulo().getImpuestoGrupo().getIdGrupo();
                         this.agregarImpuestosProducto(cn, idImpuestoGrupo, m.getIdImpuestoZona(), m.getIdMovto(), idEmpaque);
-                        this.calculaImpuestosProducto(cn, m.getIdMovto(), idEmpaque, p.getUnitario(), p.getEmpaque().getPiezas());
+                        this.calculaImpuestosProducto(cn, m.getIdMovto(), idEmpaque, p.getUnitario(), p.getProducto().getPiezas());
                     } else {
                         ps1.setDouble(1, p.getPrecio());
                         ps1.setDouble(2, p.getDesctoProducto1());
@@ -548,7 +549,7 @@ public class DAOMovimientos {
             
             for(MovimientoProducto p: productos) {
                 ps.setInt(1, idMovto);
-                ps.setInt(2, p.getEmpaque().getIdEmpaque());
+                ps.setInt(2, p.getProducto().getIdProducto());
                 ps.setDouble(3, p.getPrecio());
                 ps.setDouble(4, p.getDesctoProducto1());
                 ps.setDouble(5, p.getDesctoProducto2());
@@ -556,14 +557,14 @@ public class DAOMovimientos {
                 ps.setDouble(7, p.getUnitario());
                 ps.setDouble(8, p.getCantOrdenada());
                 ps.setDouble(9, 0);
-                ps.setInt(10, p.getEmpaque().getProducto().getImpuestoGrupo().getIdGrupo());
+                ps.setInt(10, p.getProducto().getArticulo().getImpuestoGrupo().getIdGrupo());
                 ps.setDouble(11, p.getCantSinCargo());
                 ps.executeUpdate();
                 
-                idEmpaque=p.getEmpaque().getIdEmpaque();
-                idImpuestoGrupo=p.getEmpaque().getProducto().getImpuestoGrupo().getIdGrupo();
+                idEmpaque=p.getProducto().getIdProducto();
+                idImpuestoGrupo=p.getProducto().getArticulo().getImpuestoGrupo().getIdGrupo();
                 this.agregarImpuestosProducto(cn, idImpuestoGrupo, m.getIdImpuestoZona(), idMovto, idEmpaque);
-                this.calculaImpuestosProducto(cn, idMovto, idEmpaque, p.getUnitario(), p.getEmpaque().getPiezas());
+                this.calculaImpuestosProducto(cn, idMovto, idEmpaque, p.getUnitario(), p.getProducto().getPiezas());
             }
             st.executeUpdate("COMMIT TRANSACTION");
         } catch(SQLException e) {
@@ -653,26 +654,39 @@ public class DAOMovimientos {
         return impuestos;
     }
     
-    public ArrayList<MovimientoProducto> obtenerDetalleMovimiento(int idMovto) throws SQLException, NamingException {
-        ArrayList<MovimientoProducto> lstProductos=new ArrayList<MovimientoProducto>();
+    public ArrayList<TOMovimientoDetalle> obtenerDetalleMovimiento(int idMovto) throws SQLException, NamingException {
+        ArrayList<TOMovimientoDetalle> productos=new ArrayList<TOMovimientoDetalle>();
         Connection cn=this.ds.getConnection();
         Statement st=cn.createStatement();
         try {
-            MovimientoProducto prod;
             ResultSet rs=st.executeQuery("SELECT * FROM movimientosDetalle WHERE idMovto="+idMovto);
             while(rs.next()) {
-                prod=construirProducto(rs);
-                lstProductos.add(prod);
+                productos.add(construirDetalle(rs));
             }
         } finally {
             cn.close();
         }
-        return lstProductos;
+        return productos;
     }
+    
+    public TOMovimientoDetalle construirDetalle(ResultSet rs) throws SQLException {
+        TOMovimientoDetalle to=new TOMovimientoDetalle();
+        to.setIdProducto(rs.getInt("idEmpaque"));
+        to.setDesctoProducto1(rs.getDouble("desctoProducto1"));
+        to.setDesctoProducto2(rs.getDouble("desctoProducto2"));
+        to.setDesctoConfidencial(rs.getDouble("desctoConfidencial"));
+        to.setCantOrdenada(rs.getDouble("cantOrdenada"));
+        to.setCantFacturada(rs.getDouble("cantFacturada"));
+        to.setCantSinCargo(rs.getDouble("cantSinCargo"));
+        to.setCantRecibida(rs.getDouble("cantRecibida"));
+        to.setPrecio(rs.getDouble("costo"));
+        return to;
+    } 
     
     public MovimientoProducto construirProducto(ResultSet rs) throws SQLException {
         MovimientoProducto producto=new MovimientoProducto();
-        producto.setEmpaque(new Empaque(rs.getInt("idEmpaque")));
+        producto.setProducto(new Producto());
+        producto.getProducto().setIdProducto(rs.getInt("idEmpaque"));
         producto.setDesctoProducto1(rs.getDouble("desctoProducto1"));
         producto.setDesctoProducto2(rs.getDouble("desctoProducto2"));
         producto.setDesctoConfidencial(rs.getDouble("desctoConfidencial"));

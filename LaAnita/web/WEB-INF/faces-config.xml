@@ -390,55 +390,57 @@
         </navigation-case>
     </navigation-rule>
     
-    <!-- =========== INICIO CONVERTER PRODUCTOS (JULIO) ================================== -->
-    <converter>
-        <converter-id>converters.UnidadEmpaque</converter-id>
-        <converter-class>productos.converters.UnidadEmpaqueConverter</converter-class>
-    </converter>
-    
-    <converter>
-        <converter-id>converters.SubEmpaque</converter-id>
-        <converter-class>productos.converters.SubEmpaqueConverter</converter-class>
-    </converter>
-    
+    <!-- =========== CONVERTER PRODUCTOS  =========== -->
     <converter>
         <converter-id>converters.Upc</converter-id>
-        <converter-class>productos.converters.UpcConverter</converter-class>
+        <converter-class>producto2.converters.UpcConverter</converter-class>
     </converter>
+    
+    <converter>
+        <converter-id>converters.Empaque</converter-id>
+        <converter-class>producto2.converters.EmpaqueConverter</converter-class>
+    </converter>
+    
+    <converter>
+        <converter-id>converters.SubProducto</converter-id>
+        <converter-class>producto2.converters.SubProductoConverter</converter-class>
+    </converter>
+    
+    <!-- =========== CONVERTERS ARTICULOS =========== -->
     
     <converter>
         <converter-id>converters.Parte</converter-id>
-        <converter-class>productos.converters.ParteConverter</converter-class>
+        <converter-class>producto2.converters.ParteConverter</converter-class>
     </converter>
-    
+    <!--
     <converter>
         <converter-id>converters.ParteBuscar</converter-id>
         <converter-class>productos.converters.ParteBuscarConverter</converter-class>
     </converter>
-    
+    -->
     <converter>
         <converter-id>converters.TipoProducto</converter-id>
-        <converter-class>productos.converters.TipoConverter</converter-class>
+        <converter-class>producto2.converters.TipoConverter</converter-class>
     </converter>
     
     <converter>
         <converter-id>converters.Grupos</converter-id>
-        <converter-class>productos.converters.GrupoConverter</converter-class>
+        <converter-class>producto2.converters.GrupoConverter</converter-class>
     </converter>
     
     <converter>
         <converter-id>converters.SubGrupos</converter-id>
-        <converter-class>productos.converters.SubGrupoConverter</converter-class>
+        <converter-class>producto2.converters.SubGrupoConverter</converter-class>
     </converter>
     
     <converter>
         <converter-id>converters.Marca</converter-id>
-        <converter-class>productos.converters.MarcaConverter</converter-class>
+        <converter-class>producto2.converters.MarcaConverter</converter-class>
     </converter>
     
     <converter>
         <converter-id>converters.Presentacion</converter-id>
-        <converter-class>productos.converters.PresentacionConverter</converter-class>
+        <converter-class>producto2.converters.PresentacionConverter</converter-class>
     </converter>
     
     <converter>

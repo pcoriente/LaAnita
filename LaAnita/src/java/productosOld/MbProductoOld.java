@@ -15,11 +15,11 @@ import productos.MbProducto;
 import productos.dao.DAOTipos;
 import productos.dominio.Empaque;
 import productos.dominio.Grupo;
-import productos.dominio.SubEmpaque;
+import producto2.dominio.SubProducto;
 import productos.dominio.SubGrupo;
 import productos.dominio.Presentacion;
 import productos.dominio.UnidadEmpaque;
-import productos.dominio.Upc;
+import producto2.dominio.Upc;
 import productosOld.dominio.ProductoOld;
 
 /**
@@ -182,7 +182,7 @@ public class MbProductoOld implements Serializable {
                 empaque.getProducto().setPresentacion(new Presentacion(0, "", ""));
                 empaque.setUnidadEmpaque(new UnidadEmpaque(0, "", ""));
                 empaque.setPiezas(0);
-                empaque.setSubEmpaque(new SubEmpaque(0, 0, new UnidadEmpaque(0, "", "")));
+                empaque.setSubEmpaque(new SubProducto(0, 0, new UnidadEmpaque(0, "", "")));
                 empaque.setPeso(this.productoOld.getPeso());
                 empaque.setVolumen(this.productoOld.getVolumen());
             }
