@@ -26,14 +26,14 @@
         <Node id="AltasLeyenda.xhtml" x="900" y="450" zoom="true"/>
         <Node id="menuClasificaciones.xhtml" x="150" y="1050" zoom="true"/>
         <Node id="pedidos1.xhtml" x="150" y="900" zoom="true"/>
-        <Node id="proveedoresListas.xhtml" x="150" y="1200" zoom="true"/>
         <Node id="resources/ezcomp/out.xhtml" x="650" y="900" zoom="true"/>
+        <Node id="proveedoresListas.xhtml" x="150" y="1200" zoom="true"/>
         <Node id="menuUnidadesMedida.xhtml" x="1400" y="300" zoom="true"/>
         <Node id="cedis.xhtml" x="1650" y="600" zoom="true"/>
         <Node id="wrapperMenu.xhtml" x="150" y="300" zoom="true"/>
         <Node id="footer.xhtml" x="1400" y="600" zoom="true"/>
-        <Node id="menuProveedores.xhtml" x="900" y="750" zoom="true"/>
         <Node id="unidadesMedida.xhtml" x="2150" y="300" zoom="true"/>
+        <Node id="menuProveedores.xhtml" x="900" y="750" zoom="true"/>
         <Node id="template.xhtml" x="2400" y="150" zoom="true"/>
         <Node id="ordenDeCompra.xhtml" x="400" y="750" zoom="true"/>
         <Node id="requisiciones.xhtml" x="900" y="900" zoom="true"/>
