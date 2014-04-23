@@ -47,24 +47,69 @@ public class DAOUpcs {
         }
     }
     
-    public void agregar(Upc u) throws SQLException {
+    public void modificar(Upc u) throws SQLException {
         Connection cn = ds.getConnection();
         Statement st = cn.createStatement();
         try {
-            st.executeUpdate("INSERT INTO "+this.tabla+" (upc, idProducto) VALUES ('" + u.getUpc() + "', " + u.getIdProducto() + ")");
+            st.execute("BEGIN TRANSACTION");
+            ResultSet rs=st.executeQuery("SELECT upc FROM "+this.tabla+" WHERE idProducto="+u.getIdProducto()+" AND actual=1");
+            if(rs.next()) {
+                st.executeUpdate("UPDATE "+this.tabla+" SET actual=0 WHERE upc='"+rs.getString("upc")+"'");
+            }
+            st.executeUpdate("UPDATE "+this.tabla+" SET actual=1 WHERE upc='"+u.getUpc()+"'");
+            st.execute("COMMIT TRANSACTION");
+        } catch (SQLException ex) {
+            st.execute("ROLLBACK TRANSACTION");
+            throw ex;
         } finally {
             cn.close();
         }
     }
     
-    public Upc obtenerUnUpc(int idProducto) throws SQLException {
+    public void agregar(Upc u) throws SQLException {
+        Connection cn = ds.getConnection();
+        Statement st = cn.createStatement();
+        try {
+            int actual=1;
+            st.execute("BEGIN TRANSACTION");
+            ResultSet rs=st.executeQuery("SELECT upc FROM "+this.tabla+" WHERE idProducto="+u.getIdProducto()+" AND actual=1");
+            if(rs.next()) {
+                if(u.isActual()) {
+                    st.executeUpdate("UPDATE "+this.tabla+" SET actual=0 WHERE idProducto="+u.getIdProducto());
+                } else {
+                    actual=0;
+                }
+            }
+            st.executeUpdate("INSERT INTO "+this.tabla+" (upc, idProducto, actual) "
+                            + "VALUES ('" + u.getUpc() + "', " + u.getIdProducto() + ", "+actual+")");
+            st.execute("COMMIT TRANSACTION");
+        } catch (SQLException ex) {
+            st.execute("ROLLBACK TRANSACTION");
+            if(ex.getErrorCode()==2627) {
+                throw new SQLException("Codigo de barras ya existe, no se permite duplicar");
+            } else {
+                throw ex;
+            }
+        } finally {
+            cn.close();
+        }
+    }
+    
+    public Upc obtenerUpc(int idProducto) throws SQLException {
         Upc upc=null;
         Connection cn = ds.getConnection();
         Statement st = cn.createStatement();
         try {
-            ResultSet rs=st.executeQuery("SELECT upc, idProducto FROM"+this.tabla+" WHERE idProducto="+idProducto);
+            ResultSet rs=st.executeQuery("SELECT upc, idProducto, actual FROM"+this.tabla+" WHERE idProducto="+idProducto+" AND actual=1");
             if(rs.next()) {
-                upc=new Upc(rs.getString("upc"), rs.getInt("idProducto"));
+                upc=new Upc(rs.getString("upc"), rs.getInt("idProducto"), rs.getBoolean("actual"));
+            } else {
+                rs=st.executeQuery("SELECT upc, idProducto, actual FROM"+this.tabla+" WHERE idProducto="+idProducto);
+                if(rs.next()) {
+                    upc=new Upc(rs.getString("upc"), rs.getInt("idProducto"), rs.getBoolean("actual"));
+                } else {
+                    upc=new Upc("SELECCIONE", idProducto, false);
+                }
             }
         } finally {
             cn.close();
@@ -77,9 +122,9 @@ public class DAOUpcs {
         Connection cn = ds.getConnection();
         Statement st = cn.createStatement();
         try {
-            ResultSet rs = st.executeQuery("SELECT upc, idProducto FROM "+this.tabla+" WHERE idProducto=" + idProducto);
+            ResultSet rs = st.executeQuery("SELECT upc, idProducto, actual FROM "+this.tabla+" WHERE idProducto=" + idProducto);
             while (rs.next()) {
-                upcs.add(new Upc(rs.getString("upc"), rs.getInt("idProducto")));
+                upcs.add(new Upc(rs.getString("upc"), rs.getInt("idProducto"), rs.getBoolean("actual")));
             }
         } finally {
             cn.close();
@@ -92,9 +137,9 @@ public class DAOUpcs {
         Connection cn = ds.getConnection();
         Statement st = cn.createStatement();
         try {
-            ResultSet rs = st.executeQuery("SELECT upc, idProducto FROM "+this.tabla+" WHERE upc=" + upc);
+            ResultSet rs = st.executeQuery("SELECT upc, idProducto, actual FROM "+this.tabla+" WHERE upc='" + upc + "'");
             if (rs.next()) {
-                u = new Upc(rs.getString("upc"), rs.getInt("idProducto"));
+                u = new Upc(rs.getString("upc"), rs.getInt("idProducto"), rs.getBoolean("actual"));
             }
         } finally {
             cn.close();

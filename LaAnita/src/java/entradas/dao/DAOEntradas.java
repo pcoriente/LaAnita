@@ -1,10 +1,8 @@
 package entradas.dao;
 
-import entradas.dominio.Entrada;
 import entradas.dominio.MovimientoProducto;
 import impuestos.dominio.ImpuestosProducto;
 import java.sql.Connection;
-import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -19,7 +17,7 @@ import javax.naming.InitialContext;
 import javax.naming.NamingException;
 import javax.servlet.http.HttpSession;
 import javax.sql.DataSource;
-import productos.dominio.Empaque;
+import producto2.dominio.Producto;
 import usuarios.UsuarioSesion;
 
 /**
@@ -94,7 +92,7 @@ public class DAOEntradas {
             }
             
             for(MovimientoProducto p: productos) {
-                idEmpaque=p.getEmpaque().getIdEmpaque();
+                idEmpaque=p.getProducto().getIdProducto();
 //                fechaCaducidad=utilerias.Utilerias.addDays(fechaCaducidad, p.getEmpaque().getProducto().getDiasCaducidad);
 //                fechaCaducidad=utilerias.Utilerias.addDays(fechaCaducidad, 365);
                 
@@ -186,7 +184,7 @@ public class DAOEntradas {
             //lote=""+rs.getInt("DIA")+String.format("%02d", rs.getInt("SEM"))+rs.getInt("ANIO")+"1";
             
             for(MovimientoProducto p: productos) {
-                idEmpaque=p.getEmpaque().getIdEmpaque();
+                idEmpaque=p.getProducto().getIdProducto();
                 
                 if(p.getCantFacturada()> 0) {
                     capturados++;
@@ -475,7 +473,9 @@ public class DAOEntradas {
     
     public MovimientoProducto construirProducto(ResultSet rs) throws SQLException {
         MovimientoProducto producto=new MovimientoProducto();
-        producto.setEmpaque(new Empaque(rs.getInt("idEmpaque")));
+//        producto.setEmpaque(new Empaque(rs.getInt("idEmpaque")));
+        producto.setProducto(new Producto());
+        producto.getProducto().setIdProducto(rs.getInt("idEmpaque"));
         producto.setDesctoProducto1(rs.getDouble("desctoProducto1"));
         producto.setDesctoProducto2(rs.getDouble("desctoProducto2"));
         producto.setDesctoConfidencial(rs.getDouble("desctoConfidencial"));

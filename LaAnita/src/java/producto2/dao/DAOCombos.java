@@ -36,15 +36,34 @@ public class DAOCombos {
         }
     }
     
+    public void grabarCombo(ArrayList<TOProductoCombo> tos, int idProducto) throws SQLException {
+        Connection cn=ds.getConnection();
+        Statement st=cn.createStatement();
+        try {
+            st.execute("BEGIN TRANSACTION");
+            st.executeUpdate("DELETE FROM empaquesCombos WHERE idEmpaque="+idProducto);
+            for(TOProductoCombo to:tos) {
+                st.executeUpdate("INSERT INTO empaquesCombos (idEmpaque, idSubEmpaque, piezas) "
+                        + "VALUES("+idProducto+", "+to.getIdSubProducto()+", "+to.getPiezas()+")");
+            }
+            st.execute("COMMIT TRANSACTION");
+        } catch(SQLException ex) {
+            st.execute("ROLLBACK TRANSACTION");
+            throw ex;
+        } finally {
+            cn.close();
+        }
+    } 
+    
     public ArrayList<TOProductoCombo> obtenerCombo(int idProducto) throws SQLException {
         ArrayList<TOProductoCombo> productos=new ArrayList<TOProductoCombo>();
-        String strSQL="SELECT idSubempaque AS idProducto, piezas FROM empaquesCombos WHERE idEmpaque="+idProducto;
+        String strSQL="SELECT idSubempaque AS idSubProducto, piezas FROM empaquesCombos WHERE idEmpaque="+idProducto;
         Connection cn=ds.getConnection();
         Statement st=cn.createStatement();
         try {
             ResultSet rs=st.executeQuery(strSQL);
             while(rs.next()) {
-                productos.add(new TOProductoCombo(rs.getInt("idProducto"), rs.getInt("piezas")));
+                productos.add(new TOProductoCombo(rs.getInt("idSubProducto"), rs.getInt("piezas")));
             }
         } finally {
             cn.close();

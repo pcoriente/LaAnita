@@ -238,7 +238,7 @@ public class MbArticulos implements Serializable {
             fMsg.setDetail("Se requiere el grupo !!");
         } else if(this.articulo.getPresentacion().getIdPresentacion() == 0) {
             fMsg.setDetail("Se requiere una unidad de empaque");
-        } else if(this.articulo.getPresentacion().getIdPresentacion() > 1 && (this.articulo.getContenido() <= 0 || this.articulo.getContenido() >= 1000)) {
+        } else if(this.articulo.getPresentacion().getIdPresentacion() > 1 && (this.articulo.getContenido() < 0 || this.articulo.getContenido() >= 1000)) {
             this.articulo.setContenido(0);
             fMsg.setDetail("Se requiere un número mayor que cero y menor a 1000");
         } else if (this.articulo.getPresentacion().getIdPresentacion() > 1 && this.articulo.getUnidadMedida().getIdUnidadMedida() == 0) {

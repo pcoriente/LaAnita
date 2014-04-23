@@ -1,9 +1,8 @@
 package cotizaciones.dominio;
 
 import java.io.Serializable;
-import productos.dominio.Empaque;
+import producto2.dominio.Producto;
 import proveedores.dominio.Proveedor;
-import requisiciones.dominio.RequisicionDetalle;
 
 public class CotizacionDetalle implements Serializable {
 
@@ -12,7 +11,7 @@ public class CotizacionDetalle implements Serializable {
     private Proveedor proveedor = new Proveedor();
     private int idCotizacion;  //??
     private int idRequisicion; //??
-    private Empaque empaque;  //??
+    private Producto producto;  //??
     private String sku;
     private double cantidadAutorizada;
     private double cantidadCotizada;
@@ -193,11 +192,11 @@ public class CotizacionDetalle implements Serializable {
         this.idRequisicion = idRequisicion;
     }
 
-    public Empaque getEmpaque() {
-        return empaque;
+    public Producto getProducto() {
+        return producto;
     }
 
-    public void setEmpaque(Empaque empaque) {
-        this.empaque = empaque;
+    public void setProducto(Producto producto) {
+        this.producto = producto;
     }
 }

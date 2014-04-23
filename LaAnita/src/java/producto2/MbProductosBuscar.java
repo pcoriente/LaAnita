@@ -12,7 +12,6 @@ import javax.naming.NamingException;
 import org.primefaces.context.RequestContext;
 import producto2.dao.DAOProductosBuscar;
 import producto2.dominio.Articulo;
-import producto2.dominio.Parte;
 import producto2.dominio.Producto;
 import producto2.dominio.Upc;
 import producto2.to.TOProducto;
@@ -76,7 +75,7 @@ public class MbProductosBuscar implements Serializable {
                     fMsg.setSeverity(FacesMessage.SEVERITY_WARN);
                     fMsg.setDetail("No se encontró producto con el SKU proporcionado");
                 } else {
-                    this.setProducto(this.convertir(to, this.mbBuscar1.obtenerArticulo(to.getIdArticulo()), new Upc("",to.getIdProducto())));
+                    this.setProducto(this.convertir(to, this.mbBuscar1.obtenerArticulo(to.getIdArticulo()), this.mbUpc.obtenerUpc(to.getIdProducto())));
                     ok = true;
                 }
             } else {
@@ -98,7 +97,7 @@ public class MbProductosBuscar implements Serializable {
                         idArticulo=to.getIdArticulo();
                         a=this.mbBuscar1.obtenerArticulo(idArticulo);
                     }
-                    this.productos.add(this.convertir(to, a, new Upc("", to.getIdProducto())));
+                    this.productos.add(this.convertir(to, a, this.mbUpc.obtenerUpc(to.getIdProducto())));
                 }
                 ok=true;
             }
@@ -129,7 +128,7 @@ public class MbProductosBuscar implements Serializable {
         try {
             this.dao=new DAOProductosBuscar();
             TOProducto to=this.dao.obtenerProducto(idProducto);
-            p=this.convertir(to, this.mbBuscar1.obtenerArticulo(to.getIdArticulo()), new Upc("", to.getIdProducto()));
+            p=this.convertir(to, this.mbBuscar1.obtenerArticulo(to.getIdArticulo()), this.mbUpc.obtenerUpc(to.getIdProducto()));
         } catch (NamingException ex) {
             fMsg.setDetail(ex.getMessage());
         } catch (SQLException ex) {

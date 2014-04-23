@@ -4,6 +4,7 @@
       xmlns:ui="http://java.sun.com/jsf/facelets"
       xmlns:h="http://java.sun.com/jsf/html"
       xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:pe="http://primefaces.org/ui/extensions"
       xmlns:p="http://primefaces.org/ui">
     <h:head>
         <h:outputStylesheet library="css" name="main.css"/>
@@ -229,20 +230,29 @@
                         <p:panelGrid id="mttoUpc" styleClass="sinBorde">
                             <p:row >
                                 <p:column >
-                                    <h:outputLabel for="txtUpc" value="UPC :" style="font-weight: bold; color: red; width: 60px;" />
+                                    <h:outputLabel for="txtUpc" value="UPC :" style="font-weight: bold; color: red; width: 65px; text-align: right;" />
                                 </p:column>
                                 <p:column >
-                                    <p:inputText id="txtUpc" readonly="#{frmProductos.producto.upc.upc!='SELECCIONE'}"
+                                    <p:inputText id="txtUpc" readonly="#{not frmProductos.mbBuscar.mbUpc.nueva}"
                                                  value="#{frmProductos.mbBuscar.mbUpc.upc.upc}" maxlength="13" size="15" />
+                                </p:column>
+                            </p:row>
+                            <p:row >
+                                <p:column >
+                                    <h:outputLabel for="txtActual" value="ACTUAL :" style="font-weight: bold; color: red; width: 65px; text-align: right;" />
+                                </p:column>
+                                <p:column >
+                                    <p:selectBooleanCheckbox id="txtActual" value="#{frmProductos.mbBuscar.mbUpc.upc.actual}" 
+                                                             disabled="#{frmProductos.mbBuscar.mbUpc.upc.actual}" />
                                 </p:column>
                             </p:row>
                             <f:facet name="footer" >
                                 <p:row >
                                     <p:column colspan="2" >
-                                        <p:commandButton id="btnGrabarUpc" value="Agregar" disabled="#{frmProductos.producto.upc.upc!='SELECCIONE'}"
+                                        <p:commandButton id="btnGrabarUpc" value="Grabar" disabled="#{frmProductos.mbBuscar.mbUpc.upc.actual}"
                                                          process="@this txtUpc" actionListener="#{frmProductos.grabarUpc()}"
                                                          update="upc" oncomplete="handleUpc(xhr, status, args)" />
-                                        <p:commandButton id="btnEliminarUpc" value="Eliminar" disabled="#{frmProductos.producto.upc.upc=='SELECCIONE'}" 
+                                        <p:commandButton id="btnEliminarUpc" value="Eliminar" disabled="#{frmProductos.mbBuscar.mbUpc.nueva}" 
                                                          process="@this" actionListener="#{frmProductos.eliminarUpc()}" 
                                                          update="upc" oncomplete="handleUpc(xhr, status, args)" />
                                     </p:column>
@@ -298,8 +308,12 @@
                                                          process="@this" actionListener="#{frmProductos.mbCombo.mbBuscar.inicializar()}" 
                                                          update=":main:buscarProductos :main:multipleSelectProductos" 
                                                          oncomplete="buscarProductoDlg.show();" />
+                                        <p:commandButton id="btnGrabarCombo" icon="ui-icon-disk" title="Grabar y Terminar" 
+                                                         process="@this" actionListener="#{frmProductos.grabarCombo()}" 
+                                                         oncomplete="handleCombo(xhr, status, args);" />
                                         <p:commandButton id="btnEliminarProductoCombo" icon="ui-icon-trash" title="Eliminar producto" 
-                                                         disabled="#{frmProductos.mbCombo.producto==null}" />
+                                                         disabled="#{frmProductos.mbCombo.producto==null}" 
+                                                         actionListener="#{frmProductos.mbCombo.eliminar()}" update="verProductosCombo" />
                                     </p:column>
                                 </p:row>
                             </f:facet>
@@ -308,6 +322,7 @@
                                      var="cmb" scrollable="true" scrollHeight="200" style="width: 800px;"
                                      rowKey="#{cmb.producto.idProducto}" 
                                      selectionMode="single" selection="#{frmProductos.mbCombo.producto}" >
+                            <p:ajax event="rowSelect" update=":main:btnEliminarProductoCombo" />
                             <f:facet name="header">
                                 SELECCIONE UN PRODUCTO
                             </f:facet>
@@ -318,11 +333,10 @@
                                 <h:outputText value="#{cmb.producto.toString()}" style="width: 270px;" />
                             </p:column >
                             <p:column headerText="PIEZAS" width="100" >
-                                <p:inputText id="cmbPiezas" immediate="true" maxlength="7" size="10"
-                                             required="true" requiredMessage="Se requiere un número"
-                                             value="#{cmb.piezas}" >
-                                    <f:convertNumber maxIntegerDigits="6" pattern="#####0" />
-                                </p:inputText>
+                                <pe:inputNumber id="cmbPiezas" value="#{cmb.piezas}" 
+                                                decimalPlaces="0"  minValue="0" maxlength="6" style="width: 65px;" emptyValue="zero" >
+                                    <p:ajax event="change" />
+                                </pe:inputNumber>
                             </p:column>
                         </p:dataTable>
                     </p:dialog>
@@ -468,7 +482,7 @@
                                     <p:commandButton id="btnVerCombo" icon="ui-icon-gear" title="Ver combo" 
                                                      disabled="#{frmProductos.producto.idProducto==0 or frmProductos.producto.subProducto.idProducto!=0}"
                                                      process="@this" actionListener="#{frmProductos.obtenerCombo()}" 
-                                                     update=":main:verProductosCombo :main:combo" oncomplete="comboDlg.show()" />
+                                                     update=":main:verProductosCombo :main:combo" oncomplete="comboDlg.show();" />
                                 </p:column>
                             </p:row>
                             <p:row >
@@ -731,6 +745,12 @@
                     </p:dialog>
                 </h:form>
                 <script type="text/javascript">
+                            function handleCombo(xhr, status, args) {
+                                if (!(args.validationFailed || !args.okCombo)) {
+                                    comboDlg.hide();
+                                }
+                            }
+                            
                             function handleUpc(xhr, status, args) {
                                 if (args.validationFailed || !args.okUpc) {
                                     mttoUpcDlg.jq.effect("shake", {times: 5}, 100);

@@ -54,10 +54,10 @@ import proveedores.dominio.Proveedor;
 @Named(value = "mbOrdenCompra")
 @SessionScoped
 public class MbOrdenCompra implements Serializable {
-
-    private OrdenCompraEncabezado ordenCompraEncabezado;
     @ManagedProperty(value = "#{mbCotizaciones}")
     private MbCotizaciones mbCotizaciones;
+    
+    private OrdenCompraEncabezado ordenCompraEncabezado;
     private ArrayList<OrdenCompraEncabezado> listaOrdenesEncabezado;
     private OrdenCompraEncabezado ordenElegida;
     private ArrayList<OrdenCompraDetalle> listaOrdenDetalle;
@@ -176,7 +176,7 @@ public class MbOrdenCompra implements Serializable {
     }
 
     public void limpiarCamposBusqueda() {
-        mbBuscar.setParte(null);
+        mbBuscar.getMbParte().setParte(null);
         mbBuscar.setStrBuscar("");
         mbBuscar.setProductos(null);
     }

@@ -146,19 +146,19 @@
 
                         <p:dataTable id="detalleCotizacion" value="#{mbRequisiciones.cotizacionDetalles}" 
                                      var="cot" scrollable="true" scrollHeight="200" style="width: 900px; margin:0 auto; font-size: 12px;" styleClass="sinBorde"
-                                     rowKey="#{cot.empaque.idEmpaque}" rowIndexVar="fila"
+                                     rowKey="#{cot.producto.idProducto}" rowIndexVar="fila"
                                      >
                             <p:column  headerText="Num." width="20" >
                                 <h:outputText value="#{fila+1}" />
                             </p:column>
                             <p:column  headerText="Cod." width="45" >
-                                <h:outputText value="#{cot.empaque.cod_pro}" />
+                                <h:outputText value="#{cot.producto.cod_pro}" />
                             </p:column>
                             <p:column  headerText="Descripción" width="250" >
-                                <h:outputText value="#{cot.empaque.toString()}"   />
+                                <h:outputText value="#{cot.producto.toString()}"   />
                             </p:column>
                             <p:column headerText="Unidad" width="30" >
-                                <h:outputText value="#{cot.empaque.unidadEmpaque.unidad}" />
+                                <h:outputText value="#{cot.producto.empaque.empaque}" />
                             </p:column>
                             <p:column headerText="Cant. Aut." width="30" >
                                 <h:outputText value="#{cot.cantidadAutorizada}" />
@@ -168,7 +168,7 @@
                                 <pe:inputNumber  value="#{cot.cantidadCotizada}"  id="cotizada"  
                                                  decimalPlaces="3" maxValue="#{cot.cantidadAutorizada}" minValue="0">
                                     <p:ajax event="blur" 
-                                            listener="#{mbRequisiciones.calculaPrecioDescuento(cot.empaque.idEmpaque)}"
+                                            listener="#{mbRequisiciones.calculaPrecioDescuento(cot.producto.idProducto)}"
                                             process="@this"
                                             update="neto subtotal importe detalleCotizacion sumaDescuentosTotales "
                                             />
@@ -180,7 +180,7 @@
                                 <pe:inputNumber value="#{cot.costoCotizado}" id="costo"
                                                 decimalPlaces="2" minValue="0" decimalSeparator="."> 
                                     <p:ajax event="blur" 
-                                            listener="#{mbRequisiciones.calculaPrecioDescuento(cot.empaque.idEmpaque)}"
+                                            listener="#{mbRequisiciones.calculaPrecioDescuento(cot.producto.idProducto)}"
                                             process="@this"
                                             update="neto subtotal importe detalleCotizacion sumaDescuentosTotales "
                                             />
@@ -192,7 +192,7 @@
                                 <pe:inputNumber value="#{cot.descuentoProducto}"   id="descuento"
                                                 decimalPlaces="2" minValue="0" maxValue="100">
                                     <p:ajax event="blur" 
-                                            listener="#{mbRequisiciones.calculaPrecioDescuento(cot.empaque.idEmpaque)}"
+                                            listener="#{mbRequisiciones.calculaPrecioDescuento(cot.producto.idProducto)}"
 
                                             update="neto subtotal importe detalleCotizacion sumaDescuentosTotales "
                                             process="@this"/>
@@ -204,7 +204,7 @@
                                 <pe:inputNumber value="#{cot.descuentoProducto2}"   id="descuento2"
                                                 decimalPlaces="2" minValue="0" maxValue="100">
                                     <p:ajax event="blur" 
-                                            listener="#{mbRequisiciones.calculaPrecioDescuento(cot.empaque.idEmpaque)}"
+                                            listener="#{mbRequisiciones.calculaPrecioDescuento(cot.producto.idProducto)}"
 
                                             update="neto subtotal importe detalleCotizacion sumaDescuentosTotales "
                                             process="@this"/>

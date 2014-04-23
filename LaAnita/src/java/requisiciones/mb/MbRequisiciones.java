@@ -17,9 +17,8 @@ import javax.faces.model.SelectItem;
 import javax.naming.NamingException;
 import monedas.MbMonedas;
 import org.primefaces.event.RowEditEvent;
-import productos.FrmProducto;
-import productos.MbBuscarEmpaques;
-import productos.dominio.Empaque;
+import producto2.MbProductosBuscar;
+import producto2.dominio.Producto;
 import proveedores.MbMiniProveedor;
 import requisiciones.dao.DAORequisiciones;
 import requisiciones.dominio.RequisicionDetalle;
@@ -42,9 +41,9 @@ public class MbRequisiciones implements Serializable {
     private ArrayList<RequisicionEncabezado> requisicionesFiltradas;
     //CAMBIANDO DE PRODUCTOS A EMPAQUES
     @ManagedProperty(value = "#{mbBuscarEmpaques}")
-    private MbBuscarEmpaques mbBuscar;
-    private ArrayList<Empaque> listaEmpaque = new ArrayList<Empaque>();
-    private Empaque empaque;
+    private MbProductosBuscar mbBuscar;
+    private ArrayList<Producto> listaEmpaque = new ArrayList<Producto>();
+    private Producto empaque;
     private RequisicionDetalle requisicionDetalle;
     private ArrayList<RequisicionDetalle> requisicionDetalles;
     private RequisicionDetalle empaqueElegido = new RequisicionDetalle();
@@ -84,7 +83,7 @@ public class MbRequisiciones implements Serializable {
         this.mbUsuarios = new MbUsuarios();
         this.mbMiniProveedor = new MbMiniProveedor();
         this.mbMonedas = new MbMonedas();
-        this.mbBuscar = new MbBuscarEmpaques();
+        this.mbBuscar = new MbProductosBuscar();
 
 
     }
@@ -128,7 +127,7 @@ public class MbRequisiciones implements Serializable {
                 cargaRequisiciones();
             }
         } catch (SQLException ex) {
-            Logger.getLogger(FrmProducto.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(MbRequisiciones.class.getName()).log(Level.SEVERE, null, ex);
         }
         return listaRequisicionesEncabezado;
     }
@@ -337,27 +336,27 @@ public class MbRequisiciones implements Serializable {
     }
 
     //EMPAQUES
-    public MbBuscarEmpaques getMbBuscar() {
+    public MbProductosBuscar getMbBuscar() {
         return mbBuscar;
     }
 
-    public void setMbBuscar(MbBuscarEmpaques mbBuscar) {
+    public void setMbBuscar(MbProductosBuscar mbBuscar) {
         this.mbBuscar = mbBuscar;
     }
 
-    public ArrayList<Empaque> getListaEmpaque() {
+    public ArrayList<Producto> getListaEmpaque() {
         return listaEmpaque;
     }
 
-    public void setListaEmpaque(ArrayList<Empaque> listaEmpaque) {
+    public void setListaEmpaque(ArrayList<Producto> listaEmpaque) {
         this.listaEmpaque = listaEmpaque;
     }
 
-    public Empaque getEmpaque() {
+    public Producto getEmpaque() {
         return empaque;
     }
 
-    public void setEmpaque(Empaque empaque) {
+    public void setEmpaque(Producto empaque) {
         this.empaque = empaque;
     }
 
@@ -427,7 +426,7 @@ public class MbRequisiciones implements Serializable {
             boolean control = false;
             for (RequisicionDetalle p : this.requisicionDetalles) {
                 if (p.getCantidad() <= 0) {
-                    fMsg = new FacesMessage(FacesMessage.SEVERITY_WARN, "Aviso: Para el producto " + p.getEmpaque().toString(), " Capture una cantidad numérica y positiva. ");
+                    fMsg = new FacesMessage(FacesMessage.SEVERITY_WARN, "Aviso: Para el producto " + p.getProducto().toString(), " Capture una cantidad numérica y positiva. ");
                     control = true;
                     break;
                 }
@@ -514,7 +513,7 @@ public class MbRequisiciones implements Serializable {
 
     public void eliminarProducto(int idEmpaque) {
         for (RequisicionDetalle d : requisicionDetalles) {
-            if (d.getEmpaque().getIdEmpaque() == idEmpaque) {
+            if (d.getProducto().getIdProducto() == idEmpaque) {
                 requisicionDetalles.remove(d);
                 break;
             }
@@ -556,7 +555,7 @@ public class MbRequisiciones implements Serializable {
         DAORequisiciones daoReq = new DAORequisiciones();
         int longitud = requisicionDetalles.size();
         for (int y = 0; y < longitud; y++) {
-            int idProducto = requisicionDetalles.get(y).getEmpaque().getIdEmpaque();
+            int idProducto = requisicionDetalles.get(y).getProducto().getIdProducto();
             if (idProducto == idProd) {
                 requisicionDetalles.remove(y);
                 daoReq.eliminaProductoAprobar(idReq, idProd);
@@ -569,7 +568,7 @@ public class MbRequisiciones implements Serializable {
         DAORequisiciones daoReq = new DAORequisiciones();
         int longitud = requisicionDetalles.size();
         for (int y = 0; y < longitud; y++) {
-            int idProducto = requisicionDetalles.get(y).getEmpaque().getIdEmpaque();
+            int idProducto = requisicionDetalles.get(y).getProducto().getIdProducto();
             int idRequi = requisicionDetalles.get(y).getIdRequisicion();
             if (idProducto == idProd || idRequi == idReq) {
                 int cantidad = requisicionDetalles.get(y).getCantidadAutorizada();
@@ -585,7 +584,7 @@ public class MbRequisiciones implements Serializable {
         RequisicionDetalle deta = (RequisicionDetalle) event.getObject();
         FacesMessage msg = null;
         int idReq = deta.getIdRequisicion();
-        int idProd = deta.getEmpaque().getIdEmpaque();
+        int idProd = deta.getProducto().getIdProducto();
         int cantidad = deta.getCantidadAutorizada();
         if (cantidad > 0) {
             daoReq.modificaProductoAprobar(idReq, idProd, cantidad);
@@ -743,7 +742,7 @@ public class MbRequisiciones implements Serializable {
         subtotalGeneral = 0;
         try {
             for (CotizacionDetalle e : cotizacionDetalles) {
-                if (e.getEmpaque().getIdEmpaque() == idEmp) {
+                if (e.getProducto().getIdProducto() == idEmp) {
                     double neto = e.getCostoCotizado() - (e.getCostoCotizado() * (e.getDescuentoProducto() / 100));
 
                     double neto2 = neto - neto * (e.getDescuentoProducto2() / 100);
@@ -801,7 +800,7 @@ public class MbRequisiciones implements Serializable {
     }
 
     public void actualizaProductosSeleccionados() {
-        for (Empaque e : this.mbBuscar.getSeleccionados()) {
+        for (Producto e : this.mbBuscar.getSeleccionados()) {
             this.mbBuscar.setProducto(e);
             this.actualizaProductoSeleccionado();
         }
@@ -811,10 +810,10 @@ public class MbRequisiciones implements Serializable {
           FacesMessage msg = null;
         boolean nuevo = true;
         RequisicionDetalle rd = new RequisicionDetalle();
-        int idEmp = this.mbBuscar.getProducto().getIdEmpaque();
-        rd.setEmpaque(this.mbBuscar.getProducto());
+        int idEmp = this.mbBuscar.getProducto().getIdProducto();
+        rd.setProducto(this.mbBuscar.getProducto());
         for (RequisicionDetalle p : this.requisicionDetalles) {
-            if (p.getEmpaque().getIdEmpaque() == idEmp) {
+            if (p.getProducto().getIdProducto() == idEmp) {
                 System.out.println("somos iguales");
                 nuevo = false;
                  msg = new FacesMessage(FacesMessage.SEVERITY_INFO, "Aviso:", "Ya existe el producto..");
@@ -828,7 +827,7 @@ public class MbRequisiciones implements Serializable {
     }
 
     public void cerrarCotizacion(int idReq) throws SQLException {
-        FacesMessage msg = null;
+        FacesMessage msg;
         try {
             if (numCotizacion == 0) {
                 msg = new FacesMessage(FacesMessage.SEVERITY_INFO, "Aviso:", "No ha realizado ninguna cotización, por lo que no puede ser CERRADA..");

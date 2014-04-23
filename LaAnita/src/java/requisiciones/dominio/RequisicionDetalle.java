@@ -1,13 +1,13 @@
 
 package requisiciones.dominio;
 
-import productos.dominio.Empaque;
+import producto2.dominio.Producto;
 
 
 public class RequisicionDetalle {
 
     private int idRequisicion;
-    private Empaque empaque;
+    private Producto producto;
     private int cantidad;
     private int cantidadAutorizada;
 
@@ -19,12 +19,12 @@ public class RequisicionDetalle {
         this.idRequisicion = idRequisicion;
     }
 
-    public Empaque getEmpaque() {
-        return empaque;
+    public Producto getProducto() {
+        return producto;
     }
 
-    public void setEmpaque(Empaque empaque) {
-        this.empaque = empaque;
+    public void setProducto(Producto producto) {
+        this.producto = producto;
     }
 
     public int getCantidad() {

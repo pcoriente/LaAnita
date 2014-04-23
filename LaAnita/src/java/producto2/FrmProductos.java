@@ -4,7 +4,6 @@ import javax.inject.Named;
 import javax.enterprise.context.SessionScoped;
 import java.io.Serializable;
 import java.sql.SQLException;
-import java.util.ArrayList;
 import javax.faces.application.FacesMessage;
 import javax.faces.bean.ManagedProperty;
 import javax.faces.context.FacesContext;
@@ -59,6 +58,10 @@ public class FrmProductos implements Serializable {
         this.producto=new Producto();
     }
     
+    public void grabarCombo() {
+        this.mbCombo.grabarCombo(this.producto.getIdProducto());
+    }
+    
     public void obtenerCombo() {
         this.mbCombo.obtenerCombo(this.producto.getIdProducto());
     }
@@ -71,16 +74,31 @@ public class FrmProductos implements Serializable {
     }
     
     public void grabarUpc() {
-        if (this.mbBuscar.getMbUpc().agregar()) {
-            this.producto.setUpc(this.mbBuscar.getMbUpc().getUpc());
-            this.mbBuscar.getMbUpc().cargaListaUpcs();
+        if(this.mbBuscar.getMbUpc().isNueva()) {
+            this.mbBuscar.getMbUpc().agregar();
+        } else {
+            this.mbBuscar.getMbUpc().modificar();
         }
+        this.producto.setUpc(this.mbBuscar.getMbUpc().obtenerUpc(this.mbBuscar.getMbUpc().getUpc().getUpc()));
+        this.mbBuscar.getMbUpc().cargaListaUpcs();
+//            if (this.mbBuscar.getMbUpc().agregar()) {
+//                this.producto.setUpc(this.mbBuscar.getMbUpc().getUpc());
+//                this.mbBuscar.getMbUpc().cargaListaUpcs();
+//            }
+//        } else {
+//            if(this.mbBuscar.getMbUpc().modificar()) {
+//                
+//            }
+//        }
+//        this.producto.setUpc(this.mbBuscar.getMbUpc().o);
     }
     
     public void mttoUpc() {
         if (this.producto.getUpc().getUpc().equals("SELECCIONE")) {
+            this.mbBuscar.getMbUpc().setNueva(true);
             this.mbBuscar.getMbUpc().nuevo(this.producto.getIdProducto());
         } else {
+            this.mbBuscar.getMbUpc().setNueva(false);
             this.mbBuscar.getMbUpc().copia(this.producto.getUpc());
         }
     }

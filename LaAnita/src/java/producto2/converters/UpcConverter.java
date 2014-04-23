@@ -6,6 +6,7 @@ import javax.faces.component.UIComponent;
 import javax.faces.context.FacesContext;
 import javax.faces.convert.Converter;
 import javax.faces.convert.ConverterException;
+import producto2.dao.DAOUpcs;
 import producto2.dominio.Upc;
 
 /**
@@ -17,11 +18,15 @@ public class UpcConverter implements Converter {
     public Object getAsObject(FacesContext context, UIComponent component, String value) {
         Upc upc = null;
         try {
-            
             int pos=value.indexOf("|");
             int idProducto=Integer.parseInt(value.substring(pos+1));
             value=value.substring(0, pos);
-            upc=new Upc(value, idProducto);
+            if(value.equals("SELECCIONE")) {
+                upc=new Upc("SELECCIONE", idProducto, false);
+            } else {
+                DAOUpcs dao=new DAOUpcs();
+                upc=dao.obtenerUpc(value);
+            }
         } catch(Throwable ex) {
             ResourceBundle bundle = ResourceBundle.getBundle("messages");
             FacesMessage msg = new FacesMessage(bundle.getString("Mensaje_conversion_Upc_getAsObject"));

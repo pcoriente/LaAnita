@@ -5,10 +5,13 @@ import javax.enterprise.context.SessionScoped;
 import java.io.Serializable;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.faces.application.FacesMessage;
 import javax.faces.bean.ManagedProperty;
 import javax.faces.context.FacesContext;
 import javax.naming.NamingException;
+import org.primefaces.context.RequestContext;
 import producto2.dao.DAOCombos;
 import producto2.dominio.Producto;
 import producto2.dominio.ProductoCombo;
@@ -41,6 +44,42 @@ public class MbCombo implements Serializable {
     private void inicializaLocales() {
         this.productos=new ArrayList<ProductoCombo>();
         this.producto=new ProductoCombo();
+    }
+    
+    public void eliminar() {
+        this.productos.remove(this.producto);
+        if(this.productos.isEmpty()) {
+            this.setProducto(null);
+        } else {
+            this.setProducto(this.productos.get(0));
+        }
+    }
+    
+    public void grabarCombo(int idProducto) {
+        boolean ok=false;
+        FacesMessage fMsg = new FacesMessage(FacesMessage.SEVERITY_ERROR, "Aviso:", "");
+        RequestContext context = RequestContext.getCurrentInstance();
+        ArrayList<TOProductoCombo> tos=new ArrayList<TOProductoCombo>();
+        for(ProductoCombo p:this.productos) {
+            tos.add(convertir(p));
+        }
+        try {
+            this.dao=new DAOCombos();
+            this.dao.grabarCombo(tos, idProducto);
+            ok=true;
+        } catch (NamingException ex) {
+            fMsg.setDetail(ex.getMessage());
+        } catch (SQLException ex) {
+            fMsg.setDetail(ex.getErrorCode() + " " + ex.getMessage());
+        }
+        if(!ok) {
+            FacesContext.getCurrentInstance().addMessage(null, fMsg);
+        }
+        context.addCallbackParam("okCombo", ok);
+    }
+    
+    private TOProductoCombo convertir(ProductoCombo p) {
+        return new TOProductoCombo(p.getProducto().getIdProducto(), p.getPiezas());
     }
     
     public void agregarProductosCombo() {
@@ -97,7 +136,7 @@ public class MbCombo implements Serializable {
     }
     
     private ProductoCombo convertir(TOProductoCombo to) {
-        return new ProductoCombo(this.mbBuscar.obtenerProducto(to.getIdProducto()), to.getPiezas());
+        return new ProductoCombo(this.mbBuscar.obtenerProducto(to.getIdSubProducto()), to.getPiezas());
     }
 
     public MbProductosBuscar getMbBuscar() {

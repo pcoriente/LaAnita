@@ -7,19 +7,21 @@ package producto2.dominio;
 public class Upc {
     private String upc;
     private int idProducto;
+    private boolean actual;
     
     public Upc() {
         this.upc="";
     }
 
-    public Upc(String upc, int idProducto) {
+    public Upc(String upc, int idProducto, boolean actual) {
         this.upc = upc;
         this.idProducto = idProducto;
+        this.actual=actual;
     }
 
     @Override
     public String toString() {
-        return this.upc;
+        return this.upc+(this.actual?"*":"");
     }
 
     @Override
@@ -58,5 +60,13 @@ public class Upc {
 
     public void setIdProducto(int idProducto) {
         this.idProducto = idProducto;
+    }
+
+    public boolean isActual() {
+        return actual;
+    }
+
+    public void setActual(boolean actual) {
+        this.actual = actual;
     }
 }

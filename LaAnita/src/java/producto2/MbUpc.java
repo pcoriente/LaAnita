@@ -20,6 +20,7 @@ import producto2.dominio.Upc;
 @Named(value = "mbUpc")
 @SessionScoped
 public class MbUpc implements Serializable {
+    private boolean nueva;
     private Upc upc;
     private ArrayList<SelectItem> listaUpcs;
     private DAOUpcs dao;
@@ -33,10 +34,15 @@ public class MbUpc implements Serializable {
         RequestContext context = RequestContext.getCurrentInstance();
         FacesMessage fMsg = new FacesMessage(FacesMessage.SEVERITY_ERROR, "Aviso:", "");
         try {
-            this.dao = new DAOUpcs();
-            this.dao.Eliminar(this.upc.getUpc());
-            this.cargaListaUpcs();
-            ok=true;
+            if(this.listaUpcs.size()>2 && this.upc.isActual()) {
+                fMsg.setSeverity(FacesMessage.SEVERITY_WARN);
+                fMsg.setDetail("No se puede eliminar, cambie primero de actual");
+            } else {
+                this.dao = new DAOUpcs();
+                this.dao.Eliminar(this.upc.getUpc());
+                this.cargaListaUpcs();
+                ok=true;
+            }
         } catch (NamingException ex) {
             fMsg.setDetail(ex.getMessage());
         } catch (SQLException ex) {
@@ -49,14 +55,51 @@ public class MbUpc implements Serializable {
         return ok;
     }
     
-    public boolean agregar() {
+    public Upc obtenerUpc(String strUpc) {
+        Upc u=null;
         boolean ok = false;
-        RequestContext context = RequestContext.getCurrentInstance();
         FacesMessage fMsg = new FacesMessage(FacesMessage.SEVERITY_ERROR, "Aviso:", "");
         try {
             this.dao = new DAOUpcs();
-            this.dao.agregar(this.upc);
-            this.cargaListaUpcs();
+            u=this.dao.obtenerUpc(strUpc);
+            ok=true;
+        } catch (NamingException ex) {
+            fMsg.setDetail(ex.getMessage());
+        } catch (SQLException ex) {
+            fMsg.setDetail(ex.getErrorCode() + " " + ex.getMessage());
+        }
+        if(!ok) {
+            FacesContext.getCurrentInstance().addMessage(null, fMsg);
+        }
+        return u;
+    }
+    
+    public Upc obtenerUpc(int idProducto) {
+        Upc u=null;
+        boolean ok = false;
+        FacesMessage fMsg = new FacesMessage(FacesMessage.SEVERITY_ERROR, "Aviso:", "");
+        try {
+            this.dao = new DAOUpcs();
+            u=this.dao.obtenerUpc(idProducto);
+            ok=true;
+        } catch (NamingException ex) {
+            fMsg.setDetail(ex.getMessage());
+        } catch (SQLException ex) {
+            fMsg.setDetail(ex.getErrorCode() + " " + ex.getMessage());
+        }
+        if(!ok) {
+            FacesContext.getCurrentInstance().addMessage(null, fMsg);
+        }
+        return u;
+    }
+    
+    public void modificar() {
+        boolean ok = false;
+        FacesMessage fMsg = new FacesMessage(FacesMessage.SEVERITY_ERROR, "Aviso:", "");
+        RequestContext context = RequestContext.getCurrentInstance();
+        try {
+            this.dao=new DAOUpcs();
+            this.dao.modificar(this.upc);
             ok=true;
         } catch (NamingException ex) {
             fMsg.setDetail(ex.getMessage());
@@ -67,7 +110,31 @@ public class MbUpc implements Serializable {
             FacesContext.getCurrentInstance().addMessage(null, fMsg);
         }
         context.addCallbackParam("okUpc", ok);
-        return ok;
+    }
+    
+    public void agregar() {
+        boolean ok = false;
+        FacesMessage fMsg = new FacesMessage(FacesMessage.SEVERITY_ERROR, "Aviso:", "");
+        RequestContext context = RequestContext.getCurrentInstance();
+        try {
+            if(this.upc.getUpc().equals("")) {
+                fMsg.setSeverity(FacesMessage.SEVERITY_WARN);
+                fMsg.setDetail("Se requiere un UPC !");
+            } else {
+                this.dao = new DAOUpcs();
+                this.dao.agregar(this.upc);
+                this.cargaListaUpcs();
+                ok=true;
+            }
+        } catch (NamingException ex) {
+            fMsg.setDetail(ex.getMessage());
+        } catch (SQLException ex) {
+            fMsg.setDetail(ex.getErrorCode() + " " + ex.getMessage());
+        }
+        if(!ok) {
+            FacesContext.getCurrentInstance().addMessage(null, fMsg);
+        }
+        context.addCallbackParam("okUpc", ok);
     }
     
     public void cargaListaUpcs() {
@@ -97,15 +164,17 @@ public class MbUpc implements Serializable {
     public void copia(Upc u) {
         this.upc.setUpc(u.getUpc());
         this.upc.setIdProducto(u.getIdProducto());
+        this.upc.setActual(u.isActual());
     }
     
     public Upc nuevoLista(int idProducto) {
-        return new Upc("SELECCIONE", idProducto);
+        return new Upc("SELECCIONE", idProducto, false);
     }
     
     public void nuevo(int idProducto) {
         this.upc.setUpc("");
         this.upc.setIdProducto(idProducto);
+        this.upc.setActual(false);
     }
 
     public Upc getUpc() {
@@ -122,5 +191,13 @@ public class MbUpc implements Serializable {
 
     public void setListaUpcs(ArrayList<SelectItem> listaUpcs) {
         this.listaUpcs = listaUpcs;
+    }
+
+    public boolean isNueva() {
+        return nueva;
+    }
+
+    public void setNueva(boolean nueva) {
+        this.nueva = nueva;
     }
 }

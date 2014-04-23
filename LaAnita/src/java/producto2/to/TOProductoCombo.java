@@ -5,22 +5,14 @@ package producto2.to;
  * @author jesc
  */
 public class TOProductoCombo {
-    private int idProducto;
+    private int idSubProducto;
     private int piezas;
     
     public TOProductoCombo() {}
     
-    public TOProductoCombo(int idProducto, int piezas) {
-        this.idProducto=idProducto;
+    public TOProductoCombo(int idSubProducto, int piezas) {
+        this.idSubProducto=idSubProducto;
         this.piezas=piezas;
-    }
-
-    public int getIdProducto() {
-        return idProducto;
-    }
-
-    public void setIdProducto(int idProducto) {
-        this.idProducto = idProducto;
     }
 
     public int getPiezas() {
@@ -29,5 +21,13 @@ public class TOProductoCombo {
 
     public void setPiezas(int piezas) {
         this.piezas = piezas;
+    }
+
+    public int getIdSubProducto() {
+        return idSubProducto;
+    }
+
+    public void setIdSubProducto(int idSubProducto) {
+        this.idSubProducto = idSubProducto;
     }
 }

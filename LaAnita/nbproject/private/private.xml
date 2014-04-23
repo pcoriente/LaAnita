@@ -1,41 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project-private xmlns="http://www.netbeans.org/ns/project-private/1">
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/1"/>
-    <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="8">
+    <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="4">
         <file>
             <url>src/java/almacenes/MbAlmacenesJS.java</url>
             <bookmark id="4">
                 <name/>
                 <line>53</line>
-                <key/>
-            </bookmark>
-        </file>
-        <file>
-            <url>web/menuClientes.xhtml</url>
-            <bookmark id="7">
-                <name/>
-                <line>29</line>
-                <key/>
-            </bookmark>
-            <bookmark id="6">
-                <name/>
-                <line>68</line>
-                <key/>
-            </bookmark>
-        </file>
-        <file>
-            <url>src/java/ordenesDeCompra/MbOrdenCompra.java</url>
-            <bookmark id="5">
-                <name/>
-                <line>633</line>
-                <key/>
-            </bookmark>
-        </file>
-        <file>
-            <url>web/menuClientesGruposNuevo.xhtml</url>
-            <bookmark id="8">
-                <name/>
-                <line>27</line>
                 <key/>
             </bookmark>
         </file>
