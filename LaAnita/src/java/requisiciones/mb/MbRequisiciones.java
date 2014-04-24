@@ -2,6 +2,7 @@ package requisiciones.mb;
 
 import cotizaciones.dominio.CotizacionDetalle;
 import cotizaciones.dominio.CotizacionEncabezado;
+import cotizaciones.to.TOCotizacionDetalle;
 import empresas.MbMiniEmpresa;
 import javax.inject.Named;
 import javax.enterprise.context.SessionScoped;
@@ -23,6 +24,7 @@ import proveedores.MbMiniProveedor;
 import requisiciones.dao.DAORequisiciones;
 import requisiciones.dominio.RequisicionDetalle;
 import requisiciones.dominio.RequisicionEncabezado;
+import requisiciones.to.TORequisicionDetalle;
 import usuarios.dominio.Usuario;
 
 @Named(value = "mbRequisiciones")
@@ -453,18 +455,25 @@ public class MbRequisiciones implements Serializable {
     private void cargaRequisicionesDetalle(int id) throws NamingException, SQLException {
         requisicionDetalles = new ArrayList<RequisicionDetalle>();
         DAORequisiciones daoReq = new DAORequisiciones();
-        ArrayList<RequisicionDetalle> detallado = daoReq.dameRequisicionDetalle(id);
-        for (RequisicionDetalle rd : detallado) {
-            requisicionDetalles.add(rd);
+        for (TORequisicionDetalle rd : daoReq.dameRequisicionDetalle(id)) {
+            requisicionDetalles.add(this.convertir(rd));
         }
+    }
+    
+    private RequisicionDetalle convertir(TORequisicionDetalle to) {
+        RequisicionDetalle rd=new RequisicionDetalle();
+        rd.setIdRequisicion(to.getIdRequisicion());
+        rd.setProducto(this.mbBuscar.obtenerProducto(to.getIdProducto()));
+        rd.setCantidad(to.getCantidad());
+        rd.setCantidadAutorizada(to.getCantidadAutorizada());
+        return rd;
     }
 
     public void cargaRequisicionesDetalleAprobar(int id) throws NamingException, SQLException {
         requisicionDetalles = new ArrayList<RequisicionDetalle>();
         DAORequisiciones daoReq = new DAORequisiciones();
-        ArrayList<RequisicionDetalle> rsDetalle = daoReq.dameRequisicionDetalleAprobar(id);
-        for (RequisicionDetalle rd : rsDetalle) {
-            requisicionDetalles.add(rd);
+        for (TORequisicionDetalle rd : daoReq.dameRequisicionDetalleAprobar(id)) {
+            requisicionDetalles.add(convertir(rd));
         }
     }
 
@@ -684,15 +693,21 @@ public class MbRequisiciones implements Serializable {
         this.total = 0;
         mbMiniProveedor = new MbMiniProveedor();
         cotizacionDetalles = new ArrayList<CotizacionDetalle>();
-        ArrayList<CotizacionDetalle> lc = daoReq.dameRequisicionDetalleCotizar(id);
-        for (CotizacionDetalle rd : lc) {
-            cotizacionDetalles.add(rd);
+        for (TOCotizacionDetalle rd : daoReq.dameRequisicionDetalleCotizar(id)) {
+            cotizacionDetalles.add(this.convertir(rd));
         }
         //  cotizacionEncabezado= new CotizacionEncabezado(); ;
         int coti = daoReq.numCotizaciones(id);
         this.setNumCotizacion(coti);
-
-
+    }
+    
+    private CotizacionDetalle convertir(TOCotizacionDetalle to) {
+        CotizacionDetalle rd=new CotizacionDetalle();
+        rd.setIdRequisicion(to.getIdRequisicion());
+        rd.setProducto(this.mbBuscar.obtenerProducto(to.getIdProducto()));
+        rd.setCantidadAutorizada(to.getCantidadAutorizada());
+        rd.setCantidadCotizada(to.getCantidadAutorizada());
+        return rd;
     }
 
     public void calculoSubtotalGeneral() {

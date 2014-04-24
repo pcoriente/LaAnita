@@ -1,17 +1,10 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package requisiciones.to;
 
 public class TORequisicionDetalle {
-    
-   
     private int idRequisicion;
-    private int idEmpaque;
+    private int idProducto;
     private int cantidad;
     private int cantidadAutorizada;
-
     
      public int getIdRequisicion() {
         return idRequisicion;
@@ -21,12 +14,12 @@ public class TORequisicionDetalle {
         this.idRequisicion = idRequisicion;
     }
 
-    public int getIdEmpaque() {
-        return idEmpaque;
+    public int getIdProducto() {
+        return idProducto;
     }
 
-    public void setIdEmpaque(int idEmpaque) {
-        this.idEmpaque = idEmpaque;
+    public void setIdProducto(int idProducto) {
+        this.idProducto = idProducto;
     }
 
     public int getCantidad() {
