@@ -60,6 +60,47 @@ public class MbClientesTienda implements Serializable {
         }
     }
 
+    public void guardarClientesTiendas() {
+        boolean ok = validar();
+        if (ok = true) {
+            try {
+                DAOClientesTienda daoClienteTienda = new DAOClientesTienda();
+                clienteTienda.getFormatos().setIdFormato(mbFormatos.getCmbFormato().getIdFormato());
+                clienteTienda.getRuta().setIdRuta(mbRutas.getCmbRuta().getIdRuta());
+                daoClienteTienda.guardarClientesTienda(clienteTienda);
+            } catch (NamingException ex) {
+                Logger.getLogger(MbClientesTienda.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+    }
+
+    public boolean validar() {
+        boolean ok = false;
+        RequestContext context = RequestContext.getCurrentInstance();
+        FacesMessage fMsg = new FacesMessage(FacesMessage.SEVERITY_WARN, "Aviso:", "");
+        if (clienteTienda.getCodigoTienda() == 0) {
+            fMsg.setDetail("Se requiere un codigo de tienda!!");
+        } else if (clienteTienda.getNombre().equals("")) {
+            fMsg.setDetail("Se requiere un nombre!!");
+        } else if (clienteTienda.getDireccion().getCalle().equals("")) {
+            fMsg.setDetail("Se requiere la calle !!");
+        } else if (mbFormatos.getCmbFormato().getIdFormato() == 0) {
+            fMsg.setDetail("Se requiere un formato !!");
+        } else if (mbRutas.getCmbRuta().getIdRuta() == 0) {
+            fMsg.setDetail("Se requiere una ruta !!");
+        } else if (clienteTienda.getCodigoCliente() == 0) {
+            fMsg.setDetail("Se requiere un codigo cliente !!");
+        } else {
+            ok = true;
+        }
+        if (!ok) {
+            FacesContext.getCurrentInstance().addMessage(null, fMsg);
+
+        }
+        context.addCallbackParam("ok", ok);
+        return ok;
+    }
+
     public void guardarRutas() {
         boolean ok = false;
         RequestContext context = RequestContext.getCurrentInstance();

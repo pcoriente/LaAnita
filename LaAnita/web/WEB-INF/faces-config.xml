@@ -13,7 +13,7 @@
     </converter>
     
      <converter>
-        <converter-id>converters.rutas</converter-id>
+        <converter-id>converter.rutas</converter-id>
         <converter-class>rutas.converter.RutasConverter</converter-class>
     </converter>
     

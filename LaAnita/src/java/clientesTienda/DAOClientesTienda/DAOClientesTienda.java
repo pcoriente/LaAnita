@@ -85,4 +85,19 @@ public class DAOClientesTienda {
         return lst;
     }
 
+    public void guardarClientesTienda(ClienteTienda clienteTienda) throws SQLException {
+        Connection cn = ds.getConnection();
+        Statement st = cn.createStatement();
+        int idDireccion = 0;
+        String sqlInsertarDireccion = "INSERT INTO direcciones"
+                + " (calle, numeroExterior, numeroInterior, colonia, localidad, referencia, municipio, estado , idPais, codigoPostal, numeroLocalicacion) "
+                + " VALUES('" + clienteTienda.getDireccion().getCalle() + "', '" + clienteTienda.getDireccion().getNumeroExterior() + "', '" + clienteTienda.getDireccion().getNumeroInterior() + "', "
+                + "'" + clienteTienda.getDireccion().getColonia() + "', '" + clienteTienda.getDireccion().getLocalidad() + "', "
+                + "'" + clienteTienda.getDireccion().getReferencia() + "', '" + clienteTienda.getDireccion().getMunicipio() + "', '" + clienteTienda.getDireccion().getEstado() + "', '" + clienteTienda.getDireccion().getPais().getIdPais() + "', "
+                + "'" + clienteTienda.getDireccion().getCodigoPostal() + "', '" + clienteTienda.getDireccion().getNumeroLocalizacion() + "')";
+        String sqlInsertarClienteTienda = "INSERT INTO (codigoTienda, nombre, idDireccion, idFormato, idRuta, codigoCliente) "
+                + " VALUES ('" + clienteTienda.getCodigoCliente() + "', '" + clienteTienda.getNombre() + "', '" + idDireccion + "', '" + clienteTienda.getFormatos().getIdFormato() + "', '" + clienteTienda.getFormatos().getIdFormato() + "', '" + clienteTienda.getRuta().getIdRuta() + "', '" + clienteTienda.getCodigoCliente() + "')";
+
+    }
+
 }

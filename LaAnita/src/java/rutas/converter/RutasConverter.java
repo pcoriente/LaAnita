@@ -46,7 +46,6 @@ public class RutasConverter implements Converter {
 
     @Override
     public String getAsString(FacesContext context, UIComponent component, Object value) {
-
         Ruta ruta = (Ruta) value;
         return Integer.toString(ruta.getIdRuta());
     }
