@@ -100,11 +100,11 @@ public class DAOUpcs {
         Connection cn = ds.getConnection();
         Statement st = cn.createStatement();
         try {
-            ResultSet rs=st.executeQuery("SELECT upc, idProducto, actual FROM"+this.tabla+" WHERE idProducto="+idProducto+" AND actual=1");
+            ResultSet rs=st.executeQuery("SELECT upc, idProducto, actual FROM "+this.tabla+" WHERE idProducto="+idProducto+" AND actual=1");
             if(rs.next()) {
                 upc=new Upc(rs.getString("upc"), rs.getInt("idProducto"), rs.getBoolean("actual"));
             } else {
-                rs=st.executeQuery("SELECT upc, idProducto, actual FROM"+this.tabla+" WHERE idProducto="+idProducto);
+                rs=st.executeQuery("SELECT upc, idProducto, actual FROM "+this.tabla+" WHERE idProducto="+idProducto);
                 if(rs.next()) {
                     upc=new Upc(rs.getString("upc"), rs.getInt("idProducto"), rs.getBoolean("actual"));
                 } else {
