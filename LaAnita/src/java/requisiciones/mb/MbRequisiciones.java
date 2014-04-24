@@ -42,7 +42,7 @@ public class MbRequisiciones implements Serializable {
     private RequisicionEncabezado requisicionEncabezado;
     private ArrayList<RequisicionEncabezado> requisicionesFiltradas;
     //CAMBIANDO DE PRODUCTOS A EMPAQUES
-    @ManagedProperty(value = "#{mbBuscarEmpaques}")
+    @ManagedProperty(value = "#{mbProductosBuscar}")
     private MbProductosBuscar mbBuscar;
     private ArrayList<Producto> listaEmpaque = new ArrayList<Producto>();
     private Producto empaque;

@@ -16,12 +16,14 @@ import javax.faces.bean.ManagedProperty;
 import javax.faces.context.FacesContext;
 import javax.inject.Named;
 import javax.naming.NamingException;
+import producto2.MbProductosBuscar;
 import proveedores.MbProveedores;
-import requisiciones.mb.MbRequisiciones;
 
 @Named(value = "mbCotizaciones")
 @SessionScoped
 public class MbCotizaciones implements Serializable {
+    @ManagedProperty(value = "#{mbProductosBuscar}")
+    private MbProductosBuscar mbBuscar;
 
     private ArrayList<CotizacionEncabezado> listaCotizacionEncabezado;
     private CotizacionEncabezado cotizacionEncabezado;
@@ -41,6 +43,7 @@ public class MbCotizaciones implements Serializable {
 
     //CONSTRUCTORES-------------------------------------------------------------------------------------------------------------------------------------------------------
     public MbCotizaciones() {
+        this.mbBuscar=new MbProductosBuscar();
     }
     //METODOS ---------------------------------------------------------------------------------------------------------------------------------------------------------
 
@@ -62,6 +65,7 @@ public class MbCotizaciones implements Serializable {
         DAOCotizaciones daoCot = new DAOCotizaciones();
         ArrayList<CotizacionDetalle> lista = daoCot.dameProductoCotizacionesProveedores(idReq);
         for (CotizacionDetalle d : lista) {
+            d.setProducto(this.mbBuscar.obtenerProducto(d.getProducto().getIdProducto()));
             listaCotizacionDetalle.add(d);
         }
     }
@@ -88,12 +92,13 @@ public class MbCotizaciones implements Serializable {
         listaCotizacionDetalleProductos = new ArrayList<CotizacionDetalle>();
         try {
             int idCotizacionDetalle = cotizacionDeta.getIdCotizacion();
-            int idProducto = cotizacionDeta.getEmpaque().getIdEmpaque();
+            int idProducto = cotizacionDeta.getProducto().getIdProducto();
             DAOCotizaciones daoCot = new DAOCotizaciones();
             listaCotizacionDetalleProductos = daoCot.consultaCotizacionesProveedores(idCotizacionDetalle, idProducto);
 
             for (CotizacionDetalle d : listaCotizacionDetalleProductos) {
-
+                d.setProducto(this.mbBuscar.obtenerProducto(d.getProducto().getIdProducto()));
+                
                 double neto = d.getNeto();
                 double neto2 = neto - neto * (d.getCotizacionEncabezado().getDescuentoCotizacion() / 100);
                 double neto3 = neto2 - neto2 * (d.getCotizacionEncabezado().getDescuentoProntoPago() / 100);
@@ -112,7 +117,7 @@ public class MbCotizaciones implements Serializable {
                 d.setTotal(d.getSubtotal() + d.getIva());
 
 
-                this.setNombreProduc(d.getEmpaque().toString());
+                this.setNombreProduc(d.getProducto().toString());
 
             }
 
@@ -133,7 +138,7 @@ public class MbCotizaciones implements Serializable {
 
         for (CotizacionDetalle d : listaCotizacionDetalle) {
 
-            if (d.getEmpaque().getIdEmpaque() == productoElegido.getEmpaque().getIdEmpaque()) {
+            if (d.getProducto().getIdProducto() == productoElegido.getProducto().getIdProducto()) {
                 listaCotizacionDetalle.remove(d);
                 break;
             }
@@ -142,7 +147,7 @@ public class MbCotizaciones implements Serializable {
 
     public void guardarOrdenCompra() {
         //   int longOC = 0;
-        int longCots = 0;
+        int longCots;
         FacesMessage msg = null;
         Collections.sort(ordenCompra, new Comparator<CotizacionDetalle>() {
             @Override
@@ -195,15 +200,16 @@ public class MbCotizaciones implements Serializable {
         DAOCotizaciones daoCot = new DAOCotizaciones();
         ArrayList<CotizacionDetalle> lista = daoCot.dameProductoCotizacionesProveedores(idReq);
         for (CotizacionDetalle d : lista) {
+            d.setProducto(this.mbBuscar.obtenerProducto(d.getProducto().getIdProducto()));
             listaCotizacionDetalle.add(d);
         }
     }
 
     public void eliminarProducto(int idProd) {
-        int idProducto = 0;
+        int idProducto;
         int longitud = ordenCompra.size();
         for (int y = 0; y < longitud; y++) {
-            idProducto = ordenCompra.get(y).getEmpaque().getIdEmpaque();
+            idProducto = ordenCompra.get(y).getProducto().getIdProducto();
             if (idProducto == idProd) {
                 listaCotizacionDetalle.add(ordenCompra.get(y));
                 ordenCompra.remove(y);
@@ -323,5 +329,13 @@ public class MbCotizaciones implements Serializable {
 
     public void setCotizacionesEncabezadoToOrden(CotizacionEncabezado cotizacionesEncabezadoToOrden) {
         this.cotizacionesEncabezadoToOrden = cotizacionesEncabezadoToOrden;
+    }
+
+    public MbProductosBuscar getMbBuscar() {
+        return mbBuscar;
+    }
+
+    public void setMbBuscar(MbProductosBuscar mbBuscar) {
+        this.mbBuscar = mbBuscar;
     }
 }
