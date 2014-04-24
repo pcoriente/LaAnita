@@ -10,15 +10,15 @@
         <Node id="menuLeyendas.xhtml" x="400" y="600" zoom="true"/>
         <Node id="footer.html" x="1650" y="450" zoom="true"/>
         <Node id="wrapper.xhtml" x="650" y="600" zoom="true"/>
-        <Node id="menuAlmacenes.xhtml" x="650" y="450" zoom="true"/>
         <Node id="productosOld.xhtml" x="1900" y="300" zoom="true"/>
+        <Node id="menuAlmacenes.xhtml" x="650" y="450" zoom="true"/>
         <Node id="wrapperMenu_1.xhtml" x="1400" y="450" zoom="true"/>
         <Node id="cotizacionProveedores.xhtml" x="400" y="1350" zoom="true"/>
         <Node id="menuEmpresas.xhtml" x="150" y="1350" zoom="true"/>
         <Node id="menuMarcas.xhtml" x="400" y="900" zoom="true"/>
         <Node id="menuAgentes.xhtml" x="650" y="1200" zoom="true"/>
-        <Node id="empresa.xhtml" x="650" y="150" zoom="true"/>
         <Node id="prods.xhtml" x="1150" y="150" zoom="true"/>
+        <Node id="empresa.xhtml" x="650" y="150" zoom="true"/>
         <Node id="pedidos.xhtml" x="150" y="750" zoom="true"/>
         <Node id="banco.xhtml" x="1650" y="150" zoom="true"/>
         <Node id="proveedor.xhtml" x="400" y="1200" zoom="true"/>

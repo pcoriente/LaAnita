@@ -86,4 +86,21 @@ public class DAOClientesGrupo {
             cn.close();
         }
     }
+
+    public ClientesGrupos dameClientesGrupo(int id) throws SQLException {
+        ClientesGrupos clientesGrupos = new ClientesGrupos();
+        String sql = "SELECT * FROM clientesGrupos WHERE idGrupoCte = '" + id + "'";
+        Connection c = ds.getConnection();
+        Statement st = c.createStatement();
+        try {
+            ResultSet rs = st.executeQuery(sql);
+            while (rs.next()) {
+                clientesGrupos.setIdGrupoCte(rs.getInt("idGrupoCte"));
+                clientesGrupos.setGrupoCte(rs.getString("grupoCte"));
+            }
+        } finally {
+            c.close();
+        }
+        return clientesGrupos;
+    }
 }

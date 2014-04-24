@@ -44,13 +44,25 @@ public class MbClientesGrupos implements Serializable {
     private String lblNuevoTelefono = "ui-icon-document";
     private ClientesGruposIconos iconos = new ClientesGruposIconos();
     private boolean actualizarRfc = false;
+    private ArrayList<SelectItem> itemsClientesGrupos = null;
+    private ClientesGrupos cmbClientesGrupos = new ClientesGrupos();
 
     public MbClientesGrupos() {
         mbContactos = new MbContactos();
         if (lstClientesGrupos == null) {
             cargarListaGruposClientes();
         }
+    }
 
+    public void guaradarClientesTienda() {
+
+    }
+
+    public boolean validar() {
+        boolean ok = false;
+        
+        
+        return ok;
     }
 
     public void cargaContactos() {
@@ -288,6 +300,34 @@ public class MbClientesGrupos implements Serializable {
         actualizar = true;
     }
 
+    public ArrayList<SelectItem> getItemsClientesGrupos() {
+        if (itemsClientesGrupos == null) {
+            try {
+                ArrayList<ClientesGrupos> lstClientes = new ArrayList<ClientesGrupos>();
+                DAOClientesGrupo dao = new DAOClientesGrupo();
+                lstClientes = dao.dameListaClientesGrupos();
+                ClientesGrupos clientes = new ClientesGrupos();
+                clientes.setIdGrupoCte(0);
+                clientes.setGrupoCte("Nuevo Cliente Grupo");
+                itemsClientesGrupos = new ArrayList<SelectItem>();
+                itemsClientesGrupos.add(new SelectItem(clientes, clientes.getGrupoCte()));
+                for (ClientesGrupos cl : lstClientes) {
+                    SelectItem select = new SelectItem(cl, cl.getGrupoCte());
+                    itemsClientesGrupos.add(select);
+                }
+            } catch (NamingException ex) {
+                Logger.getLogger(MbClientesGrupos.class.getName()).log(Level.SEVERE, null, ex);
+            } catch (SQLException ex) {
+                Logger.getLogger(MbClientesGrupos.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+        return itemsClientesGrupos;
+    }
+
+    public void setItemsClientesGrupos(ArrayList<SelectItem> itemsClientesGrupos) {
+        this.itemsClientesGrupos = itemsClientesGrupos;
+    }
+
     public String getLblNuevoContacto() {
         return lblNuevoContacto;
     }
@@ -327,4 +367,13 @@ public class MbClientesGrupos implements Serializable {
     public void setActualizarRfc(boolean actualizarRfc) {
         this.actualizarRfc = actualizarRfc;
     }
+
+    public ClientesGrupos getCmbClientesGrupos() {
+        return cmbClientesGrupos;
+    }
+
+    public void setCmbClientesGrupos(ClientesGrupos cmbClientesGrupos) {
+        this.cmbClientesGrupos = cmbClientesGrupos;
+    }
+
 }
