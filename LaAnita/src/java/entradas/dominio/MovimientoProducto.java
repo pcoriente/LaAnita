@@ -2,14 +2,14 @@ package entradas.dominio;
 
 import impuestos.dominio.ImpuestosProducto;
 import java.util.ArrayList;
-import productos.dominio.Empaque;
+import producto2.dominio.Producto;
 
 /**
  *
  * @author jsolis
  */
 public class MovimientoProducto {
-    private Empaque empaque;
+    private Producto producto;
     private double costoOrdenado;
     private double cantOrdenada;
     private double cantFacturada;
@@ -25,7 +25,7 @@ public class MovimientoProducto {
     private double importe;
 
     public MovimientoProducto() {
-        this.empaque=new Empaque(0);
+        this.producto=new Producto();
         this.costoOrdenado=0.00;
         this.cantOrdenada=0.00;
         this.cantFacturada=0.00;
@@ -42,13 +42,13 @@ public class MovimientoProducto {
 
     @Override
     public String toString() {
-        return this.empaque.toString();
+        return this.producto.toString();
     }
 
     @Override
     public int hashCode() {
-        int hash = 5;
-        hash = 47 * hash + (this.empaque != null ? this.empaque.hashCode() : 0);
+        int hash = 7;
+        hash = 47 * hash + (this.producto != null ? this.producto.hashCode() : 0);
         return hash;
     }
 
@@ -61,18 +61,18 @@ public class MovimientoProducto {
             return false;
         }
         final MovimientoProducto other = (MovimientoProducto) obj;
-        if (this.empaque != other.empaque && (this.empaque == null || !this.empaque.equals(other.empaque))) {
+        if (this.producto != other.producto && (this.producto == null || !this.producto.equals(other.producto))) {
             return false;
         }
         return true;
     }
 
-    public Empaque getEmpaque() {
-        return empaque;
+    public Producto getProducto() {
+        return producto;
     }
 
-    public void setEmpaque(Empaque empaque) {
-        this.empaque = empaque;
+    public void setProducto(Producto producto) {
+        this.producto = producto;
     }
 
     public double getCantOrdenada() {

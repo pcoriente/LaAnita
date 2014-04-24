@@ -1,14 +1,13 @@
 package ordenesDeCompra.dominio;
 
 import cotizaciones.dominio.CotizacionDetalle;
-import cotizaciones.dominio.CotizacionEncabezado;
 import java.io.Serializable;
-import productos.dominio.Empaque;
+import producto2.dominio.Producto;
 
 public class OrdenCompraDetalle implements Serializable {
 
  //   private Empaque producto;
-     private Empaque empaque;
+    private Producto producto;
     private CotizacionDetalle cotizacionDetalle;
     private int idOrdenCompra;
     private int idEmpaque;
@@ -37,9 +36,9 @@ public class OrdenCompraDetalle implements Serializable {
     public OrdenCompraDetalle() {
     }
 
-    public OrdenCompraDetalle(Empaque empaque, CotizacionDetalle cotizacionDetalle, int idOrdenCompra, int idEmpaque, String sku, double cantOrdenada, double cantidadSolicitada, double costoOrdenado, double descuentoProducto, double descuentoProducto2, double desctoConfidencial, int sinCargoBase, int sinCargoCant, double ptjeOferte, double margen, int IdImpuestosGrupo, int idMarca, double neto, double subtotal) {
+    public OrdenCompraDetalle(Producto producto, CotizacionDetalle cotizacionDetalle, int idOrdenCompra, int idEmpaque, String sku, double cantOrdenada, double cantidadSolicitada, double costoOrdenado, double descuentoProducto, double descuentoProducto2, double desctoConfidencial, int sinCargoBase, int sinCargoCant, double ptjeOferte, double margen, int IdImpuestosGrupo, int idMarca, double neto, double subtotal) {
      //   this.producto = producto;
-        this.empaque=empaque;
+        this.producto=producto;
         this.cotizacionDetalle = cotizacionDetalle;
         this.idOrdenCompra = 0;
         this.idEmpaque = 0;
@@ -245,11 +244,11 @@ public class OrdenCompraDetalle implements Serializable {
         this.cantRecibida = cantRecibida;
     }
 
-    public Empaque getEmpaque() {
-        return empaque;
+    public Producto getProducto() {
+        return producto;
     }
 
-    public void setEmpaque(Empaque empaque) {
-        this.empaque = empaque;
+    public void setProducto(Producto producto) {
+        this.producto = producto;
     }
 }

@@ -107,14 +107,14 @@
                         <p:dataTable id="detalleRequisicion"
                                      value="#{mbRequisiciones.requisicionDetalles}"
                                      var="det"
-                                     rowKey="#{det.empaque.idEmpaque}"
+                                     rowKey="#{det.producto.idProducto}"
                                      >
 
                             <p:column  headerText="Descripcion" style="width: 200px;">
-                                <h:outputText value="#{det.empaque.toString()}"  />
+                                <h:outputText value="#{det.producto.toString()}"  />
                             </p:column>
                             <p:column headerText="Unidad" style="width: 50px;" >
-                                <h:outputText value="#{det.empaque.unidadEmpaque.unidad}" />
+                                <h:outputText value="#{det.producto.empaque.empaque}" />
                             </p:column>
                             <p:column headerText="Cantidad" style="width: 50px;" >
 
@@ -129,7 +129,7 @@
                                 <p:commandButton icon="ui-icon-trash"
                                                  title="Eliminar Producto"
                                                  process="@this"
-                                                 actionListener="#{mbRequisiciones.eliminarProducto(det.empaque.idEmpaque)}" 
+                                                 actionListener="#{mbRequisiciones.eliminarProducto(det.producto.idProducto)}" 
                                                  update=":main:detalleRequisicion" 
                                                  />
                             </p:column>
@@ -164,9 +164,9 @@
                                                      update=":main:detalleRequisicion" oncomplete="handleBuscar(xhr, status, args)" />
                                 </p:column>
                                 <p:column rendered="#{mbRequisiciones.mbBuscar.tipoBuscar=='2'}" >
-                                    <p:autoComplete id="opcionParte" value="#{mbRequisiciones.mbBuscar.parte}" maxlength="24" size="24"
-                                                    completeMethod="#{mbRequisiciones.mbBuscar.completePartes}" process="@this"
-                                                    var="p" itemLabel="#{p.parte}" itemValue="#{p}" converter="converters.ParteBuscar" 
+                                    <p:autoComplete id="opcionParte" value="#{mbRequisiciones.mbBuscar.mbParte.parte}" maxlength="24" size="24"
+                                                    completeMethod="#{mbRequisiciones.mbBuscar.mbParte.completePartes}" process="@this"
+                                                    var="p" itemLabel="#{p.parte}" itemValue="#{p}" converter="converters.Parte" 
                                                     forceSelection="true" />
                                     <p:commandButton id="btnBuscarLista" icon="ui-icon-check" title="Buscar" 
                                                      process="@this opcionParte" actionListener="#{mbRequisiciones.buscar()}" 
@@ -179,17 +179,17 @@
                                                      update="multipleSelectProductos" />
                                 </p:column>
                                 <p:column rendered="#{mbRequisiciones.mbBuscar.tipoBuscar=='4'}" >
-                                    <p:selectOneMenu id="grupo" value="#{mbRequisiciones.mbBuscar.grupo}" style="width: 250px;" >
+                                    <p:selectOneMenu id="grupo" value="#{mbRequisiciones.mbBuscar.mbGrupo.grupo}" style="width: 250px;" >
                                         <f:converter converterId="converters.Grupos" />
-                                        <f:selectItems value="#{mbRequisiciones.mbBuscar.listaGrupos}" />
-                                        <p:ajax event="change" listener="#{mbRequisiciones.mbBuscar.cargaSubGrupos()}" 
+                                        <f:selectItems value="#{mbRequisiciones.mbBuscar.mbGrupo.listaGrupos}" />
+                                        <p:ajax event="change" listener="#{mbRequisiciones.mbBuscar.mbGrupo.cargaListaSubGrupos()}" 
                                                 update="subGrupo" />
                                     </p:selectOneMenu>
                                 </p:column>
                                 <p:column rendered="#{mbRequisiciones.mbBuscar.tipoBuscar=='4'}" >
-                                    <p:selectOneMenu id="subGrupo" value="#{mbRequisiciones.mbBuscar.subGrupo}" style="width: 250px;" >
+                                    <p:selectOneMenu id="subGrupo" value="#{mbRequisiciones.mbBuscar.mbGrupo.mbSubGrupo.subGrupo}" style="width: 250px;" >
                                         <f:converter converterId="converters.SubGrupos" />
-                                        <f:selectItems value="#{mbRequisiciones.mbBuscar.listaSubGrupos}" />
+                                        <f:selectItems value="#{mbRequisiciones.mbBuscar.mbGrupo.mbSubGrupo.listaSubGrupos}" />
                                         <p:ajax event="change" />
                                     </p:selectOneMenu>
                                 </p:column>
