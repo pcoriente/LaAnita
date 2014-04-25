@@ -70,6 +70,8 @@ public class MbClientesTienda implements Serializable {
                 daoClienteTienda.guardarClientesTienda(clienteTienda);
             } catch (NamingException ex) {
                 Logger.getLogger(MbClientesTienda.class.getName()).log(Level.SEVERE, null, ex);
+            } catch (SQLException ex) {
+                Logger.getLogger(MbClientesTienda.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
     }

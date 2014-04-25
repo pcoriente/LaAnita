@@ -11,7 +11,7 @@ public class OrdenCompraDetalle implements Serializable {
     private CotizacionDetalle cotizacionDetalle;
     private int idOrdenCompra;
     private int idEmpaque;
-    private String sku;
+//    private String sku;
     private double cantOrdenada;
     private double cantidadSolicitada;
     private double cantRecibida;
@@ -42,7 +42,7 @@ public class OrdenCompraDetalle implements Serializable {
         this.cotizacionDetalle = cotizacionDetalle;
         this.idOrdenCompra = 0;
         this.idEmpaque = 0;
-        this.sku = "";
+//        this.sku = "";
         this.cantOrdenada = 0.00;
         this.cantidadSolicitada=0.00;
         this.cantRecibida=0;
@@ -87,13 +87,13 @@ public class OrdenCompraDetalle implements Serializable {
         this.idEmpaque = idEmpaque;
     }
 
-    public String getSku() {
-        return sku;
-    }
-
-    public void setSku(String sku) {
-        this.sku = sku;
-    }
+//    public String getSku() {
+//        return sku;
+//    }
+//
+//    public void setSku(String sku) {
+//        this.sku = sku;
+//    }
 
     public double getCantOrdenada() {
         return cantOrdenada;

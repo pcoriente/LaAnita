@@ -278,38 +278,34 @@ public class DAOCotizaciones {
         cn.close();
     }// FOR CABECERO
 
-//    COMENTAREO - JULIO SOLIS
-//    public CotizacionDetalle dameCotizacion(int idCot) throws SQLException, NamingException {
-//        CotizacionDetalle cd = new CotizacionDetalle();
-//        Connection cn = ds.getConnection();
-//        Statement st = cn.createStatement();
-//        try {
-//            ResultSet rs = st.executeQuery("SELECT * FROM cotizacionesDetalle WHERE idCotizacion=" + idCot);
-//            if (rs.next()) {
-//                cd = construirCD(rs);
-//            }
-//        } finally {
-//            cn.close();
-//        }
-//        return cd;
-//    }
-//
-//    private CotizacionDetalle construirCD(ResultSet rs) throws NamingException, SQLException {
-////        DAOEmpaques daoE = new DAOEmpaques();
-////        DAOProductos daoProds = new DAOProductos();
-////        TOEmpaque to = daoE.obtenerEmpaque(rs.getInt("idEmpaque"));
-////        Empaque empaque = convertir(to, daoProds.obtenerProducto(to.getIdProducto()));
-//        CotizacionDetalle cd = new CotizacionDetalle();
-//        cd.setIdCotizacion(rs.getInt("idCotizacion"));
-//        cd.setProducto(null);
-//        cd.setCantidadCotizada(rs.getDouble("cantidadCotizada"));
-//        cd.setCostoCotizado(rs.getDouble("costoCotizado"));
-//        cd.setDescuentoProducto(rs.getDouble("descuentoProducto"));
-//        cd.setDescuentoProducto2(rs.getDouble("descuentoProducto2"));
-//        cd.setNeto(rs.getDouble("neto"));
-//        cd.setSubtotal(rs.getDouble("subtotal"));
-//        return cd;
-//    }
+    public CotizacionDetalle dameCotizacion(int idCot) throws SQLException, NamingException {
+        CotizacionDetalle cd = new CotizacionDetalle();
+        Connection cn = ds.getConnection();
+        Statement st = cn.createStatement();
+        try {
+            ResultSet rs = st.executeQuery("SELECT * FROM cotizacionesDetalle WHERE idCotizacion=" + idCot);
+            if (rs.next()) {
+                cd = construirCD(rs);
+            }
+        } finally {
+            cn.close();
+        }
+        return cd;
+    }
+
+    private CotizacionDetalle construirCD(ResultSet rs) throws NamingException, SQLException {
+        CotizacionDetalle cd = new CotizacionDetalle();
+        cd.setIdCotizacion(rs.getInt("idCotizacion"));
+        cd.setProducto(new Producto());
+        cd.getProducto().setIdProducto(rs.getInt("idEmpaque"));
+        cd.setCantidadCotizada(rs.getDouble("cantidadCotizada"));
+        cd.setCostoCotizado(rs.getDouble("costoCotizado"));
+        cd.setDescuentoProducto(rs.getDouble("descuentoProducto"));
+        cd.setDescuentoProducto2(rs.getDouble("descuentoProducto2"));
+        cd.setNeto(rs.getDouble("neto"));
+        cd.setSubtotal(rs.getDouble("subtotal"));
+        return cd;
+    }
 
     public void cambiaEstadoCotizacion(int idCot) throws SQLException {
         Connection cn = this.ds.getConnection();
