@@ -219,6 +219,8 @@ public class MbOrdenCompra implements Serializable {
             DAOOrdenDeCompra daoOC = new DAOOrdenDeCompra();
             ArrayList<OrdenCompraDetalle> lista = daoOC.consultaOrdenCompra(idOC);
             for (OrdenCompraDetalle d : lista) {
+                d.setProducto(this.mbBuscar.obtenerProducto(d.getProducto().getIdProducto()));
+                d.getCotizacionDetalle().setProducto(this.mbBuscar.obtenerProducto(d.getCotizacionDetalle().getProducto().getIdProducto()));
                 listaOrdenDetalle.add(d);
                 this.calculosOrdenCompra(d.getProducto().getIdProducto());
             }
@@ -243,6 +245,8 @@ public class MbOrdenCompra implements Serializable {
 
             ArrayList<OrdenCompraDetalle> lista = daoOC.consultaOrdenCompra(idOC);
             for (OrdenCompraDetalle d : lista) {
+                d.setProducto(this.mbBuscar.obtenerProducto(d.getProducto().getIdProducto()));
+                d.getCotizacionDetalle().setProducto(this.mbBuscar.obtenerProducto(d.getCotizacionDetalle().getProducto().getIdProducto()));
                 listaOrdenDetalle.add(d);
                 this.calculosOrdenCompra(d.getProducto().getIdProducto());
                 d.setNombreProducto(d.getProducto().toString());

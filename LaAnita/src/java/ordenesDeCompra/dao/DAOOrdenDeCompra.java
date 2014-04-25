@@ -20,11 +20,7 @@ import javax.sql.DataSource;
 import monedas.Moneda;
 import ordenesDeCompra.dominio.OrdenCompraDetalle;
 import ordenesDeCompra.dominio.OrdenCompraEncabezado;
-import productos.dao.DAOEmpaques;
-import productos.dao.DAOProductos;
-import productos.dominio.Empaque;
-import productos.dominio.Producto;
-import productos.to.TOEmpaque;
+import producto2.dominio.Producto;
 import proveedores.dao.DAOProveedores;
 import proveedores.dominio.Proveedor;
 import usuarios.UsuarioSesion;
@@ -171,7 +167,6 @@ public class DAOOrdenDeCompra {
         int idDireccion = oce.getProveedor().getContribuyente().getDireccion().getIdDireccion(); //correcion daap
         DAODireccion daoD = new DAODireccion();
         if (idDireccion != 0) {
-            // oce.getProveedor().getContribuyente().setDireccion(this.obtenerDireccion(idDireccion));
             oce.getProveedor().setDireccionFiscal(daoD.obtenerDireccion(idDireccion)); // correcion daap
         }
         int idDireccionEntrega = oce.getProveedor().getDireccionEntrega().getIdDireccion();
@@ -236,23 +231,23 @@ public class DAOOrdenDeCompra {
     private OrdenCompraDetalle construirOCDetalle(ResultSet rs) throws SQLException, NamingException {
         OrdenCompraDetalle ocd = new OrdenCompraDetalle();
         DAOCotizaciones daoC = new DAOCotizaciones();
-        DAOEmpaques daoEmp = new DAOEmpaques();
         ocd.setCotizacionDetalle(daoC.dameCotizacion(rs.getInt("idCotizacion")));
-        DAOProductos daoProds = new DAOProductos();
-        TOEmpaque to = daoEmp.obtenerEmpaque(rs.getInt("idEmpaque"));
-        Empaque empaque =convertir(to, daoProds.obtenerProducto(to.getIdProducto()));
         
-        //ocd.setEmpaque(daoEmp.obtenerEmpaque(rs.getInt("idEmpaque")));
-        ocd.setEmpaque(empaque);
-        ocd.setSku(rs.getString("sku"));
+//        DAOEmpaques daoEmp = new DAOEmpaques();
+//        DAOProductos daoProds = new DAOProductos();
+//        TOEmpaque to = daoEmp.obtenerEmpaque(rs.getInt("idEmpaque"));
+//        Empaque empaque =convertir(to, daoProds.obtenerProducto(to.getIdProducto()));
+        
+        ocd.setProducto(new Producto());
+        ocd.getProducto().setIdProducto(rs.getInt("idEmpaque"));
+//        ocd.setEmpaque(empaque);
+//        ocd.setSku(rs.getString("sku"));
         ocd.setIdOrdenCompra(rs.getInt("idOrdenCompra"));
-        // ocd.setCotizacionEncabezado(daoC.dameCotizacionEncabezado(rs.getInt("idCotizacion")));
         ocd.setCantOrdenada(rs.getDouble("cantOrdenada"));
         ocd.setCantidadSolicitada(rs.getDouble("cantOrdenada"));
         ocd.setCostoOrdenado(rs.getDouble("costoOrdenado"));
         ocd.setDescuentoProducto(rs.getDouble("descuentoProducto"));
         ocd.setDescuentoProducto2(rs.getDouble("descuentoProducto2"));
-
         return ocd;
     }
 
@@ -262,7 +257,6 @@ public class DAOOrdenDeCompra {
         Statement st = cn.createStatement();
         PreparedStatement ps2;
         try {
-
             //CABECERO
             String strSQL2 = "UPDATE ordenCompraDetalle SET cantOrdenada=" + cc + "  WHERE idOrdenCompra=" + idOrden + " and idEmpaque=" + idEmp + "";
             ps2 = cn.prepareStatement(strSQL2);
@@ -272,7 +266,6 @@ public class DAOOrdenDeCompra {
         } finally {
             cn.close();
         }
-
     }
 
     public void procesarOrdenCompra(int idOrden) throws SQLException {
@@ -280,7 +273,6 @@ public class DAOOrdenDeCompra {
         Statement st = cn.createStatement();
         PreparedStatement ps2;
         try {
-
             //CABECERO
             String strSQL2 = "UPDATE ordenCompra SET estado=2  WHERE idOrdenCompra=" + idOrden;
             ps2 = cn.prepareStatement(strSQL2);
@@ -290,8 +282,6 @@ public class DAOOrdenDeCompra {
         } finally {
             cn.close();
         }
-
-
     }
 
     public void cancelarOrdenCompra(int idOrden) throws SQLException {
@@ -309,8 +299,6 @@ public class DAOOrdenDeCompra {
         } finally {
             cn.close();
         }
-
-
     }
 
     public ArrayList<Contacto> obtenerContactos(int idOC) throws SQLException {
@@ -346,17 +334,17 @@ public class DAOOrdenDeCompra {
         return this.usuarioSesion.getUsuario().getId();
     }
     
-    private Empaque convertir(TOEmpaque to, Producto p) {
-        Empaque e = new Empaque();
-        e.setIdEmpaque(to.getIdEmpaque());
-        e.setCod_pro(to.getCod_pro());
-        e.setProducto(p);
-        e.setPiezas(to.getPiezas());
-        e.setUnidadEmpaque(to.getUnidadEmpaque());
-        e.setSubEmpaque(to.getSubEmpaque());
-        e.setDun14(to.getDun14());
-        e.setPeso(to.getPeso());
-        e.setVolumen(to.getVolumen());
-        return e;
-    }
+//    private Empaque convertir(TOEmpaque to, Producto p) {
+//        Empaque e = new Empaque();
+//        e.setIdEmpaque(to.getIdEmpaque());
+//        e.setCod_pro(to.getCod_pro());
+//        e.setProducto(p);
+//        e.setPiezas(to.getPiezas());
+//        e.setUnidadEmpaque(to.getUnidadEmpaque());
+//        e.setSubEmpaque(to.getSubEmpaque());
+//        e.setDun14(to.getDun14());
+//        e.setPeso(to.getPeso());
+//        e.setVolumen(to.getVolumen());
+//        return e;
+//    }
 }
