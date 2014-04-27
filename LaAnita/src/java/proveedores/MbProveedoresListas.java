@@ -271,4 +271,12 @@ public class MbProveedoresListas implements Serializable {
     public void setMbPrecios(MbProveedorProductoPrecios mbPrecios) {
         this.mbPrecios = mbPrecios;
     }
+
+    public MbProductosBuscar getMbBuscar() {
+        return mbBuscar;
+    }
+
+    public void setMbBuscar(MbProductosBuscar mbBuscar) {
+        this.mbBuscar = mbBuscar;
+    }
 }

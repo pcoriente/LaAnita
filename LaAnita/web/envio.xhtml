@@ -78,15 +78,15 @@
                             </p:row>
                         </p:panelGrid>
                         <p:dataTable id="detalleEnvio" widgetVar="detalleEnvio" value="#{mbEnvios.envioDetalle}" style="border:solid 1px;"
-                                     var="prod" rowKey="#{prod.empaque.idEmpaque}" selection="#{mbEnvios.envioProducto}" selectionMode="single" 
+                                     var="prod" rowKey="#{prod.producto.idProducto}" selection="#{mbEnvios.envioProducto}" selectionMode="single" 
                                      emptyMessage="No hay elementos que desplegar" scrollable="true" scrollRows="10" >
                             <p:ajax event="rowSelect" listener="#{mbEnvios.respaldaFila()}" update="detalleEnvio" />
                             
                             <p:column headerText="SKU" width="64"  >
-                                <h:outputText value="#{prod.empaque.cod_pro}" />
+                                <h:outputText value="#{prod.producto.cod_pro}" />
                             </p:column>
                             <p:column headerText="Producto" width="500" >
-                                <h:outputText value="#{prod.empaque}" />
+                                <h:outputText value="#{prod.producto}" />
                             </p:column>
                             <p:column headerText="Solicitada" width="64" >
                                 <h:outputText value="#{prod.cantOrdenada}" />

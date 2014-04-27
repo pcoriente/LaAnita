@@ -21,7 +21,7 @@ import producto2.dominio.Marca;
 @Named(value = "mbMarca1")
 @SessionScoped
 public class MbMarca implements Serializable {
-//    private String strFabricante;
+    private String strFabricante;
     private Marca marca;
     private ArrayList<Marca> marcas;
     private ArrayList<SelectItem> listaMarcas;
@@ -36,7 +36,7 @@ public class MbMarca implements Serializable {
     }
     
     private void inicializa() {
-//        this.strFabricante="";
+        this.strFabricante="";
         this.marca=new Marca();
         this.setListaMarcas(null);
     }
@@ -69,10 +69,9 @@ public class MbMarca implements Serializable {
         boolean ok=false;
         RequestContext context = RequestContext.getCurrentInstance();
         FacesMessage fMsg = new FacesMessage(FacesMessage.SEVERITY_WARN, "Aviso:", "");
-//        if(this.strFabricante==null || this.strFabricante.equals("0")) {
-//            fMsg.setDetail("Se requiere identificar al fabricante");
-//        } else 
-            if(this.marca.getMarca().trim().isEmpty()) {
+        if(this.strFabricante==null || this.strFabricante.equals("0")) {
+            fMsg.setDetail("Se requiere identificar al fabricante");
+        } else if(this.marca.getMarca().trim().isEmpty()) {
             fMsg.setDetail("Se requiere la marca");
         } else {
             try {
@@ -166,14 +165,14 @@ public class MbMarca implements Serializable {
 //        }
 //        return destino;
 //    }
-//
-//    public String getStrFabricante() {
-//        return strFabricante;
-//    }
-//
-//    public void setStrFabricante(String strFabricante) {
-//        this.strFabricante = strFabricante;
-//    }
+
+    public String getStrFabricante() {
+        return strFabricante;
+    }
+
+    public void setStrFabricante(String strFabricante) {
+        this.strFabricante = strFabricante;
+    }
 
     public Marca getMarca() {
         return marca;
