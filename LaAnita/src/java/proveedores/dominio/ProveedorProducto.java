@@ -2,10 +2,14 @@ package proveedores.dominio;
 
 import impuestos.dominio.ImpuestoGrupo;
 import java.util.Date;
-import productos.dominio.Empaque;
-import productos.dominio.Marca;
-import productos.dominio.Presentacion;
-import productos.dominio.UnidadEmpaque;
+import producto2.dominio.Empaque;
+import producto2.dominio.Marca;
+import producto2.dominio.Presentacion;
+import producto2.dominio.Producto;
+//import productos.dominio.Empaque;
+//import productos.dominio.Marca;
+//import productos.dominio.Presentacion;
+//import productos.dominio.UnidadEmpaque;
 import unidadesMedida.UnidadMedida;
 
 /**
@@ -16,7 +20,7 @@ public class ProveedorProducto {
     private int idProducto;
     private String sku;
     private int diasEntrega;
-    private UnidadEmpaque unidadEmpaque;
+    private Empaque empaque;
     private int piezas;
     private Marca marca;
     private String producto;
@@ -28,13 +32,13 @@ public class ProveedorProducto {
     private int idFactura;
     private Date ultimaCompraFecha;
     private double ultimaCompraPrecio;
-    private Empaque equivalencia;
+    private Producto equivalencia;
 
     public ProveedorProducto() {
         this.idProducto=0;
         this.sku="";
         this.diasEntrega=0;
-        this.unidadEmpaque=new UnidadEmpaque();
+        this.empaque=new Empaque();
         this.piezas=0;
         this.marca=new Marca();
         this.producto="";
@@ -46,7 +50,7 @@ public class ProveedorProducto {
         this.idFactura=0;
         this.ultimaCompraFecha=null;
         this.ultimaCompraPrecio=0.00;
-        this.equivalencia=new Empaque(0);
+        this.equivalencia=new Producto();
     }
 
     @Override
@@ -55,7 +59,7 @@ public class ProveedorProducto {
                 + (this.marca.getIdMarca()==0 ? "" : " ") + this.producto + " " + this.presentacion.getAbreviatura()
                 + (this.contenido == 0 ? "" : " " + Double.toString(this.contenido))
                 + (this.contenido == 0 || this.unidadMedida.getIdUnidadMedida() == 0 ? "" : " " + this.unidadMedida.getAbreviatura())
-                + (this.unidadEmpaque.getIdUnidad()==1 ? "" : " " + this.unidadEmpaque.getAbreviatura() + "x" + Integer.toString(this.piezas));
+                + (this.empaque.getIdEmpaque()==1 ? "" : " " + this.empaque.getAbreviatura() + "x" + Integer.toString(this.piezas));
     }
 
     @Override
@@ -112,12 +116,12 @@ public class ProveedorProducto {
         this.marca = marca;
     }
 
-    public UnidadEmpaque getUnidadEmpaque() {
-        return unidadEmpaque;
+    public Empaque getEmpaque() {
+        return empaque;
     }
 
-    public void setUnidadEmpaque(UnidadEmpaque unidadEmpaque) {
-        this.unidadEmpaque = unidadEmpaque;
+    public void setEmpaque(Empaque empaque) {
+        this.empaque = empaque;
     }
 
     public int getPiezas() {
@@ -200,11 +204,11 @@ public class ProveedorProducto {
         this.ultimaCompraPrecio = ultimaCompraPrecio;
     }
 
-    public Empaque getEquivalencia() {
+    public Producto getEquivalencia() {
         return equivalencia;
     }
 
-    public void setEquivalencia(Empaque equivalencia) {
+    public void setEquivalencia(Producto equivalencia) {
         this.equivalencia = equivalencia;
     }
 }

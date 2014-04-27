@@ -16,7 +16,7 @@ import javax.faces.bean.ManagedProperty;
 import javax.faces.context.FacesContext;
 import javax.faces.model.SelectItem;
 import javax.naming.NamingException;
-import productos.MbBuscarEmpaques;
+import producto2.MbProductosBuscar;
 import usuarios.MbAcciones;
 import usuarios.dominio.Accion;
 
@@ -39,8 +39,8 @@ public class MbSolicitudes implements Serializable {
     private ArrayList<Accion> acciones;
     @ManagedProperty(value = "#{mbAcciones}")
     private MbAcciones mbAcciones;
-    @ManagedProperty(value="#{mbBuscarEmpaques}")
-    private MbBuscarEmpaques mbBuscar;
+    @ManagedProperty(value="#{mbProductosBuscar}")
+    private MbProductosBuscar mbBuscar;
     @ManagedProperty(value="#{mbComprobantes}")
     private MbComprobantes mbComprobantes;
     
@@ -48,7 +48,7 @@ public class MbSolicitudes implements Serializable {
         this.modoEdicion = false;
         
         this.mbAcciones = new MbAcciones();
-        this.mbBuscar=new MbBuscarEmpaques();
+        this.mbBuscar=new MbProductosBuscar();
         this.mbComprobantes=new MbComprobantes();
         this.inicializa();
     }
@@ -90,7 +90,7 @@ public class MbSolicitudes implements Serializable {
     public void actualizaProductoSeleccionado() {
         boolean nuevo=true;
         MovimientoProducto producto=new MovimientoProducto();
-        producto.setEmpaque(this.mbBuscar.getProducto());
+        producto.setProducto(this.mbBuscar.getProducto());
         for(MovimientoProducto p:this.solicitudDetalle) {
             if(p.equals(producto)) {
                 this.solicitudProducto=p;
@@ -119,7 +119,7 @@ public class MbSolicitudes implements Serializable {
         this.resSolicitudProducto.setDesctoConfidencial(this.solicitudProducto.getDesctoConfidencial());
         this.resSolicitudProducto.setDesctoProducto1(this.solicitudProducto.getDesctoProducto1());
         this.resSolicitudProducto.setDesctoProducto2(this.solicitudProducto.getDesctoProducto2());
-        this.resSolicitudProducto.setEmpaque(this.solicitudProducto.getEmpaque());
+        this.resSolicitudProducto.setProducto(this.solicitudProducto.getProducto());
         this.resSolicitudProducto.setImporte(this.solicitudProducto.getImporte());
         this.resSolicitudProducto.setNeto(this.solicitudProducto.getNeto());
         this.resSolicitudProducto.setUnitario(this.solicitudProducto.getUnitario());
@@ -143,6 +143,8 @@ public class MbSolicitudes implements Serializable {
         this.mbComprobantes.getMbAlmacenes().getMbCedis().setCedis((MiniCedis)this.mbComprobantes.getMbAlmacenes().getMbCedis().getListaMiniCedis().get(0).getValue());
         this.cargaAlmacenesEmpresa();
         this.mbComprobantes.getMbAlmacenes().setToAlmacen((TOAlmacenJS)this.mbComprobantes.getMbAlmacenes().getListaAlmacenes().get(0).getValue());
+        
+        this.mbBuscar.inicializar();
     }
     
     public String terminar() {
@@ -238,11 +240,11 @@ public class MbSolicitudes implements Serializable {
         this.mbAcciones = mbAcciones;
     }
 
-    public MbBuscarEmpaques getMbBuscar() {
+    public MbProductosBuscar getMbBuscar() {
         return mbBuscar;
     }
 
-    public void setMbBuscar(MbBuscarEmpaques mbBuscar) {
+    public void setMbBuscar(MbProductosBuscar mbBuscar) {
         this.mbBuscar = mbBuscar;
     }
 

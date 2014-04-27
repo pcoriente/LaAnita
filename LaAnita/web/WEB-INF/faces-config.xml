@@ -345,11 +345,6 @@
         <converter-class>entradas.converters.ComprobanteConverter</converter-class>
     </converter>
     
-    <converter>
-        <converter-id>converters.Pedido</converter-id>
-        <converter-class>pedidos.converters.PedidoConverter</converter-class>
-    </converter>
-    
     
     <converter>
         <converter-id>converters.ClientesBancos</converter-id>
