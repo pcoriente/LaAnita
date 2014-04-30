@@ -9,6 +9,7 @@ import javax.enterprise.context.SessionScoped;
 import java.io.Serializable;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.faces.application.FacesMessage;
@@ -47,7 +48,7 @@ public class MbRequisiciones implements Serializable {
     private ArrayList<Producto> listaEmpaque = new ArrayList<Producto>();
     private Producto empaque;
     private RequisicionDetalle requisicionDetalle;
-    private ArrayList<RequisicionDetalle> requisicionDetalles;
+    private ArrayList<RequisicionDetalle> requisicionDetalles = new ArrayList<RequisicionDetalle>();
     private RequisicionDetalle empaqueElegido = new RequisicionDetalle();
     //COTIZACION
     private ArrayList<SelectItem> listaMini = new ArrayList<SelectItem>();
@@ -459,9 +460,9 @@ public class MbRequisiciones implements Serializable {
             requisicionDetalles.add(this.convertir(rd));
         }
     }
-    
+
     private RequisicionDetalle convertir(TORequisicionDetalle to) {
-        RequisicionDetalle rd=new RequisicionDetalle();
+        RequisicionDetalle rd = new RequisicionDetalle();
         rd.setIdRequisicion(to.getIdRequisicion());
         rd.setProducto(this.mbBuscar.obtenerProducto(to.getIdProducto()));
         rd.setCantidad(to.getCantidad());
@@ -700,9 +701,9 @@ public class MbRequisiciones implements Serializable {
         int coti = daoReq.numCotizaciones(id);
         this.setNumCotizacion(coti);
     }
-    
+
     private CotizacionDetalle convertir(TOCotizacionDetalle to) {
-        CotizacionDetalle rd=new CotizacionDetalle();
+        CotizacionDetalle rd = new CotizacionDetalle();
         rd.setIdRequisicion(to.getIdRequisicion());
         rd.setProducto(this.mbBuscar.obtenerProducto(to.getIdProducto()));
         rd.setCantidadAutorizada(to.getCantidadAutorizada());
@@ -816,29 +817,39 @@ public class MbRequisiciones implements Serializable {
 
     public void actualizaProductosSeleccionados() {
         for (Producto e : this.mbBuscar.getSeleccionados()) {
-            this.mbBuscar.setProducto(e);
-            this.actualizaProductoSeleccionado();
+            RequisicionDetalle rd = new RequisicionDetalle();
+            rd.setProducto(e);
+            requisicionDetalles.add(rd);
         }
+        HashSet hs = new HashSet();
+        hs.addAll(requisicionDetalles);
+        requisicionDetalles.removeAll(requisicionDetalles);
+        requisicionDetalles.addAll(hs);
     }
 
     public void actualizaProductoSeleccionado() {
-          FacesMessage msg = null;
+        FacesMessage msg = null;
+        boolean ok = true;
         boolean nuevo = true;
         RequisicionDetalle rd = new RequisicionDetalle();
-        int idEmp = this.mbBuscar.getProducto().getIdProducto();
+
+        //  int idEmp = this.mbBuscar.getProducto().getIdProducto();
         rd.setProducto(this.mbBuscar.getProducto());
-        for (RequisicionDetalle p : this.requisicionDetalles) {
-            if (p.getProducto().getIdProducto() == idEmp) {
-                System.out.println("somos iguales");
-                nuevo = false;
-                 msg = new FacesMessage(FacesMessage.SEVERITY_INFO, "Aviso:", "Ya existe el producto..");
-                break;
-            }
-        }
-        if (nuevo) {
-            this.requisicionDetalles.add(rd);
-        }
+//        for (RequisicionDetalle p : this.requisicionDetalles) {
+//            if (p.getProducto().getIdProducto() == idEmp) {
+//                System.out.println("somos iguales");
+//                nuevo = false;
+//                msg = new FacesMessage(FacesMessage.SEVERITY_INFO, "Aviso:", "Ya existe el producto..");
+//                ok = false;
+//                break;
+//            }
+//        }
+        //  if (nuevo) {
+        this.requisicionDetalles.add(rd);
+        //   }
+        //   if (ok) {
         FacesContext.getCurrentInstance().addMessage(null, msg);
+        //   }
     }
 
     public void cerrarCotizacion(int idReq) throws SQLException {

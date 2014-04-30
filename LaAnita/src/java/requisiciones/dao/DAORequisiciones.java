@@ -171,7 +171,7 @@ public class DAORequisiciones {
         to.setIdRequisicion(rs.getInt("idRequisicion"));
      //   to.setEmpaque(daoEmp.obtenerEmpaque(rs.getInt("idEmpaque")));
 //        to.setEmpaque(empaque);
-        to.setIdProducto(rs.getInt("idProducto"));
+        to.setIdProducto(rs.getInt("idEmpaque"));
         to.setCantidad(rs.getInt("cantidadSolicitada"));
         to.setCantidadAutorizada(rs.getInt("cantidadAutorizada"));
         return to;
