@@ -107,19 +107,19 @@
                             </p:row>
                         </p:panelGrid>
                         <p:dataTable id="detalleSolicitud" widgetVar="detalleSolicitud" value="#{mbSolicitudes.solicitudDetalle}" style="border:solid 1px;"
-                                     var="prod" rowKey="#{prod.empaque.idEmpaque}" selection="#{mbSolicitudes.solicitudProducto}" selectionMode="single" 
+                                     var="prod" rowKey="#{prod.producto.idProducto}" selection="#{mbSolicitudes.solicitudProducto}" selectionMode="single" 
                                      emptyMessage="No hay elementos que desplegar" scrollable="true" scrollRows="10" >
                             <p:ajax event="rowSelect" listener="#{mbSolicitudes.respaldaFila()}" update="detalleSolicitud" />
                             
                             <p:column headerText="SKU" width="64"  >
-                                <h:outputText value="#{prod.empaque.cod_pro}" />
+                                <h:outputText value="#{prod.producto.cod_pro}" />
                             </p:column>
                             <p:column headerText="Producto" width="500" >
-                                <h:outputText value="#{prod.empaque.toString()}" />
+                                <h:outputText value="#{prod.producto.toString()}" />
                             </p:column>
                             <p:column headerText="Solicitada" width="64" >
                                 <pe:inputNumber value="#{prod.cantOrdenada}" decimalPlaces="3"  minValue="0" 
-                                                disabled="#{prod.empaque.idEmpaque!=mbSolicitudes.solicitudProducto.empaque.idEmpaque}" >
+                                                disabled="#{prod.producto.idProducto!=mbSolicitudes.solicitudProducto.producto.idProducto}" >
                                     <p:ajax event="change" />
                                 </pe:inputNumber>
                             </p:column>
@@ -147,9 +147,9 @@
                                                      update=":main:detalleSolicitud" oncomplete="handleBuscar(xhr, status, args)" />
                                 </p:column>
                                 <p:column rendered="#{mbSolicitudes.mbBuscar.tipoBuscar=='2'}" >
-                                    <p:autoComplete id="opcionParte" value="#{mbSolicitudes.mbBuscar.parte}" maxlength="24" size="24"
-                                                    completeMethod="#{mbSolicitudes.mbBuscar.completePartes}" process="@this"
-                                                    var="p" itemLabel="#{p.parte}" itemValue="#{p}" converter="converters.ParteBuscar" 
+                                    <p:autoComplete id="opcionParte" value="#{mbSolicitudes.mbBuscar.mbParte.parte}" maxlength="24" size="24"
+                                                    completeMethod="#{mbSolicitudes.mbBuscar.mbParte.completePartes}" process="@this"
+                                                    var="p" itemLabel="#{p.parte}" itemValue="#{p}" converter="converters.Parte" 
                                                     forceSelection="true" />
                                     <p:commandButton id="btnBuscarLista" icon="ui-icon-check" title="Buscar" 
                                                      process="@this opcionParte" actionListener="#{mbSolicitudes.buscar()}" 
@@ -165,7 +165,7 @@
                         </p:panelGrid>
                         <p:dataTable id="listaBuscarProductos" value="#{mbSolicitudes.mbBuscar.productos}" 
                                      var="prod" scrollable="true" scrollHeight="200" style="width: 800px;"
-                                     rowKey="#{prod.idEmpaque}" selectionMode="single" selection="#{mbSolicitudes.mbBuscar.producto}" >
+                                     rowKey="#{prod.idProducto}" selectionMode="single" selection="#{mbSolicitudes.mbBuscar.producto}" >
                             <p:ajax event = "rowSelect" update="seleccion" />
 
                             <f:facet name="header">

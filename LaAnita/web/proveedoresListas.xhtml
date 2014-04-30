@@ -239,7 +239,7 @@
                                     <h:outputLabel for="empaque" value="EMPAQUE :" style="font-weight: bold; color: red; width: 120px;" />
                                 </p:column>
                                 <p:column style="width: 150px;" >
-                                    <p:selectOneMenu id="empaque" value="#{mbListas.mbProducto.producto.unidadEmpaque}" >
+                                    <p:selectOneMenu id="empaque" value="#{mbListas.mbProducto.producto.empaque}" >
                                         <f:converter converterId="converters.UnidadEmpaque" />
                                         <f:selectItems value="#{mbListas.mbProducto.listaEmpaques}" />
                                         <p:ajax event="change" listener="#{mbListas.mbProducto.actualizarPiezas()}" process="@this" update="txtPiezas" />
@@ -258,7 +258,7 @@
                                 </p:column>
                                 <p:column colspan="3">
                                     <pe:inputNumber id="txtPiezas" value="#{mbListas.mbProducto.producto.piezas}"
-                                                    disabled="#{mbListas.mbProducto.producto.unidadEmpaque.idUnidad==0 || mbListas.mbProducto.producto.unidadEmpaque.idUnidad==1}"
+                                                    disabled="#{mbListas.mbProducto.producto.empaque.idEmpaque==0 || mbListas.mbProducto.producto.empaque.idEmpaque==1}"
                                                     decimalPlaces="0" minValue="0" maxlength="6" >
                                     </pe:inputNumber>
                                 </p:column>
@@ -386,7 +386,7 @@
                                                    style="font-weight: bold; color: red; width: 105px;" />
                                 </p:column>
                                 <p:column >
-                                    <p:inputText id="txtUnidadEmpaque" value="#{mbListas.mbProducto.mbUnidadEmpaque.unidad.unidad}" 
+                                    <p:inputText id="txtUnidadEmpaque" value="#{mbListas.mbProducto.mbEmpaques.empaque.empaque}" 
                                                  maxlength="50" size="55" />
                                 </p:column>
                             </p:row>
@@ -396,7 +396,7 @@
                                                    style="font-weight: bold; color: red; width: 105px;" />
                                 </p:column>
                                 <p:column >
-                                    <p:inputText id="txtUnidadEmpaqueAbrev" value="#{mbListas.mbProducto.mbUnidadEmpaque.unidad.abreviatura}" 
+                                    <p:inputText id="txtUnidadEmpaqueAbrev" value="#{mbListas.mbProducto.mbEmpaques.empaque.abreviatura}" 
                                                  maxlength="50" size="55" />
                                 </p:column>
                             </p:row>
@@ -408,7 +408,7 @@
                                                          actionListener="#{mbListas.mbProducto.grabarUnidadEmpaque()}"
                                                          update="msgEmpaques empaque txtPiezas" oncomplete="handleUnidadEmpaque(xhr, status, args)" />
                                         <p:commandButton id="btnEliminarUnidadEmpaque" icon="ui-icon-trash" title="Eliminar Unidad de Empaque" 
-                                                         disabled="#{not mbListas.mbAcciones.validarAccion('btnEliminarUnidadEmpaque') or mbListas.mbProducto.mbUnidadEmpaque.unidad.idUnidad==0}" 
+                                                         disabled="#{not mbListas.mbAcciones.validarAccion('btnEliminarUnidadEmpaque') or mbListas.mbProducto.mbEmpaques.empaque.idEmpaque==0}" 
                                                          onclick="eUnidadEmpaque.show();" />
                                     </p:column>
                                 </p:row>
@@ -731,8 +731,8 @@
                                     <!--update=":main:mttoProductos"-->
                                 </p:column>
                                 <p:column rendered="#{mbListas.mbBuscar.tipoBuscar=='2'}" >
-                                    <p:autoComplete id="opcionParte" value="#{mbListas.mbBuscar.parte}" maxlength="50" size="30"
-                                                    completeMethod="#{mbListas.mbBuscar.completePartes}" process="@this"
+                                    <p:autoComplete id="opcionParte" value="#{mbListas.mbBuscar.mbParte.parte}" maxlength="50" size="30"
+                                                    completeMethod="#{mbListas.mbBuscar.mbParte.completePartes}" process="@this"
                                                     var="p" itemLabel="#{p.parte}" itemValue="#{p}" converter="converters.ParteBuscar" 
                                                     forceSelection="true" />
                                     <p:commandButton id="btnBuscarLista" icon="ui-icon-check" title="Buscar" 
@@ -743,7 +743,7 @@
                         </p:panelGrid>
                         <p:dataTable id="listaBuscarProductos" value="#{mbListas.mbBuscar.productos}" 
                                      var="prod" scrollable="true" scrollHeight="200" style="width: 800px;"
-                                     rowKey="#{prod.idEmpaque}" selectionMode="single" selection="#{mbListas.mbBuscar.producto}" >
+                                     rowKey="#{prod.idProducto}" selectionMode="single" selection="#{mbListas.mbBuscar.producto}" >
                             <p:ajax event = "rowSelect" update="seleccion" />
 
                             <f:facet name="header">
