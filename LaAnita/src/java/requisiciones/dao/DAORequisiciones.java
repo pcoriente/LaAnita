@@ -2,6 +2,7 @@ package requisiciones.dao;
 
 import cotizaciones.dominio.CotizacionDetalle;
 import cotizaciones.dominio.CotizacionEncabezado;
+import cotizaciones.to.TOCotizacionDetalle;
 import empresas.dao.DAOMiniEmpresas;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -18,13 +19,9 @@ import javax.naming.InitialContext;
 import javax.naming.NamingException;
 import javax.servlet.http.HttpSession;
 import javax.sql.DataSource;
-import productos.dao.DAOEmpaques;
-import productos.dao.DAOProductos;
-import productos.dominio.Empaque;
-import productos.dominio.Producto;
-import productos.to.TOEmpaque;
 import requisiciones.dominio.RequisicionDetalle;
 import requisiciones.dominio.RequisicionEncabezado;
+import requisiciones.to.TORequisicionDetalle;
 import requisiciones.to.TORequisicionEncabezado;
 import usuarios.UsuarioSesion;
 
@@ -56,7 +53,7 @@ public class DAORequisiciones {
         try {
             st.executeUpdate("BEGIN TRANSACTION");
             //CABECERO
-            String strSQL1 = "INSERT INTO requisiciones(idEmpresa, idDepto, idSolicito,fechaRequisicion) VALUES (" + idEmpresa + ", " + idDepto + ", " + idSolicito + ",GETDATE())";
+            String strSQL1 = "INSERT INTO requisiciones(idEmpresa, idDepto, idSolicito, fechaRequisicion) VALUES (" + idEmpresa + ", " + idDepto + ", " + idSolicito + ",GETDATE())";
             String strSQLIdentity = "SELECT @@IDENTITY as idReq";
             ps1 = cn.prepareStatement(strSQL1);
             ps1.executeUpdate();
@@ -74,7 +71,7 @@ public class DAORequisiciones {
 
             for (RequisicionDetalle e : pr) {
                 ps2.setInt(1, identity);
-                ps2.setInt(2, e.getEmpaque().getIdEmpaque()); //cambio a Empaque
+                ps2.setInt(2, e.getProducto().getIdProducto()); //cambio a Empaque
                 ps2.setInt(3, e.getCantidad());
                 ps2.setInt(4, e.getCantidad());
                 ps2.executeUpdate();
@@ -138,18 +135,18 @@ public class DAORequisiciones {
         return re;
     }
 
-    public ArrayList<RequisicionDetalle> dameRequisicionDetalle(int idReq) throws SQLException {
-
-        ArrayList<RequisicionDetalle> lista = new ArrayList<RequisicionDetalle>();
-        ResultSet rs;
+    public ArrayList<TORequisicionDetalle> dameRequisicionDetalle(int idReq) throws SQLException {
+        ArrayList<TORequisicionDetalle> lista = new ArrayList<TORequisicionDetalle>();
+        
         Connection cn = ds.getConnection();
         try {
 
-            String stringSQL = "select rd.idRequisicion,rd.idEmpaque,rd.cantidadSolicitada, rd.cantidadAutorizada from requisicionDetalle rd\n"
+            String stringSQL = "select rd.idRequisicion, rd.idEmpaque, rd.cantidadSolicitada, rd.cantidadAutorizada "
+                    + "from requisicionDetalle rd\n"
                     + "where idRequisicion=" + idReq;
 
             Statement sentencia = cn.createStatement();
-            rs = sentencia.executeQuery(stringSQL);
+            ResultSet rs = sentencia.executeQuery(stringSQL);
             while (rs.next()) {
                 try {
                     lista.add(construirDetalle(rs));
@@ -161,19 +158,20 @@ public class DAORequisiciones {
             cn.close();
         }
         return lista;
-
     }
 
-    private RequisicionDetalle construirDetalle(ResultSet rs) throws SQLException, NamingException {
-        RequisicionDetalle to = new RequisicionDetalle();
-        DAOEmpaques daoEmp = new DAOEmpaques();
-        DAOProductos daoProds = new DAOProductos();
-        TOEmpaque toE = daoEmp.obtenerEmpaque(rs.getInt("idEmpaque"));
-        Empaque empaque = this.convertir(toE, daoProds.obtenerProducto(toE.getIdProducto()));
+    private TORequisicionDetalle construirDetalle(ResultSet rs) throws SQLException, NamingException {
+//        RequisicionDetalle to = new RequisicionDetalle();
+//        DAOEmpaques daoEmp = new DAOEmpaques();
+//        DAOProductos daoProds = new DAOProductos();
+//        TOEmpaque toE = daoEmp.obtenerEmpaque(rs.getInt("idEmpaque"));
+//        Empaque empaque = this.convertir(toE, daoProds.obtenerProducto(toE.getIdProducto()));
         
+        TORequisicionDetalle to=new TORequisicionDetalle();
         to.setIdRequisicion(rs.getInt("idRequisicion"));
      //   to.setEmpaque(daoEmp.obtenerEmpaque(rs.getInt("idEmpaque")));
-        to.setEmpaque(empaque);
+//        to.setEmpaque(empaque);
+        to.setIdProducto(rs.getInt("idProducto"));
         to.setCantidad(rs.getInt("cantidadSolicitada"));
         to.setCantidadAutorizada(rs.getInt("cantidadAutorizada"));
         return to;
@@ -257,13 +255,14 @@ public class DAORequisiciones {
         }
     }
 
-    public ArrayList<RequisicionDetalle> dameRequisicionDetalleAprobar(int idRequisi) throws SQLException, NamingException {
-        ArrayList<RequisicionDetalle> lista = new ArrayList<RequisicionDetalle>();
+    public ArrayList<TORequisicionDetalle> dameRequisicionDetalleAprobar(int idRequisi) throws SQLException, NamingException {
+        ArrayList<TORequisicionDetalle> lista = new ArrayList<TORequisicionDetalle>();
         ResultSet rs;
         Connection cn = ds.getConnection();
         try {
 
-            String stringSQL = "select rd.idRequisicion,rd.idEmpaque,rd.cantidadSolicitada, rd.cantidadAutorizada from requisicionDetalle rd\n"
+            String stringSQL = "select rd.idRequisicion,rd.idEmpaque,rd.cantidadSolicitada, rd.cantidadAutorizada "
+                    + "from requisicionDetalle rd\n"
                     + "                    where idRequisicion=" + idRequisi;
 
             Statement sentencia = cn.createStatement();
@@ -351,7 +350,7 @@ public class DAORequisiciones {
 
             for (CotizacionDetalle e : cd) {
                 ps2.setInt(1, identity);
-                ps2.setInt(2, e.getEmpaque().getIdEmpaque());
+                ps2.setInt(2, e.getProducto().getIdProducto());
                 ps2.setDouble(3, e.getCantidadCotizada());
                 ps2.setDouble(4, e.getCostoCotizado());
                 ps2.setDouble(5, e.getDescuentoProducto());
@@ -377,16 +376,16 @@ public class DAORequisiciones {
 
     }
 
-    public ArrayList<CotizacionDetalle> dameRequisicionDetalleCotizar(int idRequisi) throws SQLException, NamingException {
-        ArrayList<CotizacionDetalle> lista = new ArrayList<CotizacionDetalle>();
+    public ArrayList<TOCotizacionDetalle> dameRequisicionDetalleCotizar(int idRequisi) throws SQLException, NamingException {
+        ArrayList<TOCotizacionDetalle> lista = new ArrayList<TOCotizacionDetalle>();
         ResultSet rs;
         Connection cn = ds.getConnection();
         //   this.grabarCotizacionInicial(idRequisi);
         try {
 
-            String stringSQL = "select rd.idRequisicion,rd.idEmpaque,rd.cantidadSolicitada, rd.cantidadAutorizada from requisicionDetalle rd\n"
-                    + "                    where cantidadAutorizada>0 and idRequisicion=" + idRequisi;
-
+            String stringSQL = "select rd.idRequisicion, rd.idEmpaque, rd.cantidadSolicitada, rd.cantidadAutorizada "
+                    + "from requisicionDetalle rd "
+                    + "where cantidadAutorizada>0 and idRequisicion=" + idRequisi;
             Statement sentencia = cn.createStatement();
             rs = sentencia.executeQuery(stringSQL);
             while (rs.next()) {
@@ -398,34 +397,35 @@ public class DAORequisiciones {
         return lista;
     }
 
-    public CotizacionDetalle construirCotizacionDetalle(ResultSet rs) throws NamingException, SQLException {
-        CotizacionDetalle cd = new CotizacionDetalle();
-        RequisicionDetalle rd = new RequisicionDetalle();
-        DAOEmpaques daoEmp = new DAOEmpaques();
-
-        //REQUISICION
-        DAOProductos daoProds = new DAOProductos();
-        TOEmpaque to = daoEmp.obtenerEmpaque(rs.getInt("idEmpaque"));
-        Empaque empaque = this.convertir(to, daoProds.obtenerProducto(to.getIdProducto()));
-
-        cd.setIdRequisicion(rs.getInt("idRequisicion"));
-        cd.setEmpaque(empaque);
-//        rd.setCantidad(rs.getInt("cantidadSolicitada"));
-//        rd.setCantidadAutorizada(rs.getInt("cantidadAutorizada"));
-        //COTIZACION
-        // cd.setRequisicionDetalle(rd);
-        cd.setCantidadAutorizada(rs.getInt("cantidadAutorizada"));
-        cd.setCantidadCotizada(rs.getDouble("cantidadAutorizada"));
-        cd.setCostoCotizado(0);
-        cd.setNeto(0);
-        cd.setSubtotal(0);
-        cd.setDescuentoProducto(0);
-        cd.setDescuentoProducto2(0);
-
-        return cd;
-
-
-
+    public TOCotizacionDetalle construirCotizacionDetalle(ResultSet rs) throws NamingException, SQLException {
+//        CotizacionDetalle cd = new CotizacionDetalle();
+//        RequisicionDetalle rd = new RequisicionDetalle();
+//        DAOEmpaques daoEmp = new DAOEmpaques();
+//        //REQUISICION
+//        DAOProductos daoProds = new DAOProductos();
+//        TOEmpaque to = daoEmp.obtenerEmpaque(rs.getInt("idEmpaque"));
+//        Empaque empaque = this.convertir(to, daoProds.obtenerProducto(to.getIdProducto()));
+//
+//        
+//        cd.setIdRequisicion(rs.getInt("idRequisicion"));
+//        cd.setEmpaque(empaque);
+////        rd.setCantidad(rs.getInt("cantidadSolicitada"));
+////        rd.setCantidadAutorizada(rs.getInt("cantidadAutorizada"));
+//        //COTIZACION
+//        // cd.setRequisicionDetalle(rd);
+//        cd.setCantidadAutorizada(rs.getInt("cantidadAutorizada"));
+//        cd.setCantidadCotizada(rs.getDouble("cantidadAutorizada"));
+//        cd.setCostoCotizado(0);
+//        cd.setNeto(0);
+//        cd.setSubtotal(0);
+//        cd.setDescuentoProducto(0);
+//        cd.setDescuentoProducto2(0);
+        
+        TOCotizacionDetalle to=new TOCotizacionDetalle();
+        to.setIdRequisicion(rs.getInt("idRequisicion"));
+        to.setIdProducto(rs.getInt("idEmpaque"));
+        to.getCantidadAutorizada();rs.getDouble("cantidadAutorizada");
+        return to;
     }
 
     public void actualizarCantidadCotizada(int idCot, int idEmp, int cc) throws SQLException {
@@ -478,9 +478,6 @@ public class DAORequisiciones {
         } finally {
             cn.close();
         }
-
-
-
     }
 
     public int numCotizaciones(int idReq) throws SQLException {
@@ -514,17 +511,17 @@ public class DAORequisiciones {
 //        return ce;
 //    }
 
-    private Empaque convertir(TOEmpaque to, Producto p) {
-        Empaque e = new Empaque();
-        e.setIdEmpaque(to.getIdEmpaque());
-        e.setCod_pro(to.getCod_pro());
-        e.setProducto(p);
-        e.setPiezas(to.getPiezas());
-        e.setUnidadEmpaque(to.getUnidadEmpaque());
-        e.setSubEmpaque(to.getSubEmpaque());
-        e.setDun14(to.getDun14());
-        e.setPeso(to.getPeso());
-        e.setVolumen(to.getVolumen());
-        return e;
-    }
+//    private Empaque convertir(TOEmpaque to, Producto p) {
+//        Empaque e = new Empaque();
+//        e.setIdEmpaque(to.getIdEmpaque());
+//        e.setCod_pro(to.getCod_pro());
+//        e.setProducto(p);
+//        e.setPiezas(to.getPiezas());
+//        e.setUnidadEmpaque(to.getUnidadEmpaque());
+//        e.setSubEmpaque(to.getSubEmpaque());
+//        e.setDun14(to.getDun14());
+//        e.setPeso(to.getPeso());
+//        e.setVolumen(to.getVolumen());
+//        return e;
+//    }
 }

@@ -13,11 +13,10 @@ import javax.naming.InitialContext;
 import javax.naming.NamingException;
 import javax.servlet.http.HttpSession;
 import javax.sql.DataSource;
-import productos.dominio.Empaque;
-import productos.dominio.Marca;
-import productos.dominio.Presentacion;
-import productos.dominio.UnidadEmpaque;
-import proveedores.dominio.Proveedor;
+import producto2.dominio.Empaque;
+import producto2.dominio.Marca;
+import producto2.dominio.Presentacion;
+import producto2.dominio.Producto;
 import proveedores.dominio.ProveedorProducto;
 import unidadesMedida.UnidadMedida;
 import usuarios.UsuarioSesion;
@@ -49,7 +48,7 @@ public class DAOProveedoresProductos {
         String strSQL="UPDATE proveedoresProductos"
                 + " SET SKU='"+pp.getSku()+"'"
                 + ",    diasEntrega="+pp.getDiasEntrega()
-                + ",    idUnidadEmpaque="+pp.getUnidadEmpaque().getIdUnidad()
+                + ",    idUnidadEmpaque="+pp.getEmpaque().getIdEmpaque()
                 + ",    piezas="+pp.getPiezas()
                 + ",    idMarca="+pp.getMarca().getIdMarca()
                 + ",    producto='"+pp.getProducto()+"'"
@@ -58,7 +57,7 @@ public class DAOProveedoresProductos {
                 + ",    idUnidadMedida="+pp.getUnidadMedida().getIdUnidadMedida()
                 + ",    idUnidadMedida2="+pp.getUnidadMedida2().getIdUnidadMedida()
                 + ",    idImpuestosGrupo="+pp.getImpuestoGrupo().getIdGrupo()
-                + ",    idEquivalencia="+pp.getEquivalencia().getIdEmpaque()
+                + ",    idEquivalencia="+pp.getEquivalencia().getIdProducto()
                 + " WHERE idProveedor="+idProveedor+" AND idProducto="+pp.getIdProducto();
         try {
             st.executeUpdate(strSQL);
@@ -70,9 +69,9 @@ public class DAOProveedoresProductos {
     public int agregar(ProveedorProducto pp, int idProveedor) throws SQLException {
         int idProducto=0;
         String strSQL="INSERT INTO proveedoresProductos (idProveedor, sku, diasEntrega, idUnidadEmpaque, piezas, idMarca, producto, idPresentacion, contenido, idUnidadMedida, idUnidadMedida2, idImpuestosGrupo, idEquivalencia) "
-                    + "     VALUES ("+idProveedor+", '"+pp.getSku()+"', "+pp.getDiasEntrega()+", "+pp.getUnidadEmpaque().getIdUnidad()+", "+pp.getPiezas()+", "+pp.getMarca().getIdMarca()+""
+                    + "     VALUES ("+idProveedor+", '"+pp.getSku()+"', "+pp.getDiasEntrega()+", "+pp.getEmpaque().getIdEmpaque()+", "+pp.getPiezas()+", "+pp.getMarca().getIdMarca()+""
                     + "             , '"+pp.getProducto()+"', "+pp.getPresentacion().getIdPresentacion()+", "+pp.getContenido()+""
-                    + "             , "+pp.getUnidadMedida().getIdUnidadMedida()+", "+pp.getUnidadMedida2().getIdUnidadMedida()+", "+pp.getImpuestoGrupo().getIdGrupo()+", "+pp.getEquivalencia().getIdEmpaque()+")";
+                    + "             , "+pp.getUnidadMedida().getIdUnidadMedida()+", "+pp.getUnidadMedida2().getIdUnidadMedida()+", "+pp.getImpuestoGrupo().getIdGrupo()+", "+pp.getEquivalencia().getIdProducto()+")";
         Connection cn=this.ds.getConnection();
         Statement st=cn.createStatement();
         try {
@@ -133,7 +132,7 @@ public class DAOProveedoresProductos {
         pp.setDiasEntrega(rs.getInt("diasEntrega"));
         pp.setUltimaCompraFecha(rs.getDate("ultimaCompraFecha"));
         pp.setUltimaCompraPrecio(rs.getDouble("ultimaCompraPrecio"));
-        pp.setUnidadEmpaque(new UnidadEmpaque(rs.getInt("idUnidad"), rs.getString("unidad"), rs.getString("unidAbrev")));
+        pp.setEmpaque(new Empaque(rs.getInt("idUnidad"), rs.getString("unidad"), rs.getString("unidAbrev")));
         pp.setPiezas(rs.getInt("piezas"));
         pp.setMarca(new Marca(rs.getInt("idMarca"), rs.getString("marca"), false));
         pp.setProducto(rs.getString("producto"));
@@ -142,7 +141,8 @@ public class DAOProveedoresProductos {
         pp.setUnidadMedida(new UnidadMedida(rs.getInt("idUnidadMedida1"), rs.getString("unidadMedida1"), rs.getString("abreviatura1")));
         pp.setUnidadMedida2(new UnidadMedida(rs.getInt("idUnidadMedida2"), rs.getString("unidadMedida2"), rs.getString("abreviatura2")));
         pp.setImpuestoGrupo(new ImpuestoGrupo(rs.getInt("idGrupo"), rs.getString("grupo")));
-        pp.setEquivalencia(new Empaque(rs.getInt("idEquivalencia")));
+        pp.setEquivalencia(new Producto());
+        pp.getEquivalencia().setIdProducto(rs.getInt("idEquivalencia"));
         return pp;
     }
     

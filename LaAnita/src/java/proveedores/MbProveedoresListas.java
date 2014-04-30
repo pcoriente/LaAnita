@@ -5,7 +5,7 @@ import javax.enterprise.context.SessionScoped;
 import java.io.Serializable;
 import java.util.ArrayList;
 import javax.faces.bean.ManagedProperty;
-import productos.MbBuscarEmpaques;
+import producto2.MbProductosBuscar;
 import proveedores.dominio.MiniProveedor;
 import proveedores.dominio.ProveedorProducto;
 import proveedores.dominio.ProveedorProductoLista;
@@ -26,32 +26,22 @@ public class MbProveedoresListas implements Serializable {
     private ArrayList<ProveedorProducto> listaFiltrados;
     private ProveedorProductoLista productoLista;
     private ProveedorProducto producto;
-    //private DAOProveedoresProductos dao;
-    
     private ProveedorProductoPrecio precio;
-    //private DAOProveedoresProductosPrecios daoPrecios;
-    
     private ProveedorProductoOferta oferta;
-    //private DAOProveedoresProductosOfertas daoOfertas;
-    
-    @ManagedProperty(value="#{mbMiniProveedor}")
-    private MbMiniProveedor mbProveedor;
     
     private ArrayList<Accion> acciones;
     @ManagedProperty(value="#{mbAcciones}")
     private MbAcciones mbAcciones;
-    
+    @ManagedProperty(value="#{mbMiniProveedor}")
+    private MbMiniProveedor mbProveedor;
     @ManagedProperty(value="#{mbProveedorProducto}")
     private MbProveedorProducto mbProducto;
-    
     @ManagedProperty(value="#{mbProveedorProductoOfertas}")
     private MbProveedorProductoOfertas mbOfertas;
-    
     @ManagedProperty(value="#{mbProveedorProductoPrecios}")
     private MbProveedorProductoPrecios mbPrecios;
-    
-    @ManagedProperty(value="#{mbBuscarEmpaques}")
-    private MbBuscarEmpaques mbBuscar;
+    @ManagedProperty(value="#{mbProductosBuscar}")
+    private MbProductosBuscar mbBuscar;
     
     public MbProveedoresListas() {
         this.modoEdicion=false;
@@ -61,29 +51,15 @@ public class MbProveedoresListas implements Serializable {
         this.mbProducto=new MbProveedorProducto(0);
         this.mbOfertas=new MbProveedorProductoOfertas();
         this.mbPrecios=new MbProveedorProductoPrecios();
-        this.mbBuscar=new MbBuscarEmpaques();
+        this.mbBuscar=new MbProductosBuscar();
     }
     
     public void actualizaProductoSeleccionado() {
         this.mbProducto.getProducto().setEquivalencia(this.mbBuscar.getProducto());
-        //this.productoLista.getProducto().setEquivalencia(this.mbBuscar.getProducto());
-        // ---------------------- ANTERIOR ----------------------------------
-        /*
-        this.mbProducto.setProducto(this.mbBuscarProd.obtenerSeleccionado());
-        this.mbProducto.cargaListaUpcs();
-        if(!this.mbProducto.getProducto().getUpcs().isEmpty()) {
-            //Upc upc=this.mbProducto.getProducto().getUpcs().get(0);
-            this.mbProducto.getMbUpc().setUpc(this.mbProducto.getProducto().getUpcs().get(0));
-        }
-        * */
-        // ---------------------- HASTA AQUI --------------------------------
     }
     
     public void buscar() {
         this.mbBuscar.buscarLista();
-//        if(this.mbBuscar.getProducto()!=null) {
-//            this.mbProducto.setProducto(this.mbBuscar.getProducto());
-//        }
     }
     
     public void eliminarOferta() {
@@ -179,25 +155,11 @@ public class MbProveedoresListas implements Serializable {
     }
     
     public void cargaProductos() {
-//        boolean ok=false;
-//        FacesMessage fMsg = new FacesMessage(FacesMessage.SEVERITY_WARN, "Aviso:", "");
         int idProveedor=this.mbProveedor.getMiniProveedor().getIdProveedor();
-//        try {
-            this.mbProducto.setIdProveedor(idProveedor);
-            this.mbOfertas.setIdProveedor(idProveedor);
-            this.mbPrecios.setIdProveedor(idProveedor);
-            this.listaProductos=this.mbProducto.obtenerProductos(idProveedor);
-//            ok=true;
-//        } catch (NamingException ex) {
-//            fMsg.setSeverity(FacesMessage.SEVERITY_ERROR);
-//            fMsg.setDetail(ex.getMessage());
-//        } catch (SQLException ex) {
-//            fMsg.setSeverity(FacesMessage.SEVERITY_ERROR);
-//            fMsg.setDetail(ex.getErrorCode() + " " + ex.getMessage());
-//        }
-//        if (!ok) {
-//            FacesContext.getCurrentInstance().addMessage(null, fMsg);
-//        }
+        this.mbProducto.setIdProveedor(idProveedor);
+        this.mbOfertas.setIdProveedor(idProveedor);
+        this.mbPrecios.setIdProveedor(idProveedor);
+        this.listaProductos=this.mbProducto.obtenerProductos(idProveedor);
     }
 
     public ProveedorProductoLista getProductoLista() {
@@ -310,11 +272,11 @@ public class MbProveedoresListas implements Serializable {
         this.mbPrecios = mbPrecios;
     }
 
-    public MbBuscarEmpaques getMbBuscar() {
+    public MbProductosBuscar getMbBuscar() {
         return mbBuscar;
     }
 
-    public void setMbBuscar(MbBuscarEmpaques mbBuscar) {
+    public void setMbBuscar(MbProductosBuscar mbBuscar) {
         this.mbBuscar = mbBuscar;
     }
 }
