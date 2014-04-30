@@ -55,10 +55,6 @@ public class MbClientesTienda implements Serializable {
         mbDireccion.setDireccion(clienteTiendaSeleccionado.getDireccion());
         mbFormatos.getCmbFormato().setIdFormato(clienteTiendaSeleccionado.getFormatos().getIdFormato());
         mbRutas.getCmbRuta().setIdRuta(clienteTiendaSeleccionado.getRuta().getIdRuta());
-//        mbRutas.getRuta().setIdRuta(clienteTiendaSeleccionado.getRuta().getIdRuta());
-//        mbRutas.getRuta().setRuta(clienteTiendaSeleccionado.getRuta().getRuta());
-//        mbFormatos.getMbClientesGrupos().getCmbClientesGrupos().setIdGrupoCte(clienteTiendaSeleccionado.getFormatos().getClientesGrupo().getIdGrupoCte());
-//        mbFormatos.getFormato().setFormato(clienteTiendaSeleccionado.getFormatos().getFormato());
         this.setClienteTienda(clienteTiendaSeleccionado);
         this.setEditar(true);
     }
@@ -70,7 +66,7 @@ public class MbClientesTienda implements Serializable {
     public void validarDireccion() {
         boolean ok = mbDireccion.validarDireccion();
         if (ok == true) {
-            Direccion direccion = new Direccion();
+            Direccion direccion;
             RequestContext context = RequestContext.getCurrentInstance();
             FacesMessage fMsg = new FacesMessage(FacesMessage.SEVERITY_INFO, "Exito:", "");
             fMsg.setDetail("Nueva Direccion Disponible");
@@ -151,9 +147,9 @@ public class MbClientesTienda implements Serializable {
     }
 
     public void guardarRutas() {
-        boolean ok = false;
+        boolean ok;
         RequestContext context = RequestContext.getCurrentInstance();
-        FacesMessage fMsg = null;
+        FacesMessage fMsg;
         ok = mbRutas.validar();
         if (ok == true) {
             try {
@@ -183,8 +179,8 @@ public class MbClientesTienda implements Serializable {
         int idFormato = mbFormatos.getMbClientesGrupos().getCmbClientesGrupos().getIdGrupoCte();
         boolean ok = mbFormatos.validar();
         RequestContext context = RequestContext.getCurrentInstance();
-        FacesMessage fMsg = null;
-        if (ok = true) {
+        FacesMessage fMsg;
+        if (ok == true) {
             try {
                 DAOFormatos dao = new DAOFormatos();
                 Formato formato = new Formato();
