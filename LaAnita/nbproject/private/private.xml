@@ -1,22 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project-private xmlns="http://www.netbeans.org/ns/project-private/1">
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/1"/>
-<<<<<<< HEAD
-<<<<<<< HEAD
-    <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="9">
-=======
-    <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="4">
->>>>>>> origin/master
-=======
-    <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="4">
->>>>>>> origin/master
+    <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="10">
         <file>
             <url>src/java/almacenes/MbAlmacenesJS.java</url>
             <bookmark id="4">
                 <name/>
                 <line>53</line>
-<<<<<<< HEAD
-<<<<<<< HEAD
                 <key/>
             </bookmark>
         </file>
@@ -24,7 +14,7 @@
             <url>web/menuClientesTienda.xhtml</url>
             <bookmark id="9">
                 <name/>
-                <line>43</line>
+                <line>79</line>
                 <key/>
             </bookmark>
         </file>
@@ -50,14 +40,18 @@
             </bookmark>
         </file>
         <file>
+            <url>src/java/clientesTienda/MbClientesTienda.java</url>
+            <bookmark id="10">
+                <name/>
+                <line>192</line>
+                <key/>
+            </bookmark>
+        </file>
+        <file>
             <url>web/menuClientesGruposNuevo.xhtml</url>
             <bookmark id="8">
                 <name/>
                 <line>27</line>
-=======
->>>>>>> origin/master
-=======
->>>>>>> origin/master
                 <key/>
             </bookmark>
         </file>
@@ -65,12 +59,11 @@
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group/>
         <group name="La Anita">
-            <file>file:/C:/Users/Usuario/Documents/NetBeansProjects/elikminarAnita/LaAnita/LaAnita/src/java/formatos/MbFormatos.java</file>
-            <file>file:/C:/Users/Usuario/Documents/NetBeansProjects/elikminarAnita/LaAnita/LaAnita/src/java/formatos/converters/FormatosConverter.java</file>
-            <file>file:/C:/Users/Usuario/Documents/NetBeansProjects/elikminarAnita/LaAnita/LaAnita/src/java/mbMenuClientesGrupos/MbClientesGrupos.java</file>
             <file>file:/C:/Users/Usuario/Documents/NetBeansProjects/elikminarAnita/LaAnita/LaAnita/src/java/formatos/DAOFormatos/DAOFormatos.java</file>
-            <file>file:/C:/Users/Usuario/Documents/NetBeansProjects/elikminarAnita/LaAnita/LaAnita/src/java/clientesTienda/dominio/ClienteTienda.java</file>
+            <file>file:/C:/Users/Usuario/Documents/NetBeansProjects/elikminarAnita/LaAnita/LaAnita/src/java/direccion/MbDireccion.java</file>
+            <file>file:/C:/Users/Usuario/Documents/NetBeansProjects/elikminarAnita/LaAnita/LaAnita/src/java/clientesTienda/MbClientesTienda.java</file>
             <file>file:/C:/Users/Usuario/Documents/NetBeansProjects/elikminarAnita/LaAnita/LaAnita/web/menuClientesTienda.xhtml</file>
+            <file>file:/C:/Users/Usuario/Documents/NetBeansProjects/elikminarAnita/LaAnita/LaAnita/src/java/rutas/daoRutas/DAORutas.java</file>
         </group>
     </open-files>
 </project-private>

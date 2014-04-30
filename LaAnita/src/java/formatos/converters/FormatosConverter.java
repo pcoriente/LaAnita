@@ -28,6 +28,7 @@ public class FormatosConverter implements Converter {
         if (id == 0) {
             formato = new Formato();
             formato.setIdFormato(0);
+            formato.getClientesGrupo().setIdGrupoCte(0);
         } else {
             try {
                 DAOFormatos dao = new DAOFormatos();
@@ -45,7 +46,7 @@ public class FormatosConverter implements Converter {
     @Override
     public String getAsString(FacesContext context, UIComponent component, Object value) {
         Formato formato = (Formato) value;
-        return Integer.toBinaryString(formato.getIdFormato());
+        return Integer.toString(formato.getIdFormato());
     }
 
 }
