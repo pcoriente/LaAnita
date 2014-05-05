@@ -216,7 +216,9 @@ public class DAOOrdenDeCompra {
                     + "                         inner join cotizaciones c on c.idCotizacion= oc.idCotizacion\n"
                     + "                         inner join requisiciones r on r.idRequisicion= c.idRequisicion\n"
                     + "                        where oc.idOrdenCompra=" + idOC;
-
+//ORDEN DE COMPRA DIRECTA NO FUNCIONA
+//sku CHECAR
+//idEmpresa.
             Statement sentencia = cn.createStatement();
             rs = sentencia.executeQuery(stringSQL);
             while (rs.next()) {

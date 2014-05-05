@@ -424,7 +424,7 @@ public class DAORequisiciones {
         TOCotizacionDetalle to=new TOCotizacionDetalle();
         to.setIdRequisicion(rs.getInt("idRequisicion"));
         to.setIdProducto(rs.getInt("idEmpaque"));
-        to.getCantidadAutorizada();rs.getDouble("cantidadAutorizada");
+        to.setCantidadAutorizada(rs.getDouble("cantidadAutorizada"));
         return to;
     }
 

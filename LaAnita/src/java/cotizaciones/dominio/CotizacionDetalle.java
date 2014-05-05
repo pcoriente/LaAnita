@@ -23,10 +23,10 @@ public class CotizacionDetalle implements Serializable {
     private double iva;
     private double total;
     private String costoCotizadoF;
-    private String netoF;
-    private String subtotalF;
-    private String ivaF;
-    private String totalF;
+//    private String netoF;
+//    private String subtotalF;
+//    private String ivaF;
+//    private String totalF;
 
 //    public RequisicionDetalle getRequisicionDetalle() {
 //        return requisicionDetalle;
@@ -140,41 +140,41 @@ public class CotizacionDetalle implements Serializable {
         this.costoCotizadoF = costoCotizadoF;
     }
 
-    public String getNetoF() {
-        netoF = utilerias.Utilerias.formatoMonedas(this.getNeto());
-        return netoF;
-    }
-
-    public void setNetoF(String netoF) {
-        this.netoF = netoF;
-    }
-
-    public String getSubtotalF() {
-        subtotalF = utilerias.Utilerias.formatoMonedas(this.subtotal);
-        return subtotalF;
-    }
-
-    public void setSubtotalF(String subtotalF) {
-        this.subtotalF = subtotalF;
-    }
-
-    public String getIvaF() {
-        ivaF = utilerias.Utilerias.formatoMonedas(this.getIva());
-        return ivaF;
-    }
-
-    public void setIvaF(String ivaF) {
-        this.ivaF = ivaF;
-    }
-
-    public String getTotalF() {
-        totalF = utilerias.Utilerias.formatoMonedas(this.getTotal());
-        return totalF;
-    }
-
-    public void setTotalF(String totalF) {
-        this.totalF = totalF;
-    }
+//    public String getNetoF() {
+//        netoF = utilerias.Utilerias.formatoMonedas(this.getNeto());
+//        return netoF;
+//    }
+//
+//    public void setNetoF(String netoF) {
+//        this.netoF = netoF;
+//    }
+//
+//    public String getSubtotalF() {
+//        subtotalF = utilerias.Utilerias.formatoMonedas(this.subtotal);
+//        return subtotalF;
+//    }
+//
+//    public void setSubtotalF(String subtotalF) {
+//        this.subtotalF = subtotalF;
+//    }
+//
+//    public String getIvaF() {
+//        ivaF = utilerias.Utilerias.formatoMonedas(this.getIva());
+//        return ivaF;
+//    }
+//
+//    public void setIvaF(String ivaF) {
+//        this.ivaF = ivaF;
+//    }
+//
+//    public String getTotalF() {
+//        totalF = utilerias.Utilerias.formatoMonedas(this.getTotal());
+//        return totalF;
+//    }
+//
+//    public void setTotalF(String totalF) {
+//        this.totalF = totalF;
+//    }
 
     public int getIdCotizacion() {
         return idCotizacion;

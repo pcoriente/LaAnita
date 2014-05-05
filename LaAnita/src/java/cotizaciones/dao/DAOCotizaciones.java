@@ -285,8 +285,8 @@ public class DAOCotizaciones {
         try {
             ResultSet rs = st.executeQuery("SELECT * FROM cotizacionesDetalle WHERE idCotizacion=" + idCot);
             if (rs.next()) {
-                cd = construirCD(rs);
-            }
+                cd = construirCD(rs); //CHECAR.... SOLAMENTE TRAE UN PRODUCTO
+           }
         } finally {
             cn.close();
         }

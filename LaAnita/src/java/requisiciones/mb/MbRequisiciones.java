@@ -60,14 +60,14 @@ public class MbRequisiciones implements Serializable {
     private double impuesto;
     private double total;
     private double iva = 0.16;
-    private String subtotF;
-    private String descF;
-    private String impF;
-    private String totalF;
+//    private String subtotF;
+//    private String descF;
+//    private String impF;
+//    private String totalF;
     private double descuentoGeneralAplicado;
-    private String descGralAplicF;
+//    private String descGralAplicF;
     private double sumaDescuentoTotales;
-    private String desctoTotalesF;
+//    private String desctoTotalesF;
     @ManagedProperty(value = "#{mbMiniProveedor}")
     private MbMiniProveedor mbMiniProveedor = new MbMiniProveedor();
     @ManagedProperty(value = "#{mbMonedas}")
@@ -230,25 +230,25 @@ public class MbRequisiciones implements Serializable {
         this.total = total;
     }
 
-    public String getSubtotF() {
-        subtotF = utilerias.Utilerias.formatoMonedas(this.getSubtotalGeneral());
-        return subtotF;
-    }
-
-    public String getDescF() {
-        descF = utilerias.Utilerias.formatoMonedas(this.getSumaDescuentosProductos());
-        return descF;
-    }
-
-    public String getImpF() { //IVA
-        impF = utilerias.Utilerias.formatoMonedas(this.getImpuesto());
-        return impF;
-    }
-
-    public String getTotalF() {
-        totalF = utilerias.Utilerias.formatoMonedas(this.getTotal());
-        return totalF;
-    }
+//    public String getSubtotF() {
+//        subtotF = utilerias.Utilerias.formatoMonedas(this.getSubtotalGeneral());
+//        return subtotF;
+//    }
+//
+//    public String getDescF() {
+//        descF = utilerias.Utilerias.formatoMonedas(this.getSumaDescuentosProductos());
+//        return descF;
+//    }
+//
+//    public String getImpF() { //IVA
+//        impF = utilerias.Utilerias.formatoMonedas(this.getImpuesto());
+//        return impF;
+//    }
+//
+//    public String getTotalF() {
+//        totalF = utilerias.Utilerias.formatoMonedas(this.getTotal());
+//        return totalF;
+//    }
 
     public double getDescuentoGeneralAplicado() {
         this.calculoDescuentoGeneral();
@@ -259,14 +259,14 @@ public class MbRequisiciones implements Serializable {
         this.descuentoGeneralAplicado = descuentoGeneralAplicado;
     }
 
-    public String getDescGralAplicF() {
-        descGralAplicF = utilerias.Utilerias.formatoMonedas(this.getDescuentoGeneralAplicado());
-        return descGralAplicF;
-    }
-
-    public void setDescGralAplicF(String descGralAplicF) {
-        this.descGralAplicF = descGralAplicF;
-    }
+//    public String getDescGralAplicF() {
+//        descGralAplicF = utilerias.Utilerias.formatoMonedas(this.getDescuentoGeneralAplicado());
+//        return descGralAplicF;
+//    }
+//
+//    public void setDescGralAplicF(String descGralAplicF) {
+//        this.descGralAplicF = descGralAplicF;
+//    }
 
     public double getSumaDescuentoTotales() {
         this.calculoDescuentoTotales();
@@ -277,15 +277,15 @@ public class MbRequisiciones implements Serializable {
         this.sumaDescuentoTotales = sumaDescuentoTotales;
     }
 
-    public String getDesctoTotalesF() {
-        desctoTotalesF = utilerias.Utilerias.formatoMonedas(this.getSumaDescuentoTotales());
-        return desctoTotalesF;
-    }
-
-    public void setDesctoTotalesF(String desctoTotalesF) {
-
-        this.desctoTotalesF = desctoTotalesF;
-    }
+//    public String getDesctoTotalesF() {
+//        desctoTotalesF = utilerias.Utilerias.formatoMonedas(this.getSumaDescuentoTotales());
+//        return desctoTotalesF;
+//    }
+//
+//    public void setDesctoTotalesF(String desctoTotalesF) {
+//
+//        this.desctoTotalesF = desctoTotalesF;
+//    }
 
     public MbMiniProveedor getMbMiniProveedor() {
         return mbMiniProveedor;
