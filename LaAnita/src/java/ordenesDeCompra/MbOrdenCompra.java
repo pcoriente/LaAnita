@@ -134,15 +134,14 @@ public class MbOrdenCompra implements Serializable {
     public void cargaOrdenesEncabezado(int idProveedor, int status) throws NamingException, SQLException {
         this.listaOrdenesEncabezado = new ArrayList<OrdenCompraEncabezado>();
         DAOOrdenDeCompra daoOC = new DAOOrdenDeCompra();
-        ArrayList<OrdenCompraEncabezado> lista = daoOC.listaOrdenes(idProveedor, status);
-        for (OrdenCompraEncabezado d : lista) {
+        for (OrdenCompraEncabezado d : daoOC.listaOrdenes(idProveedor, status)) {
             listaOrdenesEncabezado.add(d);
         }
     }
 
     public void dameEmpaqueSeleccionado() {
         boolean ok = false;
-        FacesMessage fMsg = new FacesMessage(FacesMessage.SEVERITY_WARN, "Aviso:", null);
+        FacesMessage fMsg = new FacesMessage(FacesMessage.SEVERITY_WARN, "Aviso:", "dameEmpaqueSeleccionado");
         boolean verifi = verificacion(mbBuscar.getProducto());
         if (verifi == false) {
             listaEmpaque.add(mbBuscar.getProducto());
@@ -184,17 +183,15 @@ public class MbOrdenCompra implements Serializable {
     public boolean aseguraOrdenCompra(int idOrdenCompra) {
         int propietario;
         boolean ok = false;
-        FacesMessage fMsg = new FacesMessage(FacesMessage.SEVERITY_WARN, "Aviso:", "");
+        FacesMessage fMsg = new FacesMessage(FacesMessage.SEVERITY_WARN, "Aviso:", "aseguraOrdenCompra");
         try {
             DAOOrdenDeCompra dao=new DAOOrdenDeCompra();
             propietario=dao.aseguraOrdenCompra(idOrdenCompra);
             if(propietario==dao.obtenerIdUsuario()) {
                 ok=true;
             } else if(propietario==0) {
-                fMsg.setSeverity(FacesMessage.SEVERITY_WARN);
                 fMsg.setDetail("No se encontro la orden de compra");
             } else {
-                fMsg.setSeverity(FacesMessage.SEVERITY_WARN);
                 fMsg.setDetail("La orden de compra esta siendo procesada por otro usuario("+propietario+")");
             }
         } catch (SQLException ex) {
@@ -210,24 +207,32 @@ public class MbOrdenCompra implements Serializable {
         return ok;
     }
 
-    public void obtenerDetalleOrdenCompra() throws SQLException {
+    public void obtenerDetalleOrdenCompra() {
         listaOrdenDetalle = new ArrayList<OrdenCompraDetalle>();
         this.subtotalGeneral = 0;
-
+        boolean ok = false;
+        FacesMessage fMsg = new FacesMessage(FacesMessage.SEVERITY_WARN, "Aviso:", "obtenerDetalleOrdenCompra");
         try {
             int idOC = ordenElegida.getIdOrdenCompra();
             DAOOrdenDeCompra daoOC = new DAOOrdenDeCompra();
-            ArrayList<OrdenCompraDetalle> lista = daoOC.consultaOrdenCompra(idOC);
-            for (OrdenCompraDetalle d : lista) {
+            for (OrdenCompraDetalle d : daoOC.consultaOrdenCompra(idOC)) {
                 d.setProducto(this.mbBuscar.obtenerProducto(d.getProducto().getIdProducto()));
-                d.getCotizacionDetalle().setProducto(this.mbBuscar.obtenerProducto(d.getCotizacionDetalle().getProducto().getIdProducto()));
+                if(d.getCotizacionDetalle().getProducto()!=null) {
+                    d.getCotizacionDetalle().setProducto(this.mbBuscar.obtenerProducto(d.getCotizacionDetalle().getProducto().getIdProducto()));
+                }
                 listaOrdenDetalle.add(d);
                 this.calculosOrdenCompra(d.getProducto().getIdProducto());
             }
-        } catch (NamingException ex) {
-            Logger.getLogger(MbOrdenCompra.class.getName()).log(Level.SEVERE, null, ex);
+            ok=true;
         } catch (SQLException ex) {
-            Logger.getLogger(MbOrdenCompra.class.getName()).log(Level.SEVERE, null, ex);
+            fMsg.setSeverity(FacesMessage.SEVERITY_ERROR);
+            fMsg.setDetail(ex.getErrorCode() + " " + ex.getMessage());
+        } catch (NamingException ex) {
+            fMsg.setSeverity(FacesMessage.SEVERITY_ERROR);
+            fMsg.setDetail(ex.getMessage());
+        }
+        if (!ok) {
+            FacesContext.getCurrentInstance().addMessage(null, fMsg);
         }
     }
 
@@ -345,7 +350,7 @@ public class MbOrdenCompra implements Serializable {
     }
 
     public void guardarOrden(int idOrden, int estado) throws NamingException {
-        FacesMessage msg = null;
+        FacesMessage fMsg = new FacesMessage(FacesMessage.SEVERITY_INFO, "Aviso: ", "guardarOrden");
         DAOOrdenDeCompra daoO = new DAOOrdenDeCompra();
         try {
             if (estado == 1) {
@@ -354,22 +359,21 @@ public class MbOrdenCompra implements Serializable {
                 this.setListaOrdenesEncabezado(null);
                 this.cargaOrdenesEncabezado();
 
-                msg = new FacesMessage(FacesMessage.SEVERITY_INFO, "Aviso: ", "Se ha guardado con satisfactoriamente...");
+                fMsg.setDetail("Se ha guardado con satisfactoriamente...");
             } else if (estado == 2) {
-                msg = new FacesMessage(FacesMessage.SEVERITY_INFO, "Aviso: ", "La orden se ha registrado con anterioridad");
+                fMsg.setDetail("La orden se ha registrado con anterioridad");
             }
         } catch (SQLException ex) {
             Logger.getLogger(MbOrdenCompra.class.getName()).log(Level.SEVERE, null, ex);
-            msg = new FacesMessage(FacesMessage.SEVERITY_INFO, "Aviso: ", "No se realizó el registro de la orden de compra..");
+            fMsg.setDetail("No se realizó el registro de la orden de compra..");
         }
-        FacesContext.getCurrentInstance().addMessage(null, msg);
-
+        FacesContext.getCurrentInstance().addMessage(null, fMsg);
     }
 
     public void cancelarOrden(int idOrden, int estado) throws NamingException {
         Boolean correcto = false;
         //    FacesMessage msg = null;
-        FacesMessage msg = new FacesMessage(FacesMessage.SEVERITY_WARN, "Aviso:", null);
+        FacesMessage fMsg = new FacesMessage(FacesMessage.SEVERITY_WARN, "Aviso:", "cancelarOrden");
         DAOOrdenDeCompra daoO = new DAOOrdenDeCompra();
         try {
             if (estado == 0) {
@@ -377,16 +381,16 @@ public class MbOrdenCompra implements Serializable {
                 this.setListaOrdenesEncabezado(null);
                 this.cargaOrdenesEncabezado();
 
-                msg = new FacesMessage(FacesMessage.SEVERITY_INFO, "Aviso: ", "Se ha CANCELADO");
+                fMsg.setDetail("Se ha CANCELADO");
                 correcto = true;
             }
         } catch (SQLException ex) {
             Logger.getLogger(MbOrdenCompra.class.getName()).log(Level.SEVERE, null, ex);
-            msg = new FacesMessage(FacesMessage.SEVERITY_INFO, "Aviso: ", "No se realizó la cancelación de la orden de compra..");
+            fMsg.setDetail("No se realizó la cancelación de la orden de compra..");
         }
 
-        if (correcto) {
-            FacesContext.getCurrentInstance().addMessage(null, msg);
+        if (!correcto) {
+            FacesContext.getCurrentInstance().addMessage(null, fMsg);
         }
     }
 
@@ -417,20 +421,16 @@ public class MbOrdenCompra implements Serializable {
         String contenido = correo.getMensaje();
         String ruta = "";
         Boolean ok = false;
-        FacesMessage fMsg = new FacesMessage(FacesMessage.SEVERITY_WARN, "Aviso:", null);
+        FacesMessage fMsg = new FacesMessage(FacesMessage.SEVERITY_WARN, "Aviso:", "enviarCorreo");
         if (emails.equals("")) {
-            fMsg.setSeverity(FacesMessage.SEVERITY_WARN);
             fMsg.setDetail("Se requiere un correo !!");
         } else if (asunto.equals("")) {
-            fMsg.setSeverity(FacesMessage.SEVERITY_WARN);
             fMsg.setDetail("Se requiere un ASUNTO !!");
         } else if (contenido.equals("")) {
-            fMsg.setSeverity(FacesMessage.SEVERITY_WARN);
             fMsg.setDetail("Se requiere un MENSAJE !!");
         } else {
             String verifica = this.validarCadenaCorreos(emails);
             if (verifica.equals("")) {
-                fMsg.setSeverity(FacesMessage.SEVERITY_WARN);
                 fMsg.setDetail("Es incorrecto el correo " + verifica);
             } else {
                 try {
@@ -497,14 +497,11 @@ public class MbOrdenCompra implements Serializable {
                         limpiarFormulario();
                         FacesContext.getCurrentInstance().addMessage(null, fMsg);
                     } catch (NoSuchProviderException e) {
-                        fMsg.setSeverity(FacesMessage.SEVERITY_WARN);
                         fMsg.setDetail(e.getMessage() + "Error capturado1");
                     } catch (MessagingException e) {
-                        fMsg.setSeverity(FacesMessage.SEVERITY_WARN);
                         fMsg.setDetail("Aviso: Corrige el correo..");
                     }
                 } catch (Exception ex) {
-                    fMsg.setSeverity(FacesMessage.SEVERITY_WARN);
                     fMsg.setDetail("Aviso: Acompleta el correo...");
                 }
             }
@@ -604,7 +601,7 @@ public class MbOrdenCompra implements Serializable {
     public void validarRangoFechas() {
 
         boolean ok = false;
-        FacesMessage fMsg = new FacesMessage(FacesMessage.SEVERITY_WARN, "Aviso:", "");
+        FacesMessage fMsg = new FacesMessage(FacesMessage.SEVERITY_WARN, "Aviso:", "validarRangoFechas");
 
         SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy");
         this.ordenCompraEncabezado.setFechaCreacion(sdf.format(ordenCompraEncabezado.getFechaEmisionDirectas()));

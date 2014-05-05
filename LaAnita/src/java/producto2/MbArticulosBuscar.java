@@ -70,7 +70,7 @@ public class MbArticulosBuscar implements Serializable {
     public Articulo obtenerArticulo(int idArticulo) {
         Articulo a=null;
         boolean ok = false;
-        FacesMessage fMsg = new FacesMessage(FacesMessage.SEVERITY_ERROR, "Aviso:", "");
+        FacesMessage fMsg = new FacesMessage(FacesMessage.SEVERITY_ERROR, "Aviso:", "obtenerArticulo");
         try {
             this.dao=new DAOArticulosBuscar();
             a=dao.obtenerArticulo(idArticulo);
@@ -89,7 +89,7 @@ public class MbArticulosBuscar implements Serializable {
     public void buscarLista() {
         boolean ok = false;
         RequestContext context = RequestContext.getCurrentInstance();
-        FacesMessage fMsg = new FacesMessage(FacesMessage.SEVERITY_ERROR, "Aviso:", "");
+        FacesMessage fMsg = new FacesMessage(FacesMessage.SEVERITY_ERROR, "Aviso:", "buscarLista");
         try {
             this.dao=new DAOArticulosBuscar();
             if(this.tipoBuscar.equals("1")) {

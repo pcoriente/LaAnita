@@ -32,7 +32,7 @@ public class MbUpc implements Serializable {
     public boolean eliminar() {
         boolean ok = false;
         RequestContext context = RequestContext.getCurrentInstance();
-        FacesMessage fMsg = new FacesMessage(FacesMessage.SEVERITY_ERROR, "Aviso:", "");
+        FacesMessage fMsg = new FacesMessage(FacesMessage.SEVERITY_ERROR, "Aviso:", "eliminar: mbUpc");
         try {
             if(this.listaUpcs.size()>2 && this.upc.isActual()) {
                 fMsg.setSeverity(FacesMessage.SEVERITY_WARN);
@@ -58,7 +58,7 @@ public class MbUpc implements Serializable {
     public Upc obtenerUpc(String strUpc) {
         Upc u=null;
         boolean ok = false;
-        FacesMessage fMsg = new FacesMessage(FacesMessage.SEVERITY_ERROR, "Aviso:", "");
+        FacesMessage fMsg = new FacesMessage(FacesMessage.SEVERITY_ERROR, "Aviso:", "obtenerUpc");
         try {
             this.dao = new DAOUpcs();
             u=this.dao.obtenerUpc(strUpc);
@@ -77,7 +77,7 @@ public class MbUpc implements Serializable {
     public Upc obtenerUpc(int idProducto) {
         Upc u=null;
         boolean ok = false;
-        FacesMessage fMsg = new FacesMessage(FacesMessage.SEVERITY_ERROR, "Aviso:", "");
+        FacesMessage fMsg = new FacesMessage(FacesMessage.SEVERITY_ERROR, "Aviso:", "obtenerUpc");
         try {
             this.dao = new DAOUpcs();
             u=this.dao.obtenerUpc(idProducto);
@@ -95,7 +95,7 @@ public class MbUpc implements Serializable {
     
     public void modificar() {
         boolean ok = false;
-        FacesMessage fMsg = new FacesMessage(FacesMessage.SEVERITY_ERROR, "Aviso:", "");
+        FacesMessage fMsg = new FacesMessage(FacesMessage.SEVERITY_ERROR, "Aviso:", "modificar: mbUpc");
         RequestContext context = RequestContext.getCurrentInstance();
         try {
             this.dao=new DAOUpcs();
@@ -114,7 +114,7 @@ public class MbUpc implements Serializable {
     
     public void agregar() {
         boolean ok = false;
-        FacesMessage fMsg = new FacesMessage(FacesMessage.SEVERITY_ERROR, "Aviso:", "");
+        FacesMessage fMsg = new FacesMessage(FacesMessage.SEVERITY_ERROR, "Aviso:", "agregar: mbUpc");
         RequestContext context = RequestContext.getCurrentInstance();
         try {
             if(this.upc.getUpc().equals("")) {
@@ -140,7 +140,7 @@ public class MbUpc implements Serializable {
     public void cargaListaUpcs() {
         boolean ok=false;
         RequestContext context = RequestContext.getCurrentInstance();
-        FacesMessage fMsg = new FacesMessage(FacesMessage.SEVERITY_ERROR, "Aviso:", "");
+        FacesMessage fMsg = new FacesMessage(FacesMessage.SEVERITY_ERROR, "Aviso:", "cargaListaUpcs");
         this.listaUpcs=new ArrayList<SelectItem>();
         Upc u0=this.nuevoLista(this.upc.getIdProducto());
         this.listaUpcs.add(new SelectItem(u0, u0.toString()));

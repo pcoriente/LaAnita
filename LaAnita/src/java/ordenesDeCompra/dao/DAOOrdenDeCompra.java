@@ -110,16 +110,15 @@ public class DAOOrdenDeCompra {
         Connection cn = ds.getConnection();
         Statement sentencia = cn.createStatement();
         try {
-
             String stringSQL = "select oc.idOrdenCompra, oc.fechaCreacion, oc.fechaFinalizacion, oc.fechaPuesta, oc.fechaEntrega, oc.estado, oc.idMoneda \n"
                     + "                                       , m.idMoneda, m.Moneda, m.codigoIso\n"
                     + "                                       , isnull(c.idCotizacion, 0) as idCotizacion, isnull(c.idRequisicion,0) as idRequisicion, isnull(c.desctoComercial,0.00) as desctoComercial, isnull(c.desctoProntoPago,0.00) as desctoProntoPago\n"
                     + "                                       , isnull(c.idProveedor,0) as idProveedor, isnull(c.idDireccionEntrega,0) as idDireccionEntrega\n"
-                    + "                                       , isnull(c.nombreComercial,'') as nombreComercial,  isnull(c.idDireccion, 0) as idDireccion\n"
+                    + "                                       , isnull(c.nombreComercial,'') as nombreComercial, isnull(c.idDirEmp,0) as idDireEmpre,  isnull(c.idDireccion, 0) as idDireccion\n"
                     + "                               from ordenCompra oc\n"
                     + "                               inner join webSystem.dbo.monedas m on m.idMoneda=oc.idMoneda\n"
                     + "                               left join (select c.idCotizacion, c.idRequisicion, c.descuentoCotizacion as desctoComercial, c.descuentoProntoPago as desctoProntoPago\n"
-                    + "                                               , p.idProveedor, p.idDireccionEntrega, eg.nombreComercial, d.idDireccion\n"
+                    + "                                               , p.idProveedor, p.idDireccionEntrega, eg.nombreComercial, eg.idDireccion as idDirEmp, d.idDireccion\n"
                     + "                                           from cotizaciones c\n"
                     + "                                           inner join proveedores p on p.idProveedor = c.idProveedor\n"
                     + "                                           inner join contribuyentes co on co.idContribuyente = p.idContribuyente\n"
@@ -209,13 +208,13 @@ public class DAOOrdenDeCompra {
         ResultSet rs;
         Connection cn = ds.getConnection();
         try {
-
-            String stringSQL = "select oc.idOrdenCompra, oc.idCotizacion, ocd.idEmpaque, ocd.cantOrdenada, ocd.costoOrdenado, ocd.descuentoProducto, ocd.descuentoProducto2, ocd.sku, r.idEmpresa\n"
-                    + "                         from ordencompra oc\n"
-                    + "                         inner join ordenCompraDetalle ocd on ocd.idOrdenCompra = oc.idOrdenCompra\n"
-                    + "                         inner join cotizaciones c on c.idCotizacion= oc.idCotizacion\n"
-                    + "                         inner join requisiciones r on r.idRequisicion= c.idRequisicion\n"
-                    + "                        where oc.idOrdenCompra=" + idOC;
+            String stringSQL = "select oc.idOrdenCompra, oc.idCotizacion, ocd.idEmpaque, ocd.cantOrdenada, ocd.costoOrdenado"
+                    + "           , ocd.descuentoProducto, ocd.descuentoProducto2, ocd.sku, isnull(r.idEmpresa, 0) as idEmpresa "
+                    + "from ordencompra oc "
+                    + "inner join ordenCompraDetalle ocd on ocd.idOrdenCompra = oc.idOrdenCompra "
+                    + "left join cotizaciones c on c.idCotizacion=oc.idCotizacion "
+                    + "left join requisiciones r on r.idRequisicion=c.idRequisicion "
+                    + "where oc.idOrdenCompra=" + idOC;
 
             Statement sentencia = cn.createStatement();
             rs = sentencia.executeQuery(stringSQL);
@@ -227,7 +226,7 @@ public class DAOOrdenDeCompra {
         }
         return lista;
     }
-
+    
     private OrdenCompraDetalle construirOCDetalle(ResultSet rs) throws SQLException, NamingException {
         OrdenCompraDetalle ocd = new OrdenCompraDetalle();
         DAOCotizaciones daoC = new DAOCotizaciones();

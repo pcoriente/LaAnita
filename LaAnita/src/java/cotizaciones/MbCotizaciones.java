@@ -148,7 +148,7 @@ public class MbCotizaciones implements Serializable {
     public void guardarOrdenCompra() {
         //   int longOC = 0;
         int longCots;
-        FacesMessage msg = null;
+        FacesMessage fMsg = new FacesMessage(FacesMessage.SEVERITY_INFO, "Aviso:", "guardarOrdenCompra");
         Collections.sort(ordenCompra, new Comparator<CotizacionDetalle>() {
             @Override
             public int compare(CotizacionDetalle o1, CotizacionDetalle o2) {
@@ -171,12 +171,12 @@ public class MbCotizaciones implements Serializable {
                 longCots = listaCotizacionDetalle.size();
                 if (longCots == 0) {
                     daoCot.guardarOrdenCompraTotal(cotizacionesEncabezadoToOrden, ordenCompra);
-                    msg = new FacesMessage(FacesMessage.SEVERITY_INFO, "Aviso:", "La orden de compra ha sido generada...");
+                    fMsg.setDetail("La orden de compra ha sido generada...");
                     //      this.salirMenuCotizaciones();
                     this.listaCotizacionEncabezado = null;
                     this.cargaCotizaciones();
                 } else {
-                    msg = new FacesMessage(FacesMessage.SEVERITY_INFO, "Aviso:", "La orden de compra está incompleta, faltan productos por integrar...");
+                    fMsg.setDetail("La orden de compra está incompleta, faltan productos por integrar...");
                 }
             } catch (SQLException ex) {
                 Logger.getLogger(MbCotizaciones.class.getName()).log(Level.SEVERE, null, ex);
@@ -184,7 +184,7 @@ public class MbCotizaciones implements Serializable {
         } catch (NamingException ex) {
             Logger.getLogger(MbCotizaciones.class.getName()).log(Level.SEVERE, null, ex);
         }
-        FacesContext.getCurrentInstance().addMessage(null, msg);
+        FacesContext.getCurrentInstance().addMessage(null, fMsg);
     }
 
     public String salirMenuCotizaciones() throws NamingException {

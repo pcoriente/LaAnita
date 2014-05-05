@@ -59,12 +59,18 @@ public class MbSolicitudes implements Serializable {
         try {
             this.dao=new DAOMovimientos();
             TOMovimiento solicitud=new TOMovimiento();
-            solicitud.setIdAlmacen(this.toAlmacen.getIdAlmacen());
+//            solicitud.setIdCedis(this.toAlmacen.getIdCedis());
+//            solicitud.setIdEmpresa(this.toAlmacen.getIdEmpresa());
+//            solicitud.setIdAlmacen(this.toAlmacen.getIdAlmacen());
+            solicitud.setIdCedis(this.mbComprobantes.getMbAlmacenes().getMbCedis().getCedis().getIdCedis());
+            solicitud.setIdEmpresa(this.toAlmacen.getIdEmpresa());
+            solicitud.setIdAlmacen(this.mbComprobantes.getMbAlmacenes().getToAlmacen().getIdAlmacen());
             solicitud.setIdMoneda(1);
             solicitud.setTipoCambio(1);
             solicitud.setIdTipo(2); // Entrada por traspaso
-            solicitud.setIdImpuestoZona(1);
-            if(this.dao.grabarSolicitudTraspaso(this.mbComprobantes.getMbAlmacenes().getToAlmacen().getIdAlmacen(), solicitud, this.solicitudDetalle)) {
+            solicitud.setIdImpuestoZona(0);
+//            if(this.dao.grabarSolicitudTraspaso(this.mbComprobantes.getMbAlmacenes().getToAlmacen().getIdAlmacen(), solicitud, this.solicitudDetalle)) {
+            if(this.dao.grabarSolicitudTraspaso(this.toAlmacen.getIdAlmacen(), solicitud, this.solicitudDetalle)) {    
                 fMsg.setSeverity(FacesMessage.SEVERITY_INFO);
                 fMsg.setDetail("La solicitud se grabo correctamente !!!");
                 this.modoEdicion=false;
@@ -132,6 +138,8 @@ public class MbSolicitudes implements Serializable {
     }
     
     private void inicializa() {
+        this.resSolicitudProducto=new MovimientoProducto();
+        
         this.mbComprobantes.getMbAlmacenes().getMbCedis().obtenerDefaultCedis();
         this.mbComprobantes.getMbAlmacenes().cargaAlmacenes();
         

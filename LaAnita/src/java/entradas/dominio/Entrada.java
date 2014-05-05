@@ -1,5 +1,7 @@
 package entradas.dominio;
 
+import almacenes.dominio.AlmacenJS;
+import cedis.dominio.MiniCedis;
 import java.util.Date;
 import monedas.Moneda;
 
@@ -9,6 +11,7 @@ import monedas.Moneda;
  */
 public class Entrada {
     private int idEntrada;
+    private AlmacenJS almacen;
     private int folio;
     private Comprobante comprobante;
     private int idImpuestoZona;
@@ -27,6 +30,7 @@ public class Entrada {
     public Entrada() {
         this.idEntrada=0;
         this.folio=0;
+        this.almacen=new AlmacenJS();
         this.comprobante=new Comprobante();
         this.idImpuestoZona=0;
         this.idOrdenCompra=0;
@@ -160,5 +164,13 @@ public class Entrada {
 
     public void setFolio(int folio) {
         this.folio = folio;
+    }
+
+    public AlmacenJS getAlmacen() {
+        return almacen;
+    }
+
+    public void setAlmacen(AlmacenJS almacen) {
+        this.almacen = almacen;
     }
 }

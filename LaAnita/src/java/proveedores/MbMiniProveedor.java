@@ -21,11 +21,21 @@ public class MbMiniProveedor implements Serializable {
 
     private ArrayList<SelectItem> listaMiniProveedores = new ArrayList<SelectItem>();
     private MiniProveedor miniProveedor = new MiniProveedor();
-    private ArrayList<SelectItem> listaMonedas = new ArrayList<SelectItem>();
-    private Moneda moneda = new Moneda();
+//    private ArrayList<SelectItem> listaMonedas = new ArrayList<SelectItem>();
+//    private Moneda moneda = new Moneda();
     private DAOMiniProveedores dao;
 
     public MbMiniProveedor() {
+        this.inicializaLocales();
+    }
+    
+    public void inicializar() {
+        this.inicializaLocales();
+    }
+    
+    private void inicializaLocales() {
+        this.miniProveedor=new MiniProveedor();
+        this.setListaMiniProveedores(null);
     }
     
     public MiniProveedor obtenerProveedor(int idProveedor) {

@@ -104,7 +104,7 @@
                                 <p:column >
                                     <p:commandButton id="btnMttoComprobante" icon="ui-icon-pencil" title="Mantenimiento de Facturas" 
                                                      disabled="#{mbEntradas.mbComprobantes.toComprobante.cerradaOficina}"
-                                                     actionListener="#{mbEntradas.mbComprobantes.mttoComprobante()}" process="@this" 
+                                                     actionListener="#{mbEntradas.mbComprobantes.mttoComprobanteOficina()}" process="@this" 
                                                      oncomplete="handleAbrirMttoComprobanteDlg(xhr, status, args);" 
                                                      update=":main:msgs mttoComprobanteDlg" />
                                     <p:commandButton id="btnImprimirFactura" icon="ui-icon-print" title="Imprimir Factura" />
@@ -232,15 +232,15 @@
                             </p:row>
                         </p:panelGrid>
                         <p:dataTable id="detalleEntrada" widgetVar="detalleEntrada" value="#{mbEntradas.entradaDetalle}" style="border:solid 1px"
-                                     var="prod" rowKey="#{prod.empaque.idEmpaque}" selection="#{mbEntradas.entradaProducto}" selectionMode="single" 
+                                     var="prod" rowKey="#{prod.producto.idProducto}" selection="#{mbEntradas.entradaProducto}" selectionMode="single" 
                                      emptyMessage="No hay elementos que desplegar" scrollable="true" scrollHeight="220" >
                             <p:ajax event="rowSelect" listener="#{mbEntradas.respaldaFila()}" update="detalleEntrada" />
 
                             <p:column headerText="SKU" width="64"  >
-                                <h:outputText value="#{prod.empaque.cod_pro}" />
+                                <h:outputText value="#{prod.producto.cod_pro}" />
                             </p:column>
                             <p:column headerText="Producto" width="272" >
-                                <h:outputText value="#{prod.empaque.toString()}" />
+                                <h:outputText value="#{prod.producto.toString()}" />
                             </p:column>
                             <p:column headerText="Ordenada" width="64" >
                                 <h:outputText value="#{prod.cantOrdenada}" >
@@ -259,7 +259,7 @@
                             </p:column>
                             <p:column headerText="Recibida" width="64" >
                                 <pe:inputNumber value="#{prod.cantRecibida}" decimalPlaces="3" minValue="0"
-                                                disabled="#{prod.empaque.idEmpaque!=mbEntradas.entradaProducto.empaque.idEmpaque}" >
+                                                disabled="#{prod.producto.idProducto!=mbEntradas.entradaProducto.producto.idProducto}" >
                                     <p:ajax event="change" listener="#{mbEntradas.validaCantidadRecibida()}" process="@this" update=":main:msgs detalleEntrada" />
                                 </pe:inputNumber>
                             </p:column>
@@ -287,9 +287,9 @@
                                                      update=":main:detalleEntrada" oncomplete="handleBuscar(xhr, status, args)" />
                                 </p:column>
                                 <p:column rendered="#{mbEntradas.mbBuscar.tipoBuscar=='2'}" >
-                                    <p:autoComplete id="opcionParte" value="#{mbEntradas.mbBuscar.parte}" maxlength="24" size="24"
-                                                    completeMethod="#{mbEntradas.mbBuscar.completePartes}" process="@this"
-                                                    var="p" itemLabel="#{p.parte}" itemValue="#{p}" converter="converters.ParteBuscar" 
+                                    <p:autoComplete id="opcionParte" value="#{mbEntradas.mbBuscar.mbParte.parte}" maxlength="24" size="24"
+                                                    completeMethod="#{mbEntradas.mbBuscar.mbParte.completePartes}" process="@this"
+                                                    var="p" itemLabel="#{p.parte}" itemValue="#{p}" converter="converters.Parte" 
                                                     forceSelection="true" />
                                     <p:commandButton id="btnBuscarLista" icon="ui-icon-check" title="Buscar" 
                                                      process="@this opcionParte" actionListener="#{mbEntradas.buscar()}" 
@@ -305,7 +305,7 @@
                         </p:panelGrid>
                         <p:dataTable id="listaBuscarProductos" value="#{mbEntradas.mbBuscar.productos}" 
                                      var="prod" scrollable="true" scrollHeight="200" style="width: 800px;"
-                                     rowKey="#{prod.idEmpaque}" selectionMode="single" selection="#{mbEntradas.mbBuscar.producto}" >
+                                     rowKey="#{prod.idProducto}" selectionMode="single" selection="#{mbEntradas.mbBuscar.producto}" >
                             <p:ajax event = "rowSelect" update="seleccion" />
 
                             <f:facet name="header">

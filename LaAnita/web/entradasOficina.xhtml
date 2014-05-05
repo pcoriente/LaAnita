@@ -29,7 +29,7 @@
                                         <f:converter converterId="converters.MiniCedis" />
                                         <f:selectItems value="#{mbEntradas.mbComprobantes.mbAlmacenes.mbCedis.listaMiniCedis}" />
                                         <p:ajax event="change" listener="#{mbEntradas.mbComprobantes.cargaAlmacenes()}" 
-                                                update=":main:msgs almacen cmbComprobante" />
+                                                update="msgs almacen cmbComprobante" />
                                     </p:selectOneMenu>
                                 </p:column>
                                 <p:column colspan="2" >
@@ -473,7 +473,6 @@
                         </p:dataTable>
                     </p:dialog>
                     <p:dialog id="listaOrdenesDlg" widgetVar="listaOrdenesDlg" header="LISTA DE ORDENES DE COMPRA" resizable="false" modal="true" >
-                        <p:messages id="msgListaOCs" showDetail="true" autoUpdate="true" closable="true" />
                         <p:dataTable id="listaOrdenes" widgetVar="listaOrdenes" value="#{mbEntradas.mbOrdenCompra.listaOrdenesEncabezado}" style="border:solid 1px"
                                      var="orden" rowKey="#{orden.idOrdenCompra}" selectionMode="single" 
                                      emptyMessage="No hay elementos que desplegar" scrollable="true" scrollHeight="220" >

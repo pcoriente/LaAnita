@@ -66,7 +66,7 @@ public class MbProductosBuscar implements Serializable {
     public void buscarLista() {
         boolean ok = false;
         RequestContext context = RequestContext.getCurrentInstance();
-        FacesMessage fMsg = new FacesMessage(FacesMessage.SEVERITY_ERROR, "Aviso:", "");
+        FacesMessage fMsg = new FacesMessage(FacesMessage.SEVERITY_ERROR, "Aviso:", "buscarLista");
         try {
             this.dao=new DAOProductosBuscar();
             if (this.getTipoBuscar().equals("1")) {
@@ -123,12 +123,13 @@ public class MbProductosBuscar implements Serializable {
     
     public Producto obtenerProducto(int idProducto) {
         boolean ok=false;
-        FacesMessage fMsg = new FacesMessage(FacesMessage.SEVERITY_ERROR, "Aviso:", "");
+        FacesMessage fMsg = new FacesMessage(FacesMessage.SEVERITY_ERROR, "Aviso:", "obtenerProducto");
         Producto p=new Producto();
         try {
             this.dao=new DAOProductosBuscar();
             TOProducto to=this.dao.obtenerProducto(idProducto);
             p=this.convertir(to, this.mbBuscar1.obtenerArticulo(to.getIdArticulo()), this.mbUpc.obtenerUpc(to.getIdProducto()));
+            ok=true;
         } catch (NamingException ex) {
             fMsg.setDetail(ex.getMessage());
         } catch (SQLException ex) {
@@ -143,7 +144,7 @@ public class MbProductosBuscar implements Serializable {
     public void obtenerProductos(int idArticulo) {
         boolean ok=false;
         this.productos=new ArrayList<Producto>();
-        FacesMessage fMsg = new FacesMessage(FacesMessage.SEVERITY_ERROR, "Aviso:", "");
+        FacesMessage fMsg = new FacesMessage(FacesMessage.SEVERITY_ERROR, "Aviso:", "obtenerProductos");
         RequestContext context = RequestContext.getCurrentInstance();
         try {
             this.dao=new DAOProductosBuscar();
