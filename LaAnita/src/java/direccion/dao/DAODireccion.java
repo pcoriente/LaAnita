@@ -61,9 +61,6 @@ public class DAODireccion {
         Statement st=cn.createStatement();
         try {
             String sql = "UPDATE direcciones SET calle='"+calle+"', numeroExterior='"+numeroExterior+"', numeroInterior='"+numeroInterior+"', referencia='"+referencia+"', idPais="+idPais+", codigoPostal='"+codigoPostal+"', estado='"+estado+"', municipio='"+municipio+"', localidad='"+localidad+"', colonia='"+colonia+"', numeroLocalizacion='"+numeroLocalizacion+ "' WHERE idDireccion="+idDireccion;
-//            st.executeUpdate("UPDATE direcciones "
-//                    + "SET calle='"+calle+"', numeroExterior='"+numeroExterior+"', numeroInterior='"+numeroInterior+"', referencia='"+referencia+"', idPais="+idPais+", codigoPostal='"+codigoPostal+"', estado='"+estado+"', municipio='"+municipio+"', localidad='"+localidad+"', colonia='"+colonia+"', numeroLocalizacion='"+numeroLocalizacion+"' "
-//                    + "WHERE idDireccion="+idDireccion);
             st.executeUpdate(sql);
         } finally {
             cn.close();

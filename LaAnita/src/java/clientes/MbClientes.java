@@ -299,6 +299,7 @@ public class MbClientes implements Serializable {
         FacesMessage fMsg = new FacesMessage(FacesMessage.SEVERITY_WARN, "Aviso:", "");
         if (cliente.getCodigoCliente() == 0) {
             fMsg.setDetail("Error!! Codigo Cliente Requerido");
+            FacesContext.getCurrentInstance().addMessage(null, fMsg);
             context.addCallbackParam("ok", ok);
         } else if (!mbZonas.validar()) {
         } else if (cliente.getDiasCredito() == 0) {
