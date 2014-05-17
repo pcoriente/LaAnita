@@ -93,8 +93,7 @@
                                 </p:column>
                                 <p:column style="width: 310px;" >
                                     <p:commandButton id="btnMttoComprobante" icon="ui-icon-pencil" title="Mantenimiento de Facturas" 
-                                                     disabled="#{mbEntradas.mbComprobantes.toComprobante.cerradaOficina}"
-                                                     actionListener="#{mbEntradas.mbComprobantes.mttoComprobanteOficina()}" process="@this" 
+                                                     actionListener="#{mbEntradas.mbComprobantes.mttoComprobante(true)}" process="@this" 
                                                      oncomplete="handleAbrirMttoComprobanteDlg(xhr, status, args);" 
                                                      update=":main:msgs mttoComprobanteDlg" />
                                     <p:commandButton id="btnCancelarMovimiento" icon="ui-icon-cancel" title="Cancelacion de Movimiento" 
@@ -105,8 +104,8 @@
                                 </p:column>
                                 <p:column colspan="2" style="text-align: right;" >
                                     <p:commandLink id="lnkEditarComprobante" styleClass="nueva" value="Editar" 
-                                                   disabled="#{mbEntradas.mbComprobantes.toComprobante.cerradaOficina or mbEntradas.mbComprobantes.toComprobante.idComprobante==0}"
-                                                   update="main" actionListener="#{mbEntradas.entradas()}" process="@this" />|
+                                                   disabled="#{mbEntradas.mbComprobantes.toComprobante.idComprobante==0}"
+                                                   update="main" actionListener="#{mbEntradas.nuevaEntrada()}" process="@this" />|
                                     <p:commandLink styleClass="nueva" action="#{mbEntradas.terminar()}" value="Salir" ajax="false" />
                                 </p:column>
                             </p:row>

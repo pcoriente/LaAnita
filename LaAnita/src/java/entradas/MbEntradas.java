@@ -93,9 +93,9 @@ public class MbEntradas implements Serializable {
         this.resEntradaProducto = new MovimientoProducto();
     }
     
-    public void cargaAlmacenesEmpresa() {
-        this.mbComprobantes.getMbAlmacenes().cargaAlmacenesEmpresa(this.mbAlmacenes.getToAlmacen().getIdEmpresa());
-    }
+//    public void cargaAlmacenesEmpresa() {
+//        this.mbComprobantes.getMbAlmacenes().cargaAlmacenesEmpresa(this.mbAlmacenes.getToAlmacen().getIdEmpresa());
+//    }
     
     public void mttoComprobante() {
         this.mbComprobantes.inicializaConAlmacen(this.mbAlmacenes.getToAlmacen());
@@ -168,7 +168,7 @@ public class MbEntradas implements Serializable {
         try {
             this.dao = new DAOMovimientos();
             TOMovimiento toEntrada = convertirTO(this.entrada);
-            if (this.dao.grabarEntradaAlmacen(toEntrada, this.entradaDetalle)) {
+            if (this.dao.grabarEntradaAlmacen(toEntrada, this.entradaDetalle, this.mbOrdenCompra.getOrdenElegida().getIdOrdenCompra())) {
                 fMsg.setSeverity(FacesMessage.SEVERITY_INFO);
                 fMsg.setDetail("La entrada se grabo correctamente !!!");
                 this.modoEdicion = false;
@@ -235,7 +235,7 @@ public class MbEntradas implements Serializable {
 
     public void cargaDetalleOrdenCompra(SelectEvent event) {
         boolean ok = false;
-        int idMovto;
+//        int idMovto;
         FacesMessage fMsg = new FacesMessage(FacesMessage.SEVERITY_WARN, "Aviso:", "cargaDetalleOrdenCompra");
         this.mbOrdenCompra.setOrdenElegida((OrdenCompraEncabezado) event.getObject());
         try {
@@ -243,9 +243,9 @@ public class MbEntradas implements Serializable {
             this.dao = new DAOMovimientos();
             
             this.daoImps = new DAOImpuestosProducto();
-            idMovto = this.dao.buscarEntrada(this.entrada.getComprobante().getIdComprobante(), this.mbOrdenCompra.getOrdenElegida().getIdOrdenCompra());
-            if (idMovto == 0) {
-                if (this.mbOrdenCompra.aseguraOrdenCompra(this.mbOrdenCompra.getOrdenElegida().getIdOrdenCompra())) {
+//            idMovto = this.dao.buscarEntrada(this.entrada.getComprobante().getIdComprobante(), this.mbOrdenCompra.getOrdenElegida().getIdOrdenCompra());
+//            if (idMovto == 0) {
+//                if (this.mbOrdenCompra.aseguraOrdenCompra(this.mbOrdenCompra.getOrdenElegida().getIdOrdenCompra())) {
                     this.entrada.setIdOrdenCompra(this.mbOrdenCompra.getOrdenElegida().getIdOrdenCompra());
                     this.entrada.setDesctoComercial(this.mbOrdenCompra.getOrdenElegida().getDesctoComercial());
                     this.entrada.setDesctoProntoPago(this.mbOrdenCompra.getOrdenElegida().getDesctoProntoPago());
@@ -274,23 +274,23 @@ public class MbEntradas implements Serializable {
 //                            unitario *= (1 - this.entradaProducto.getDesctoProducto2() / 100.00);
 //                            unitario *= (1 - this.entradaProducto.getDesctoConfidencial() / 100.00);
 //                            this.entradaProducto.setUnitario(unitario);
-                            this.entradaProducto.setImpuestos(this.dao.generarImpuestosProducto(this.entradaProducto.getProducto().getArticulo().getImpuestoGrupo().getIdGrupo(), this.entrada.getIdImpuestoZona()));
-                            this.calculaProducto();
                         } else {
                             this.entradaProducto.setCantOrdenada(d.getCantOrdenada() - d.getCantRecibida());
                             this.entradaProducto.setCantFacturada(0);
                         }
+                        this.entradaProducto.setImpuestos(this.dao.generarImpuestosProducto(this.entradaProducto.getProducto().getArticulo().getImpuestoGrupo().getIdGrupo(), this.entrada.getIdImpuestoZona()));
+//                        this.calculaProducto();
                         this.entradaDetalle.add(this.entradaProducto);
                     }
 //                    TOMovimiento toMovimiento = convertirTO(this.entrada);
 //                    idMovto = this.dao.agregarEntrada(toMovimiento, this.entradaDetalle, this.entrada.getIdOrdenCompra());
-                }
-            } else {
-                TOMovimiento to = this.dao.obtenerMovimiento(idMovto);
-                this.entrada = this.convertir(to);
-                this.cargaDatosFactura(this.entrada.getIdEntrada());
-            }
-            this.sinOrden = false;
+//                }
+//            } else {
+//                TOMovimiento to = this.dao.obtenerMovimiento(idMovto);
+//                this.entrada = this.convertir(to);
+//                this.cargaDatosFactura(this.entrada.getIdEntrada());
+//            }
+//            this.sinOrden = false;
             this.tipoCambio = this.entrada.getTipoCambio();
             this.cambiaPrecios();
             this.entradaProducto = null;
@@ -391,9 +391,11 @@ public class MbEntradas implements Serializable {
         try {
             this.dao = new DAOMovimientos();
             this.entradas = new ArrayList<Entrada>();
-            for (TOMovimiento m : this.dao.obtenerEntradas(this.mbComprobantes.getToComprobante().getIdComprobante())) {
-                this.entradas.add(convertir(m));
-            }
+            TOMovimiento m=this.dao.obtenerMovimientoComprobante(this.mbComprobantes.getToComprobante().getIdComprobante());
+            this.entradas.add(this.convertir(m));
+//            for (TOMovimiento m : this.dao.obtenerMovimientoComprobante(this.mbComprobantes.getToComprobante().getIdComprobante())) {
+//                this.entradas.add(convertir(m));
+//            }
             this.selEntrada = null;
             ok = true;
         } catch (SQLException ex) {
@@ -649,17 +651,23 @@ public class MbEntradas implements Serializable {
             this.actualizaProductoSeleccionado();
         }
     }
-
-    public void entradas() {
-        this.mbComprobantes.convertirComprobante();
-        this.entrada = new Entrada();
-        this.entrada.setComprobante(this.mbComprobantes.getComprobante());
-        this.entrada.setIdImpuestoZona(this.mbComprobantes.getMbProveedores().getMiniProveedor().getIdImpuestoZona());
-        this.entradaDetalle = new ArrayList<MovimientoProducto>();
-        this.ordenCompra = new OrdenCompraEncabezado();
-        this.tipoCambio = 1;
-        this.sinOrden = true;
-        this.modoEdicion = true;
+    
+    public void nuevaEntrada() {
+        boolean oficina=false;
+        if(this.idModulo==13) {
+            oficina=true;
+        }
+        if(this.mbComprobantes.aseguraComprobante(this.mbComprobantes.getComprobante().getIdComprobante(), oficina)) {
+            this.mbComprobantes.convertirComprobante();
+            this.entrada = new Entrada();
+            this.entrada.setComprobante(this.mbComprobantes.getComprobante());
+            this.entrada.setIdImpuestoZona(this.mbComprobantes.getMbProveedores().getMiniProveedor().getIdImpuestoZona());
+            this.entradaDetalle = new ArrayList<MovimientoProducto>();
+            this.ordenCompra = new OrdenCompraEncabezado();
+            this.tipoCambio = 1;
+            this.sinOrden = true;
+            this.modoEdicion = true;
+        }
     }
 
     // Este metodo se ejecutaba al seleccionar un almacen de la lista

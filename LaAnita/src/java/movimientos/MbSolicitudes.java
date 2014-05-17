@@ -53,6 +53,24 @@ public class MbSolicitudes implements Serializable {
         this.inicializa();
     }
     
+    private void inicializa() {
+        this.resSolicitudProducto=new MovimientoProducto();
+        
+        this.mbComprobantes.getMbAlmacenes().getMbCedis().obtenerDefaultCedis();
+        this.mbComprobantes.getMbAlmacenes().cargaAlmacenes();
+        
+        this.cedis=this.mbComprobantes.getMbAlmacenes().getMbCedis().getCedis();
+        this.listaAlmacenes=this.mbComprobantes.getMbAlmacenes().getListaAlmacenes();
+        this.toAlmacen=(TOAlmacenJS)this.listaAlmacenes.get(0).getValue();
+        
+        this.mbComprobantes.getMbAlmacenes().getMbCedis().cargaMiniCedisTodos();
+        this.mbComprobantes.getMbAlmacenes().getMbCedis().setCedis((MiniCedis)this.mbComprobantes.getMbAlmacenes().getMbCedis().getListaMiniCedis().get(0).getValue());
+        this.cargaAlmacenesEmpresa();
+        this.mbComprobantes.getMbAlmacenes().setToAlmacen((TOAlmacenJS)this.mbComprobantes.getMbAlmacenes().getListaAlmacenes().get(0).getValue());
+        
+        this.mbBuscar.inicializar();
+    }
+    
     public void grabarSolicitud() {
         boolean ok = false;
         FacesMessage fMsg = new FacesMessage(FacesMessage.SEVERITY_WARN, "Aviso:", "");
@@ -70,7 +88,7 @@ public class MbSolicitudes implements Serializable {
             solicitud.setIdTipo(2); // Entrada por traspaso
             solicitud.setIdImpuestoZona(0);
 //            if(this.dao.grabarSolicitudTraspaso(this.mbComprobantes.getMbAlmacenes().getToAlmacen().getIdAlmacen(), solicitud, this.solicitudDetalle)) {
-            if(this.dao.grabarSolicitudTraspaso(this.toAlmacen.getIdAlmacen(), solicitud, this.solicitudDetalle)) {    
+            if(this.dao.grabarTraspasoSolicitud(this.toAlmacen.getIdAlmacen(), solicitud, this.solicitudDetalle)) {    
                 fMsg.setSeverity(FacesMessage.SEVERITY_INFO);
                 fMsg.setDetail("La solicitud se grabo correctamente !!!");
                 this.modoEdicion=false;
@@ -137,24 +155,6 @@ public class MbSolicitudes implements Serializable {
         this.modoEdicion=true;
     }
     
-    private void inicializa() {
-        this.resSolicitudProducto=new MovimientoProducto();
-        
-        this.mbComprobantes.getMbAlmacenes().getMbCedis().obtenerDefaultCedis();
-        this.mbComprobantes.getMbAlmacenes().cargaAlmacenes();
-        
-        this.cedis=this.mbComprobantes.getMbAlmacenes().getMbCedis().getCedis();
-        this.listaAlmacenes=this.mbComprobantes.getMbAlmacenes().getListaAlmacenes();
-        this.toAlmacen=(TOAlmacenJS)this.listaAlmacenes.get(0).getValue();
-        
-        this.mbComprobantes.getMbAlmacenes().getMbCedis().cargaMiniCedisTodos();
-        this.mbComprobantes.getMbAlmacenes().getMbCedis().setCedis((MiniCedis)this.mbComprobantes.getMbAlmacenes().getMbCedis().getListaMiniCedis().get(0).getValue());
-        this.cargaAlmacenesEmpresa();
-        this.mbComprobantes.getMbAlmacenes().setToAlmacen((TOAlmacenJS)this.mbComprobantes.getMbAlmacenes().getListaAlmacenes().get(0).getValue());
-        
-        this.mbBuscar.inicializar();
-    }
-    
     public String terminar() {
         this.modoEdicion = false;
         this.acciones = null;
@@ -163,7 +163,7 @@ public class MbSolicitudes implements Serializable {
     }
     
     public void cargaAlmacenesEmpresa() {
-        this.mbComprobantes.getMbAlmacenes().cargaAlmacenesEmpresa(this.toAlmacen.getIdEmpresa());
+        this.mbComprobantes.getMbAlmacenes().cargaAlmacenesEmpresa(this.toAlmacen.getIdEmpresa(), this.toAlmacen.getIdAlmacen());
     }
 
     public MovimientoProducto getResSolicitudProducto() {

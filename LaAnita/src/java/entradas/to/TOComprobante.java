@@ -11,22 +11,22 @@ public class TOComprobante {
     private int idAlmacen;
     private int idProveedor;
     private int tipoComprobante;
+    private String remision;
     private String serie;
     private String numero;
     private Date fecha;
-    private boolean cerradaOficina;
-    private boolean cerradaAlmacen;
+    private byte statusOficina;
+    private byte statusAlmacen;
 
     public TOComprobante() {
         this.idComprobante=0;
         this.idAlmacen=0;
         this.idProveedor=0;
         this.tipoComprobante=0;
+        this.remision="";
         this.serie="";
         this.numero="";
         this.fecha=new Date();
-        this.cerradaOficina=false;
-        this.cerradaAlmacen=false;
     }
     
     public TOComprobante(int idAlmacen, int idProveedor, int tipoComprobante) {
@@ -34,16 +34,15 @@ public class TOComprobante {
         this.idAlmacen=idAlmacen;
         this.idProveedor=idProveedor;
         this.tipoComprobante=tipoComprobante;
+        this.remision="";
         this.serie="";
         this.numero="";
         this.fecha=new Date();
-        this.cerradaOficina=false;
-        this.cerradaAlmacen=false;
     }
     
     @Override
     public String toString() {
-        return (this.serie.isEmpty()?"":this.serie+"-")+this.numero;
+        return this.remision.isEmpty()?((this.serie.isEmpty()?"":this.serie+"-")+this.numero):this.remision;
     }
 
     @Override
@@ -124,19 +123,27 @@ public class TOComprobante {
         this.fecha = fecha;
     }
 
-    public boolean isCerradaOficina() {
-        return cerradaOficina;
+    public byte getStatusOficina() {
+        return statusOficina;
     }
 
-    public void setCerradaOficina(boolean cerradaOficina) {
-        this.cerradaOficina = cerradaOficina;
+    public void setStatusOficina(byte statusOficina) {
+        this.statusOficina = statusOficina;
     }
 
-    public boolean isCerradaAlmacen() {
-        return cerradaAlmacen;
+    public byte getStatusAlmacen() {
+        return statusAlmacen;
     }
 
-    public void setCerradaAlmacen(boolean cerradaAlmacen) {
-        this.cerradaAlmacen = cerradaAlmacen;
+    public void setStatusAlmacen(byte statusAlmacen) {
+        this.statusAlmacen = statusAlmacen;
+    }
+
+    public String getRemision() {
+        return remision;
+    }
+
+    public void setRemision(String remision) {
+        this.remision = remision;
     }
 }

@@ -56,7 +56,7 @@ public class MbAlmacenesJS implements Serializable {
         this.mbCedis.cargaMiniCedisTodos();
         this.mbCedis.setCedis(this.mbCedis.obtenerCedis(toAlmacen.getIdCedis()));
         this.mbCedis.obtenerDefaultCedis();
-        this.cargaAlmacenesEmpresa(toAlmacen.getIdEmpresa());
+        this.cargaAlmacenesEmpresa(toAlmacen.getIdEmpresa(), 0);
         this.setToAlmacen(toAlmacen);
     }
     
@@ -67,13 +67,13 @@ public class MbAlmacenesJS implements Serializable {
         this.toAlmacen=(TOAlmacenJS)this.listaAlmacenes.get(0).getValue();
     }
     
-    public void cargaAlmacenesEmpresa(int idEmpresa) {
+    public void cargaAlmacenesEmpresa(int idEmpresa, int noSelect) {
         boolean ok=false;
         FacesMessage fMsg = new FacesMessage(FacesMessage.SEVERITY_WARN, "Aviso:", "cargaAlmacenesEmpresa");
         try {
             if(idEmpresa!=0) {
                 this.dao=new DAOAlmacenesJS();
-                cargaListaAlmacenes(this.dao.obtenerAlmacenesEmpresa(this.mbCedis.getCedis().getIdCedis(), idEmpresa));
+                this.cargaListaAlmacenes(this.dao.obtenerAlmacenesEmpresa(this.mbCedis.getCedis().getIdCedis(), idEmpresa), noSelect);
                 ok=true;
             } else {
                 fMsg.setDetail("Debe seleccionar un cedis y un almacen");
@@ -95,7 +95,7 @@ public class MbAlmacenesJS implements Serializable {
         FacesMessage fMsg = new FacesMessage(FacesMessage.SEVERITY_WARN, "Aviso:", "cargaAlmacenes");
         try {
             this.dao=new DAOAlmacenesJS();
-            this.cargaListaAlmacenes(this.dao.obtenerAlmacenes(this.mbCedis.getCedis().getIdCedis()));
+            this.cargaListaAlmacenes(this.dao.obtenerAlmacenes(this.mbCedis.getCedis().getIdCedis()), 0);
             ok=true;
         } catch (NamingException ex) {
             fMsg.setSeverity(FacesMessage.SEVERITY_ERROR);
@@ -109,14 +109,17 @@ public class MbAlmacenesJS implements Serializable {
         }
     }
     
-    private void cargaListaAlmacenes(ArrayList<TOAlmacenJS> lstAlmacenes) {
+    private void cargaListaAlmacenes(ArrayList<TOAlmacenJS> lstAlmacenes, int noSelect) {
+        boolean disabled;
         this.listaAlmacenes=new ArrayList<SelectItem>();
         this.toAlmacen=new TOAlmacenJS();
         this.toAlmacen.setIdAlmacen(0);
         this.toAlmacen.setAlmacen("Seleccione un almacen");
         this.listaAlmacenes.add(new SelectItem(this.toAlmacen, this.toAlmacen.toString()));
         for(TOAlmacenJS a: lstAlmacenes) {
-            listaAlmacenes.add(new SelectItem(a, a.toString()));
+            disabled=false;
+            if(a.getIdAlmacen()==noSelect) disabled=true;
+            listaAlmacenes.add(new SelectItem(a, a.toString(),"",disabled));
         }
     }
     
