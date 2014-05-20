@@ -1,0 +1,239 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:pe="http://primefaces.org/ui/extensions">
+    <h:head>
+        <h:outputStylesheet library="css" name="main.css"/>
+        <title>Relación de Clientes Grupos</title>
+    </h:head>
+    <body>
+        <div id="wrapper" align="center">
+            <ui:include src="wrapper.xhtml" />
+            <div id="content" align="center"  >
+                <br></br>
+                <h:form id="form" 
+                        onkeypress="return event.keyCode !== 13;" >
+                    <p:growl id="growl" autoUpdate="true" showDetail="true"/>  
+                    <div align="right">
+                        <p:commandButton icon="ui-icon-document"
+                                         process="@this"
+                                         title="Nuevo Formato"
+                                         oncomplete="dlgFormato.show();"
+                                         actionListener="#{mbFormatos.limpiar()}"
+                                         update="panelMonedas"/>
+                        <p:commandButton id="btnEditarFormato" 
+                                         icon="ui-icon-pencil"
+                                         process="@this"
+                                         actionListener="#{mbFormatos.actualizar()}"
+                                         update="panelMonedas"
+                                         title="Actualizar Formato"
+                                         disabled="#{mbFormatos.formatoSeleccion==null}"
+                                         oncomplete="dlgFormato.show();"/>
+                        <p:commandButton icon="ui-icon-arrowreturnthick-1-w"
+                                         ajax="false"
+                                         title="Salir"
+                                         immediate="true"/>
+                    </div>
+                    <p:panel header="Grupo de Cliente" 
+                             styleClass="quitaCuadro">
+                        <p:dataTable value="#{mbFormatos.lstFormato}"
+                                     var="tableFormatos"
+                                     id="tableFormatos"
+                                     selectionMode="single"
+                                     rowKey="#{tableFormatos}"
+                                     emptyMessage="No hay clientes Formatos"
+                                     selection="#{mbFormatos.formatoSeleccion}">
+                            <p:ajax event="rowSelect"
+                                    process="@this"
+                                    listener="#{mbFormatos.cargarDatos()}"
+                                    update=":form:btnEditarFormato"/>
+                            <p:column headerText="Formato">
+                                ${tableFormatos.formato}
+                            </p:column>
+                            <p:column headerText="Moneda">
+                                ${tableFormatos.moneda.moneda}
+                            </p:column>
+                        </p:dataTable>
+                    </p:panel>
+                    <p:dialog widgetVar="dlgFormato"
+                              modal="true"
+                              showEffect="explode"
+                              hideEffect="explode"
+                              closable="false"
+                              header="Formatos"
+                              resizable="false">
+                        <h:panelGrid columns="4"
+                                     id="panelMonedas">
+                            <h:outputText value="Formato:"/>
+                            <p:inputText id="txtFormato" 
+                                         value="#{mbFormatos.formato.formato}"/>
+                            <h:outputText value="Moneda:"/>
+                            <p:selectOneMenu id="cmbMoneda"
+                                             filter="true"
+                                             value="#{mbFormatos.mbMonedas.moneda}">
+                                <f:selectItems value="#{mbFormatos.mbMonedas.listaMonedas}"/>
+                                <f:converter converterId="converters.Moneda"/>
+                            </p:selectOneMenu>
+                            <h:outputText value="Fecha Inicio:"/>
+                            <p:calendar/>
+                            <h:outputText value="Fecha Final:"/>
+                            <p:calendar/>
+                        </h:panelGrid>
+                        <h:panelGrid columns="2">
+                            <p:dataTable emptyMessage="No hay productos seleccionados"
+                                         value="#{mbFormatos.lstFormatoDetalle}"
+                                         var="formatoDetalle"
+                                         id="tablaFormatoDetalle"
+                                         scrollable="true"
+                                         scrollHeight="150"
+                                         style="width: 900px"
+                                         >
+                                <p:column headerText="Producto" width="400">
+                                    #{formatoDetalle.producto}
+                                </p:column>
+                                <p:column headerText="Precio Lista">
+                                </p:column>
+                                <p:column headerText="Descuentos">
+                                    <p:inputText value="#{formatoDetalle.descuentos}" 
+                                                 style="width:89px"/>
+                                </p:column>
+                                <p:column headerText="Inicio Vigencia">
+                                    <p:calendar  size="10" />
+                                </p:column>
+                                <p:column headerText="Fin Vigencia">
+                                    <p:calendar  style="width:89px"
+                                                 size="10"/>
+                                </p:column>
+                            </p:dataTable>
+                            <p:commandButton icon="ui-icon-search"
+                                             title="Busqueda de Productos"
+                                             oncomplete="buscarProductoDlg.show();"/>
+                        </h:panelGrid>
+                        <div style="margin: auto">
+                            <p:commandButton icon="ui-icon-disk" 
+                                             process="@this txtFormato cmbMoneda"
+                                             update="growl tableFormatos"
+                                             actionListener="#{mbFormatos.guardarFormato()}"
+                                             oncomplete="nuevoFormato(xhr, status, args)"/>
+                            <p:commandButton icon="ui-icon-arrowreturnthick-1-w"
+                                             actionListener="#{mbFormatos.limpiar()}"
+                                             onclick="dlgFormato.hide();"
+                                             update=":form:btnEditarFormato :form:tableFormatos"
+                                             title="Cancelar"/>
+                        </div>
+                    </p:dialog>
+
+                    <p:dialog header="BUSCADOR DE PRODUCTOS" 
+                              widgetVar="buscarProductoDlg" 
+                              resizable="false" style="width: 600px;" 
+                              modal="true" >
+                        <p:messages id="msgBuscar" showDetail="true" autoUpdate="true" closable="true" />
+                        <p:panelGrid id="buscarProductos" styleClass="sinBorde" >
+                            <p:row >
+                                <p:column colspan="6" >
+                                    <p:selectOneRadio id="opciones" value="#{mbFormatos.mbBuscar.tipoBuscar}" style="background-color: #ccc" >
+                                        <f:selectItem itemLabel="SKU" itemValue="1" />
+                                        <f:selectItem itemLabel="Genérico" itemValue="2" />
+                                        <f:selectItem itemLabel="Descripcion" itemValue="3" />
+                                        <f:selectItem itemLabel="Clasificacion" itemValue="4" />
+                                        <p:ajax listener="#{mbFormatos.mbBuscar.verCambio()}" update="buscarProductos" />
+                                    </p:selectOneRadio>
+                                </p:column>
+                            </p:row>
+                            <p:row >
+                                <p:column style="width: 70px;" >
+                                    <h:outputLabel value="BUSCAR :" style="font-weight: bold; color: red; width: 70px;" />
+                                </p:column>
+                                <p:column rendered="#{mbFormatos.mbBuscar.tipoBuscar=='1'}" >
+                                    <p:inputText id="opcionSKU" value="#{mbFormatos.mbBuscar.strBuscar}" maxlength="8" size="10" />
+                                    <p:commandButton id="btnBuscarSKU" icon="ui-icon-check" title="Buscar" 
+                                                     process="@this opcionSKU" 
+                                                     actionListener="#{mbFormatos.buscar()}"
+                                                     oncomplete="handleBuscar(xhr, status, args)" />
+                                </p:column>
+                                <p:column rendered="#{mbFormatos.mbBuscar.tipoBuscar=='2'}" >
+                                    <p:autoComplete id="opcionParte" value="#{mbFormatos.mbBuscar.mbParte.parte}" maxlength="24" size="24"
+                                                    completeMethod="#{mbFormatos.mbBuscar.mbParte.completePartes}" process="@this"
+                                                    var="p" itemLabel="#{p.parte}" itemValue="#{p}" converter="converters.Parte" 
+                                                    forceSelection="true" />
+                                    <p:commandButton id="btnBuscarLista" icon="ui-icon-check" title="Buscar" 
+                                                     process="@this opcionParte" 
+                                                     update="multipleSelectProductos"
+                                                     actionListener="#{mbFormatos.buscar()}" />
+                                </p:column>
+                                <p:column rendered="#{mbFormatos.mbBuscar.tipoBuscar=='3'}" >
+                                    <p:inputText id="opcionDescripcion" value="#{mbFormatos.mbBuscar.strBuscar}" maxlength="24" size="24" />
+                                    <p:commandButton id="btnBuscarDescripcion" icon="ui-icon-check" title="Buscar" 
+                                                     process="@this opcionDescripcion" 
+                                                     update="multipleSelectProductos" 
+                                                     actionListener="#{mbFormatos.buscar()}"/>
+                                </p:column>
+                                <p:column rendered="#{mbFormatos.mbBuscar.tipoBuscar=='4'}" >
+                                    <p:selectOneMenu id="grupo" value="#{mbFormatos.mbBuscar.mbGrupo.grupo}" style="width: 250px;" >
+                                        <f:converter converterId="converters.Grupos" />
+                                        <f:selectItems value="#{mbFormatos.mbBuscar.mbGrupo.listaGrupos}" />
+                                        <p:ajax event="change" listener="#{mbFormatos.mbBuscar.mbGrupo.cargaListaSubGrupos()}" 
+                                                update="subGrupo" />
+                                    </p:selectOneMenu>
+                                </p:column>
+                                <p:column rendered="#{mbFormatos.mbBuscar.tipoBuscar=='4'}" >
+                                    <p:selectOneMenu id="subGrupo" value="#{mbFormatos.mbBuscar.mbGrupo.mbSubGrupo.subGrupo}" style="width: 250px;" >
+                                        <f:converter converterId="converters.SubGrupos" />
+                                        <f:selectItems value="#{mbFormatos.mbBuscar.mbGrupo.mbSubGrupo.listaSubGrupos}" />
+                                        <p:ajax event="change" />
+                                    </p:selectOneMenu>
+                                </p:column>
+                                <p:column rendered="#{mbFormatos.mbBuscar.tipoBuscar=='4'}" >
+                                    <p:commandButton id="btnBuscarClasificacion" icon="ui-icon-check" title="Buscar" 
+                                                     process="@this opcionDescripcion" 
+                                                     update="multipleSelectProductos" 
+                                                     actionListener="#{mbFormatos.buscar()}"/>
+                                </p:column>
+                            </p:row>
+                        </p:panelGrid>
+                        <p:dataTable id="multipleSelectProductos" var="e" rowKey="#{e.cod_pro}"
+                                     value="#{mbFormatos.mbBuscar.productos}" 
+                                     selection="#{mbFormatos.mbBuscar.seleccionados}" >
+
+                            <p:column selectionMode="multiple" style="width: 40px;" />
+                            <p:column headerText="SKU" style="width: 70px;" >
+                                <h:outputText value="#{e.cod_pro}" />
+                            </p:column>
+                            <p:column headerText="Producto" style="width: 575px;" >
+                                <h:outputText value="#{e.toString()}" />
+                            </p:column>
+
+                            <f:facet name="footer">
+                                <p:commandButton id="seleccionMultiple" value="Seleccionar" 
+                                                 oncomplete="buscarProductoDlg.hide()"
+                                                 actionListener="#{mbFormatos.construir()}"
+                                                 update=":form:tablaFormatoDetalle"/>
+                            </f:facet>
+                        </p:dataTable>
+                    </p:dialog>
+                </h:form>
+            </div>
+            <ui:include src="footer.html" />
+        </div>
+    </body>
+    <script>
+        function nuevoFormato(xhr, status, args) {
+            if (args.validationFailed || !args.ok) {
+                dlgFormato.jq.effect("shake", {times: 5}, 100);
+            }
+            else {
+                dlgFormato.hide();
+            }
+        }
+        function handleBuscar(xhr, status, args) {
+            if (!(args.validationFailed || !args.okBuscar)) {
+                buscarProductoDlg.hide();
+            }
+        }
+
+    </script>
+</html>

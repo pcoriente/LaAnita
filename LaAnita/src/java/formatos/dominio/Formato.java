@@ -7,6 +7,7 @@ package formatos.dominio;
 
 import java.io.Serializable;
 import menuClientesGrupos.dominio.ClientesGrupos;
+import monedas.Moneda;
 
 /**
  *
@@ -17,6 +18,7 @@ public class Formato implements Serializable {
     private int idFormato;
     private String formato;
     private ClientesGrupos clientesGrupo = new ClientesGrupos();
+    private Moneda moneda  = new Moneda();
 
     public int getIdFormato() {
         return idFormato;
@@ -67,6 +69,14 @@ public class Formato implements Serializable {
             return false;
         }
         return true;
+    }
+
+    public Moneda getMoneda() {
+        return moneda;
+    }
+
+    public void setMoneda(Moneda moneda) {
+        this.moneda = moneda;
     }
     
     
