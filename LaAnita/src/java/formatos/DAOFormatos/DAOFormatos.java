@@ -43,7 +43,9 @@ public class DAOFormatos {
 
     public ArrayList<Formato> dameListaFormatos() throws SQLException {
         ArrayList<Formato> lstFormato = new ArrayList<Formato>();
-        String slq = "select * from clientesFormato";
+        String slq = "select * from clientesFormatos cf\n"
+                + "inner join webSystem.dbo.monedas mo\n"
+                + "on mo.idMoneda = cf.idMoneda";
         Connection cn = ds.getConnection();
         Statement st = cn.createStatement();
         try {
@@ -52,7 +54,9 @@ public class DAOFormatos {
                 Formato formato = new Formato();
                 formato.setFormato(rs.getString("formato"));
                 formato.setIdFormato(rs.getInt("idFormato"));
-                formato.getClientesGrupo().setIdGrupoCte(rs.getInt("idGrupo"));
+                formato.getMoneda().setIdMoneda(rs.getInt("idMoneda"));
+                formato.getMoneda().setMoneda(rs.getString("moneda"));
+//                formato.getClientesGrupo().setIdGrupoCte(rs.getInt("idGrupo"));
                 lstFormato.add(formato);
             }
         } finally {
@@ -63,7 +67,7 @@ public class DAOFormatos {
 
     public void guardarFormato(Formato formato) throws SQLException {
         Connection cn = ds.getConnection();
-        String sql = "INSERT INTO clientesFormato (formato, idGrupo) VALUES('" + formato.getFormato() + "', '" + formato.getClientesGrupo().getIdGrupoCte() + "')";
+        String sql = "INSERT INTO clientesFormatos (formato, idMoneda) VALUES('" + formato.getFormato() + "', '" + formato.getMoneda().getIdMoneda() + "')";
         Statement st = cn.createStatement();
         try {
             st.executeUpdate(sql);
@@ -94,7 +98,7 @@ public class DAOFormatos {
     }
 
     public void actualizar(Formato formato) throws SQLException {
-        String sql = "UPDATE clientesFormato set formato = '" + formato.getFormato() + "', idGrupo = '" + formato.getClientesGrupo().getIdGrupoCte() + "' WHERE idFormato ='" + formato.getIdFormato() + "'";
+        String sql = "UPDATE clientesFormatos set formato = '" + formato.getFormato() + "', idMoneda = '" + formato.getMoneda().getIdMoneda() + "' WHERE idFormato ='" + formato.getIdFormato() + "'";
         Connection cn = ds.getConnection();
         Statement st = cn.createStatement();
         try {

@@ -17,9 +17,6 @@
                 <h:form id="form" onkeypress="return event.keyCode !== 13;" >
                     <p:growl id="growl" showDetail="true"/>  
                     <div align="right">
-                        <p:commandButton value="click"
-                                         onclick="click.show();"
-                                         process="@this"/>
                         <p:commandButton icon="ui-icon-document"
                                          oncomplete="dlgClientesGrupos.show();"
                                          actionListener="#{mbMenuClientesGrupos.cargaContactos()}"
@@ -57,7 +54,8 @@
                             selection="#{mbMenuClientesGrupos.clienteGrupoSeleccionado}"
                             selectionMode="single"
                             rowKey="#{lstClienteGrupos}"
-                            emptyMessage="No hay clientes Grupos">
+                            emptyMessage="No hay clientes Grupos"
+                            >
                             <p:ajax event="rowSelect"
                                     process="@this"
                                     listener="#{mbMenuClientesGrupos.cargarDatos()}"

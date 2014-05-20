@@ -56,11 +56,10 @@ public class MbMonedas implements Serializable {
     private ArrayList<SelectItem> obtenerListaMonedas() throws NamingException {
         listaMonedas=new ArrayList<SelectItem>();
         try {
-            Moneda m0 = new Moneda();
-            m0.setIdMoneda(0);
-            m0.setMoneda("Moneda: ");
-            
-            listaMonedas.add(new SelectItem(m0, m0.toString()));
+            Moneda moneda = new Moneda();
+            moneda.setIdMoneda(0);
+            moneda.setMoneda("Monedas: ");
+            listaMonedas.add(new SelectItem(moneda, moneda.toString()));
             DAOMonedas dao=new DAOMonedas();
             ArrayList<Moneda> monedas = dao.obtenerMonedas();
             for (Moneda e : monedas) {
@@ -90,4 +89,7 @@ public class MbMonedas implements Serializable {
     public void setMoneda(Moneda moneda) {
         this.moneda = moneda;
     }
+    
+    
+    
 }

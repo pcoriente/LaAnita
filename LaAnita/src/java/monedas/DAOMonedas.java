@@ -66,9 +66,7 @@ public class DAOMonedas {
         ArrayList<Moneda> lista = new ArrayList<Moneda>();
         Connection cn = ds.getConnection();
         try {
-
             String stringSQL = "SELECT idMoneda, moneda, codigoIso FROM monedas where idMoneda between 0 and 4";
-
             Statement sentencia = cn.createStatement();
             ResultSet rs = sentencia.executeQuery(stringSQL);
             while (rs.next()) {
