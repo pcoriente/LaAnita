@@ -13,22 +13,22 @@ public class Comprobante {
     private AlmacenJS almacen;
     private MiniProveedor proveedor;
     private int tipoComprobante;
+    private String remision;
     private String serie;
     private String numero;
     private Date fecha;
-    private boolean cerradaOficina;
-    private boolean cerradaAlmacen;
+    private byte statusOficina;
+    private byte statusAlmacen;
 
     public Comprobante() {
         this.idComprobante=0;
         this.almacen=new AlmacenJS();
         this.proveedor=new MiniProveedor();
         this.tipoComprobante=0;
+        this.remision="";
         this.serie="";
         this.numero="";
         this.fecha=new Date();
-        this.cerradaOficina=false;
-        this.cerradaAlmacen=false;
     }
     
     public Comprobante(AlmacenJS almacen, MiniProveedor proveedor, int tipoComprobante) {
@@ -36,16 +36,16 @@ public class Comprobante {
         this.almacen=almacen;
         this.proveedor=proveedor;
         this.tipoComprobante=tipoComprobante;
+        this.remision="";
         this.serie="";
         this.numero="";
         this.fecha=new Date();
-        this.cerradaOficina=false;
-        this.cerradaAlmacen=false;
     }
     
     @Override
     public String toString() {
-        return (this.serie.isEmpty()?"":this.serie+"-")+this.numero;
+//        return (this.serie.isEmpty()?"":this.serie+"-")+this.numero;
+        return this.remision.isEmpty()?((this.serie.isEmpty()?"":this.serie+"-")+this.numero):this.remision;
     }
 
     public int getIdComprobante() {
@@ -104,19 +104,27 @@ public class Comprobante {
         this.fecha = fecha;
     }
 
-    public boolean isCerradaOficina() {
-        return cerradaOficina;
+    public String getRemision() {
+        return remision;
     }
 
-    public void setCerradaOficina(boolean cerradaOficina) {
-        this.cerradaOficina = cerradaOficina;
+    public void setRemision(String remision) {
+        this.remision = remision;
     }
 
-    public boolean isCerradaAlmacen() {
-        return cerradaAlmacen;
+    public byte getStatusOficina() {
+        return statusOficina;
     }
 
-    public void setCerradaAlmacen(boolean cerradaAlmacen) {
-        this.cerradaAlmacen = cerradaAlmacen;
+    public void setStatusOficina(byte statusOficina) {
+        this.statusOficina = statusOficina;
+    }
+
+    public byte getStatusAlmacen() {
+        return statusAlmacen;
+    }
+
+    public void setStatusAlmacen(byte statusAlmacen) {
+        this.statusAlmacen = statusAlmacen;
     }
 }

@@ -39,6 +39,40 @@ public class DAOComprobantes {
         }
     }
     
+    public boolean asegurarComprobante(int idComprobante, boolean oficina) throws SQLException {
+        boolean ok=false;
+        byte status=0;
+        Connection cn=this.ds.getConnection();
+        Statement st=cn.createStatement();
+        try {
+            st.execute("BEGIN TRANSACTION");
+            ResultSet rs=st.executeQuery("SELECT statusAlmacen, statusOficina FROM comprobantes WHERE idComprobante="+idComprobante);
+            if(rs.next()) {
+                if(oficina) {
+                    status=rs.getByte("statusOficina");
+                } else {
+                    status=rs.getByte("statusAlmacen");
+                }
+            } else {
+                throw new SQLException("No se encotro el comprobante");
+            }
+            if(status==0) {
+                if(oficina) {
+                    st.executeUpdate("UPDATE comprobantes SET statusOficina=1 WHERE idComprobante="+idComprobante);
+                } else {
+                    st.executeUpdate("UPDATE comprobantes SET statusAlmacen=1 WHERE idComprobante="+idComprobante);
+                }
+            }
+            st.execute("COMMIT TRANSACTION");
+        } catch(SQLException ex) {
+            st.execute("ROLLBACK TRANSACTION");
+            throw ex;
+        } finally {
+            cn.close();
+        }
+        return ok;
+    }
+    
     public boolean obtenerEstadoAlmacen(int idComprobante) throws SQLException {
         boolean cerrada=false;   // 0.-Abierta; 1.-Cerrada
         Connection cn=this.ds.getConnection();
@@ -75,7 +109,7 @@ public class DAOComprobantes {
         try {
             Date fechaFactura=new java.sql.Date(c.getFecha().getTime());
             String strSQL="UPDATE comprobantes "
-                    + "SET serie='"+c.getSerie()+"', numero='"+c.getNumero()+"', fecha='"+fechaFactura.toString()+"' "
+                    + "SET remision='"+c.getRemision()+"', serie='"+c.getSerie()+"', numero='"+c.getNumero()+"', fecha='"+fechaFactura.toString()+"' "
                     + "WHERE idComprobante="+c.getIdComprobante();
             st.executeUpdate(strSQL);
         } finally {
@@ -90,8 +124,8 @@ public class DAOComprobantes {
         try {
             st.executeUpdate("BEGIN TRANSACTION");
             Date fechaFactura=new java.sql.Date(c.getFecha().getTime());
-            st.executeUpdate("INSERT INTO comprobantes (idAlmacen, idProveedor, tipoComprobante, serie, numero, fecha, idUsuario, cerradaOficina, cerradaAlmacen) "
-                            + "VALUES ("+c.getIdAlmacen()+", "+c.getIdProveedor()+", 1, '"+c.getSerie()+"', '"+c.getNumero()+"', '"+fechaFactura.toString()+"', "+this.idUsuario+", 0, 0)");
+            st.executeUpdate("INSERT INTO comprobantes (idAlmacen, idProveedor, tipoComprobante, remision, serie, numero, fecha, idUsuario, cerradaOficina, cerradaAlmacen) "
+                            + "VALUES ("+c.getIdAlmacen()+", "+c.getIdProveedor()+", "+c.getTipoComprobante()+", '"+c.getRemision()+"', '"+c.getSerie()+"', '"+c.getNumero()+"', '"+fechaFactura.toString()+"', "+this.idUsuario+", 0, 0)");
             ResultSet rs=st.executeQuery("SELECT @@IDENTITY AS idComprobante");
             if(rs.next()) {
                 idComprobante=rs.getInt("idComprobante");
@@ -199,11 +233,12 @@ public class DAOComprobantes {
         c.setIdAlmacen(rs.getInt("idAlmacen"));
         c.setIdProveedor(rs.getInt("idProveedor"));
         c.setTipoComprobante(rs.getInt("tipoComprobante"));
+        c.setRemision(rs.getString("remision"));
         c.setSerie(rs.getString("serie"));
         c.setNumero(rs.getString("numero"));
         c.setFecha(new java.util.Date(rs.getDate("fecha").getTime()));
-        c.setCerradaOficina(rs.getBoolean("cerradaOficina"));
-        c.setCerradaAlmacen(rs.getBoolean("cerradaAlmacen"));
+        c.setStatusOficina(rs.getByte("statusOficina"));
+        c.setStatusAlmacen(rs.getByte("statusAlmacen"));
         return c;
     }
 }

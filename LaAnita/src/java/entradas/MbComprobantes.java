@@ -27,7 +27,7 @@ import proveedores.MbMiniProveedor;
 @SessionScoped
 public class MbComprobantes implements Serializable {
     private int tipoComprobante;
-    private Comprobante comprobante;
+    private Comprobante comprobante;    // Se usa en traspasos: envios
     private TOComprobante toComprobante;
     private TOComprobante edicion;
     private ArrayList<Comprobante> comprobantes;
@@ -58,34 +58,69 @@ public class MbComprobantes implements Serializable {
     }
     
     private void inicializaLocales() {
-        this.tipoComprobante=0;
+        this.tipoComprobante=1;
+        this.edicion=new TOComprobante();
+        this.toComprobante=new TOComprobante();
+        this.toComprobante.setIdAlmacen(this.mbAlmacenes.getToAlmacen().getIdAlmacen());
+        this.toComprobante.setIdProveedor(this.mbProveedores.getMiniProveedor().getIdProveedor());
+        this.toComprobante.setTipoComprobante(this.tipoComprobante);
+        this.comprobante=new Comprobante();
+        this.setComprobante(null);
+        this.setListaComprobantes(null);
+    }
+    
+    private void nuevo() {
         this.edicion=new TOComprobante();
         this.edicion.setIdComprobante(0);
         this.edicion.setIdAlmacen(this.mbAlmacenes.getToAlmacen().getIdAlmacen());
         this.edicion.setIdProveedor(this.mbProveedores.getMiniProveedor().getIdProveedor());
         this.edicion.setTipoComprobante(this.tipoComprobante);
+        this.edicion.setRemision("");
         this.edicion.setSerie("");
         this.edicion.setNumero("");
         this.edicion.setFecha(new Date());
-        this.edicion.setCerradaOficina(false);
-        this.edicion.setCerradaAlmacen(false);
+        this.edicion.setStatusOficina((byte)0);
+        this.edicion.setStatusAlmacen((byte)0);
         this.toComprobante=new TOComprobante();
         this.comprobante=new Comprobante();
         this.setComprobantes(null);
         this.setListaComprobantes(null);
     }
     
-    public void mttoComprobanteOficina() {
+    public boolean aseguraComprobante(int idComprobante, boolean oficina) {
+        boolean ok=false;
+        FacesMessage fMsg = new FacesMessage(FacesMessage.SEVERITY_ERROR, "Aviso:", "aseguraComprobante");
+        try {
+            this.dao=new DAOComprobantes();
+            if(this.dao.asegurarComprobante(this.toComprobante.getIdComprobante(), oficina)) {
+                ok=true;
+            } else {
+                fMsg.setSeverity(FacesMessage.SEVERITY_WARN);
+                fMsg.setDetail("Em comprobante esta en uso o ya ha sido cerrado");
+            }
+        } catch (NamingException ex) {
+            fMsg.setDetail(ex.getMessage());
+        } catch (SQLException ex) {
+            fMsg.setDetail(ex.getErrorCode() + " " + ex.getMessage());
+        }
+        if (!ok) {
+            FacesContext.getCurrentInstance().addMessage(null, fMsg);
+        }
+        return ok;
+    }
+    
+    public void mttoComprobante(boolean oficina) {
         boolean ok = false;
         RequestContext context = RequestContext.getCurrentInstance();
         if(this.validaComprobante()) {
-            this.setTipoComprobante(1);
+//            this.setTipoComprobante(1);
             if(this.toComprobante.getIdComprobante()==0) {
-                this.inicializaLocales();
-            } else {
+                this.nuevo();
+                ok=true;
+            } else if(this.aseguraComprobante(this.toComprobante.getIdComprobante(), oficina)) {
                 this.respalda();
+                ok=true;
             }
-            ok=true;
         }
         context.addCallbackParam("okComprobante", ok);
     }
@@ -116,11 +151,12 @@ public class MbComprobantes implements Serializable {
         this.edicion.setIdAlmacen(this.toComprobante.getIdAlmacen());
         this.edicion.setIdProveedor(this.toComprobante.getIdProveedor());
         this.edicion.setTipoComprobante(this.toComprobante.getTipoComprobante());
+        this.edicion.setRemision(this.toComprobante.getRemision());
         this.edicion.setSerie(this.toComprobante.getSerie());
         this.edicion.setNumero(this.toComprobante.getNumero());
         this.edicion.setFecha(this.toComprobante.getFecha());
-        this.edicion.setCerradaOficina(this.toComprobante.isCerradaOficina());
-        this.edicion.setCerradaAlmacen(this.toComprobante.isCerradaAlmacen());
+        this.edicion.setStatusOficina(this.toComprobante.getStatusOficina());
+        this.edicion.setStatusAlmacen(this.toComprobante.getStatusAlmacen());
     }
     
     private void restaura() {
@@ -128,67 +164,68 @@ public class MbComprobantes implements Serializable {
         this.toComprobante.setIdAlmacen(this.edicion.getIdAlmacen());
         this.toComprobante.setIdProveedor(this.edicion.getIdProveedor());
         this.toComprobante.setTipoComprobante(this.edicion.getTipoComprobante());
+        this.toComprobante.setRemision(this.edicion.getRemision());
         this.toComprobante.setSerie(this.edicion.getSerie());
         this.toComprobante.setNumero(this.edicion.getNumero());
         this.toComprobante.setFecha(this.edicion.getFecha());
-        this.toComprobante.setCerradaOficina(this.edicion.isCerradaOficina());
-        this.toComprobante.setCerradaAlmacen(this.edicion.isCerradaAlmacen());
+        this.toComprobante.setStatusOficina(this.edicion.getStatusOficina());
+        this.toComprobante.setStatusAlmacen(this.edicion.getStatusAlmacen());
     }
     
-    public void copiaX(Comprobante comprobante) {
-        this.comprobante=new Comprobante();
-        this.comprobante.setFecha(comprobante.getFecha());
-        this.comprobante.getAlmacen().setIdAlmacen(comprobante.getAlmacen().getIdAlmacen());
-        this.comprobante.setIdComprobante(comprobante.getIdComprobante());
-        this.comprobante.getProveedor().setIdProveedor(comprobante.getProveedor().getIdProveedor());
-        this.comprobante.setTipoComprobante(comprobante.getTipoComprobante());
-        this.comprobante.setNumero(comprobante.getNumero());
-        this.comprobante.setSerie(comprobante.getSerie());
-        this.comprobante.setCerradaOficina(comprobante.isCerradaOficina());
-        this.comprobante.setCerradaAlmacen(comprobante.isCerradaAlmacen());
-    }
-    
-    public boolean cerradaAlmacen() {
-        boolean ok = false;
-        boolean cerrada=false;
-        FacesMessage fMsg = new FacesMessage(FacesMessage.SEVERITY_WARN, "Aviso:", "cerradaAlmacen");
-        try {
-            this.dao=new DAOComprobantes();
-            cerrada=this.dao.obtenerEstadoAlmacen(this.comprobante.getIdComprobante());
-            ok=true;
-        } catch (NamingException ex) {
-            fMsg.setSeverity(FacesMessage.SEVERITY_ERROR);
-            fMsg.setDetail(ex.getMessage());
-        } catch (SQLException ex) {
-            fMsg.setSeverity(FacesMessage.SEVERITY_ERROR);
-            fMsg.setDetail(ex.getErrorCode() + " " + ex.getMessage());
-        }
-        if (!ok) {
-            FacesContext.getCurrentInstance().addMessage(null, fMsg);
-        }
-        return cerrada;
-    }
-    
-    public boolean cerradaOficina() {
-        boolean ok = false;
-        boolean cerrada=false;
-        FacesMessage fMsg = new FacesMessage(FacesMessage.SEVERITY_WARN, "Aviso:", "cerradaOficina");
-        try {
-            this.dao=new DAOComprobantes();
-            cerrada=this.dao.obtenerEstadoOficina(this.comprobante.getIdComprobante());
-            ok=true;
-        } catch (NamingException ex) {
-            fMsg.setSeverity(FacesMessage.SEVERITY_ERROR);
-            fMsg.setDetail(ex.getMessage());
-        } catch (SQLException ex) {
-            fMsg.setSeverity(FacesMessage.SEVERITY_ERROR);
-            fMsg.setDetail(ex.getErrorCode() + " " + ex.getMessage());
-        }
-        if (!ok) {
-            FacesContext.getCurrentInstance().addMessage(null, fMsg);
-        }
-        return cerrada;
-    }
+//    public void copiaX(Comprobante comprobante) {
+//        this.comprobante=new Comprobante();
+//        this.comprobante.setFecha(comprobante.getFecha());
+//        this.comprobante.getAlmacen().setIdAlmacen(comprobante.getAlmacen().getIdAlmacen());
+//        this.comprobante.setIdComprobante(comprobante.getIdComprobante());
+//        this.comprobante.getProveedor().setIdProveedor(comprobante.getProveedor().getIdProveedor());
+//        this.comprobante.setTipoComprobante(comprobante.getTipoComprobante());
+//        this.comprobante.setNumero(comprobante.getNumero());
+//        this.comprobante.setSerie(comprobante.getSerie());
+//        this.comprobante.setCerradaOficina(comprobante.isCerradaOficina());
+//        this.comprobante.setCerradaAlmacen(comprobante.isCerradaAlmacen());
+//    }
+//    
+//    public boolean cerradaAlmacenX() {
+//        boolean ok = false;
+//        boolean cerrada=false;
+//        FacesMessage fMsg = new FacesMessage(FacesMessage.SEVERITY_WARN, "Aviso:", "cerradaAlmacen");
+//        try {
+//            this.dao=new DAOComprobantes();
+//            cerrada=this.dao.obtenerEstadoAlmacen(this.comprobante.getIdComprobante());
+//            ok=true;
+//        } catch (NamingException ex) {
+//            fMsg.setSeverity(FacesMessage.SEVERITY_ERROR);
+//            fMsg.setDetail(ex.getMessage());
+//        } catch (SQLException ex) {
+//            fMsg.setSeverity(FacesMessage.SEVERITY_ERROR);
+//            fMsg.setDetail(ex.getErrorCode() + " " + ex.getMessage());
+//        }
+//        if (!ok) {
+//            FacesContext.getCurrentInstance().addMessage(null, fMsg);
+//        }
+//        return cerrada;
+//    }
+//    
+//    public boolean cerradaOficina() {
+//        boolean ok = false;
+//        boolean cerrada=false;
+//        FacesMessage fMsg = new FacesMessage(FacesMessage.SEVERITY_WARN, "Aviso:", "cerradaOficina");
+//        try {
+//            this.dao=new DAOComprobantes();
+//            cerrada=this.dao.obtenerEstadoOficina(this.comprobante.getIdComprobante());
+//            ok=true;
+//        } catch (NamingException ex) {
+//            fMsg.setSeverity(FacesMessage.SEVERITY_ERROR);
+//            fMsg.setDetail(ex.getMessage());
+//        } catch (SQLException ex) {
+//            fMsg.setSeverity(FacesMessage.SEVERITY_ERROR);
+//            fMsg.setDetail(ex.getErrorCode() + " " + ex.getMessage());
+//        }
+//        if (!ok) {
+//            FacesContext.getCurrentInstance().addMessage(null, fMsg);
+//        }
+//        return cerrada;
+//    }
     
     private Comprobante convertir(TOComprobante to) {
         Comprobante c=new Comprobante();
@@ -196,11 +233,12 @@ public class MbComprobantes implements Serializable {
         c.setAlmacen(this.mbAlmacenes.obtenerAlmacen(to.getIdAlmacen()));
         c.setProveedor(this.mbProveedores.obtenerProveedor(to.getIdProveedor()));
         c.setTipoComprobante(to.getTipoComprobante());
+        c.setRemision(to.getRemision());
         c.setSerie(to.getSerie());
         c.setNumero(to.getNumero());
         c.setFecha(to.getFecha());
-        c.setCerradaOficina(to.isCerradaOficina());
-        c.setCerradaAlmacen(to.isCerradaAlmacen());
+        c.setStatusOficina(to.getStatusOficina());
+        c.setStatusAlmacen(to.getStatusAlmacen());
         return c;
     }
     
@@ -209,11 +247,12 @@ public class MbComprobantes implements Serializable {
         to.setIdComprobante(c.getIdComprobante());
         to.setIdAlmacen(c.getAlmacen().getIdAlmacen());
         to.setIdProveedor(c.getProveedor().getIdProveedor());
+        to.setRemision(c.getRemision());
         to.setSerie(c.getSerie());
         to.setNumero(c.getNumero());
         to.setFecha(c.getFecha());
-        to.setCerradaOficina(c.isCerradaOficina());
-        to.setCerradaAlmacen(c.isCerradaAlmacen());
+        to.setStatusOficina(c.getStatusOficina());
+        to.setStatusAlmacen(c.getStatusAlmacen());
         return to;
     }
     
@@ -227,7 +266,7 @@ public class MbComprobantes implements Serializable {
         FacesMessage fMsg = new FacesMessage(FacesMessage.SEVERITY_WARN, "Aviso:", "grabar");
         try {
             if(this.edicion.getNumero().equals("")) {
-                fMsg.setDetail("Se requiere el numero de la factura");
+                fMsg.setDetail("Se requiere el numero del comprobante");
             } else {
                 this.dao=new DAOComprobantes();
                 if (this.edicion.getIdComprobante() == 0) {
@@ -291,7 +330,7 @@ public class MbComprobantes implements Serializable {
     
     public void cargaListaComprobantes() {
         if(this.validaComprobante()) {
-            this.setTipoComprobante(1);
+//            this.setTipoComprobante(1);
             this.obtenerListaComprobantes();
             this.toComprobante=(TOComprobante)this.listaComprobantes.get(0).getValue();
         } else {

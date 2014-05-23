@@ -15,7 +15,7 @@ public class MovimientoProducto {
     private double cantFacturada;
     private double cantSinCargo;
     private double cantRecibida;
-    private double precio;
+    private double costo;
     private double desctoProducto1;
     private double desctoProducto2;
     private double desctoConfidencial;
@@ -31,7 +31,7 @@ public class MovimientoProducto {
         this.cantFacturada=0.00;
         this.cantSinCargo=0.00;
         this.cantRecibida=0.00;
-        this.precio=0.00;
+        this.costo=0.00;
         this.desctoProducto1=0.00;
         this.desctoProducto2=0.00;
         this.desctoConfidencial=0.00;
@@ -91,12 +91,12 @@ public class MovimientoProducto {
         this.cantRecibida = cantRecibida;
     }
 
-    public double getPrecio() {
-        return precio;
+    public double getCosto() {
+        return costo;
     }
 
-    public void setPrecio(double precio) {
-        this.precio = precio;
+    public void setCosto(double costo) {
+        this.costo = costo;
     }
 
     public double getDesctoProducto1() {

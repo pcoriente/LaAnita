@@ -1,20 +1,20 @@
-package entradas.dominio;
+package movimientos.dominio;
 
 import almacenes.dominio.AlmacenJS;
+import entradas.dominio.Comprobante;
 import java.util.Date;
 import monedas.Moneda;
 
 /**
  *
- * @author jsolis
+ * @author jesc
  */
-public class Entrada {
-    private int idEntrada;
+public class Envio {
+    private int idMovto;
     private AlmacenJS almacen;
     private int folio;
     private Comprobante comprobante;
     private int idImpuestoZona;
-    private int idOrdenCompra;
     private Moneda moneda;
     private double tipoCambio;
     private double desctoComercial;
@@ -25,32 +25,37 @@ public class Entrada {
     private double descuento;
     private double impuesto;
     private double total;
-
-    public Entrada() {
-        this.idEntrada=0;
-        this.folio=0;
+    
+    public Envio() {
         this.almacen=new AlmacenJS();
         this.comprobante=new Comprobante();
-        this.idImpuestoZona=0;
-        this.idOrdenCompra=0;
         this.moneda=new Moneda();
-        this.tipoCambio=1.00;
-        this.desctoComercial=0.00;
-        this.desctoProntoPago=0.00;
+        this.tipoCambio=1;
         this.fecha=new Date();
-        this.idUsuario=0;
-        this.subTotal=0.00;
-        this.descuento=0.00;
-        this.impuesto=0.00;
-        this.total=0.00;
     }
 
-    public int getIdEntrada() {
-        return idEntrada;
+    public int getIdMovto() {
+        return idMovto;
     }
 
-    public void setIdEntrada(int idEntrada) {
-        this.idEntrada = idEntrada;
+    public void setIdMovto(int idMovto) {
+        this.idMovto = idMovto;
+    }
+
+    public AlmacenJS getAlmacen() {
+        return almacen;
+    }
+
+    public void setAlmacen(AlmacenJS almacen) {
+        this.almacen = almacen;
+    }
+
+    public int getFolio() {
+        return folio;
+    }
+
+    public void setFolio(int folio) {
+        this.folio = folio;
     }
 
     public Comprobante getComprobante() {
@@ -67,14 +72,6 @@ public class Entrada {
 
     public void setIdImpuestoZona(int idImpuestoZona) {
         this.idImpuestoZona = idImpuestoZona;
-    }
-
-    public int getIdOrdenCompra() {
-        return idOrdenCompra;
-    }
-
-    public void setIdOrdenCompra(int idOrdenCompra) {
-        this.idOrdenCompra = idOrdenCompra;
     }
 
     public Moneda getMoneda() {
@@ -155,21 +152,5 @@ public class Entrada {
 
     public void setTotal(double total) {
         this.total = total;
-    }
-
-    public int getFolio() {
-        return folio;
-    }
-
-    public void setFolio(int folio) {
-        this.folio = folio;
-    }
-
-    public AlmacenJS getAlmacen() {
-        return almacen;
-    }
-
-    public void setAlmacen(AlmacenJS almacen) {
-        this.almacen = almacen;
     }
 }

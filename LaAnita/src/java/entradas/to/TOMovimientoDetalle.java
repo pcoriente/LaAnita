@@ -11,7 +11,8 @@ public class TOMovimientoDetalle {
     private double cantFacturada;
     private double cantSinCargo;
     private double cantRecibida;
-    private double precio;
+    private double costo;
+//    private double precio;
     private double desctoProducto1;
     private double desctoProducto2;
     private double desctoConfidencial;
@@ -70,13 +71,21 @@ public class TOMovimientoDetalle {
         this.cantRecibida = cantRecibida;
     }
 
-    public double getPrecio() {
-        return precio;
+    public double getCosto() {
+        return costo;
     }
 
-    public void setPrecio(double precio) {
-        this.precio = precio;
+    public void setCosto(double costo) {
+        this.costo = costo;
     }
+//
+//    public double getPrecio() {
+//        return precio;
+//    }
+//
+//    public void setPrecio(double precio) {
+//        this.precio = precio;
+//    }
 
     public double getDesctoProducto1() {
         return desctoProducto1;

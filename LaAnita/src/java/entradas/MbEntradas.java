@@ -93,9 +93,9 @@ public class MbEntradas implements Serializable {
         this.resEntradaProducto = new MovimientoProducto();
     }
     
-    public void cargaAlmacenesEmpresa() {
-        this.mbComprobantes.getMbAlmacenes().cargaAlmacenesEmpresa(this.mbAlmacenes.getToAlmacen().getIdEmpresa());
-    }
+//    public void cargaAlmacenesEmpresa() {
+//        this.mbComprobantes.getMbAlmacenes().cargaAlmacenesEmpresa(this.mbAlmacenes.getToAlmacen().getIdEmpresa());
+//    }
     
     public void mttoComprobante() {
         this.mbComprobantes.inicializaConAlmacen(this.mbAlmacenes.getToAlmacen());
@@ -168,7 +168,7 @@ public class MbEntradas implements Serializable {
         try {
             this.dao = new DAOMovimientos();
             TOMovimiento toEntrada = convertirTO(this.entrada);
-            if (this.dao.grabarEntradaAlmacen(toEntrada, this.entradaDetalle)) {
+            if (this.dao.grabarEntradaAlmacen(toEntrada, this.entradaDetalle, this.mbOrdenCompra.getOrdenElegida().getIdOrdenCompra())) {
                 fMsg.setSeverity(FacesMessage.SEVERITY_INFO);
                 fMsg.setDetail("La entrada se grabo correctamente !!!");
                 this.modoEdicion = false;
@@ -235,7 +235,7 @@ public class MbEntradas implements Serializable {
 
     public void cargaDetalleOrdenCompra(SelectEvent event) {
         boolean ok = false;
-        int idMovto;
+//        int idMovto;
         FacesMessage fMsg = new FacesMessage(FacesMessage.SEVERITY_WARN, "Aviso:", "cargaDetalleOrdenCompra");
         this.mbOrdenCompra.setOrdenElegida((OrdenCompraEncabezado) event.getObject());
         try {
@@ -243,9 +243,9 @@ public class MbEntradas implements Serializable {
             this.dao = new DAOMovimientos();
             
             this.daoImps = new DAOImpuestosProducto();
-            idMovto = this.dao.buscarEntrada(this.entrada.getComprobante().getIdComprobante(), this.mbOrdenCompra.getOrdenElegida().getIdOrdenCompra());
-            if (idMovto == 0) {
-                if (this.mbOrdenCompra.aseguraOrdenCompra(this.mbOrdenCompra.getOrdenElegida().getIdOrdenCompra())) {
+//            idMovto = this.dao.buscarEntrada(this.entrada.getComprobante().getIdComprobante(), this.mbOrdenCompra.getOrdenElegida().getIdOrdenCompra());
+//            if (idMovto == 0) {
+//                if (this.mbOrdenCompra.aseguraOrdenCompra(this.mbOrdenCompra.getOrdenElegida().getIdOrdenCompra())) {
                     this.entrada.setIdOrdenCompra(this.mbOrdenCompra.getOrdenElegida().getIdOrdenCompra());
                     this.entrada.setDesctoComercial(this.mbOrdenCompra.getOrdenElegida().getDesctoComercial());
                     this.entrada.setDesctoProntoPago(this.mbOrdenCompra.getOrdenElegida().getDesctoProntoPago());
@@ -263,7 +263,7 @@ public class MbEntradas implements Serializable {
                             this.entradaProducto.setCantOrdenada(d.getCantOrdenada());
                             this.entradaProducto.setCantSinCargo(0);
                             this.entradaProducto.setCantRecibida(d.getCantOrdenada());
-                            this.entradaProducto.setPrecio(d.getCostoOrdenado());
+                            this.entradaProducto.setCosto(d.getCostoOrdenado());
                             this.entradaProducto.setDesctoProducto1(d.getDescuentoProducto());
                             this.entradaProducto.setDesctoProducto2(d.getDescuentoProducto2());
                             this.entradaProducto.setDesctoConfidencial(d.getDesctoConfidencial());
@@ -274,23 +274,23 @@ public class MbEntradas implements Serializable {
 //                            unitario *= (1 - this.entradaProducto.getDesctoProducto2() / 100.00);
 //                            unitario *= (1 - this.entradaProducto.getDesctoConfidencial() / 100.00);
 //                            this.entradaProducto.setUnitario(unitario);
-                            this.entradaProducto.setImpuestos(this.dao.generarImpuestosProducto(this.entradaProducto.getProducto().getArticulo().getImpuestoGrupo().getIdGrupo(), this.entrada.getIdImpuestoZona()));
-                            this.calculaProducto();
                         } else {
                             this.entradaProducto.setCantOrdenada(d.getCantOrdenada() - d.getCantRecibida());
                             this.entradaProducto.setCantFacturada(0);
                         }
+                        this.entradaProducto.setImpuestos(this.dao.generarImpuestosProducto(this.entradaProducto.getProducto().getArticulo().getImpuestoGrupo().getIdGrupo(), this.entrada.getIdImpuestoZona()));
+//                        this.calculaProducto();
                         this.entradaDetalle.add(this.entradaProducto);
                     }
 //                    TOMovimiento toMovimiento = convertirTO(this.entrada);
 //                    idMovto = this.dao.agregarEntrada(toMovimiento, this.entradaDetalle, this.entrada.getIdOrdenCompra());
-                }
-            } else {
-                TOMovimiento to = this.dao.obtenerMovimiento(idMovto);
-                this.entrada = this.convertir(to);
-                this.cargaDatosFactura(this.entrada.getIdEntrada());
-            }
-            this.sinOrden = false;
+//                }
+//            } else {
+//                TOMovimiento to = this.dao.obtenerMovimiento(idMovto);
+//                this.entrada = this.convertir(to);
+//                this.cargaDatosFactura(this.entrada.getIdEntrada());
+//            }
+//            this.sinOrden = false;
             this.tipoCambio = this.entrada.getTipoCambio();
             this.cambiaPrecios();
             this.entradaProducto = null;
@@ -391,9 +391,11 @@ public class MbEntradas implements Serializable {
         try {
             this.dao = new DAOMovimientos();
             this.entradas = new ArrayList<Entrada>();
-            for (TOMovimiento m : this.dao.obtenerEntradas(this.mbComprobantes.getToComprobante().getIdComprobante())) {
-                this.entradas.add(convertir(m));
-            }
+            TOMovimiento m=this.dao.obtenerMovimientoComprobante(this.mbComprobantes.getToComprobante().getIdComprobante());
+            this.entradas.add(this.convertir(m));
+//            for (TOMovimiento m : this.dao.obtenerMovimientoComprobante(this.mbComprobantes.getToComprobante().getIdComprobante())) {
+//                this.entradas.add(convertir(m));
+//            }
             this.selEntrada = null;
             ok = true;
         } catch (SQLException ex) {
@@ -453,8 +455,8 @@ public class MbEntradas implements Serializable {
         MovimientoProducto ep = this.entradaProducto;
         for (MovimientoProducto p : this.entradaDetalle) {
             this.entradaProducto = p;
-            this.entradaProducto.setPrecio(this.entradaProducto.getPrecio() / this.tipoCambio);
-            this.entradaProducto.setPrecio(this.entradaProducto.getPrecio() * this.entrada.getTipoCambio());
+            this.entradaProducto.setCosto(this.entradaProducto.getCosto() / this.tipoCambio);
+            this.entradaProducto.setCosto(this.entradaProducto.getCosto() * this.entrada.getTipoCambio());
             calculaProducto();
             sumaTotales();
         }
@@ -505,10 +507,10 @@ public class MbEntradas implements Serializable {
 
     private void sumaTotales() {
         double suma;
-        suma = this.entradaProducto.getPrecio() * this.entradaProducto.getCantFacturada();   // Calcula el subTotal
+        suma = this.entradaProducto.getCosto() * this.entradaProducto.getCantFacturada();   // Calcula el subTotal
         this.entrada.setSubTotal(this.entrada.getSubTotal() + Math.round(suma * 100.00) / 100.00);    // Suma el importe el subtotal
 
-        suma = this.entradaProducto.getPrecio() - this.entradaProducto.getUnitario();   // Obtine el descuento por diferencia.
+        suma = this.entradaProducto.getCosto() - this.entradaProducto.getUnitario();   // Obtine el descuento por diferencia.
         suma = suma * this.entradaProducto.getCantFacturada();                           // Calcula el importe de descuento
         this.entrada.setDescuento(this.entrada.getDescuento() + Math.round(suma * 100.00) / 100.00);  // Suma el descuento
 
@@ -522,9 +524,9 @@ public class MbEntradas implements Serializable {
 
     private void restaTotales() {
         double resta;
-        resta = this.resEntradaProducto.getPrecio() * this.resEntradaProducto.getCantFacturada();
+        resta = this.resEntradaProducto.getCosto() * this.resEntradaProducto.getCantFacturada();
         this.entrada.setSubTotal(this.entrada.getSubTotal() - Math.round(resta * 100.00) / 100.00);
-        resta = this.resEntradaProducto.getPrecio() - this.resEntradaProducto.getUnitario();
+        resta = this.resEntradaProducto.getCosto() - this.resEntradaProducto.getUnitario();
         resta = resta * this.resEntradaProducto.getCantFacturada();
         this.entrada.setDescuento(this.entrada.getDescuento() - Math.round(resta * 100.00) / 100.00);
         resta = this.resEntradaProducto.getNeto() - this.resEntradaProducto.getUnitario();
@@ -542,7 +544,7 @@ public class MbEntradas implements Serializable {
 
     public void cambiaPrecio() {
         restaTotales();
-        this.entradaProducto.setPrecio(this.entradaProducto.getPrecio() * this.entrada.getTipoCambio());
+        this.entradaProducto.setCosto(this.entradaProducto.getCosto() * this.entrada.getTipoCambio());
         calculaProducto();
         sumaTotales();
     }
@@ -583,11 +585,11 @@ public class MbEntradas implements Serializable {
         this.resEntradaProducto.setImporte(this.entradaProducto.getImporte());
         this.resEntradaProducto.setNeto(this.entradaProducto.getNeto());
         this.resEntradaProducto.setUnitario(this.entradaProducto.getUnitario());
-        this.resEntradaProducto.setPrecio(this.entradaProducto.getPrecio());
+        this.resEntradaProducto.setCosto(this.entradaProducto.getCosto());
     }
 
     private void calculaProducto() {
-        double unitario = this.entradaProducto.getPrecio();
+        double unitario = this.entradaProducto.getCosto();
         unitario *= (1 - this.entrada.getDesctoComercial() / 100.00);
         unitario *= (1 - this.entrada.getDesctoProntoPago() / 100.00);
         unitario *= (1 - this.entradaProducto.getDesctoProducto1() / 100.00);
@@ -625,7 +627,7 @@ public class MbEntradas implements Serializable {
             try {
                 this.dao = new DAOMovimientos();
                 producto.setImpuestos(this.dao.generarImpuestosProducto(producto.getProducto().getArticulo().getImpuestoGrupo().getIdGrupo(), this.entrada.getIdImpuestoZona()));
-                producto.setPrecio(this.dao.obtenerPrecioUltimaCompra(this.entrada.getComprobante().getAlmacen().getEmpresa().getIdEmpresa(), producto.getProducto().getIdProducto()));
+                producto.setCosto(this.dao.obtenerPrecioUltimaCompra(this.entrada.getComprobante().getAlmacen().getEmpresa().getIdEmpresa(), producto.getProducto().getIdProducto()));
                 this.entradaDetalle.add(producto);
                 this.entradaProducto = producto;
                 this.calculaProducto();
@@ -649,17 +651,23 @@ public class MbEntradas implements Serializable {
             this.actualizaProductoSeleccionado();
         }
     }
-
-    public void entradas() {
-        this.mbComprobantes.convertirComprobante();
-        this.entrada = new Entrada();
-        this.entrada.setComprobante(this.mbComprobantes.getComprobante());
-        this.entrada.setIdImpuestoZona(this.mbComprobantes.getMbProveedores().getMiniProveedor().getIdImpuestoZona());
-        this.entradaDetalle = new ArrayList<MovimientoProducto>();
-        this.ordenCompra = new OrdenCompraEncabezado();
-        this.tipoCambio = 1;
-        this.sinOrden = true;
-        this.modoEdicion = true;
+    
+    public void nuevaEntrada() {
+        boolean oficina=false;
+        if(this.idModulo==13) {
+            oficina=true;
+        }
+        if(this.mbComprobantes.aseguraComprobante(this.mbComprobantes.getComprobante().getIdComprobante(), oficina)) {
+            this.mbComprobantes.convertirComprobante();
+            this.entrada = new Entrada();
+            this.entrada.setComprobante(this.mbComprobantes.getComprobante());
+            this.entrada.setIdImpuestoZona(this.mbComprobantes.getMbProveedores().getMiniProveedor().getIdImpuestoZona());
+            this.entradaDetalle = new ArrayList<MovimientoProducto>();
+            this.ordenCompra = new OrdenCompraEncabezado();
+            this.tipoCambio = 1;
+            this.sinOrden = true;
+            this.modoEdicion = true;
+        }
     }
 
     // Este metodo se ejecutaba al seleccionar un almacen de la lista
