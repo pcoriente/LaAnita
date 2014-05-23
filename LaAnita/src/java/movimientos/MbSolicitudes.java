@@ -147,7 +147,7 @@ public class MbSolicitudes implements Serializable {
         this.resSolicitudProducto.setImporte(this.solicitudProducto.getImporte());
         this.resSolicitudProducto.setNeto(this.solicitudProducto.getNeto());
         this.resSolicitudProducto.setUnitario(this.solicitudProducto.getUnitario());
-        this.resSolicitudProducto.setPrecio(this.solicitudProducto.getPrecio());
+        this.resSolicitudProducto.setCosto(this.solicitudProducto.getCosto());
     }
     
     public void solicitud() {

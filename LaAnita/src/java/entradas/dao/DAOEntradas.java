@@ -189,7 +189,7 @@ public class DAOEntradas {
                 if(p.getCantFacturada()> 0) {
                     capturados++;
                     
-                    ps1.setDouble(1, p.getPrecio());
+                    ps1.setDouble(1, p.getCosto());
                     ps1.setDouble(2, p.getDesctoProducto1());
                     ps1.setDouble(3, p.getDesctoProducto2());
                     ps1.setDouble(4, p.getDesctoConfidencial());
@@ -483,7 +483,7 @@ public class DAOEntradas {
         producto.setCantFacturada(rs.getDouble("cantFacturada"));
         producto.setCantSinCargo(rs.getDouble("cantSinCargo"));
         producto.setCantRecibida(rs.getDouble("cantRecibida"));
-        producto.setPrecio(rs.getDouble("costo"));
+        producto.setCosto(rs.getDouble("costo"));
         return producto;
     }
 }

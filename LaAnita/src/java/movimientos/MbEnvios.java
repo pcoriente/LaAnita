@@ -244,7 +244,7 @@ public class MbEnvios implements Serializable {
         this.envios = new ArrayList<Envio>();
         try {
             this.dao = new DAOMovimientos();
-            for (TOMovimiento m : this.dao.obtenerMovimientos(this.mbComprobantes.getMbAlmacenes().getToAlmacen().getIdAlmacen(), 2, 0)) {
+            for (TOMovimiento m : this.dao.obtenerMovimientos(this.mbComprobantes.getMbAlmacenes().getToAlmacen().getIdAlmacen(), 35, 0)) {
                 this.envios.add(this.convertir(m));
             }
             ok = true;
@@ -288,7 +288,7 @@ public class MbEnvios implements Serializable {
             this.daoImps = new DAOImpuestosProducto();
             this.envioDetalle = new ArrayList<SalidaProducto>();
             for (TOMovimientoDetalle p : this.dao.obtenerDetalleMovimiento(this.envio.getIdMovto())) {
-                this.envioDetalle.add(convertirDetalle(p));
+                this.envioDetalle.add(this.convertirDetalle(p));
             }
             this.envioProducto = new SalidaProducto();
             this.modoEdicion = true;
@@ -345,7 +345,7 @@ public class MbEnvios implements Serializable {
         this.resEnvioProducto.setImporte(this.envioProducto.getImporte());
         this.resEnvioProducto.setNeto(this.envioProducto.getNeto());
         this.resEnvioProducto.setUnitario(this.envioProducto.getUnitario());
-        this.resEnvioProducto.setPrecio(this.envioProducto.getPrecio());
+        this.resEnvioProducto.setCosto(this.envioProducto.getCosto());
         this.resEnvioProducto.setLotes(this.envioProducto.getLotes());
         this.resEnvioProducto.setImpuestos(this.envioProducto.getImpuestos());
     }

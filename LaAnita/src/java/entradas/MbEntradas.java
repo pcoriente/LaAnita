@@ -263,7 +263,7 @@ public class MbEntradas implements Serializable {
                             this.entradaProducto.setCantOrdenada(d.getCantOrdenada());
                             this.entradaProducto.setCantSinCargo(0);
                             this.entradaProducto.setCantRecibida(d.getCantOrdenada());
-                            this.entradaProducto.setPrecio(d.getCostoOrdenado());
+                            this.entradaProducto.setCosto(d.getCostoOrdenado());
                             this.entradaProducto.setDesctoProducto1(d.getDescuentoProducto());
                             this.entradaProducto.setDesctoProducto2(d.getDescuentoProducto2());
                             this.entradaProducto.setDesctoConfidencial(d.getDesctoConfidencial());
@@ -455,8 +455,8 @@ public class MbEntradas implements Serializable {
         MovimientoProducto ep = this.entradaProducto;
         for (MovimientoProducto p : this.entradaDetalle) {
             this.entradaProducto = p;
-            this.entradaProducto.setPrecio(this.entradaProducto.getPrecio() / this.tipoCambio);
-            this.entradaProducto.setPrecio(this.entradaProducto.getPrecio() * this.entrada.getTipoCambio());
+            this.entradaProducto.setCosto(this.entradaProducto.getCosto() / this.tipoCambio);
+            this.entradaProducto.setCosto(this.entradaProducto.getCosto() * this.entrada.getTipoCambio());
             calculaProducto();
             sumaTotales();
         }
@@ -507,10 +507,10 @@ public class MbEntradas implements Serializable {
 
     private void sumaTotales() {
         double suma;
-        suma = this.entradaProducto.getPrecio() * this.entradaProducto.getCantFacturada();   // Calcula el subTotal
+        suma = this.entradaProducto.getCosto() * this.entradaProducto.getCantFacturada();   // Calcula el subTotal
         this.entrada.setSubTotal(this.entrada.getSubTotal() + Math.round(suma * 100.00) / 100.00);    // Suma el importe el subtotal
 
-        suma = this.entradaProducto.getPrecio() - this.entradaProducto.getUnitario();   // Obtine el descuento por diferencia.
+        suma = this.entradaProducto.getCosto() - this.entradaProducto.getUnitario();   // Obtine el descuento por diferencia.
         suma = suma * this.entradaProducto.getCantFacturada();                           // Calcula el importe de descuento
         this.entrada.setDescuento(this.entrada.getDescuento() + Math.round(suma * 100.00) / 100.00);  // Suma el descuento
 
@@ -524,9 +524,9 @@ public class MbEntradas implements Serializable {
 
     private void restaTotales() {
         double resta;
-        resta = this.resEntradaProducto.getPrecio() * this.resEntradaProducto.getCantFacturada();
+        resta = this.resEntradaProducto.getCosto() * this.resEntradaProducto.getCantFacturada();
         this.entrada.setSubTotal(this.entrada.getSubTotal() - Math.round(resta * 100.00) / 100.00);
-        resta = this.resEntradaProducto.getPrecio() - this.resEntradaProducto.getUnitario();
+        resta = this.resEntradaProducto.getCosto() - this.resEntradaProducto.getUnitario();
         resta = resta * this.resEntradaProducto.getCantFacturada();
         this.entrada.setDescuento(this.entrada.getDescuento() - Math.round(resta * 100.00) / 100.00);
         resta = this.resEntradaProducto.getNeto() - this.resEntradaProducto.getUnitario();
@@ -544,7 +544,7 @@ public class MbEntradas implements Serializable {
 
     public void cambiaPrecio() {
         restaTotales();
-        this.entradaProducto.setPrecio(this.entradaProducto.getPrecio() * this.entrada.getTipoCambio());
+        this.entradaProducto.setCosto(this.entradaProducto.getCosto() * this.entrada.getTipoCambio());
         calculaProducto();
         sumaTotales();
     }
@@ -585,11 +585,11 @@ public class MbEntradas implements Serializable {
         this.resEntradaProducto.setImporte(this.entradaProducto.getImporte());
         this.resEntradaProducto.setNeto(this.entradaProducto.getNeto());
         this.resEntradaProducto.setUnitario(this.entradaProducto.getUnitario());
-        this.resEntradaProducto.setPrecio(this.entradaProducto.getPrecio());
+        this.resEntradaProducto.setCosto(this.entradaProducto.getCosto());
     }
 
     private void calculaProducto() {
-        double unitario = this.entradaProducto.getPrecio();
+        double unitario = this.entradaProducto.getCosto();
         unitario *= (1 - this.entrada.getDesctoComercial() / 100.00);
         unitario *= (1 - this.entrada.getDesctoProntoPago() / 100.00);
         unitario *= (1 - this.entradaProducto.getDesctoProducto1() / 100.00);
@@ -627,7 +627,7 @@ public class MbEntradas implements Serializable {
             try {
                 this.dao = new DAOMovimientos();
                 producto.setImpuestos(this.dao.generarImpuestosProducto(producto.getProducto().getArticulo().getImpuestoGrupo().getIdGrupo(), this.entrada.getIdImpuestoZona()));
-                producto.setPrecio(this.dao.obtenerPrecioUltimaCompra(this.entrada.getComprobante().getAlmacen().getEmpresa().getIdEmpresa(), producto.getProducto().getIdProducto()));
+                producto.setCosto(this.dao.obtenerPrecioUltimaCompra(this.entrada.getComprobante().getAlmacen().getEmpresa().getIdEmpresa(), producto.getProducto().getIdProducto()));
                 this.entradaDetalle.add(producto);
                 this.entradaProducto = producto;
                 this.calculaProducto();

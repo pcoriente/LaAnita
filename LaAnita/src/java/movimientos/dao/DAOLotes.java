@@ -5,8 +5,6 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.faces.context.ExternalContext;
 import javax.faces.context.FacesContext;
 import javax.naming.Context;
@@ -71,15 +69,15 @@ public class DAOLotes {
         st.executeUpdate(this.strSQL);
 
         this.strSQL = "UPDATE lotesAlmacenes SET separados=separados-" + cantidad + " "
-                + "WHERE idAlmacen=" + lote.getIdAlmacen() + " AND idProducto=" + lote.getIdProducto() + " AND lote='" + lote.getLote() + "'";
+                + "WHERE idAlmacen=" + lote.getIdAlmacen() + " AND idEmpaque=" + lote.getIdProducto() + " AND lote='" + lote.getLote() + "'";
         st.executeUpdate(this.strSQL);
 
         if (lote.getSeparados() == 0) {
             this.strSQL = "DELETE FROM lotesKardex "
-                    + "WHERE idAlmacen=" + lote.getIdAlmacen() + " AND idMovto=" + idMovto + " AND idProducto=" + lote.getIdProducto() + " AND lote='" + lote.getLote() + "'";
+                    + "WHERE idAlmacen=" + lote.getIdAlmacen() + " AND idMovto=" + idMovto + " AND idEmpaque=" + lote.getIdProducto() + " AND lote='" + lote.getLote() + "'";
         } else {
             this.strSQL = "UPDATE lotesKardex SET cantidad=cantidad-" + cantidad + " "
-                    + "WHERE idAlmacen=" + lote.getIdAlmacen() + " AND idMovto=" + idMovto + " AND idProducto=" + lote.getIdProducto() + " AND lote='" + lote.getLote() + "'";
+                    + "WHERE idAlmacen=" + lote.getIdAlmacen() + " AND idMovto=" + idMovto + " AND idEmpaque=" + lote.getIdProducto() + " AND lote='" + lote.getLote() + "'";
         }
         st.executeUpdate(this.strSQL);
     }
@@ -121,7 +119,7 @@ public class DAOLotes {
         }
         this.strSQL = "SELECT saldo-separados AS saldo "
                 + "FROM lotesAlmacenes "
-                + "WHERE idAlmacen=" + lote.getIdAlmacen() + " AND idProducto=" + lote.getIdProducto() + " AND lote='" + lote.getLote() + "'";
+                + "WHERE idAlmacen=" + lote.getIdAlmacen() + " AND idEmpaque=" + lote.getIdProducto() + " AND lote='" + lote.getLote() + "'";
         rs = st.executeQuery(this.strSQL);
         if (rs.next()) {
             if (rs.getDouble("saldo") < cantidad) {
@@ -136,21 +134,52 @@ public class DAOLotes {
             st.executeUpdate(this.strSQL);
 
             this.strSQL = "UPDATE lotesAlmacenes SET separados=separados+" + cantidad + " "
-                    + "WHERE idAlmacen=" + lote.getIdAlmacen() + " AND idProducto=" + lote.getIdProducto() + " AND lote='" + lote.getLote() + "'";
+                    + "WHERE idAlmacen=" + lote.getIdAlmacen() + " AND idEmpaque=" + lote.getIdProducto() + " AND lote='" + lote.getLote() + "'";
             st.executeUpdate(this.strSQL);
 
             if (lote.getSeparados() == cantidad) {
-                this.strSQL = "INSERT INTO lotesKardex (idAlmacen, idMovto, idProducto, lote, cantidad, suma, fecha) "
+                this.strSQL = "INSERT INTO lotesKardex (idAlmacen, idMovto, idEmpaque, lote, cantidad, suma, fecha) "
                         + "VALUES(" + lote.getIdAlmacen() + ", " + idMovto + ", " + lote.getIdProducto() + ", '" + lote.getLote() + "', " + cantidad + ", 0, GETDATE())";
             } else {
                 this.strSQL = "UPDATE lotesKardex SET cantidad=cantidad+" + cantidad + " "
-                        + "WHERE idAlmacen=" + lote.getIdAlmacen() + " AND idMovto=" + idMovto + " AND idProducto=" + lote.getIdProducto() + " AND lote='" + lote.getLote() + "'";
+                        + "WHERE idAlmacen=" + lote.getIdAlmacen() + " AND idMovto=" + idMovto + " AND idEmpaque=" + lote.getIdProducto() + " AND lote='" + lote.getLote() + "'";
             }
             st.executeUpdate(this.strSQL);
         } else {
             cantidad = 0;
         }
         return cantidad;
+    }
+    
+    public ArrayList<Lote> obtenerLotesEnvio(int idAlmacen, int idMovto, int idProducto) throws SQLException {
+        ArrayList<Lote> lotes = new ArrayList<Lote>();
+        Connection cn = this.ds.getConnection();
+        Statement st = cn.createStatement();
+        try {
+            this.strSQL = "SELECT K.idEmpaque, K.lote, K.cantidad, 0 AS saldo, K.cantidad AS separados, A.fechaCaducidad "
+                    + "FROM lotesKardex K "
+                    + "INNER JOIN lotesAlmacenes A ON A.idAlmacen=K.idAlmacen AND A.idEmpaque=K.idEmpaque AND A.lote=K.lote "
+                    + "WHERE K.idAlmacen=" + idAlmacen + " AND K.idMovto=" + idMovto + " AND K.idEmpaque=" + idProducto;
+            ResultSet rs = st.executeQuery(this.strSQL);
+            while (rs.next()) {
+                lotes.add(this.construirLoteRecepcion(rs));
+            }
+        } finally {
+            cn.close();
+        }
+        return lotes;
+    }
+    
+    private Lote construirLoteRecepcion(ResultSet rs) throws SQLException {
+        Lote lote=new Lote();
+        lote.setIdAlmacen(0);
+        lote.setIdProducto(rs.getInt("idEmpaque"));
+        lote.setLote(rs.getString("lote"));
+        lote.setCantidad(rs.getDouble("cantidad"));
+        lote.setSaldo(0);
+        lote.setSeparados(rs.getDouble("separados"));
+        lote.setFechaCaducidad(new java.util.Date(rs.getDate("fechaCaducidad").getTime()));
+        return lote;
     }
 
     public ArrayList<Lote> obtenerLotes(int idAlmacen, int idMovto, int idProducto) throws SQLException {
@@ -159,16 +188,16 @@ public class DAOLotes {
         Statement st = cn.createStatement();
         try {
 //            st.execute("BEGIN TRANSACTION");
-            this.strSQL = "SELECT idAlmacen, idProducto, lote, cantidad, saldo, separados, fechaCaducidad "
+            this.strSQL = "SELECT idAlmacen, idEmpaque, lote, cantidad, saldo, separados, fechaCaducidad "
                     + "FROM lotesAlmacenes "
-                    + "WHERE idalmacen=" + idAlmacen + " AND idProducto=" + idProducto + " AND saldo > 0 "
+                    + "WHERE idalmacen=" + idAlmacen + " AND idEmpaque=" + idProducto + " AND saldo > 0 "
                     + "ORDER BY lote";
             ResultSet rs = st.executeQuery(this.strSQL);
             while (rs.next()) {
                 lotes.add(this.construir(rs));
             }
             this.strSQL = "SELECT * FROM lotesKardex "
-                    + "WHERE idAlmacen=" + idAlmacen + " AND idMovto=" + idMovto + " AND idProducto=" + idProducto;
+                    + "WHERE idAlmacen=" + idAlmacen + " AND idMovto=" + idMovto + " AND idEmpaque=" + idProducto;
             rs = st.executeQuery(this.strSQL);
             while (rs.next()) {
                 for (Lote l : lotes) {
@@ -191,7 +220,7 @@ public class DAOLotes {
     private Lote construir(ResultSet rs) throws SQLException {
         Lote lote = new Lote();
         lote.setIdAlmacen(rs.getInt("idAlmacen"));
-        lote.setIdProducto(rs.getInt("idProducto"));
+        lote.setIdProducto(rs.getInt("idEmpaque"));
         lote.setLote(rs.getString("lote"));
         lote.setCantidad(rs.getDouble("cantidad"));
         lote.setSaldo(rs.getDouble("saldo") - rs.getDouble("separados"));
