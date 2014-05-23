@@ -36,7 +36,7 @@ public class MbParte implements Serializable {
     public ArrayList<Parte> completePartes(String query) {
         boolean ok=false;
         ArrayList<Parte> partes=null;
-        FacesMessage fMsg = new FacesMessage(FacesMessage.SEVERITY_ERROR, "Aviso:", "");
+        FacesMessage fMsg = new FacesMessage(FacesMessage.SEVERITY_ERROR, "Aviso:", "completePartes");
         try {
             this.dao = new DAOPartes();
              partes = this.dao.completePartes(query);
@@ -55,7 +55,7 @@ public class MbParte implements Serializable {
     public boolean eliminar() {
         boolean ok=false;
         RequestContext context = RequestContext.getCurrentInstance();
-        FacesMessage fMsg = new FacesMessage(FacesMessage.SEVERITY_ERROR, "Aviso:", "");
+        FacesMessage fMsg = new FacesMessage(FacesMessage.SEVERITY_ERROR, "Aviso:", "eliminar: mbParte");
         try {
             this.dao=new DAOPartes();
             this.dao.eliminar(this.parte.getIdParte());
@@ -76,7 +76,7 @@ public class MbParte implements Serializable {
     public boolean grabar() {
         boolean ok=false;
         RequestContext context = RequestContext.getCurrentInstance();
-        FacesMessage fMsg = new FacesMessage(FacesMessage.SEVERITY_ERROR, "Aviso:", "");
+        FacesMessage fMsg = new FacesMessage(FacesMessage.SEVERITY_ERROR, "Aviso:", "grabar: mbParte");
         if(this.parte==null || this.parte.getParte().equals("")) {
             fMsg.setDetail("Se requiere identificar la parte");
         } else {

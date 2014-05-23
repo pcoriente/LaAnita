@@ -19,11 +19,51 @@
                     <p:growl id="growl" autoUpdate="true" showDetail="true"/>  
                     <div align="right">
                         <p:commandButton icon="ui-icon-document"
-                                         oncomplete="dlgClientTienda.show();"/>
+                                         actionListener="#{mbClientesTienda.limpiarCampos()}"
+                                         update="txtCodigo txtCodigoCliente txtnombre cmbRutas cmbFormatos txtDireccion :form:panelCapturaDireccion"
+                                         oncomplete="dlgClientTienda.show();"
+                                         process="@this"/>
+                        <p:commandButton id="btnEditarClienteTienda" 
+                                         icon="ui-icon-pencil"
+                                         oncomplete="dlgClientTienda.show();"
+                                         process="@this"
+                                         disabled="#{mbClientesTienda.clienteTiendaSeleccionado==null}"/>
+                        <p:commandButton icon="ui-icon-arrowreturnthick-1-w"
+                                         ajax="false"
+                                         title="Salir"
+                                         immediate="true"
+                                         action="#{mbClientesBueno.salir()}"/>
                     </div>
                     <p:panel header="Grupo de Cliente" 
                              styleClass="quitaCuadro">
-                        <p:dataTable>
+                        <p:dataTable id="tablaClientesTienda" 
+                                     value="#{mbClientesTienda.lstClientesGrupos}"
+                                     var="table"
+                                     selection="#{mbClientesTienda.clienteTiendaSeleccionado}"
+                                     selectionMode="single"
+                                     rowKey="#{table}"
+                                     emptyMessage="No hay Tiendas Disponibles">
+                            <p:ajax event="rowSelect"
+                                    process="@this"
+                                    listener="#{mbClientesTienda.cargarDatos()}"
+                                    update=":form:panelClientesTiendas 
+                                    :form:tablaClientesTienda 
+                                    :form:btnEditarClienteTienda
+                                    :form:panelCapturaDireccion
+                                    :form:calle"
+                                    />
+                            <p:column headerText="Codigo">
+                                #{table.codigoTienda}
+                            </p:column>
+                            <p:column headerText="Nombre">
+                                #{table.nombre}
+                            </p:column>
+                            <p:column headerText="Ruta">
+                                #{table.ruta.ruta}
+                            </p:column>
+                            <p:column headerText="Formato">
+                                #{table.formatos.formato}
+                            </p:column>
                         </p:dataTable>
                     </p:panel>
                     <p:dialog header="Mantenimineto de Tiendas"
@@ -31,8 +71,10 @@
                               resizable="false"
                               showEffect="explode"
                               modal="true"
-                              hideEffect="explode">
-                        <h:panelGrid columns="3">
+                              hideEffect="explode"
+                              closable="false">
+                        <h:panelGrid columns="3"
+                                     id="panelClientesTiendas">
                             <h:outputText value="Codigo:"/>
                             <pe:inputNumber  id="txtCodigo"
                                              emptyValue="zero"
@@ -62,7 +104,10 @@
                             </p:selectOneMenu>
                             <p:commandButton icon="ui-icon-plus"
                                              title="Mtt. Formatos"
-                                             oncomplete="dlgFormatos.show();"/>
+                                             process="@this cmbFormatos"
+                                             actionListener="#{mbClientesTienda.cargarFormatos()}"
+                                             oncomplete="dlgFormatos.show();" 
+                                             update=":form:panelFormatos"/>
                             <h:outputText value="Ruta:"/>
                             <p:selectOneMenu  id="cmbRutas" 
                                               style="width: 150px"
@@ -73,7 +118,10 @@
                             </p:selectOneMenu>
                             <p:commandButton icon="ui-icon-plus"
                                              title="Mtt. Ruta"
-                                             oncomplete="dlgRutas.show();"/>
+                                             process="@this cmbRutas"
+                                             actionListener="#{mbClientesTienda.cargarRutas()}"
+                                             oncomplete="dlgRutas.show();"
+                                             update=":form:panelRutas"/>
                             <h:outputText value="Codigo Cliente:"/>
                             <pe:inputNumber  emptyValue="zero"
                                              decimalPlaces="0"
@@ -83,10 +131,24 @@
                         </h:panelGrid>
                         <div style="margin: auto">
                             <p:commandButton icon="ui-icon-disk"
+                                             title="Guardar"
                                              process="@this  txtCodigo txtCodigoCliente txtnombre cmbRutas cmbFormatos txtDireccion"
                                              actionListener="#{mbClientesTienda.guardarClientesTiendas()}"
-                                             update="growl"
+                                             update="growl 
+                                             tablaClientesTienda 
+                                             btnEditarClienteTienda 
+                                             :form:panelFormatos
+                                             :form:panelRutas"
                                              oncomplete="nuevoClienteTieda(xhr, status, args)"/>
+                            <p:commandButton icon="ui-icon-arrowreturnthick-1-w"
+                                             title="Salir"
+                                             actionListener="#{mbClientesTienda.limpiarCampos()}"
+                                             update="panelClientesTiendas 
+                                             tablaClientesTienda 
+                                             btnEditarClienteTienda
+                                             :form:panelFormatos
+                                             :form:panelRutas"
+                                             oncomplete="dlgClientTienda.hide();"/>
                         </div>
                     </p:dialog>
                     <p:dialog  header="Nueva Dirección" 
@@ -171,8 +233,10 @@
                     </p:dialog>
 
                     <p:dialog header="Mtto. Rutas"
-                              widgetVar="dlgRutas">
-                        <h:panelGrid columns="2">
+                              widgetVar="dlgRutas"
+                              modal="true">
+                        <h:panelGrid columns="2"
+                                     id="panelRutas">
                             <h:outputText value="Formato:"/>
                             <p:inputText id="txtRuta"  value="#{mbClientesTienda.mbRutas.ruta.ruta}"/>
                         </h:panelGrid>
@@ -184,14 +248,16 @@
                                              update="growl cmbRutas"
                                              oncomplete="nuevaRuta(xhr, status, args);"/>
                         </div>
-
                     </p:dialog>
 
                     <p:dialog widgetVar="dlgFormatos"
-                              header="Mantenimiento Formato">
-                        <h:panelGrid columns="2">
+                              header="Mantenimiento Formato"
+                              modal="true">
+                        <h:panelGrid columns="2"
+                                     id="panelFormatos">
                             <h:outputText value="Formato:"/>
-                            <p:inputText id="txtFormato" value="#{mbClientesTienda.mbFormatos.formato.formato}"/>
+                            <p:inputText id="txtFormato" 
+                                         value="#{mbClientesTienda.mbFormatos.formato.formato}"/>
                             <h:outputText value="Grupo"/>
                             <p:selectOneMenu style="width: 155px"
                                              filter="true"
@@ -209,8 +275,6 @@
                                              oncomplete="nuevoFormato(xhr, status, args)"/>
                         </div>
                     </p:dialog>
-
-
                 </h:form>
             </div>
             <ui:include src="footer.html" />

@@ -240,7 +240,7 @@
                                 </p:column>
                                 <p:column style="width: 150px;" >
                                     <p:selectOneMenu id="empaque" value="#{mbListas.mbProducto.producto.empaque}" >
-                                        <f:converter converterId="converters.UnidadEmpaque" />
+                                        <f:converter converterId="converters.Empaque" />
                                         <f:selectItems value="#{mbListas.mbProducto.listaEmpaques}" />
                                         <p:ajax event="change" listener="#{mbListas.mbProducto.actualizarPiezas()}" process="@this" update="txtPiezas" />
                                     </p:selectOneMenu>
@@ -733,11 +733,11 @@
                                 <p:column rendered="#{mbListas.mbBuscar.tipoBuscar=='2'}" >
                                     <p:autoComplete id="opcionParte" value="#{mbListas.mbBuscar.mbParte.parte}" maxlength="50" size="30"
                                                     completeMethod="#{mbListas.mbBuscar.mbParte.completePartes}" process="@this"
-                                                    var="p" itemLabel="#{p.parte}" itemValue="#{p}" converter="converters.ParteBuscar" 
+                                                    var="p" itemLabel="#{p.parte}" itemValue="#{p}" converter="converters.Parte" 
                                                     forceSelection="true" />
                                     <p:commandButton id="btnBuscarLista" icon="ui-icon-check" title="Buscar" 
                                                      process="@this opcionParte" actionListener="#{mbListas.buscar()}" 
-                                                     update="listaBuscarProductos" oncomplete="handleBuscar(xhr, status, args)" />
+                                                     update="listaBuscarProductos" />
                                 </p:column>
                             </p:row>
                         </p:panelGrid>

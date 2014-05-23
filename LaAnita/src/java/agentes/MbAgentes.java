@@ -398,7 +398,7 @@ public class MbAgentes implements Serializable {
             listaMiniCedis.add(cero);
 
             this.dao = new DAOMiniCedis();
-            for (MiniCedis m : this.dao.obtenerTodasListaMiniCedis()) {
+            for (MiniCedis m : this.dao.obtenerListaMiniCedisTodos()) {
                 listaMiniCedis.add(new SelectItem(m, m.toString()));
             }
             ok = true;

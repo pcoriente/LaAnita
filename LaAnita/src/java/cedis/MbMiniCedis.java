@@ -20,11 +20,20 @@ import javax.naming.NamingException;
 @SessionScoped
 public class MbMiniCedis implements Serializable {
     private MiniCedis cedis;
-    private ArrayList<SelectItem> listaMiniCedis =null;
+    private ArrayList<SelectItem> listaMiniCedis;
     private DAOMiniCedis dao;
     
     public MbMiniCedis() {
+        this.inicializaLocales();
+    }
+    
+    public void inicializar() {
+        this.inicializaLocales();
+    }
+    
+    private void inicializaLocales() {
         this.cedis=new MiniCedis();
+        this.setListaMiniCedis(null);
     }
     
     public void obtenerDefaultCedis() {

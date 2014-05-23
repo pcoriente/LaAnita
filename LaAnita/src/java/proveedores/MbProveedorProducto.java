@@ -103,10 +103,10 @@ public class MbProveedorProducto implements Serializable {
             fMsg.setDetail("Se requiere la descripción del producto");
         } else if (this.producto.getPresentacion().getIdPresentacion() == 0) {
             fMsg.setDetail("Se requiere la presentación del producto");
-        } else if (this.producto.getPresentacion().getIdPresentacion() > 1 && (this.producto.getContenido() <= 0 || this.producto.getContenido() >= 1000)) {
-            this.producto.setContenido(0);
-            fMsg.setDetail("El contenido debe ser un número de 0 a 1000");
-        } else if (this.producto.getPresentacion().getIdPresentacion() > 1 && this.producto.getUnidadMedida().getIdUnidadMedida() == 0) {
+//        } else if (this.producto.getPresentacion().getIdPresentacion() > 1 && (this.producto.getContenido() <= 0 || this.producto.getContenido() >= 1000)) {
+//            this.producto.setContenido(0);
+//            fMsg.setDetail("El contenido debe ser un número de 0 a 1000");
+        } else if (this.producto.getUnidadMedida().getIdUnidadMedida() == 0) {
             fMsg.setDetail("Se requiere la unidad de medida !!");
         } else if (this.producto.getImpuestoGrupo().getIdGrupo() == 0) {
             fMsg.setDetail("Se requiere un impuesto !!");

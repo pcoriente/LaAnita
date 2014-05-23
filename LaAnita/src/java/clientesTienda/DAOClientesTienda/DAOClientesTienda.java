@@ -51,7 +51,9 @@ public class DAOClientesTienda {
                 + "inner join clientesFormato cf\n"
                 + "on ct.idFormato = cf.idFormato\n"
                 + "inner join clientesGrupos cg\n"
-                + "on ct.idGrupoCte = cg.idGrupoCte";
+                + "on ct.idGrupoCte = cg.idGrupoCte "
+                + "inner join rutas rut "
+                + "on rut.idRuta = ct.idRuta";
         Connection cn = ds.getConnection();
         Statement st = cn.createStatement();
         try {
@@ -77,6 +79,8 @@ public class DAOClientesTienda {
                 ct.getFormatos().setIdFormato(rs.getInt("idFormato"));
                 ct.getFormatos().setFormato(rs.getString("formato"));
                 ct.getFormatos().getClientesGrupo().setIdGrupoCte(rs.getInt("idGrupo"));
+                ct.getRuta().setIdRuta(rs.getInt("idRuta"));
+                ct.getRuta().setRuta(rs.getString("ruta"));
                 lst.add(ct);
             }
         } finally {
@@ -88,16 +92,40 @@ public class DAOClientesTienda {
     public void guardarClientesTienda(ClienteTienda clienteTienda) throws SQLException {
         Connection cn = ds.getConnection();
         Statement st = cn.createStatement();
+        ResultSet rs = null;
         int idDireccion = 0;
         String sqlInsertarDireccion = "INSERT INTO direcciones"
-                + " (calle, numeroExterior, numeroInterior, colonia, localidad, referencia, municipio, estado , idPais, codigoPostal, numeroLocalicacion) "
+                + " (calle, numeroExterior, numeroInterior, colonia, localidad, referencia, municipio, estado , idPais, codigoPostal, numeroLocalizacion) "
                 + " VALUES('" + clienteTienda.getDireccion().getCalle() + "', '" + clienteTienda.getDireccion().getNumeroExterior() + "', '" + clienteTienda.getDireccion().getNumeroInterior() + "', "
                 + "'" + clienteTienda.getDireccion().getColonia() + "', '" + clienteTienda.getDireccion().getLocalidad() + "', "
                 + "'" + clienteTienda.getDireccion().getReferencia() + "', '" + clienteTienda.getDireccion().getMunicipio() + "', '" + clienteTienda.getDireccion().getEstado() + "', '" + clienteTienda.getDireccion().getPais().getIdPais() + "', "
                 + "'" + clienteTienda.getDireccion().getCodigoPostal() + "', '" + clienteTienda.getDireccion().getNumeroLocalizacion() + "')";
-        String sqlInsertarClienteTienda = "INSERT INTO (codigoTienda, nombre, idDireccion, idFormato, idRuta, codigoCliente) "
-                + " VALUES ('" + clienteTienda.getCodigoCliente() + "', '" + clienteTienda.getNombre() + "', '" + idDireccion + "', '" + clienteTienda.getFormatos().getIdFormato() + "', '" + clienteTienda.getFormatos().getIdFormato() + "', '" + clienteTienda.getRuta().getIdRuta() + "', '" + clienteTienda.getCodigoCliente() + "')";
-
+        try {
+            st.executeUpdate("begin transaction");
+            st.executeUpdate(sqlInsertarDireccion);
+            rs = st.executeQuery("SELECT @@IDENTITY AS idDireccion");
+            while (rs.next()) {
+                idDireccion = rs.getInt("idDireccion");
+            }
+            String sqlInsertarClienteTienda = "INSERT INTO clientesTiendas (codigoTienda, nombre, idDireccion, idFormato, idRuta, codigoCliente) "
+                    + " VALUES ('" + clienteTienda.getCodigoCliente() + "', '" + clienteTienda.getNombre() + "', '" + idDireccion + "', '" + clienteTienda.getFormatos().getIdFormato() + "', '" + clienteTienda.getRuta().getIdRuta() + "', '" + clienteTienda.getCodigoCliente() + "')";
+            st.executeUpdate(sqlInsertarClienteTienda);
+            st.executeUpdate("commit transaction");
+        } catch (SQLException e) {
+            st.executeUpdate("rollback transaction");
+        } finally {
+            cn.close();
+        }
     }
 
+    public void actualizarClientesTienda(ClienteTienda clientes) throws SQLException {
+        Connection cn = ds.getConnection();
+        Statement st = cn.createStatement();
+        String sql = "UPDATE clientesTiendas set codigoTienda='" + clientes.getCodigoTienda() + "', nombre = '" + clientes.getNombre() + "', idFormato ='" + clientes.getFormatos().getIdFormato() + "', idRuta ='" + clientes.getRuta().getIdRuta() + "', codigoCliente = '" + clientes.getCodigoCliente() + "' WHERE idGrupoCte ='"+clientes.getIdClienteTienda()+"'";
+        try {
+            st.executeUpdate(sql);
+        } finally {
+            cn.close();
+        }
+    }
 }

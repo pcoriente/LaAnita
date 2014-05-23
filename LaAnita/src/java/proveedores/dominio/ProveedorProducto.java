@@ -55,10 +55,9 @@ public class ProveedorProducto {
 
     @Override
     public String toString() {
-        return (this.marca.getIdMarca()==0 ? "" : this.marca.toString()) 
-                + (this.marca.getIdMarca()==0 ? "" : " ") + this.producto + " " + this.presentacion.getAbreviatura()
-                + (this.contenido == 0 ? "" : " " + Double.toString(this.contenido))
-                + (this.contenido == 0 || this.unidadMedida.getIdUnidadMedida() == 0 ? "" : " " + this.unidadMedida.getAbreviatura())
+        return (this.marca.getIdMarca()==0 ? "" : this.marca.toString()+" ") 
+                + this.producto + " " + this.presentacion.getAbreviatura()
+                + (this.contenido == 0 ? "("+this.unidadMedida.getAbreviatura()+")" : " " + Double.toString(this.contenido))
                 + (this.empaque.getIdEmpaque()==1 ? "" : " " + this.empaque.getAbreviatura() + "x" + Integer.toString(this.piezas));
     }
 

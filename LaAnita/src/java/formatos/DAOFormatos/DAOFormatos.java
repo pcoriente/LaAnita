@@ -74,7 +74,10 @@ public class DAOFormatos {
 
     public Formato dameFormato(int id) throws SQLException {
         Formato formato = new Formato();
-        String sql = "SELECT * FROM clientesFormato WHERE idFormato='" + id + "'";
+        String sql = "SELECT * FROM clientesFormato cf"
+                + " inner join clientesGrupos cg\n"
+                + "on cf.idGrupo = cg.idGrupoCte "
+                + " WHERE idFormato='" + id + "'";
         Connection cn = ds.getConnection();
         Statement st = cn.createStatement();
         try {
@@ -82,10 +85,22 @@ public class DAOFormatos {
             while (rs.next()) {
                 formato.setIdFormato(rs.getInt("idFormato"));
                 formato.setFormato(rs.getString("formato"));
+                formato.getClientesGrupo().setIdGrupoCte(rs.getInt("idGrupoCte"));
             }
         } finally {
             cn.close();
         }
         return formato;
+    }
+
+    public void actualizar(Formato formato) throws SQLException {
+        String sql = "UPDATE clientesFormato set formato = '" + formato.getFormato() + "', idGrupo = '" + formato.getClientesGrupo().getIdGrupoCte() + "' WHERE idFormato ='" + formato.getIdFormato() + "'";
+        Connection cn = ds.getConnection();
+        Statement st = cn.createStatement();
+        try {
+            st.executeUpdate(sql);
+        } finally {
+            cn.close();
+        }
     }
 }

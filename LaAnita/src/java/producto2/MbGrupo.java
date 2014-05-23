@@ -50,7 +50,7 @@ public class MbGrupo implements Serializable {
     private void cargarListaGrupos() {
         boolean ok=false;
         this.listaGrupos=new ArrayList<SelectItem>();
-        FacesMessage fMsg = new FacesMessage(FacesMessage.SEVERITY_ERROR, "Aviso:", "");
+        FacesMessage fMsg = new FacesMessage(FacesMessage.SEVERITY_ERROR, "Aviso:", "cargarListaGrupos");
         try {
             this.dao=new DAOGrupos();
             Grupo g0=new Grupo(0, 0, "SELECCCIONE");
@@ -72,7 +72,7 @@ public class MbGrupo implements Serializable {
     public boolean eliminar() {
         boolean ok = false;
         RequestContext context = RequestContext.getCurrentInstance();
-        FacesMessage fMsg = new FacesMessage(FacesMessage.SEVERITY_WARN, "Aviso:", "");
+        FacesMessage fMsg = new FacesMessage(FacesMessage.SEVERITY_WARN, "Aviso:", "eliminar: mbGrupo");
         try {
             this.dao = new DAOGrupos();
             this.dao.eliminar(this.grupo.getIdGrupo());
@@ -96,7 +96,7 @@ public class MbGrupo implements Serializable {
     public boolean grabar() {
         boolean ok = false;
         RequestContext context = RequestContext.getCurrentInstance();
-        FacesMessage fMsg = new FacesMessage(FacesMessage.SEVERITY_WARN, "Aviso:", "");
+        FacesMessage fMsg = new FacesMessage(FacesMessage.SEVERITY_WARN, "Aviso:", "grabar: mbGrupo");
         if (this.grupo.getGrupo().isEmpty()) {
             fMsg.setDetail("Se requiere el grupo");
         } else {
@@ -139,7 +139,7 @@ public class MbGrupo implements Serializable {
     public int obtenerUltimoGrupo() {
         int ultimo = 0;
         boolean ok = false;
-        FacesMessage fMsg = new FacesMessage(FacesMessage.SEVERITY_WARN, "Aviso:", "");
+        FacesMessage fMsg = new FacesMessage(FacesMessage.SEVERITY_WARN, "Aviso:", "obtenerUltimoGrupo");
         try {
             this.dao = new DAOGrupos();
             ultimo = this.dao.obtenerUltimoCodigoGrupo();
@@ -162,7 +162,7 @@ public class MbGrupo implements Serializable {
         boolean ok = false;
         this.grupos = new ArrayList<Grupo>();
         RequestContext context = RequestContext.getCurrentInstance();
-        FacesMessage fMsg = new FacesMessage(FacesMessage.SEVERITY_WARN, "Aviso:", "");
+        FacesMessage fMsg = new FacesMessage(FacesMessage.SEVERITY_WARN, "Aviso:", "obtenerGrupos");
         try {
             this.dao = new DAOGrupos();
             this.grupos = this.dao.obtenerGrupos();

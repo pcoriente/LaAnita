@@ -43,27 +43,27 @@ public class DAOOrdenDeCompra {
             throw (ex);
         }
     }
-    
+
     public int aseguraOrdenCompra(int idOrdenCompra) throws SQLException {
-        int propietario=0;
+        int propietario = 0;
         Connection cn = ds.getConnection();
         Statement st = cn.createStatement();
         try {
             st.executeUpdate("BEGIN TRANSACTION");
-            
-            ResultSet rs=st.executeQuery("SELECT propietario FROM ordenCompra WHERE idOrdenCompra="+idOrdenCompra);
-            if(rs.next()) {
-                propietario=rs.getInt("propietario");
-                if(propietario==0 ) {
-                    propietario=this.usuarioSesion.getUsuario().getId();
-                    st.executeUpdate("UPDATE ordenCompra SET propietario="+propietario+", estado=5 " +
-                                     "WHERE idOrdenCompra="+idOrdenCompra);
+
+            ResultSet rs = st.executeQuery("SELECT propietario FROM ordenCompra WHERE idOrdenCompra=" + idOrdenCompra);
+            if (rs.next()) {
+                propietario = rs.getInt("propietario");
+                if (propietario == 0) {
+                    propietario = this.usuarioSesion.getUsuario().getId();
+                    st.executeUpdate("UPDATE ordenCompra SET propietario=" + propietario + ", estado=5 "
+                            + "WHERE idOrdenCompra=" + idOrdenCompra);
                 }
             }
             st.executeUpdate("COMMIT TRANSACTION");
-        } catch(SQLException e) {
+        } catch (SQLException e) {
             st.executeUpdate("ROLLBACK TRANSACTION");
-            throw(e);
+            throw (e);
         } finally {
             cn.close();
         }
@@ -94,7 +94,6 @@ public class DAOOrdenDeCompra {
                     + "                               where oc.estado >0\n"
                     + "                               order by oc.idOrdenCompra desc";
 
-//            //Statement sentencia = cn.createStatement();
             ResultSet rs = sentencia.executeQuery(stringSQL);
             while (rs.next()) {
                 lista.add(construirOCEncabezado(rs));
@@ -110,16 +109,15 @@ public class DAOOrdenDeCompra {
         Connection cn = ds.getConnection();
         Statement sentencia = cn.createStatement();
         try {
-
             String stringSQL = "select oc.idOrdenCompra, oc.fechaCreacion, oc.fechaFinalizacion, oc.fechaPuesta, oc.fechaEntrega, oc.estado, oc.idMoneda \n"
                     + "                                       , m.idMoneda, m.Moneda, m.codigoIso\n"
                     + "                                       , isnull(c.idCotizacion, 0) as idCotizacion, isnull(c.idRequisicion,0) as idRequisicion, isnull(c.desctoComercial,0.00) as desctoComercial, isnull(c.desctoProntoPago,0.00) as desctoProntoPago\n"
                     + "                                       , isnull(c.idProveedor,0) as idProveedor, isnull(c.idDireccionEntrega,0) as idDireccionEntrega\n"
-                    + "                                       , isnull(c.nombreComercial,'') as nombreComercial,  isnull(c.idDireccion, 0) as idDireccion\n"
+                    + "                                       , isnull(c.nombreComercial,'') as nombreComercial, isnull(c.idDirEmp,0) as idDireEmpre,  isnull(c.idDireccion, 0) as idDireccion\n"
                     + "                               from ordenCompra oc\n"
                     + "                               inner join webSystem.dbo.monedas m on m.idMoneda=oc.idMoneda\n"
                     + "                               left join (select c.idCotizacion, c.idRequisicion, c.descuentoCotizacion as desctoComercial, c.descuentoProntoPago as desctoProntoPago\n"
-                    + "                                               , p.idProveedor, p.idDireccionEntrega, eg.nombreComercial, d.idDireccion\n"
+                    + "                                               , p.idProveedor, p.idDireccionEntrega, eg.nombreComercial, eg.idDireccion as idDirEmp, d.idDireccion\n"
                     + "                                           from cotizaciones c\n"
                     + "                                           inner join proveedores p on p.idProveedor = c.idProveedor\n"
                     + "                                           inner join contribuyentes co on co.idContribuyente = p.idContribuyente\n"
@@ -129,7 +127,6 @@ public class DAOOrdenDeCompra {
                     + "                               where oc.idProveedor=" + idProveedor + " and oc.estado=" + status + "\n"
                     + "                               order by oc.idOrdenCompra desc";
 
-            //Statement sentencia = cn.createStatement();
             ResultSet rs = sentencia.executeQuery(stringSQL);
             while (rs.next()) {
                 lista.add(construirOCEncabezado(rs));
@@ -209,16 +206,14 @@ public class DAOOrdenDeCompra {
         ResultSet rs;
         Connection cn = ds.getConnection();
         try {
+            String stringSQL = "select oc.idOrdenCompra, oc.idCotizacion, ocd.idProducto, ocd.cantOrdenada, ocd.costoOrdenado"
+                    + "           , ocd.descuentoProducto, ocd.descuentoProducto2, ocd.sku, isnull(r.idEmpresa, 0) as idEmpresa "
+                    + "from ordencompra oc "
+                    + "inner join ordenCompraDetalle ocd on ocd.idOrdenCompra = oc.idOrdenCompra "
+                    + "left join cotizaciones c on c.idCotizacion=oc.idCotizacion "
+                    + "left join requisiciones r on r.idRequisicion=c.idRequisicion "
+                    + "where oc.idOrdenCompra=" + idOC;
 
-            String stringSQL = "select oc.idOrdenCompra, oc.idCotizacion, ocd.idEmpaque, ocd.cantOrdenada, ocd.costoOrdenado, ocd.descuentoProducto, ocd.descuentoProducto2, ocd.sku, r.idEmpresa\n"
-                    + "                         from ordencompra oc\n"
-                    + "                         inner join ordenCompraDetalle ocd on ocd.idOrdenCompra = oc.idOrdenCompra\n"
-                    + "                         inner join cotizaciones c on c.idCotizacion= oc.idCotizacion\n"
-                    + "                         inner join requisiciones r on r.idRequisicion= c.idRequisicion\n"
-                    + "                        where oc.idOrdenCompra=" + idOC;
-//ORDEN DE COMPRA DIRECTA NO FUNCIONA
-//sku CHECAR
-//idEmpresa.
             Statement sentencia = cn.createStatement();
             rs = sentencia.executeQuery(stringSQL);
             while (rs.next()) {
@@ -234,16 +229,8 @@ public class DAOOrdenDeCompra {
         OrdenCompraDetalle ocd = new OrdenCompraDetalle();
         DAOCotizaciones daoC = new DAOCotizaciones();
         ocd.setCotizacionDetalle(daoC.dameCotizacion(rs.getInt("idCotizacion")));
-        
-//        DAOEmpaques daoEmp = new DAOEmpaques();
-//        DAOProductos daoProds = new DAOProductos();
-//        TOEmpaque to = daoEmp.obtenerEmpaque(rs.getInt("idEmpaque"));
-//        Empaque empaque =convertir(to, daoProds.obtenerProducto(to.getIdProducto()));
-        
         ocd.setProducto(new Producto());
-        ocd.getProducto().setIdProducto(rs.getInt("idEmpaque"));
-//        ocd.setEmpaque(empaque);
-//        ocd.setSku(rs.getString("sku"));
+        ocd.getProducto().setIdProducto(rs.getInt("idProducto"));
         ocd.setIdOrdenCompra(rs.getInt("idOrdenCompra"));
         ocd.setCantOrdenada(rs.getDouble("cantOrdenada"));
         ocd.setCantidadSolicitada(rs.getDouble("cantOrdenada"));
@@ -253,14 +240,14 @@ public class DAOOrdenDeCompra {
         return ocd;
     }
 
-    public void actualizarCantidadOrdenada(int idOrden, int idEmp, double cc) throws SQLException {
+    public void actualizarCantidadOrdenada(int idOrden, int idProd, double cc) throws SQLException {
 
         Connection cn = this.ds.getConnection();
         Statement st = cn.createStatement();
         PreparedStatement ps2;
         try {
             //CABECERO
-            String strSQL2 = "UPDATE ordenCompraDetalle SET cantOrdenada=" + cc + "  WHERE idOrdenCompra=" + idOrden + " and idEmpaque=" + idEmp + "";
+            String strSQL2 = "UPDATE ordenCompraDetalle SET cantOrdenada=" + cc + "  WHERE idOrdenCompra=" + idOrden + " and idProducto=" + idProd + "";
             ps2 = cn.prepareStatement(strSQL2);
             ps2.executeUpdate();
         } catch (SQLException e) {
@@ -331,22 +318,8 @@ public class DAOOrdenDeCompra {
         cont.setCorreo(rs.getString("correo"));
         return cont;
     }
-    
+
     public int obtenerIdUsuario() {
         return this.usuarioSesion.getUsuario().getId();
     }
-    
-//    private Empaque convertir(TOEmpaque to, Producto p) {
-//        Empaque e = new Empaque();
-//        e.setIdEmpaque(to.getIdEmpaque());
-//        e.setCod_pro(to.getCod_pro());
-//        e.setProducto(p);
-//        e.setPiezas(to.getPiezas());
-//        e.setUnidadEmpaque(to.getUnidadEmpaque());
-//        e.setSubEmpaque(to.getSubEmpaque());
-//        e.setDun14(to.getDun14());
-//        e.setPeso(to.getPeso());
-//        e.setVolumen(to.getVolumen());
-//        return e;
-//    }
 }

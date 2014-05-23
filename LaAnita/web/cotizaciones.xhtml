@@ -31,7 +31,8 @@
                                     icon="ui-icon-disk"
                                     title="Guardar cotización"
                                     actionListener="#{mbRequisiciones.guardaCotizacion(mbRequisiciones.requisicionEncabezado.idRequisicion,mbRequisiciones.mbMiniProveedor.miniProveedor.desctoComercial,mbRequisiciones.mbMiniProveedor.miniProveedor.desctoProntoPago)}"
-                                    update="detalleCotizacion proveedor moneda desctoComercial dc desctoProntoPago dpp :fc:numCotizacion"
+                                    update="detalleCotizacion proveedor moneda desctoComercial dc desctoProntoPago dpp :fc:numCotizacion
+                                    :fc:pie"
                                     process="@this moneda :fc:detalleCotizacion :fc:numCotizacion "
                                     />
                                 <p:commandButton id="limpiarCotizacion"
@@ -105,7 +106,8 @@
                                                     >
                                         <p:ajax event="blur" 
                                                 listener="#{mbRequisiciones.calculoDescuentoGeneral()}"
-                                                update=":fc:detalleCotizacion desctoComercial dc"
+                                                update=":fc:detalleCotizacion desctoComercial dc :fc:sumaDescuentosTotales
+                                                        :fc:sumaDescuentosProductos :fc:descuentoGeneralAplicado"
                                                 process="@this"/>
                                     </pe:inputNumber> 
                                 </p:inplace>
@@ -120,7 +122,8 @@
                                                     decimalPlaces="2" minValue="0" maxValue="100" >
                                         <p:ajax event="blur" 
                                                 listener="#{mbRequisiciones.calculoDescuentoGeneral()}"
-                                                update=":fc:detalleCotizacion desctoProntoPago dpp"
+                                                update=":fc:detalleCotizacion desctoProntoPago dpp :fc:sumaDescuentosTotales
+                                                        :fc:sumaDescuentosProductos :fc:descuentoGeneralAplicado"
                                                 process="@this"/>
                                     </pe:inputNumber> 
                                 </p:inplace>
@@ -170,7 +173,8 @@
                                     <p:ajax event="blur" 
                                             listener="#{mbRequisiciones.calculaPrecioDescuento(cot.producto.idProducto)}"
                                             process="@this"
-                                            update="neto subtotal :fc:importe detalleCotizacion :fc:sumaDescuentosTotales "
+                                            update="neto subtotal :fc:importe detalleCotizacion :fc:sumaDescuentosTotales
+                                            :fc:sumaDescuentosProductos :fc:descuentoGeneralAplicado :fc:subtotalBruto :fc:impuesto :fc:total"
                                             />
                                 </pe:inputNumber>
                             </p:column>
@@ -182,7 +186,8 @@
                                     <p:ajax event="blur" 
                                             listener="#{mbRequisiciones.calculaPrecioDescuento(cot.producto.idProducto)}"
                                             process="@this"
-                                            update="neto subtotal :fc:importe detalleCotizacion :fc:sumaDescuentosTotales "
+                                            update="neto subtotal :fc:importe detalleCotizacion :fc:sumaDescuentosTotales
+                                            :fc:sumaDescuentosProductos :fc:descuentoGeneralAplicado :fc:subtotalBruto :fc:impuesto :fc:total"
                                             />
                                 </pe:inputNumber>
 
@@ -194,7 +199,8 @@
                                     <p:ajax event="blur" 
                                             listener="#{mbRequisiciones.calculaPrecioDescuento(cot.producto.idProducto)}"
 
-                                            update="neto subtotal :fc:importe detalleCotizacion :fc:sumaDescuentosTotales "
+                                            update="neto subtotal :fc:importe detalleCotizacion :fc:sumaDescuentosTotales
+                                            :fc:sumaDescuentosProductos :fc:descuentoGeneralAplicado :fc:subtotalBruto :fc:impuesto :fc:total "
                                             process="@this"/>
                                 </pe:inputNumber>
 
@@ -206,7 +212,7 @@
                                     <p:ajax event="blur" 
                                             listener="#{mbRequisiciones.calculaPrecioDescuento(cot.producto.idProducto)}"
 
-                                            update="neto subtotal :fc:importe :fc:detalleCotizacion :fc:sumaDescuentosTotales "
+                                            update="neto subtotal :fc:importe :fc:detalleCotizacion :fc:sumaDescuentosTotales :fc:pie"
                                             process="@this"/>
                                 </pe:inputNumber>
 
@@ -223,7 +229,7 @@
                                     <f:convertNumber type="currency" locale="en-US" />
                                 </h:outputText>
                             </p:column>
-                    
+
                         </p:dataTable>
                         <p:panelGrid id="pie" >
                             <p:row >
@@ -262,15 +268,15 @@
                             <p:row >
                                 <p:column style="font-weight: bold; color: red; text-align: right; width: 800px" colspan="5" >Subtotal :</p:column>
                                 <p:column styleClass="alineacionD" style="font-weight: bold; width: 80px;" >
-                                    <h:outputText value=" #{mbRequisiciones.subtotalBruto}"  id="subtotalBruto" style="color: black;" >
-                                        <f:convertNumber type="currency" locale="en-US"   />
+                                    <h:outputText value=" #{mbRequisiciones.subtotalBrutoF}"  id="subtotalBruto" style="color: black;" >
+                                          
                                     </h:outputText>
                                 </p:column>
                             </p:row>
 
                             <p:row >
                                 <p:column style="font-weight: bold; color: red; text-align: right; width: 800px" colspan="5">Impuestos :</p:column>
-                                <p:column  styleClass="alineacionD" style="font-weight: bold;" >
+                                <p:column  styleClass="alineacionD" style="font-weight: bold; width: 80px;" >
                                     <h:outputText value="#{mbRequisiciones.impuesto}"  id="impuesto"  style="color: black;"  >
                                         <f:convertNumber type="currency" locale="en-US"   />
                                     </h:outputText>
@@ -278,7 +284,7 @@
                             </p:row>
                             <p:row >
                                 <p:column style="font-weight: bold; color: red; text-align: right; width: 800px" colspan="5" >Total :</p:column>
-                                <p:column styleClass="alineacionD" style="font-weight: bold;" >
+                                <p:column styleClass="alineacionD" style="font-weight: bold; width: 80px;" >
                                     <h:outputText value="#{mbRequisiciones.total}"  id="total" style="color: black;" >
                                         <f:convertNumber type="currency" locale="en-US"   />
                                     </h:outputText>

@@ -24,7 +24,16 @@ public class MbMiniEmpresas implements Serializable {
     private DAOMiniEmpresas dao;
     
     public MbMiniEmpresas() throws NamingException {
+        this.inicializaLocales();
+    }
+    
+    public void inicializar() {
+        this.inicializaLocales();
+    }
+    
+    private void inicializaLocales() {
         this.empresa=new MiniEmpresa();
+        this.setListaEmpresas(null);
     }
     
     public MiniEmpresa obtenerEmpresa(int idEmpresa) {

@@ -1,10 +1,8 @@
 package entradas.dominio;
 
-import almacenes.dominio.Almacen;
 import almacenes.dominio.AlmacenJS;
 import java.util.Date;
 import proveedores.dominio.MiniProveedor;
-import proveedores.dominio.Proveedor;
 
 /**
  *

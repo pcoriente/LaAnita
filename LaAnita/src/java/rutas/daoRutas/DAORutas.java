@@ -81,4 +81,15 @@ public class DAORutas {
         return ruta;
     }
 
+    public void actualizarRutas(Ruta ruta) throws SQLException {
+        Connection cn = ds.getConnection();
+        Statement st = cn.createStatement();
+        String sql = "UPDATE rutas SET  ruta = '" + ruta.getRuta() + "' WHERE idRuta = '" + ruta.getIdRuta() + "'";
+        try {
+            st.execute(sql);
+        } finally {
+            cn.close();
+        }
+    }
+
 }

@@ -98,9 +98,8 @@ a.nueva{ display:  inline;}
 }
 
 .textoEtiquetas{
-    font-weight: bold;
-    color: blue;
-    font-size: 12px;
+    color: red;
+    text-align: right;
 }
 
 .ui-panel, ui-widget, ui-widget-content, ui-corner-all {
@@ -118,6 +117,7 @@ a.nueva{ display:  inline;}
 
 .textoContenido{
     font-size: 10px;
+   
 }
 
 .fondoCelda{

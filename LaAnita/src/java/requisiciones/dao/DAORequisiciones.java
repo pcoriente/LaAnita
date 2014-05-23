@@ -345,7 +345,7 @@ public class DAORequisiciones {
 
             }
             // DETALLE
-            String strSQL2 = "INSERT INTO cotizacionesDetalle(idCotizacion,idEmpaque, cantidadCotizada, costoCotizado, descuentoProducto, descuentoProducto2,neto,subtotal) VALUES (?,?,?,?,?,?,?,?)";
+            String strSQL2 = "INSERT INTO cotizacionesDetalle(idCotizacion,idProducto, cantidadCotizada, costoCotizado, descuentoProducto, descuentoProducto2,neto,subtotal) VALUES (?,?,?,?,?,?,?,?)";
             ps2 = cn.prepareStatement(strSQL2);
 
             for (CotizacionDetalle e : cd) {

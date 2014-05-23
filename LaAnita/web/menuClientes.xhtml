@@ -78,7 +78,7 @@
                             </p:inputText>
                             <h:outputLabel/>
                             <h:outputLabel styleClass="colorLetra" value="Contribuyente:"/>
-                            <p:inputText value="#{mbClientesBueno.mbContribuyente.contribuyente.contribuyente}"/> 
+                            <p:inputText id="clienteContribuyente" value="#{mbClientesBueno.mbContribuyente.contribuyente.contribuyente}"/> 
                             <h:outputLabel/>
                             <h:outputLabel styleClass="colorLetra" value="Curp:"/>
                             <p:inputText  id="txtCurp" 
@@ -86,7 +86,9 @@
                                           value="#{mbClientesBueno.mbContribuyente.contribuyente.curp}"/>
                             <h:outputLabel/>
                             <h:outputLabel styleClass="colorLetra" value="Codigo Cliente:"/>
-                            <p:inputText value="#{mbClientesBueno.cliente.codigoCliente}"/> 
+                            <pe:inputNumber value="#{mbClientesBueno.cliente.codigoCliente}"
+                                            emptyValue="zero"
+                                            decimalPlaces="0"/> 
                             <h:outputLabel/>
                             <h:outputLabel  styleClass="colorLetra" value="Dirección:"/>
                             <p:inputTextarea id="txtDireccion" 
@@ -100,7 +102,8 @@
                             <h:outputLabel  styleClass="colorLetra" value="Impuesto Zona:"/>
                             <p:selectOneMenu id="cmbZonas"
                                              style="width: 155px"
-                                             value="#{mbClientesBueno.mbZonas.zona}">
+                                             value="#{mbClientesBueno.mbZonas.zona}"
+                                             filter="true">
                                 <f:selectItems value="#{mbClientesBueno.mbZonas.listaZonas}"/>
                                 <f:converter converterId="converters.ImpuestoZona"/>
                                 <p:ajax event="change" process="@this"/>
@@ -143,7 +146,8 @@
                             <h:outputLabel value="Num.Cuenta:" styleClass="colorLetra" rendered="#{mbClientesBueno.actualizar}"/>
                             <p:selectOneMenu id="cmbBancos"
                                              value="#{mbClientesBueno.clientes}"
-                                             rendered="#{mbClientesBueno.actualizar}">
+                                             rendered="#{mbClientesBueno.actualizar}"
+                                             filter="true">
                                 <f:selectItems  value="#{mbClientesBueno.mbClientesBancos.lstClientesBancos}"/>
                                 <f:converter converterId="converters.ClientesBancos"/>
                             </p:selectOneMenu>
@@ -156,26 +160,26 @@
                                              title="Nuva Cuenta Bancaria"/>
                         </h:panelGrid>
                         <p:commandButton 
-                                         process="@this :form:panelClientes"
-                                         actionListener="#{mbClientesBueno.guardar()}" 
-                                         update="growl :form:tablaClientesGrupos :form:panelClientes"
-                                         oncomplete="nuevoCliente(xhr, status, args);"
-                                         icon="ui-icon-disk"
-                                         title="Guardar Cliente"
-                                         />
+                            process="@this :form:panelClientes"
+                            actionListener="#{mbClientesBueno.guardar()}" 
+                            update="growl :form:tablaClientesGrupos :form:panelClientes"
+                            oncomplete="nuevoCliente(xhr, status, args);"
+                            icon="ui-icon-disk"
+                            title="Guardar Cliente"
+                            />
                         <p:commandButton 
-                                         actionListener="#{mbClientesBueno.cancelar()}"
-                                         oncomplete="dlgClientes.hide();"
-                                         process="@this :form:cmbBancos"
-                                         title="Cancelar"
-                                         icon="ui-icon-arrowreturnthick-1-w"
-                                         update=":form:actualizarContacto 
-                                         :form:tablaClientesGrupos 
-                                         :form:txtRfc 
-                                         :form:panelClientes
-                                         :form:panelCapturaDireccion
-                                         :form:cmbBancos"
-                                         />
+                            actionListener="#{mbClientesBueno.cancelar()}"
+                            oncomplete="dlgClientes.hide();"
+                            process="@this :form:cmbBancos"
+                            title="Cancelar"
+                            icon="ui-icon-arrowreturnthick-1-w"
+                            update=":form:actualizarContacto 
+                            :form:tablaClientesGrupos 
+                            :form:txtRfc 
+                            :form:panelClientes
+                            :form:panelCapturaDireccion
+                            :form:cmbBancos"
+                            />
                     </p:dialog>
                     <p:dialog  header="Nueva Dirección" 
                                widgetVar="dlgDireccion"
