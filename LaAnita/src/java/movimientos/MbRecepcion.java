@@ -219,6 +219,11 @@ public class MbRecepcion implements Serializable {
     
     private EntradaProducto convertirDetalle(TOMovimientoDetalle to) throws SQLException {
         EntradaProducto p = new EntradaProducto();
+        
+        
+        
+        
+        
         p.setProducto(this.mbBuscar.obtenerProducto(to.getIdProducto()));
         p.setCantFacturada(to.getCantFacturada());
         p.setCantOrdenada(to.getCantFacturada());
