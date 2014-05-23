@@ -628,7 +628,9 @@ public class MbOrdenCompra implements Serializable {
         this.ordenCompraEncabezado = new OrdenCompraEncabezado();
         this.mbMonedas.getMoneda().setIdMoneda(0);
     }
+    
 
+    
     // GET Y SETS ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     public MbMiniProveedor getMbProveedores() {
         return mbProveedores;

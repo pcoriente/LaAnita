@@ -3,6 +3,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml"
       xmlns:h="http://java.sun.com/jsf/html"
       xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://java.sun.com/jsf/core"
       xmlns:ui="http://java.sun.com/jsf/facelets">
     <h:head>
         <title>Ordenes de Compra</title>
@@ -97,7 +98,7 @@
                             <p:ajax event="rowSelect" 
                                     listener="#{mbCotizaciones.ordCompra()}"
                                     update=":form:ordenDeCompra :form:listaProveedores"
-                                  />
+                                    />
                             <p:column headerText="Nombre Comercial" styleClass="anchoCol">
                                 #{producto.proveedor.nombreComercial}
                             </p:column>
@@ -121,16 +122,18 @@
                                 #{producto.descuentoProducto2}  
                             </p:column>
                             <p:column headerText="Neto" styleClass="anchoCol">  
-                                #{producto.netoF}  
                             </p:column>
                             <p:column headerText="Subtotal" styleClass="anchoCol">  
-                                #{producto.subtotalF}  
                             </p:column>
-                            <p:column headerText="IVA" styleClass="anchoCol">  
-                                #{producto.ivaF}  
+                            <p:column headerText="IVA" styleClass="anchoCol"> 
+                                <h:outputText value="#{producto.iva}"  id="iva" style="color: black;" >
+                                   <f:convertNumber currencySymbol="$" type="currency" />
+                                </h:outputText>
                             </p:column>
-                            <p:column headerText="Total" styleClass="anchoCol">  
-                                #{producto.totalF}  
+                            <p:column  headerText="Totales">  
+                                <h:outputText value="#{producto.total}"   >
+                                    <f:convertNumber  type="currency" />
+                                </h:outputText>
                             </p:column>
 
                         </p:dataTable>

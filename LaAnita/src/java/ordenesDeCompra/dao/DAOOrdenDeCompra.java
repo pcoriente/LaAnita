@@ -43,27 +43,27 @@ public class DAOOrdenDeCompra {
             throw (ex);
         }
     }
-    
+
     public int aseguraOrdenCompra(int idOrdenCompra) throws SQLException {
-        int propietario=0;
+        int propietario = 0;
         Connection cn = ds.getConnection();
         Statement st = cn.createStatement();
         try {
             st.executeUpdate("BEGIN TRANSACTION");
-            
-            ResultSet rs=st.executeQuery("SELECT propietario FROM ordenCompra WHERE idOrdenCompra="+idOrdenCompra);
-            if(rs.next()) {
-                propietario=rs.getInt("propietario");
-                if(propietario==0 ) {
-                    propietario=this.usuarioSesion.getUsuario().getId();
-                    st.executeUpdate("UPDATE ordenCompra SET propietario="+propietario+", estado=5 " +
-                                     "WHERE idOrdenCompra="+idOrdenCompra);
+
+            ResultSet rs = st.executeQuery("SELECT propietario FROM ordenCompra WHERE idOrdenCompra=" + idOrdenCompra);
+            if (rs.next()) {
+                propietario = rs.getInt("propietario");
+                if (propietario == 0) {
+                    propietario = this.usuarioSesion.getUsuario().getId();
+                    st.executeUpdate("UPDATE ordenCompra SET propietario=" + propietario + ", estado=5 "
+                            + "WHERE idOrdenCompra=" + idOrdenCompra);
                 }
             }
             st.executeUpdate("COMMIT TRANSACTION");
-        } catch(SQLException e) {
+        } catch (SQLException e) {
             st.executeUpdate("ROLLBACK TRANSACTION");
-            throw(e);
+            throw (e);
         } finally {
             cn.close();
         }
@@ -94,7 +94,6 @@ public class DAOOrdenDeCompra {
                     + "                               where oc.estado >0\n"
                     + "                               order by oc.idOrdenCompra desc";
 
-//            //Statement sentencia = cn.createStatement();
             ResultSet rs = sentencia.executeQuery(stringSQL);
             while (rs.next()) {
                 lista.add(construirOCEncabezado(rs));
@@ -128,7 +127,6 @@ public class DAOOrdenDeCompra {
                     + "                               where oc.idProveedor=" + idProveedor + " and oc.estado=" + status + "\n"
                     + "                               order by oc.idOrdenCompra desc";
 
-            //Statement sentencia = cn.createStatement();
             ResultSet rs = sentencia.executeQuery(stringSQL);
             while (rs.next()) {
                 lista.add(construirOCEncabezado(rs));
@@ -208,7 +206,7 @@ public class DAOOrdenDeCompra {
         ResultSet rs;
         Connection cn = ds.getConnection();
         try {
-            String stringSQL = "select oc.idOrdenCompra, oc.idCotizacion, ocd.idEmpaque, ocd.cantOrdenada, ocd.costoOrdenado"
+            String stringSQL = "select oc.idOrdenCompra, oc.idCotizacion, ocd.idProducto, ocd.cantOrdenada, ocd.costoOrdenado"
                     + "           , ocd.descuentoProducto, ocd.descuentoProducto2, ocd.sku, isnull(r.idEmpresa, 0) as idEmpresa "
                     + "from ordencompra oc "
                     + "inner join ordenCompraDetalle ocd on ocd.idOrdenCompra = oc.idOrdenCompra "
@@ -226,21 +224,13 @@ public class DAOOrdenDeCompra {
         }
         return lista;
     }
-    
+
     private OrdenCompraDetalle construirOCDetalle(ResultSet rs) throws SQLException, NamingException {
         OrdenCompraDetalle ocd = new OrdenCompraDetalle();
         DAOCotizaciones daoC = new DAOCotizaciones();
         ocd.setCotizacionDetalle(daoC.dameCotizacion(rs.getInt("idCotizacion")));
-        
-//        DAOEmpaques daoEmp = new DAOEmpaques();
-//        DAOProductos daoProds = new DAOProductos();
-//        TOEmpaque to = daoEmp.obtenerEmpaque(rs.getInt("idEmpaque"));
-//        Empaque empaque =convertir(to, daoProds.obtenerProducto(to.getIdProducto()));
-        
         ocd.setProducto(new Producto());
-        ocd.getProducto().setIdProducto(rs.getInt("idEmpaque"));
-//        ocd.setEmpaque(empaque);
-//        ocd.setSku(rs.getString("sku"));
+        ocd.getProducto().setIdProducto(rs.getInt("idProducto"));
         ocd.setIdOrdenCompra(rs.getInt("idOrdenCompra"));
         ocd.setCantOrdenada(rs.getDouble("cantOrdenada"));
         ocd.setCantidadSolicitada(rs.getDouble("cantOrdenada"));
@@ -250,14 +240,14 @@ public class DAOOrdenDeCompra {
         return ocd;
     }
 
-    public void actualizarCantidadOrdenada(int idOrden, int idEmp, double cc) throws SQLException {
+    public void actualizarCantidadOrdenada(int idOrden, int idProd, double cc) throws SQLException {
 
         Connection cn = this.ds.getConnection();
         Statement st = cn.createStatement();
         PreparedStatement ps2;
         try {
             //CABECERO
-            String strSQL2 = "UPDATE ordenCompraDetalle SET cantOrdenada=" + cc + "  WHERE idOrdenCompra=" + idOrden + " and idEmpaque=" + idEmp + "";
+            String strSQL2 = "UPDATE ordenCompraDetalle SET cantOrdenada=" + cc + "  WHERE idOrdenCompra=" + idOrden + " and idProducto=" + idProd + "";
             ps2 = cn.prepareStatement(strSQL2);
             ps2.executeUpdate();
         } catch (SQLException e) {
@@ -328,22 +318,8 @@ public class DAOOrdenDeCompra {
         cont.setCorreo(rs.getString("correo"));
         return cont;
     }
-    
+
     public int obtenerIdUsuario() {
         return this.usuarioSesion.getUsuario().getId();
     }
-    
-//    private Empaque convertir(TOEmpaque to, Producto p) {
-//        Empaque e = new Empaque();
-//        e.setIdEmpaque(to.getIdEmpaque());
-//        e.setCod_pro(to.getCod_pro());
-//        e.setProducto(p);
-//        e.setPiezas(to.getPiezas());
-//        e.setUnidadEmpaque(to.getUnidadEmpaque());
-//        e.setSubEmpaque(to.getSubEmpaque());
-//        e.setDun14(to.getDun14());
-//        e.setPeso(to.getPeso());
-//        e.setVolumen(to.getVolumen());
-//        return e;
-//    }
 }

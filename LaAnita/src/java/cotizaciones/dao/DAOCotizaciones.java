@@ -43,7 +43,7 @@ public class DAOCotizaciones {
         Connection cn = ds.getConnection();
         try {
 
-            String stringSQL = "SELECT c.idRequisicion,  ed.depto, r.fechaRequisicion, r.fechaAprobacion,  COUNT(distinct cd.idEmpaque) as numProductos, COUNT(distinct cd.idCotizacion)as numCotizaciones,c.estado,c.idMoneda\n"
+            String stringSQL = "SELECT c.idRequisicion,  ed.depto, r.fechaRequisicion, r.fechaAprobacion,  COUNT(distinct cd.idProducto) as numProductos, COUNT(distinct cd.idCotizacion)as numCotizaciones,c.estado,c.idMoneda\n"
                     + "                    FROM cotizaciones c\n"
                     + "                    INNER JOIN cotizacionesDetalle cd ON cd.idCotizacion= c.idCotizacion\n"
                     + "                    INNER JOIN requisiciones r ON r.idRequisicion = c.idRequisicion\n"
@@ -83,7 +83,7 @@ public class DAOCotizaciones {
         Connection cn = ds.getConnection();
         try {
 
-            String stringSQL = "select distinct( cd.idEmpaque),c.idRequisicion from cotizacionesDetalle cd\n"
+            String stringSQL = "select distinct( cd.idProducto),c.idRequisicion from cotizacionesDetalle cd\n"
                     + "       inner join cotizaciones c on c.idCotizacion = cd.idCotizacion\n"
                     + "       where c.idRequisicion=" + idReq;
             Statement sentencia = cn.createStatement();
@@ -105,12 +105,12 @@ public class DAOCotizaciones {
 //        Empaque empaque = convertir(to, daoProds.obtenerProducto(to.getIdProducto()));
         CotizacionDetalle cd = new CotizacionDetalle();
         cd.setProducto(new Producto());
-        cd.getProducto().setIdProducto(rs.getInt("idEmpaque"));
+        cd.getProducto().setIdProducto(rs.getInt("idProducto"));
         cd.setIdCotizacion(rs.getInt("idRequisicion"));
         return cd;
     }
 
-    public ArrayList<CotizacionDetalle> consultaCotizacionesProveedores(int idReq, int idEmpaque) throws SQLException, NamingException {
+    public ArrayList<CotizacionDetalle> consultaCotizacionesProveedores(int idReq, int idProducto) throws SQLException, NamingException {
         ArrayList<CotizacionDetalle> lista = new ArrayList<CotizacionDetalle>();
         ResultSet rs;
         Connection cn = ds.getConnection();
@@ -121,7 +121,7 @@ public class DAOCotizaciones {
                     + " inner join proveedores pro on c.idProveedor = pro.idProveedor\n"
                     + " inner join contribuyentes cb on cb.idContribuyente = pro.idContribuyente\n"
                     + " where c.idRequisicion=" + idReq
-                    + " and cd.idEmpaque = " + idEmpaque;
+                    + " and cd.idProducto = " + idProducto;
             Statement sentencia = cn.createStatement();
             rs = sentencia.executeQuery(stringSQL);
             while (rs.next()) {
@@ -148,7 +148,7 @@ public class DAOCotizaciones {
         cd.getProveedor().setNombreComercial(rs.getString("contribuyente"));
         cd.setIdCotizacion(rs.getInt("idCotizacion"));
         cd.setProducto(new Producto());
-        cd.getProducto().setIdProducto(rs.getInt("idEmpaque"));
+        cd.getProducto().setIdProducto(rs.getInt("idProducto"));
 //        cd.setEmpaque(empaque);
         cd.setCantidadCotizada(rs.getDouble("cantidadCotizada"));
         cd.setCostoCotizado(rs.getDouble("costoCotizado"));
@@ -243,7 +243,7 @@ public class DAOCotizaciones {
 
 
             // DETALLE
-            String stringSQL2 = "INSERT INTO ordenCompraDetalle (idOrdenCompra,interno, idEmpaque, sku, cantOrdenada, costoOrdenado, descuentoProducto, descuentoProducto2, desctoConfidencial, sinCargoBase, sinCargoCant, ptjeOferta, margen, idImpuestosGrupo, idMarca)"
+            String stringSQL2 = "INSERT INTO ordenCompraDetalle (idOrdenCompra,interno, idProducto, sku, cantOrdenada, costoOrdenado, descuentoProducto, descuentoProducto2, desctoConfidencial, sinCargoBase, sinCargoCant, ptjeOferta, margen, idImpuestosGrupo, idMarca)"
                     + "VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
             PreparedStatement ps = cn.prepareStatement(stringSQL2);
 
@@ -285,8 +285,8 @@ public class DAOCotizaciones {
         try {
             ResultSet rs = st.executeQuery("SELECT * FROM cotizacionesDetalle WHERE idCotizacion=" + idCot);
             if (rs.next()) {
-                cd = construirCD(rs);
-            }
+                cd = construirCD(rs); //CHECAR.... SOLAMENTE TRAE UN PRODUCTO
+           }
         } finally {
             cn.close();
         }
@@ -297,7 +297,7 @@ public class DAOCotizaciones {
         CotizacionDetalle cd = new CotizacionDetalle();
         cd.setIdCotizacion(rs.getInt("idCotizacion"));
         cd.setProducto(new Producto());
-        cd.getProducto().setIdProducto(rs.getInt("idEmpaque"));
+        cd.getProducto().setIdProducto(rs.getInt("idProducto"));
         cd.setCantidadCotizada(rs.getDouble("cantidadCotizada"));
         cd.setCostoCotizado(rs.getDouble("costoCotizado"));
         cd.setDescuentoProducto(rs.getDouble("descuentoProducto"));

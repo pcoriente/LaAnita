@@ -109,7 +109,9 @@
                                      var="det"
                                      rowKey="#{det.producto.idProducto}"
                                      >
-
+                            <p:column  headerText="Código" style="width: 40px;" >
+                                <h:outputText value="#{det.producto.cod_pro}"  />
+                            </p:column>
                             <p:column  headerText="Descripcion" style="width: 200px;">
                                 <h:outputText value="#{det.producto.toString()}"  />
                             </p:column>

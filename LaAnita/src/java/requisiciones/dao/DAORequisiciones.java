@@ -171,7 +171,7 @@ public class DAORequisiciones {
         to.setIdRequisicion(rs.getInt("idRequisicion"));
      //   to.setEmpaque(daoEmp.obtenerEmpaque(rs.getInt("idEmpaque")));
 //        to.setEmpaque(empaque);
-        to.setIdProducto(rs.getInt("idProducto"));
+        to.setIdProducto(rs.getInt("idEmpaque"));
         to.setCantidad(rs.getInt("cantidadSolicitada"));
         to.setCantidadAutorizada(rs.getInt("cantidadAutorizada"));
         return to;
@@ -345,7 +345,7 @@ public class DAORequisiciones {
 
             }
             // DETALLE
-            String strSQL2 = "INSERT INTO cotizacionesDetalle(idCotizacion,idEmpaque, cantidadCotizada, costoCotizado, descuentoProducto, descuentoProducto2,neto,subtotal) VALUES (?,?,?,?,?,?,?,?)";
+            String strSQL2 = "INSERT INTO cotizacionesDetalle(idCotizacion,idProducto, cantidadCotizada, costoCotizado, descuentoProducto, descuentoProducto2,neto,subtotal) VALUES (?,?,?,?,?,?,?,?)";
             ps2 = cn.prepareStatement(strSQL2);
 
             for (CotizacionDetalle e : cd) {
@@ -424,7 +424,7 @@ public class DAORequisiciones {
         TOCotizacionDetalle to=new TOCotizacionDetalle();
         to.setIdRequisicion(rs.getInt("idRequisicion"));
         to.setIdProducto(rs.getInt("idEmpaque"));
-        to.getCantidadAutorizada();rs.getDouble("cantidadAutorizada");
+        to.setCantidadAutorizada(rs.getDouble("cantidadAutorizada"));
         return to;
     }
 
