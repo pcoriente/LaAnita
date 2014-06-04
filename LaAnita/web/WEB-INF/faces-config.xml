@@ -560,4 +560,9 @@
         <converter-id>converters.Empresa</converter-id>
         <converter-class>empresas.converters.EmpresaConverter</converter-class>
     </converter>
+    
+    <converter>
+        <converter-id>converters.MovimientoTipo</converter-id>
+        <converter-class>movimientos.converters.MovimientoTipoConverter</converter-class>
+    </converter>
 </faces-config>

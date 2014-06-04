@@ -154,6 +154,27 @@ public class MbAlmacenesJS implements Serializable {
         }
         return a;
     }
+    
+    public TOAlmacenJS obtenerTOAlmacen(int idAlmacen) {
+        boolean ok=false;
+        FacesMessage fMsg = new FacesMessage(FacesMessage.SEVERITY_WARN, "Aviso:", "obtenerAlmacen");
+        TOAlmacenJS a=null;
+        try {
+            this.dao=new DAOAlmacenesJS();
+            a=this.dao.obtenerAlmacen(idAlmacen);
+            ok=true;
+        } catch (NamingException ex) {
+            fMsg.setSeverity(FacesMessage.SEVERITY_ERROR);
+            fMsg.setDetail(ex.getMessage());
+        } catch (SQLException ex) {
+            fMsg.setSeverity(FacesMessage.SEVERITY_ERROR);
+            fMsg.setDetail(ex.getErrorCode() + " " + ex.getMessage());
+        }
+        if (!ok) {
+            FacesContext.getCurrentInstance().addMessage(null, fMsg);
+        }
+        return a;
+    }
 
     public ArrayList<SelectItem> getListaAlmacenes() {
         if(this.listaAlmacenes==null) {

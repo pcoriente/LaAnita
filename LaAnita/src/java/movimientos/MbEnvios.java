@@ -11,8 +11,6 @@ import javax.enterprise.context.SessionScoped;
 import java.io.Serializable;
 import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.faces.application.FacesMessage;
 import javax.faces.bean.ManagedProperty;
 import javax.faces.context.FacesContext;
@@ -40,6 +38,7 @@ public class MbEnvios implements Serializable {
     private double resSeparados;
     private double sumaLotes;
     private Envio envio;
+    private int idMovtoAlmacen;
     private ArrayList<Envio> envios;
     private ArrayList<SalidaProducto> envioDetalle;
     private SalidaProducto envioProducto;
@@ -150,7 +149,7 @@ public class MbEnvios implements Serializable {
     public void gestionarLotes() {
         boolean cierra = false;
         RequestContext context = RequestContext.getCurrentInstance();
-        this.gestionLotes(this.envio.getIdMovto());
+        this.gestionLotes(this.idMovtoAlmacen);
         if (this.envioProducto.getCantFacturada() == this.sumaLotes) {
             cierra = true;
         }
@@ -220,7 +219,7 @@ public class MbEnvios implements Serializable {
             try {
                 this.sumaLotes = 0;
                 this.daoLotes = new DAOLotes();
-                this.envioProducto.setLotes(this.daoLotes.obtenerLotes(this.envio.getAlmacen().getIdAlmacen(), this.envio.getIdMovto(), this.envioProducto.getProducto().getIdProducto()));
+                this.envioProducto.setLotes(this.daoLotes.obtenerLotes(this.envio.getAlmacen().getIdAlmacen(), this.idMovtoAlmacen, this.envioProducto.getProducto().getIdProducto()));
                 for (Lote l : this.envioProducto.getLotes()) {
                     this.sumaLotes += l.getSeparados();
                 }
@@ -284,6 +283,8 @@ public class MbEnvios implements Serializable {
         FacesMessage fMsg = new FacesMessage(FacesMessage.SEVERITY_ERROR, "Aviso:", "cargaDetalleSolicitud");
         try {
             this.dao = new DAOMovimientos();
+            this.idMovtoAlmacen=this.dao.obtenerIdMovtoAlmacen(this.envio.getAlmacen().getIdAlmacen(), 35, this.envio.getComprobante().getNumero());
+            
             this.daoLotes = new DAOLotes();
             this.daoImps = new DAOImpuestosProducto();
             this.envioDetalle = new ArrayList<SalidaProducto>();

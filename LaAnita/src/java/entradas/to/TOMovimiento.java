@@ -22,6 +22,7 @@ public class TOMovimiento {
     private double desctoProntoPago;
     private Date fecha;
     private int idUsuario;
+    private boolean status;
 
     public TOMovimiento() {
         this.idMovto=0;
@@ -39,6 +40,7 @@ public class TOMovimiento {
         this.desctoProntoPago=0;
         this.fecha=new Date();
         this.idUsuario=0;
+        this.status=false;
     }
 
     public int getIdMovto() {
@@ -159,5 +161,13 @@ public class TOMovimiento {
 
     public void setFolio(int folio) {
         this.folio = folio;
+    }
+
+    public boolean isStatus() {
+        return status;
+    }
+
+    public void setStatus(boolean status) {
+        this.status = status;
     }
 }

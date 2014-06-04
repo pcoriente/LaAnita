@@ -256,7 +256,7 @@
                                 </pe:inputNumber>
                             </p:column>
                             <p:column headerText="P.Lista" width="64" >
-                                <pe:inputNumber value="#{prod.precio}" decimalPlaces="3"  minValue="0" emptyValue="zero"
+                                <pe:inputNumber value="#{prod.costo}" decimalPlaces="3"  minValue="0" emptyValue="zero"
                                                 disabled="#{prod.producto.idProducto!=mbEntradas.entradaProducto.producto.idProducto}" >
                                     <p:ajax event="change" listener="#{mbEntradas.cambiaPrecio()}" 
                                             process="@this" update="detalleEntrada :main:mttoEntradasTotales" />
@@ -375,7 +375,7 @@
                                 <h:outputText value="#{prod.cantSinCargo}" style="width: 75px;" />
                             </p:column>
                             <p:column headerText="P.Lista" style="width: 80px;" >
-                                <h:outputText value="#{prod.precio}" style="width: 75px;" />
+                                <h:outputText value="#{prod.costo}" style="width: 75px;" />
                             </p:column>
                             <p:column headerText="(%)Descto1" style="width: 90px;" >
                                 <h:outputText value="#{prod.desctoProducto1}" style="width: 75px;" />

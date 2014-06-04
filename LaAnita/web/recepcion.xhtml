@@ -8,7 +8,7 @@
       xmlns:f="http://java.sun.com/jsf/core">
     <h:head>
         <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1"></meta>
-        <title>Envio de traspaso</title>
+        <title>Recepcion de traspaso</title>
         <h:outputStylesheet library="css" name="main.css"/>
     </h:head>
     <body>
@@ -18,7 +18,7 @@
                 <h:form id="main"  onkeypress="return event.keyCode !== 13;">
                     <p:messages id="msgs" showDetail="true" showSummary="false" closable="true" />
                     <p:panel id="encabezado" header="RECEPCION DE TRASPASO"
-                             rendered="#{not empty mbRecepcion.obtenerAcciones(20) and not mbRecepcion.modoEdicion}">
+                             rendered="#{not empty mbRecepcion.obtenerAcciones(21) and not mbRecepcion.modoEdicion}">
                         <p:panelGrid id="encabezadoRecepcion" >
                             <p:row >
                                 <p:column >

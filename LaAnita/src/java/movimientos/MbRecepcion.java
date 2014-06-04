@@ -53,6 +53,7 @@ public class MbRecepcion implements Serializable {
     private double sumaLotes;
     private int idMovtoOrigen;
     private double resSeparados;
+//    private int idMovtoAlmacen;
 
     public MbRecepcion() throws NamingException {
         this.mbAcciones = new MbAcciones();
@@ -197,10 +198,10 @@ public class MbRecepcion implements Serializable {
         FacesMessage fMsg = new FacesMessage(FacesMessage.SEVERITY_ERROR, "Aviso:", "cargaDetalleRecepcion");
         try {
             this.dao = new DAOMovimientos();
+            //this.idMovtoAlmacen=this.dao.obtenerIdMovtoAlmacen(this.recepcion.getComprobante().getAlmacen().getIdAlmacen(), 9, this.recepcion.getComprobante().getNumero());
             this.daoLotes = new DAOLotes();
-//            this.daoImps = new DAOImpuestosProducto();
             this.recepcionDetalle = new ArrayList<EntradaProducto>();
-            this.idMovtoOrigen=this.dao.obtenerIdMovto(this.recepcion.getComprobante().getAlmacen().getIdAlmacen(), this.recepcion.getComprobante().getRemision());
+            this.idMovtoOrigen=this.dao.obtenerIdMovto(this.recepcion.getComprobante().getAlmacen().getIdAlmacen(), 9, this.recepcion.getComprobante().getRemision());
             for (TOMovimientoDetalle p : this.dao.obtenerDetalleMovimiento(this.idMovtoOrigen)) {
                 this.recepcionDetalle.add(this.convertirDetalle(p));
             }
@@ -374,7 +375,7 @@ public class MbRecepcion implements Serializable {
 
     public ArrayList<Accion> getAcciones() {
         if (this.acciones == null) {
-            this.acciones = this.mbAcciones.obtenerAcciones(18);
+            this.acciones = this.mbAcciones.obtenerAcciones(21);
         }
         return acciones;
     }
