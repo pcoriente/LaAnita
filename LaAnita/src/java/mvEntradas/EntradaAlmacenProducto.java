@@ -1,23 +1,27 @@
-package salidas;
+package mvEntradas;
 
+import java.util.ArrayList;
+import movimientos.dominio.Lote;
 import producto2.dominio.Producto;
 
 /**
  *
  * @author jesc
  */
-public class SalidaOficinaProducto {
+public class EntradaAlmacenProducto {
     private Producto producto;
     private double cantidad;
     private double separados;
-    private double costo;
+    private ArrayList<Lote> lotes;
     
-    public SalidaOficinaProducto() {
+    public EntradaAlmacenProducto() {
         this.producto=new Producto();
+        this.lotes=new ArrayList<Lote>();
     }
     
-    public SalidaOficinaProducto(Producto producto) {
+    public EntradaAlmacenProducto(Producto producto) {
         this.producto=producto;
+        this.lotes=new ArrayList<Lote>();
     }
 
     @Override
@@ -28,7 +32,7 @@ public class SalidaOficinaProducto {
     @Override
     public int hashCode() {
         int hash = 7;
-        hash = 83 * hash + (this.producto != null ? this.producto.hashCode() : 0);
+        hash = 41 * hash + (this.producto != null ? this.producto.hashCode() : 0);
         return hash;
     }
 
@@ -40,7 +44,7 @@ public class SalidaOficinaProducto {
         if (getClass() != obj.getClass()) {
             return false;
         }
-        final SalidaOficinaProducto other = (SalidaOficinaProducto) obj;
+        final EntradaAlmacenProducto other = (EntradaAlmacenProducto) obj;
         if (this.producto != other.producto && (this.producto == null || !this.producto.equals(other.producto))) {
             return false;
         }
@@ -71,11 +75,11 @@ public class SalidaOficinaProducto {
         this.separados = separados;
     }
 
-    public double getCosto() {
-        return costo;
+    public ArrayList<Lote> getLotes() {
+        return lotes;
     }
 
-    public void setCosto(double costo) {
-        this.costo = costo;
+    public void setLotes(ArrayList<Lote> lotes) {
+        this.lotes = lotes;
     }
 }

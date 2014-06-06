@@ -168,7 +168,7 @@ public class MbEntradas implements Serializable {
         try {
             this.dao = new DAOMovimientos();
             TOMovimiento toEntrada = convertirTO(this.entrada);
-            if (this.dao.grabarEntradaAlmacen(toEntrada, this.entradaDetalle, this.mbOrdenCompra.getOrdenElegida().getIdOrdenCompra())) {
+            if (this.dao.grabarComprasAlmacen(toEntrada, this.entradaDetalle, this.mbOrdenCompra.getOrdenElegida().getIdOrdenCompra())) {
                 fMsg.setSeverity(FacesMessage.SEVERITY_INFO);
                 fMsg.setDetail("La entrada se grabo correctamente !!!");
                 this.modoEdicion = false;
@@ -198,7 +198,7 @@ public class MbEntradas implements Serializable {
             if(!this.sinOrden) {
                 idOrdenCompra=this.mbOrdenCompra.getOrdenElegida().getIdOrdenCompra();
             }
-            if (this.dao.grabarEntradaOficina(toEntrada, this.entradaDetalle, idOrdenCompra)) {
+            if (this.dao.grabarComprasOficina(toEntrada, this.entradaDetalle, idOrdenCompra)) {
                 fMsg.setSeverity(FacesMessage.SEVERITY_INFO);
                 fMsg.setDetail("La entrada se grabo correctamente !!!");
                 this.mbComprobantes.cargaListaComprobantes();

@@ -1,18 +1,15 @@
-package salidas;
-
-import java.util.ArrayList;
-import movimientos.dominio.Lote;
+package mvEntradas;
 
 /**
  *
  * @author jesc
  */
-public class TOSalidaAlmacenProducto {
+public class TOEntradaOficinaProducto {
     private int idProducto;
     private double cantidad;
-    private ArrayList<Lote> lotes;
+    private double costo;
     
-    public TOSalidaAlmacenProducto() {}
+    public TOEntradaOficinaProducto() {}
 
     public int getIdProducto() {
         return idProducto;
@@ -30,11 +27,11 @@ public class TOSalidaAlmacenProducto {
         this.cantidad = cantidad;
     }
 
-    public ArrayList<Lote> getLotes() {
-        return lotes;
+    public double getCosto() {
+        return costo;
     }
 
-    public void setLotes(ArrayList<Lote> lotes) {
-        this.lotes = lotes;
+    public void setCosto(double costo) {
+        this.costo = costo;
     }
 }

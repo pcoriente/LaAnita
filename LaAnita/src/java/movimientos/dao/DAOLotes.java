@@ -20,7 +20,7 @@ import usuarios.UsuarioSesion;
  * @author jesc
  */
 public class DAOLotes {
-
+    private int diasCaducidad=365;
     private String strSQL;
     private DataSource ds = null;
 
@@ -36,6 +36,72 @@ public class DAOLotes {
         } catch (NamingException ex) {
             throw (ex);
         }
+    }
+    
+    public void agregarLoteEntradaAlmacen(int idMovto, Lote l) throws SQLException {
+        Connection cn = this.ds.getConnection();
+        Statement st = cn.createStatement();
+        try {
+            this.strSQL="INSERT INTO lotesKardex (idAlmacen, idMovto, idEmpaque, lote, cantidad, SUMA, fecha, existenciaAnterior) "
+                    + "VALUES ("+l.getIdAlmacen()+", "+idMovto+", "+l.getIdProducto()+", '"+l.getLote()+"', "+l.getCantidad()+", 1, GETDATE(), 0)";
+            st.executeUpdate(this.strSQL);
+        } finally{
+            cn.close();
+        }
+    }
+    
+    public void editarLoteEntradaAlmacen(int idMovto, Lote l) throws SQLException {
+        Connection cn = this.ds.getConnection();
+        Statement st = cn.createStatement();
+        try {
+            if(l.getCantidad()==0) {
+                this.strSQL="DELETE FROM lotesKardex "
+                        + "WHERE idMovto="+idMovto+" AND lote='"+l.getLote()+"'";
+            } else if(l.getSeparados()==0) {
+                this.strSQL="INSERT INTO lotesKardex (idAlmacen, idMovto, idEmpaque, lote, cantidad, SUMA, fecha, existenciaAnterior) "
+                    + "VALUES ("+l.getIdAlmacen()+", "+idMovto+", "+l.getIdProducto()+", '"+l.getLote()+"', "+l.getCantidad()+", 1, GETDATE(), 0)";
+            } else {
+                this.strSQL="UPDATE lotesKardex "
+                        + "SET lote='"+l.getLote()+"', cantidad="+l.getCantidad()+" "
+                        + "WHERE idMovto="+idMovto+" AND lote='"+l.getLote()+"'";
+            }
+            st.executeUpdate(this.strSQL);
+        } catch (SQLException ex) {
+            if(ex.getErrorCode()==2627) {
+                ex=new SQLException("El lote ya existe !!");
+            }
+            throw ex;
+        } finally{
+            cn.close();
+        }
+    }
+    
+    public ArrayList<Lote> obtenerLotesKardex(int idMovto, int idProducto) throws SQLException {
+        ArrayList<Lote> lotes=new ArrayList<Lote>();
+        Connection cn = this.ds.getConnection();
+        Statement st = cn.createStatement();
+        Lote lote;
+        try {
+            this.strSQL ="SELECT K.*, COALESCE(DATEADD(DAY, "+this.diasCaducidad+",L.fecha), DATEADD(DAY, -1, CONVERT(DATETIME, DATEDIFF(DAY, 0, GETDATE()), 102))) AS fechaCaducidad " +
+                        "FROM lotesKardex K " +
+                        "LEFT JOIN lotes L ON L.lote=K.lote " +
+                        "WHERE idMovto=" + idMovto + " AND idEmpaque=" + idProducto;
+            ResultSet rs = st.executeQuery(this.strSQL);
+            while (rs.next()) {
+                lote=new Lote();
+                lote.setIdAlmacen(rs.getInt("idAlmacen"));
+                lote.setIdProducto(rs.getInt("idEmpaque"));
+                lote.setLote(rs.getString("lote"));
+                lote.setSaldo(0);
+                lote.setCantidad(rs.getDouble("cantidad"));
+                lote.setSeparados(rs.getDouble("cantidad"));
+                lote.setFechaCaducidad(rs.getDate("fechaCaducidad"));
+                lotes.add(lote);
+            }
+        } finally {
+            cn.close();
+        }
+        return lotes;
     }
 
     public void gestionar(Lote lote, int idMovto, double cantidad) {
@@ -288,7 +354,7 @@ public class DAOLotes {
                     + "ORDER BY lote";
             ResultSet rs = st.executeQuery(this.strSQL);
             while (rs.next()) {
-                    lotes.add(this.construir(rs));
+                lotes.add(this.construir(rs));
             }
             this.strSQL = "SELECT * FROM lotesKardex "
                     + "WHERE idAlmacen=" + idAlmacen + " AND idMovto=" + idMovto + " AND idEmpaque=" + idProducto;

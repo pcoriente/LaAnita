@@ -108,18 +108,19 @@
                             </p:column>
                         </p:dataTable>
                     </p:panel>
-                    <p:dialog id="pendientes" widgetVar="pendientesDlg" header="LISTA DE SALIDAS DE ALMACEN PENDIENTES" resizable="false" modal="true" width="600" >
+                    <p:dialog id="pendientes" widgetVar="pendientesDlg" header="LISTA DE SALIDAS DE ALMACEN PENDIENTES" 
+                              resizable="false" modal="true" >
                         <p:dataTable id="listaPendientes" widgetVar="listaPendientes"
-                                     value="#{mbSalidasAlmacen.salidasPendientes}" style="border: solid 1px"
+                                     value="#{mbSalidasAlmacen.salidasPendientes}" style="border: solid 1px; width: 800px;"
                                      var="salida" rowKey="#{salida.idMovto}" selectionMode="single"
                                      emptyMessage="No hay elementos que desplegar" scrollable="true" scrollHeight="220" >
                             <p:ajax process="@this" event="rowSelect" listener="#{mbSalidasAlmacen.cargaDetalleSalida}" 
                                     update=":main" oncomplete="pendientesDlg.hide();" />
-                            <p:column headerText="TIPO" style="width: 150px;" >
-                                <h:outputText value="#{salida.tipo}" style="width: 150px;" />
-                            </p:column>
                             <p:column headerText="ALMACEN" style="width: 150px;" >
                                 <h:outputText value="#{salida.almacen}" style="width: 150px;" />
+                            </p:column>
+                            <p:column headerText="TIPO" style="width: 150px;" >
+                                <h:outputText value="#{salida.tipo}" style="width: 150px;" />
                             </p:column>
                             <p:column headerText="FECHA" style="width: 60px;" >
                                 <h:outputText value="#{salida.fecha}" style="width: 150px;" >

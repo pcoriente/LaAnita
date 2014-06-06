@@ -20,7 +20,8 @@ import javax.sql.DataSource;
 import movimientos.dominio.Lote;
 import movimientos.dominio.MovimientoTipo;
 import movimientos.to.TOEntradaProducto;
-import salidas.TOSalidaAlmacenProducto;
+import movimientos.to.TOMovimientoAlmacenProducto;
+import mvEntradas.TOEntradaOficinaProducto;
 import salidas.TOSalidaOficinaProducto;
 import usuarios.UsuarioSesion;
 
@@ -47,6 +48,231 @@ public class DAOMovimientos {
         } catch (NamingException ex) {
             throw (ex);
         }
+    }
+    
+    public ArrayList<TOEntradaOficinaProducto> obtenerDetalleEntradaOficina(int idMovto) throws SQLException {
+        ArrayList<TOEntradaOficinaProducto> lista=new ArrayList<TOEntradaOficinaProducto>();
+        Connection cn=this.ds.getConnection();
+        Statement st=cn.createStatement();
+        TOEntradaOficinaProducto to;
+        String strSQL="SELECT idEmpaque, cantFacturada, unitario " +
+                        "FROM movimientosDetalle " +
+                        "WHERE idMovto="+idMovto;
+        try {
+            ResultSet rs=st.executeQuery(strSQL);
+            while(rs.next()) {
+                to=new TOEntradaOficinaProducto();
+                to.setIdProducto(rs.getInt("idEmpaque"));
+                to.setCantidad(rs.getDouble("cantFacturada"));
+                to.setCosto(rs.getDouble("unitario"));
+                lista.add(to);
+            }
+        } finally {
+            cn.close();
+        }
+        return lista;
+    }
+    
+    public void cancelarEntradaOficina(int idMovto) throws SQLException {
+        Connection cn=this.ds.getConnection();
+        Statement st=cn.createStatement();
+        String strSQL;
+        try {
+            st.executeUpdate("BEGIN TRANSACTION");
+            
+            strSQL="DELETE FROM movimientosDetalle where idMovto="+idMovto;
+            st.executeUpdate(strSQL);
+            
+            strSQL="DELETE FROM movimientos WHERE idMovto="+idMovto;
+            st.executeUpdate(strSQL);
+            
+            st.executeUpdate("COMMIT TRANSACTION");
+        } catch (SQLException ex) {
+            st.executeUpdate("ROLLBACK TRANSACTION");
+            throw ex;
+        } finally {
+            cn.close();
+        }
+    }
+    
+    public void grabarEntradaOficina(TOMovimiento to) throws SQLException {
+        Connection cn=this.ds.getConnection();
+        Statement st=cn.createStatement();
+        String strSQL;
+        int folio;
+        try {
+            st.executeUpdate("BEGIN TRANSACTION");
+            
+            folio=this.obtenerMovimientoFolio(true, to.getIdAlmacen(), to.getIdTipo(), st);
+            
+            strSQL="UPDATE movimientos SET fecha=GETDATE(), status=1, folio="+folio+", idUsuario="+this.idUsuario+" "
+                    + "WHERE idMovto="+to.getIdMovto();
+            st.executeUpdate(strSQL);
+            
+            strSQL="DELETE FROM movimientosDetalle WHERE idMovto="+to.getIdMovto()+" AND cantFacturada=0";
+            st.executeUpdate(strSQL);
+            
+            strSQL="UPDATE d " +
+                    "SET d.unitario=e.promedioPonderado, d.fecha=GETDATE(), d.existenciaAnterior=a.existenciaOficina " +
+                    "FROM movimientosDetalle d " +
+                    "INNER JOIN movimientos m ON m.idMovto=d.idMovto " +
+                    "INNER JOIN almacenesEmpaques a ON a.idAlmacen=m.idAlmacen AND a.idEmpaque=d.idEmpaque " +
+                    "INNER JOIN empresasEmpaques e ON e.idEmpaque=d.idEmpaque " +
+                    "WHERE e.idEmpresa=m.idEmpresa AND d.idMovto="+to.getIdMovto();
+            st.executeUpdate(strSQL);
+            
+            strSQL="UPDATE a " +
+                    "SET a.existenciaOficina=a.existenciaOficina+d.cantFacturada " +
+                    "FROM (SELECT m.idAlmacen, d.* " +
+                    "		FROM movimientosDetalle d " +
+                    "		INNER JOIN movimientos m ON m.idMovto=d.idMovto " +
+                    "		WHERE d.idMovto="+to.getIdMovto()+") d " +
+                    "INNER JOIN almacenesEmpaques a ON a.idAlmacen=d.idAlmacen AND a.idEmpaque=d.idEmpaque";
+            st.executeUpdate(strSQL);
+            
+            strSQL="UPDATE e " +
+                    "SET e.existenciaOficina=e.existenciaOficina+d.cantFacturada " +
+                    "FROM (SELECT m.idEmpresa, d.* " +
+                    "		FROM movimientosDetalle d " +
+                    "		INNER JOIN movimientos m ON m.idMovto=d.idMovto " +
+                    "		WHERE d.idMovto="+to.getIdMovto()+") d " +
+                    "INNER JOIN empresasEmpaques e ON e.idEmpresa=d.idEmpresa AND e.idEmpaque=d.idEmpaque";
+            st.executeUpdate(strSQL);
+            
+            st.executeUpdate("COMMIT TRANSACTION");
+        } catch (SQLException ex) {
+            st.executeUpdate("ROLLBACK TRANSACTION");
+            throw ex;
+        } finally {
+            cn.close();
+        }
+    }
+    
+    public double actualizaEntrada(int idMovto, int idAlmacen, int idProducto, double cantidad) throws SQLException {
+        Connection cn=this.ds.getConnection();
+        Statement st = cn.createStatement();
+        String strSQL;
+        try {
+            strSQL="UPDATE movimientosDetalle "
+                    + "SET cantFacturada="+cantidad+" "
+                    + "WHERE idMovto="+idMovto+" AND idEmpaque="+idProducto;
+            st.executeUpdate(strSQL);
+        } finally {
+            cn.close();
+        }
+        return cantidad;
+    }
+    
+    public void agregarProductoEntradaOficina(int idMovto, TOEntradaOficinaProducto to) throws SQLException {
+        Connection cn=this.ds.getConnection();
+        Statement st=cn.createStatement();
+        String strSQL;
+        try {
+            strSQL="INSERT INTO movimientosDetalle (idMovto, idEmpaque, cantOrdenada, cantFacturada, cantSinCargo, cantRecibida, costo, desctoProducto1, desctoProducto2, desctoConfidencial, unitario, idImpuestoGrupo, fecha, existenciaAnterior) "
+                        + "VALUES ("+idMovto+", "+to.getIdProducto()+", 0, "+to.getCantidad()+", 0, 0, 0, 0, 0, 0, 0, 0, GETDATE(), 0)";
+            st.executeUpdate(strSQL);
+        } finally {
+            cn.close();
+        }
+    }
+    
+    public void cancelarEntradaAlmacen(int idMovto) throws SQLException {
+        Connection cn=this.ds.getConnection();
+        Statement st=cn.createStatement();
+        String strSQL;
+        try {
+            st.executeUpdate("BEGIN TRANSACTION");
+            
+            strSQL="DELETE FROM lotesKardex where idMovto="+idMovto;
+            st.executeUpdate(strSQL);
+            
+            strSQL="DELETE FROM movimientosAlmacen WHERE idMovto="+idMovto;
+            st.executeUpdate(strSQL);
+            
+            st.executeUpdate("COMMIT TRANSACTION");
+        } catch (SQLException ex) {
+            st.executeUpdate("ROLLBACK TRANSACTION");
+            throw ex;
+        } finally {
+            cn.close();
+        }
+    }
+    
+    public void grabarEntradaAlmacen(TOMovimiento to) throws SQLException {
+        Connection cn=this.ds.getConnection();
+        Statement st, st1;
+        ResultSet rs, rs1;
+        
+        String strSQL;
+        int folio;
+        double saldo;
+        
+        st=cn.createStatement();
+        st1=cn.createStatement();
+        try {
+            st.executeUpdate("BEGIN TRANSACTION");
+            
+            folio=this.obtenerMovimientoFolio(false, to.getIdAlmacen(), to.getIdTipo(), st);
+            
+            strSQL="UPDATE movimientosAlmacen SET fecha=GETDATE(), status=1, folio="+folio+", idUsuario="+this.idUsuario+" "
+                    + "WHERE idMovto="+to.getIdMovto();
+            st.executeUpdate(strSQL);
+            
+            strSQL="SELECT * FROM lotesKardex "
+                    + "WHERE idMovto="+to.getIdMovto()+" "
+                    + "ORDER BY idEmpaque";
+            rs=st.executeQuery(strSQL);
+            while(rs.next()) {
+                strSQL="SELECT saldo FROM lotesAlmacenes "
+                        + "WHERE idAlmacen="+to.getIdAlmacen()+" AND idEmpaque="+rs.getInt("idEmpaque")+" AND lote='"+rs.getString("lote")+"'";
+                rs1=st1.executeQuery(strSQL);
+                if(rs1.next()) {
+                    saldo=rs.getDouble("saldo");
+                    strSQL="UPDATE lotesAlmacenes "
+                            + "SET cantidad=cantidad+"+rs.getDouble("cantidad")+" AND saldo=saldo+"+rs.getDouble("cantidad")+" "
+                            + "WHERE idAlmacen="+to.getIdAlmacen()+" AND idEmpaque="+rs.getInt("idEmpaque")+" AND lote='"+rs.getString("lote")+"'";
+                    st1.executeUpdate(strSQL);
+                } else {
+                    saldo=0;
+                    strSQL="INSERT INTO lotesAlmacenes (idAlmacen, idEmpaque, lote, fechaCaducidad, cantidad, saldo, separados) "
+                            + "VALUES ("+to.getIdAlmacen()+", "+rs.getInt("idEmpaque")+", '"+rs.getString("lote")+"', '"+rs.getDate("fecha")+"', "+rs.getDouble("cantidad")+", "+rs.getDouble("cantidad")+", 0)";
+                    st1.executeUpdate(strSQL);
+                }
+                strSQL="UPDATE lotesKardex "
+                        + "SET fecha=GETDATE(), existenciaAnterior="+saldo+" "
+                        + "WHERE idMovto="+to.getIdMovto()+" AND idEmpaque="+rs.getInt("idEmpaque")+" AND lote='"+rs.getString("lote")+"'";
+                st1.executeUpdate(strSQL);
+            }
+            st.executeUpdate("COMMIT TRANSACTION");
+        } catch (SQLException ex) {
+            st.executeUpdate("ROLLBACK TRANSACTION");
+            throw ex;
+        } finally {
+            cn.close();
+        }
+    }
+    
+    public ArrayList<TOMovimientoAlmacenProducto> obtenerDetalleMovimientoAlmacen(int idMovto) throws SQLException {
+        ArrayList<TOMovimientoAlmacenProducto> lista=new ArrayList<TOMovimientoAlmacenProducto>();
+        Connection cn=this.ds.getConnection();
+        Statement st=cn.createStatement();
+        TOMovimientoAlmacenProducto to;
+        String strSQL="SELECT idEmpaque, SUM(cantidad) AS cantidad " +
+                        "FROM lotesKardex k " +
+                        "WHERE idMovto="+idMovto+" " +
+                        "GROUP BY idEmpaque";
+        try {
+            ResultSet rs=st.executeQuery(strSQL);
+            while(rs.next()) {
+                to=new TOMovimientoAlmacenProducto();
+                to.setIdProducto(rs.getInt("idEmpaque"));
+                to.setCantidad(rs.getDouble("cantidad"));
+                lista.add(to);
+            }
+        } finally {
+            cn.close();
+        }
+        return lista;
     }
     
     public void cancelarSalidaOficina(int idMovto) throws SQLException {
@@ -85,7 +311,7 @@ public class DAOMovimientos {
         Connection cn=this.ds.getConnection();
         Statement st=cn.createStatement();
         TOSalidaOficinaProducto to;
-        String strSQL="SELECT idEmpaque, cantFacturada " +
+        String strSQL="SELECT idEmpaque, cantFacturada, unitario " +
                         "FROM movimientosDetalle " +
                         "WHERE idMovto="+idMovto;
         try {
@@ -94,6 +320,7 @@ public class DAOMovimientos {
                 to=new TOSalidaOficinaProducto();
                 to.setIdProducto(rs.getInt("idEmpaque"));
                 to.setCantidad(rs.getDouble("cantFacturada"));
+                to.setCosto(rs.getDouble("unitario"));
                 lista.add(to);
             }
         } finally {
@@ -102,14 +329,21 @@ public class DAOMovimientos {
         return lista;
     }
     
-    private void creaMovimientoFolio(boolean oficina, int idAlmacen, int idTipo, Statement st) throws SQLException {
-        String strSQL;
+    private int obtenerMovimientoFolio(boolean oficina, int idAlmacen, int idTipo, Statement st) throws SQLException {
+        int folio;
         String tabla="movimientosFoliosAlmacen";
         if(oficina) {
             tabla="movimientosFolios";
         }
-        strSQL="INSERT INTO "+tabla+" (idAlmacen, idTipo, folio) VALUES ("+idAlmacen+", "+idTipo+", 1)";
-        st.executeUpdate(strSQL);
+        ResultSet rs=st.executeQuery("SELECT folio FROM "+tabla+" WHERE idAlmacen="+idAlmacen+" AND idTipo="+idTipo);
+        if(rs.next()) {
+            folio=rs.getInt("folio");
+            st.executeUpdate("UPDATE "+tabla+" SET folio=folio+1 WHERE idAlmacen="+idAlmacen+" AND idTipo="+idTipo);
+        } else {
+            folio=1;
+            st.executeUpdate("INSERT INTO "+tabla+" (idAlmacen, idTipo, folio) VALUES ("+idAlmacen+", "+idTipo+", 2)");
+        }
+        return folio;
     }
     
     public void grabarSalidaOficina(TOMovimiento to) throws SQLException {
@@ -120,19 +354,10 @@ public class DAOMovimientos {
         try {
             st.executeUpdate("BEGIN TRANSACTION");
             
-            strSQL="SELECT folio FROM movimientosFolios WHERE idAlmacen="+to.getIdAlmacen()+" AND idTipo="+to.getIdTipo();
-            ResultSet rs=st.executeQuery(strSQL);
-            if(rs.next()) {
-                folio=rs.getInt("folio");
-            } else {
-                creaMovimientoFolio(true, to.getIdAlmacen(), to.getIdTipo(), st);
-                folio=1;
-            }
-            strSQL="UPDATE movimientosFolios SET folio=folio+1 "
-                    + "WHERE idAlmacen="+to.getIdAlmacen()+" AND idTipo="+to.getIdTipo();
-            st.executeUpdate(strSQL);
+            folio=this.obtenerMovimientoFolio(true, to.getIdAlmacen(), to.getIdTipo(), st);
             
-            strSQL="UPDATE movimientos SET fecha=GETDATE(), status=1, folio="+folio+" WHERE idMovto="+to.getIdMovto();
+            strSQL="UPDATE movimientos SET fecha=GETDATE(), status=1, folio="+folio+", idUsuario="+this.idUsuario+" "
+                    + "WHERE idMovto="+to.getIdMovto();
             st.executeUpdate(strSQL);
             
             strSQL="DELETE FROM movimientosDetalle WHERE idMovto="+to.getIdMovto()+" AND cantFacturada=0";
@@ -327,15 +552,15 @@ public class DAOMovimientos {
             cn.close();
         }
     }
-    
-    public ArrayList<TOSalidaAlmacenProducto> obtenerDetalleSalidaAlmacen(int idAlmacen, int idMovto) throws SQLException {
+    /*
+    public ArrayList<TOSalidaAlmacenProducto> obtenerDetalleMovimientoAlmacen(int idMovto) throws SQLException {
         ArrayList<TOSalidaAlmacenProducto> lista=new ArrayList<TOSalidaAlmacenProducto>();
         Connection cn=this.ds.getConnection();
         Statement st=cn.createStatement();
         TOSalidaAlmacenProducto to;
         String strSQL="SELECT idEmpaque, SUM(cantidad) AS cantidad " +
                         "FROM lotesKardex k " +
-                        "WHERE idAlmacen="+idAlmacen+" AND idMovto="+idMovto+" " +
+                        "WHERE idMovto="+idMovto+" " +
                         "GROUP BY idEmpaque";
         try {
             ResultSet rs=st.executeQuery(strSQL);
@@ -350,7 +575,7 @@ public class DAOMovimientos {
         }
         return lista;
     }
-    
+    */
     public ArrayList<TOMovimiento> movimientosPendientes(boolean oficina, int entrada) throws SQLException {
         ArrayList<TOMovimiento> lista=new ArrayList<TOMovimiento>();
         String tabla="movimientosAlmacen";
@@ -404,16 +629,10 @@ public class DAOMovimientos {
         try {
             st.executeUpdate("BEGIN TRANSACTION");
             
-            strSQL="SELECT folio FROM movimientosFoliosAlmacen WHERE idAlmacen="+to.getIdAlmacen()+" AND idTipo="+to.getIdTipo();
-            rs=st.executeQuery(strSQL);
-            if(rs.next()) {
-                folio=rs.getInt("folio");
-                st.executeUpdate("UPDATE movimientosFoliosAlmacen SET folio=folio+1 "
-                        + "WHERE idAlmacen="+to.getIdAlmacen()+" AND idTipo="+to.getIdTipo());
-            } else {
-                throw new SQLException("No se encontro el tipo de movimiento "+to.getIdTipo()+" en tabla movimientosFoliosAlmacen");
-            }
-            strSQL="UPDATE movimientosAlmacen SET status=1, folio="+folio+" WHERE idMovto="+to.getIdMovto();
+            folio=this.obtenerMovimientoFolio(false, to.getIdAlmacen(), to.getIdTipo(), st);
+            
+            strSQL="UPDATE movimientosAlmacen SET fecha=GETDATE(), status=1, folio="+folio+", idUsuario="+this.idUsuario+" "
+                    + "WHERE idMovto="+to.getIdMovto();
             st.executeUpdate(strSQL);
             
             strSQL="SELECT * FROM lotesKardex "
@@ -969,7 +1188,7 @@ public class DAOMovimientos {
         return ok;
     }
     
-    public boolean grabarEntradaAlmacen(TOMovimiento m, ArrayList<MovimientoProducto> productos, int idOrdenCompra) throws SQLException {
+    public boolean grabarComprasAlmacen(TOMovimiento m, ArrayList<MovimientoProducto> productos, int idOrdenCompra) throws SQLException {
         boolean ok=false;
         Connection cn=this.ds.getConnection();
         Statement st=cn.createStatement();
@@ -1046,7 +1265,7 @@ public class DAOMovimientos {
         return ok;
     }
     
-    public boolean grabarEntradaOficina(TOMovimiento m, ArrayList<MovimientoProducto> productos, int idOrdenCompra) throws SQLException {
+    public boolean grabarComprasOficina(TOMovimiento m, ArrayList<MovimientoProducto> productos, int idOrdenCompra) throws SQLException {
         int capturados;
         boolean ok=false;
         boolean nueva;

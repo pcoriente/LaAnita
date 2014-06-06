@@ -1,4 +1,4 @@
-package salidas;
+package mvEntradas;
 
 import entradas.MbComprobantes;
 import entradas.dao.DAOMovimientos;
@@ -8,8 +8,6 @@ import javax.enterprise.context.SessionScoped;
 import java.io.Serializable;
 import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.faces.application.FacesMessage;
 import javax.faces.bean.ManagedProperty;
 import javax.faces.context.FacesContext;
@@ -26,9 +24,9 @@ import usuarios.dominio.Accion;
  *
  * @author jesc
  */
-@Named(value = "mbSalidasOficina")
+@Named(value = "mbEntradasOficina")
 @SessionScoped
-public class MbSalidasOficina implements Serializable {
+public class MbEntradasOficina implements Serializable {
     private ArrayList<Accion> acciones;
     @ManagedProperty(value = "#{mbAcciones}")
     private MbAcciones mbAcciones;
@@ -40,52 +38,32 @@ public class MbSalidasOficina implements Serializable {
     private boolean modoEdicion;
     private ArrayList<SelectItem> listaMovimientosTipos;
     private MovimientoTipo tipo;
-    private SalidaOficinaProducto salidaProducto;
-    private ArrayList<SalidaOficinaProducto> salidaDetalle;
-    private Salida salida;
-    private ArrayList<Salida> salidasPendientes;
+    private ArrayList<EntradaOficinaProducto> entradaDetalle;
+    private EntradaOficinaProducto entradaProducto;
+    private ArrayList<Entrada> entradasPendientes;
+    private Entrada entrada;
     private DAOMovimientos dao;
     
-    public MbSalidasOficina() throws NamingException {
+    public MbEntradasOficina() throws NamingException {
         this.mbAcciones = new MbAcciones();
         this.mbComprobantes = new MbComprobantes();
         this.mbBuscar = new MbProductosBuscar();
         this.inicializa();
     }
     
-    public void cancelar() {
+    public void cargaDetalleEntrada(SelectEvent event) {
         boolean ok = false;
-        FacesMessage fMsg = new FacesMessage(FacesMessage.SEVERITY_WARN, "Aviso:", "cancelar");
-        try {
-            this.dao=new DAOMovimientos();
-            this.dao.cancelarSalidaOficina(this.salida.getIdMovto());
-            this.modoEdicion=false;
-            ok=true;
-        } catch (SQLException ex) {
-            fMsg.setSeverity(FacesMessage.SEVERITY_ERROR);
-            fMsg.setDetail(ex.getErrorCode() + " " + ex.getMessage());
-        } catch (NamingException ex) {
-            fMsg.setSeverity(FacesMessage.SEVERITY_ERROR);
-            fMsg.setDetail(ex.getMessage());
-        }
-        if (!ok) {
-            FacesContext.getCurrentInstance().addMessage(null, fMsg);
-        }
-    }
-    
-    public void cargaDetalleSalida(SelectEvent event) {
-        boolean ok = false;
-        FacesMessage fMsg = new FacesMessage(FacesMessage.SEVERITY_WARN, "Aviso:", "cargaDetalleOrdenCompra");
-        this.salida=((Salida) event.getObject());
-        this.salidaDetalle=new ArrayList<SalidaOficinaProducto>();
-        this.mbComprobantes.getMbAlmacenes().setToAlmacen(this.salida.getAlmacen());
-        this.tipo=this.salida.getTipo();
+        FacesMessage fMsg = new FacesMessage(FacesMessage.SEVERITY_WARN, "Aviso:", "cargaDetalleEntrada");
+        this.entrada=((Entrada) event.getObject());
+        this.entradaDetalle=new ArrayList<EntradaOficinaProducto>();
+        this.mbComprobantes.getMbAlmacenes().setToAlmacen(this.entrada.getAlmacen());
+        this.tipo=this.entrada.getTipo();
         try {
             this.dao = new DAOMovimientos();
-            for(TOSalidaOficinaProducto to:this.dao.obtenerDetalleSalidaOficina(this.salida.getAlmacen().getIdAlmacen(), this.salida.getIdMovto())) {
-                this.salidaDetalle.add(this.convertirProductoOficina(to));
+            for(TOEntradaOficinaProducto to:this.dao.obtenerDetalleEntradaOficina(this.entrada.getIdMovto())) {
+                this.entradaDetalle.add(this.convertirProductoAlmacen(to));
             }
-            this.salidaProducto=new SalidaOficinaProducto();
+            this.entradaProducto=new EntradaOficinaProducto();
             this.modoEdicion=true;
             ok = true;
         } catch (SQLException ex) {
@@ -100,8 +78,8 @@ public class MbSalidasOficina implements Serializable {
         }
     }
     
-    private SalidaOficinaProducto convertirProductoOficina(TOSalidaOficinaProducto to) throws SQLException {
-        SalidaOficinaProducto p=new SalidaOficinaProducto();
+    private EntradaOficinaProducto convertirProductoAlmacen(TOEntradaOficinaProducto to) throws SQLException {
+        EntradaOficinaProducto p=new EntradaOficinaProducto();
         p.setProducto(this.mbBuscar.obtenerProducto(to.getIdProducto()));
         p.setCantidad(to.getCantidad());
         p.setSeparados(to.getCantidad());
@@ -113,11 +91,11 @@ public class MbSalidasOficina implements Serializable {
         boolean ok = false;
         FacesMessage fMsg = new FacesMessage(FacesMessage.SEVERITY_ERROR, "Aviso:", "pendientes");
         RequestContext context = RequestContext.getCurrentInstance();
-        this.salidasPendientes=new ArrayList<Salida>();
+        this.entradasPendientes=new ArrayList<Entrada>();
         try {
             this.dao=new DAOMovimientos();
-            for(TOMovimiento to: this.dao.movimientosPendientes(true, 0)) {
-                this.salidasPendientes.add(this.convertir(to));
+            for(TOMovimiento to: this.dao.movimientosPendientes(true, 1)) {
+                this.entradasPendientes.add(this.convertir(to));
             }
             ok=true;
         } catch (SQLException ex) {
@@ -131,14 +109,34 @@ public class MbSalidasOficina implements Serializable {
         context.addCallbackParam("ok", ok);
     }
     
-    private Salida convertir(TOMovimiento to) throws SQLException {
-        Salida s=new Salida();
-        s.setIdMovto(to.getIdMovto());
-        s.setAlmacen(this.mbComprobantes.getMbAlmacenes().obtenerTOAlmacen(to.getIdAlmacen()));
-        s.setTipo(this.dao.obtenerMovimientoTipo(to.getIdTipo()));
-        s.setFecha(to.getFecha());
-        s.setIdUsuario(to.getIdUsuario());
-        return s;
+    private Entrada convertir(TOMovimiento to) throws SQLException {
+        Entrada e=new Entrada();
+        e.setIdMovto(to.getIdMovto());
+        e.setAlmacen(this.mbComprobantes.getMbAlmacenes().obtenerTOAlmacen(to.getIdAlmacen()));
+        e.setTipo(this.dao.obtenerMovimientoTipo(to.getIdTipo()));
+        e.setFecha(to.getFecha());
+        e.setIdUsuario(to.getIdUsuario());
+        return e;
+    }
+    
+    public void cancelar() {
+        boolean ok = false;
+        FacesMessage fMsg = new FacesMessage(FacesMessage.SEVERITY_WARN, "Aviso:", "cancelar");
+        try {
+            this.dao=new DAOMovimientos();
+            this.dao.cancelarEntradaOficina(this.entrada.getIdMovto());
+            this.modoEdicion=false;
+            ok=true;
+        } catch (SQLException ex) {
+            fMsg.setSeverity(FacesMessage.SEVERITY_ERROR);
+            fMsg.setDetail(ex.getErrorCode() + " " + ex.getMessage());
+        } catch (NamingException ex) {
+            fMsg.setSeverity(FacesMessage.SEVERITY_ERROR);
+            fMsg.setDetail(ex.getMessage());
+        }
+        if (!ok) {
+            FacesContext.getCurrentInstance().addMessage(null, fMsg);
+        }
     }
     
     public void grabar() {
@@ -146,7 +144,7 @@ public class MbSalidasOficina implements Serializable {
         FacesMessage fMsg = new FacesMessage(FacesMessage.SEVERITY_ERROR, "Aviso:", "grabar");
         try {
             this.dao=new DAOMovimientos();
-            this.dao.grabarSalidaOficina(this.convertirTO());
+            this.dao.grabarEntradaOficina(this.convertirTO());
             this.modoEdicion=false;
             ok=true;
         } catch (SQLException ex) {
@@ -159,38 +157,37 @@ public class MbSalidasOficina implements Serializable {
         }
     }
     
+    public void salir() {
+        this.inicializar();
+        this.modoEdicion = false;
+    }
+    
     public void gestionar() {
         boolean ok = false;
         FacesMessage fMsg = new FacesMessage(FacesMessage.SEVERITY_ERROR, "Aviso:", "gestionar");
-        double separados;
         try {
             this.dao=new DAOMovimientos();
-            double separar = this.salidaProducto.getCantidad() - this.salidaProducto.getSeparados();
-            if (separar > 0) {
-                separados = this.dao.separaSalida(this.salida.getIdMovto(), this.salida.getAlmacen().getIdAlmacen(), this.salidaProducto.getProducto().getIdProducto(), separar);
-                if (separados < separar) {
-                    fMsg.setSeverity(FacesMessage.SEVERITY_WARN);
-                    fMsg.setDetail("No se pudieron obtener la cantidad solicitada");
-                } else {
-                    ok = true;
-                }
-            } else {
-                this.dao.liberaSalida(this.salida.getIdMovto(), this.salida.getAlmacen().getIdAlmacen(), this.salidaProducto.getProducto().getIdProducto(), -separar);
-                separados=separar;
-                ok = true;
-            }
-            this.salidaProducto.setSeparados(this.salidaProducto.getSeparados() + separados);
-            this.salidaProducto.setCantidad(this.salidaProducto.getSeparados());
+            this.dao.actualizaEntrada(this.entrada.getIdMovto(), this.entrada.getAlmacen().getIdAlmacen(), this.entradaProducto.getProducto().getIdProducto(), this.entradaProducto.getCantidad());
+            this.entradaProducto.setSeparados(this.entradaProducto.getCantidad());
+            ok=true;
         } catch (SQLException ex) {
-            this.salidaProducto.setCantidad(this.salidaProducto.getSeparados());
+            this.entradaProducto.setCantidad(this.entradaProducto.getSeparados());
             fMsg.setDetail(ex.getErrorCode() + " " + ex.getMessage());
         } catch (NamingException ex) {
-            this.salidaProducto.setCantidad(this.salidaProducto.getSeparados());
+            this.entradaProducto.setCantidad(this.entradaProducto.getSeparados());
             fMsg.setDetail(ex.getMessage());
         }
         if (!ok) {
             FacesContext.getCurrentInstance().addMessage(null, fMsg);
         }
+    }
+    
+    public boolean comparaProducto(EntradaOficinaProducto p) {
+        boolean disable = true;
+        if (this.entradaProducto.getProducto().getIdProducto()==p.getProducto().getIdProducto()) {
+            disable = false;
+        }
+        return disable;
     }
     
     public void buscar() {
@@ -202,10 +199,10 @@ public class MbSalidasOficina implements Serializable {
     
     public void actualizaProductoSeleccionado() {
         boolean nuevo=true;
-        SalidaOficinaProducto productoSeleccionado=new SalidaOficinaProducto(this.mbBuscar.getProducto());
-        for(SalidaOficinaProducto p: this.salidaDetalle) {
+        EntradaOficinaProducto productoSeleccionado=new EntradaOficinaProducto(this.mbBuscar.getProducto());
+        for(EntradaOficinaProducto p: this.entradaDetalle) {
             if(p.equals(productoSeleccionado)) {
-                this.salidaProducto=p;
+                this.entradaProducto=p;
                 nuevo=false;
                 break;
             }
@@ -215,9 +212,9 @@ public class MbSalidasOficina implements Serializable {
             FacesMessage fMsg = new FacesMessage(FacesMessage.SEVERITY_ERROR, "Aviso:", "actualizaProductoSeleccionado");
             try {
                 this.dao=new DAOMovimientos();
-                this.dao.agregarProductoSalidaOficina(this.salida.getIdMovto(), this.convertirTOProducto(productoSeleccionado));
-                this.salidaDetalle.add(productoSeleccionado);
-                this.salidaProducto=productoSeleccionado;
+                this.dao.agregarProductoEntradaOficina(this.entrada.getIdMovto(), this.convertirTOProducto(productoSeleccionado));
+                this.entradaDetalle.add(productoSeleccionado);
+                this.entradaProducto=productoSeleccionado;
                 ok=true;
             } catch (SQLException ex) {
                 fMsg.setDetail(ex.getErrorCode() + " " + ex.getMessage());
@@ -230,24 +227,12 @@ public class MbSalidasOficina implements Serializable {
         }
     }
     
-    private TOSalidaOficinaProducto convertirTOProducto(SalidaOficinaProducto p) {
-        TOSalidaOficinaProducto to=new TOSalidaOficinaProducto();
+    private TOEntradaOficinaProducto convertirTOProducto(EntradaOficinaProducto p) {
+        TOEntradaOficinaProducto to=new TOEntradaOficinaProducto();
         to.setIdProducto(p.getProducto().getIdProducto());
         to.setCantidad(p.getCantidad());
+        to.setCosto(p.getCosto());
         return to;
-    }
-    
-    public boolean comparaProducto(SalidaOficinaProducto p) {
-        boolean disable = true;
-        if (this.salidaProducto.getProducto().getIdProducto()==p.getProducto().getIdProducto()) {
-            disable = false;
-        }
-        return disable;
-    }
-    
-    public void salir() {
-        this.inicializar();
-        this.modoEdicion = false;
     }
     
     public void capturar() {
@@ -260,14 +245,14 @@ public class MbSalidasOficina implements Serializable {
             fMsg.setSeverity(FacesMessage.SEVERITY_WARN);
             fMsg.setDetail("Se requiere seleccionar un concepto");
         } else {
-            this.salida=new Salida();
-            this.salida.setAlmacen(this.mbComprobantes.getMbAlmacenes().getToAlmacen());
-            this.salida.setTipo(this.tipo);
+            this.entrada=new Entrada();
+            this.entrada.setAlmacen(this.mbComprobantes.getMbAlmacenes().getToAlmacen());
+            this.entrada.setTipo(this.tipo);
             try {
                 this.dao=new DAOMovimientos();
-                this.salida.setIdMovto(this.dao.agregarMovimientoOficina(this.convertirTO()));
-                this.salidaDetalle=new ArrayList<SalidaOficinaProducto>();
-                this.salidaProducto=new SalidaOficinaProducto();
+                this.entrada.setIdMovto(this.dao.agregarMovimientoOficina(this.convertirTO()));
+                this.entradaDetalle=new ArrayList<EntradaOficinaProducto>();
+                this.entradaProducto=new EntradaOficinaProducto();
                 this.modoEdicion=true;
                 ok=true;
             } catch (SQLException ex) {
@@ -283,14 +268,14 @@ public class MbSalidasOficina implements Serializable {
     
     private TOMovimiento convertirTO() {
         TOMovimiento to=new TOMovimiento();
-        to.setIdMovto(this.salida.getIdMovto());
-        to.setIdTipo(this.salida.getTipo().getIdTipo());
-        to.setFolio(this.salida.getFolio());
-        to.setIdCedis(this.salida.getAlmacen().getIdCedis());
-        to.setIdEmpresa(this.salida.getAlmacen().getIdEmpresa());
-        to.setIdAlmacen(this.salida.getAlmacen().getIdAlmacen());
-        to.setFecha(this.salida.getFecha());
-        to.setIdUsuario(this.salida.getIdUsuario());
+        to.setIdMovto(this.entrada.getIdMovto());
+        to.setIdTipo(this.entrada.getTipo().getIdTipo());
+        to.setFolio(this.entrada.getFolio());
+        to.setIdCedis(this.entrada.getAlmacen().getIdCedis());
+        to.setIdEmpresa(this.entrada.getAlmacen().getIdEmpresa());
+        to.setIdAlmacen(this.entrada.getAlmacen().getIdAlmacen());
+        to.setFecha(this.entrada.getFecha());
+        to.setIdUsuario(this.entrada.getIdUsuario());
         return to;
     }
     
@@ -309,7 +294,7 @@ public class MbSalidasOficina implements Serializable {
             this.listaMovimientosTipos.add(new SelectItem(this.tipo, this.tipo.toString()));
             
             this.dao=new DAOMovimientos();
-            for(MovimientoTipo t: this.dao.obtenerMovimientosTipos(false)) {
+            for(MovimientoTipo t: this.dao.obtenerMovimientosTipos(true)) {
                 this.listaMovimientosTipos.add(new SelectItem(t, t.toString()));
             }
             ok=true;
@@ -333,7 +318,7 @@ public class MbSalidasOficina implements Serializable {
         this.mbBuscar.inicializar();
         this.modoEdicion=false;
         this.listaMovimientosTipos=null;
-        this.salidaDetalle=new ArrayList<SalidaOficinaProducto>();
+        this.entradaDetalle=new ArrayList<EntradaOficinaProducto>();
     }
 
     public ArrayList<Accion> obtenerAcciones(int idModulo) {
@@ -345,9 +330,17 @@ public class MbSalidasOficina implements Serializable {
 
     public ArrayList<Accion> getAcciones() {
         if (this.acciones == null) {
-            this.acciones = this.mbAcciones.obtenerAcciones(26);
+            this.acciones = this.mbAcciones.obtenerAcciones(28);
         }
         return acciones;
+    }
+
+    public void setAcciones(ArrayList<Accion> acciones) {
+        this.acciones = acciones;
+    }
+
+    public MbAcciones getMbAcciones() {
+        return mbAcciones;
     }
 
     public void setMbAcciones(MbAcciones mbAcciones) {
@@ -397,27 +390,27 @@ public class MbSalidasOficina implements Serializable {
         this.tipo = tipo;
     }
 
-    public SalidaOficinaProducto getSalidaProducto() {
-        return salidaProducto;
+    public ArrayList<Entrada> getEntradasPendientes() {
+        return entradasPendientes;
     }
 
-    public void setSalidaProducto(SalidaOficinaProducto salidaProducto) {
-        this.salidaProducto = salidaProducto;
+    public void setEntradasPendientes(ArrayList<Entrada> entradasPendientes) {
+        this.entradasPendientes = entradasPendientes;
     }
 
-    public ArrayList<SalidaOficinaProducto> getSalidaDetalle() {
-        return salidaDetalle;
+    public ArrayList<EntradaOficinaProducto> getEntradaDetalle() {
+        return entradaDetalle;
     }
 
-    public void setSalidaDetalle(ArrayList<SalidaOficinaProducto> salidaDetalle) {
-        this.salidaDetalle = salidaDetalle;
+    public void setEntradaDetalle(ArrayList<EntradaOficinaProducto> entradaDetalle) {
+        this.entradaDetalle = entradaDetalle;
     }
 
-    public ArrayList<Salida> getSalidasPendientes() {
-        return salidasPendientes;
+    public EntradaOficinaProducto getEntradaProducto() {
+        return entradaProducto;
     }
 
-    public void setSalidasPendientes(ArrayList<Salida> salidasPendientes) {
-        this.salidasPendientes = salidasPendientes;
+    public void setEntradaProducto(EntradaOficinaProducto entradaProducto) {
+        this.entradaProducto = entradaProducto;
     }
 }

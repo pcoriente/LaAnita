@@ -1,4 +1,4 @@
-package salidas;
+package mvEntradas;
 
 import producto2.dominio.Producto;
 
@@ -6,17 +6,17 @@ import producto2.dominio.Producto;
  *
  * @author jesc
  */
-public class SalidaOficinaProducto {
+public class EntradaOficinaProducto {
     private Producto producto;
     private double cantidad;
     private double separados;
     private double costo;
     
-    public SalidaOficinaProducto() {
+    public EntradaOficinaProducto() {
         this.producto=new Producto();
     }
     
-    public SalidaOficinaProducto(Producto producto) {
+    public EntradaOficinaProducto(Producto producto) {
         this.producto=producto;
     }
 
@@ -27,8 +27,8 @@ public class SalidaOficinaProducto {
 
     @Override
     public int hashCode() {
-        int hash = 7;
-        hash = 83 * hash + (this.producto != null ? this.producto.hashCode() : 0);
+        int hash = 5;
+        hash = 97 * hash + (this.producto != null ? this.producto.hashCode() : 0);
         return hash;
     }
 
@@ -40,7 +40,7 @@ public class SalidaOficinaProducto {
         if (getClass() != obj.getClass()) {
             return false;
         }
-        final SalidaOficinaProducto other = (SalidaOficinaProducto) obj;
+        final EntradaOficinaProducto other = (EntradaOficinaProducto) obj;
         if (this.producto != other.producto && (this.producto == null || !this.producto.equals(other.producto))) {
             return false;
         }

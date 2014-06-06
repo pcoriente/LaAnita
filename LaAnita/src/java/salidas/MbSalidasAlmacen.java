@@ -16,6 +16,7 @@ import javax.naming.NamingException;
 import movimientos.dao.DAOLotes;
 import movimientos.dominio.Lote;
 import movimientos.dominio.MovimientoTipo;
+import movimientos.to.TOMovimientoAlmacenProducto;
 import org.primefaces.context.RequestContext;
 import org.primefaces.event.SelectEvent;
 import producto2.MbProductosBuscar;
@@ -88,7 +89,7 @@ public class MbSalidasAlmacen implements Serializable {
         try {
             this.daoLotes=new DAOLotes();
             this.dao = new DAOMovimientos();
-            for(TOSalidaAlmacenProducto to:this.dao.obtenerDetalleSalidaAlmacen(this.salida.getAlmacen().getIdAlmacen(), this.salida.getIdMovto())) {
+            for(TOMovimientoAlmacenProducto to:this.dao.obtenerDetalleMovimientoAlmacen(this.salida.getIdMovto())) {
                 this.salidaDetalle.add(this.convertirProductoAlmacen(to));
             }
             this.salidaProducto=new SalidaAlmacenProducto();
@@ -106,7 +107,7 @@ public class MbSalidasAlmacen implements Serializable {
         }
     }
     
-    private SalidaAlmacenProducto convertirProductoAlmacen(TOSalidaAlmacenProducto to) throws SQLException {
+    private SalidaAlmacenProducto convertirProductoAlmacen(TOMovimientoAlmacenProducto to) throws SQLException {
         SalidaAlmacenProducto p=new SalidaAlmacenProducto();
         p.setProducto(this.mbBuscar.obtenerProducto(to.getIdProducto()));
         p.setCantidad(to.getCantidad());
@@ -165,18 +166,18 @@ public class MbSalidasAlmacen implements Serializable {
         }
     }
     
-    private ArrayList<TOSalidaAlmacenProducto> convertirDetalle() {
-        TOSalidaAlmacenProducto to;
-        ArrayList<TOSalidaAlmacenProducto> lista=new ArrayList<TOSalidaAlmacenProducto>();
-        for(SalidaAlmacenProducto p: this.salidaDetalle) {
-            to=new TOSalidaAlmacenProducto();
-            to.setIdProducto(p.getProducto().getIdProducto());
-            to.setCantidad(p.getCantidad());
-            to.setLotes(p.getLotes());
-            lista.add(to);
-        }
-        return lista;
-    }
+//    private ArrayList<TOSalidaAlmacenProducto> convertirDetalle() {
+//        TOSalidaAlmacenProducto to;
+//        ArrayList<TOSalidaAlmacenProducto> lista=new ArrayList<TOSalidaAlmacenProducto>();
+//        for(SalidaAlmacenProducto p: this.salidaDetalle) {
+//            to=new TOSalidaAlmacenProducto();
+//            to.setIdProducto(p.getProducto().getIdProducto());
+//            to.setCantidad(p.getCantidad());
+//            to.setLotes(p.getLotes());
+//            lista.add(to);
+//        }
+//        return lista;
+//    }
     
     public boolean comparaLotes(Lote lote) {
         boolean disable = true;
@@ -333,6 +334,8 @@ public class MbSalidasAlmacen implements Serializable {
             try {
                 this.dao=new DAOMovimientos();
                 this.salida.setIdMovto(this.dao.agregarMovimientoAlmacen(this.convertirTO()));
+                this.salidaDetalle=new ArrayList<SalidaAlmacenProducto>();
+                this.salidaProducto=new SalidaAlmacenProducto();
                 this.modoEdicion=true;
                 ok=true;
             } catch (SQLException ex) {
