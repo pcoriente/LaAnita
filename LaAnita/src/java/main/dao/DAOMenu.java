@@ -87,7 +87,7 @@ public class DAOMenu implements Serializable{
     
     public ArrayList<Menu> obtenermenu() throws SQLException {
         ArrayList<Menu> menuItems=new ArrayList<Menu>();
-        String strSQL="select x.idMenu, mm.menu, x.idSubmenu, isnull(ms.submenu, '') as subMenu, " +
+        String strSQL="select x.idMenu, mm.menu, x.idSubMenu, isnull(ms.subMenu, '') as subMenu, " +
                                 "x.idModulo, m.modulo, m.url\n" +
                         "from (select distinct m.idMenu, m.idSubMenu, m.idModulo \n" +
                         "		from usuarioPerfil p\n" +
