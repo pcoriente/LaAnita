@@ -10,17 +10,18 @@ import contactos.dao.DAOContactos;
 import contactos.dominio.Contacto;
 import contactos.dominio.Telefono;
 import contactos.dominio.TelefonoTipo;
-import javax.inject.Named;
-import javax.enterprise.context.SessionScoped;
+import formatos.MbFormatos;
 import java.io.Serializable;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.enterprise.context.SessionScoped;
 import javax.faces.application.FacesMessage;
 import javax.faces.bean.ManagedProperty;
 import javax.faces.context.FacesContext;
 import javax.faces.model.SelectItem;
+import javax.inject.Named;
 import javax.naming.NamingException;
 import menuClientesGrupos.dao.DAOClientesGrupo;
 import menuClientesGrupos.dominio.ClientesGrupos;
@@ -37,6 +38,8 @@ public class MbClientesGrupos implements Serializable {
 
     @ManagedProperty(value = "#{mbContactos}")
     private MbContactos mbContactos = new MbContactos();
+    @ManagedProperty(value = "#{mbFormatos}")
+    private MbFormatos mbFormatos = new MbFormatos();
     private ClientesGrupos clientesGrupos = new ClientesGrupos();
     private ArrayList<ClientesGrupos> lstClientesGrupos;
     private ClientesGrupos clienteGrupoSeleccionado = null;
@@ -61,8 +64,7 @@ public class MbClientesGrupos implements Serializable {
 
     public boolean validar() {
         boolean ok = false;
-        
-        
+
         return ok;
     }
 
@@ -131,19 +133,11 @@ public class MbClientesGrupos implements Serializable {
 
     public boolean validarClientesGrupo() {
         boolean okClienteGrupo = false;
-//        RequestContext context = RequestContext.getCurrentInstance();
-//        FacesMessage fMsg = new FacesMessage(FacesMessage.SEVERITY_WARN, "Aviso:", "");
-//        fMsg.setSeverity(FacesMessage.SEVERITY_ERROR);
         if (clientesGrupos.getGrupoCte().equals("")) {
             Mensajes.mensajeError("Se requiere un Cliente Grupo");
-//            fMsg.setDetail("Se requiere un Cliente Grupo");
         } else {
             okClienteGrupo = true;
         }
-        if (okClienteGrupo == false) {
-//            FacesContext.getCurrentInstance().addMessage(null, fMsg);
-        }
-//        context.addCallbackParam("ok", okClienteGrupo);
         return okClienteGrupo;
     }
 
@@ -326,6 +320,14 @@ public class MbClientesGrupos implements Serializable {
         return itemsClientesGrupos;
     }
 
+    public void guardarFormato() {
+        boolean ok = false;
+        ok = mbFormatos.validarFormatos();
+        if (ok == true) {
+            Mensajes.mensajeSucces("Datos Almacenados");
+        }
+    }
+
     public void setItemsClientesGrupos(ArrayList<SelectItem> itemsClientesGrupos) {
         this.itemsClientesGrupos = itemsClientesGrupos;
     }
@@ -376,6 +378,14 @@ public class MbClientesGrupos implements Serializable {
 
     public void setCmbClientesGrupos(ClientesGrupos cmbClientesGrupos) {
         this.cmbClientesGrupos = cmbClientesGrupos;
+    }
+
+    public MbFormatos getMbFormatos() {
+        return mbFormatos;
+    }
+
+    public void setMbFormatos(MbFormatos mbFormatos) {
+        this.mbFormatos = mbFormatos;
     }
 
 }
