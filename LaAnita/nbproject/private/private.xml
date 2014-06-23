@@ -13,6 +13,13 @@
     </editor-bookmarks>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group/>
-        <group name="La Anita"/>
+        <group name="La Anita">
+            <file>file:/C:/LaAnita10Junio2014/LaAnita/LaAnita/web/menuPrecioLista.xhtml</file>
+            <file>file:/C:/LaAnita10Junio2014/LaAnita/LaAnita/src/java/main/MbMenu.java</file>
+            <file>file:/C:/LaAnita10Junio2014/LaAnita/LaAnita/src/java/main/dao/DAOMenu.java</file>
+            <file>file:/C:/LaAnita10Junio2014/LaAnita/LaAnita/web/ordenCompra.xhtml</file>
+            <file>file:/C:/LaAnita10Junio2014/LaAnita/LaAnita/web/ordenDeCompra.xhtml</file>
+            <file>file:/C:/LaAnita10Junio2014/LaAnita/LaAnita/web/menuOrdenesDeCompra.xhtml</file>
+        </group>
     </open-files>
 </project-private>
