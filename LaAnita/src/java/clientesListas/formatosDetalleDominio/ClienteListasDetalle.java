@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package formatos.formatosDetalleDominio;
+package clientesListas.formatosDetalleDominio;
 
 import java.io.Serializable;
 import java.util.Date;
@@ -14,7 +14,7 @@ import producto2.dominio.Producto;
  *
  * @author Usuario
  */
-public class FormatoDetalle implements Serializable {
+public class ClienteListasDetalle implements Serializable {
 
     private int idFormato;
     private Producto producto = new Producto();
@@ -77,7 +77,7 @@ public class FormatoDetalle implements Serializable {
         if (getClass() != obj.getClass()) {
             return false;
         }
-        final FormatoDetalle other = (FormatoDetalle) obj;
+        final ClienteListasDetalle other = (ClienteListasDetalle) obj;
         if (this.producto != other.producto && (this.producto == null || !this.producto.equals(other.producto))) {
             return false;
         }

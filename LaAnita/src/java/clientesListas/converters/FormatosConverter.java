@@ -3,10 +3,10 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package formatos.converters;
+package clientesListas.converters;
 
-import formatos.DAOFormatos.DAOFormatos;
-import formatos.dominio.Formato;
+import clientesListas.DAOClientesLista.DAOClientesLista;
+import clientesListas.dominio.ClientesFormatos;
 import java.sql.SQLException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -24,14 +24,14 @@ public class FormatosConverter implements Converter {
     @Override
     public Object getAsObject(FacesContext context, UIComponent component, String value) {
         int id = Integer.parseInt(value);
-        Formato formato = null;
+        ClientesFormatos formato = null;
         if (id == 0) {
-            formato = new Formato();
+            formato = new ClientesFormatos();
             formato.setIdFormato(0);
             formato.getClientesGrupo().setIdGrupoCte(0);
         } else {
             try {
-                DAOFormatos dao = new DAOFormatos();
+                DAOClientesLista dao = new DAOClientesLista();
                 formato = dao.dameFormato(id);
             } catch (NamingException ex) {
                 Logger.getLogger(FormatosConverter.class.getName()).log(Level.SEVERE, null, ex);
@@ -45,7 +45,7 @@ public class FormatosConverter implements Converter {
 
     @Override
     public String getAsString(FacesContext context, UIComponent component, Object value) {
-        Formato formato = (Formato) value;
+        ClientesFormatos formato = (ClientesFormatos) value;
         return Integer.toString(formato.getIdFormato());
     }
 

@@ -10,9 +10,9 @@ import clientesTienda.dominio.ClienteTienda;
 import direccion.MbDireccion;
 import direccion.dao.DAODireccion;
 import direccion.dominio.Direccion;
-import formatos.DAOFormatos.DAOFormatos;
-import formatos.MbFormatos;
-import formatos.dominio.Formato;
+import clientesListas.DAOClientesLista.DAOClientesLista;
+import clientesListas.MbClientesListas;
+import clientesListas.dominio.ClientesFormatos;
 import java.io.Serializable;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -44,7 +44,7 @@ public class MbClientesTienda implements Serializable {
     @ManagedProperty(value = "#{mbRutas}")
     private MbRutas mbRutas = new MbRutas();
     @ManagedProperty(value = "#{mbFormatos}")
-    private MbFormatos mbFormatos = new MbFormatos();
+    private MbClientesListas mbFormatos = new MbClientesListas();
     private ArrayList<ClienteTienda> lstClientesGrupos = null;
     private boolean editar = false;
 
@@ -182,8 +182,8 @@ public class MbClientesTienda implements Serializable {
         FacesMessage fMsg;
         if (ok == true) {
             try {
-                DAOFormatos dao = new DAOFormatos();
-                Formato formato = new Formato();
+                DAOClientesLista dao = new DAOClientesLista();
+                ClientesFormatos formato = new ClientesFormatos();
                 formato.setFormato(mbFormatos.getFormato().getFormato());
                 formato.getClientesGrupo().setIdGrupoCte(idFormato);
                 if (mbFormatos.getCmbFormato().getIdFormato() == 0) {
@@ -271,11 +271,11 @@ public class MbClientesTienda implements Serializable {
         this.mbRutas = mbRutas;
     }
 
-    public MbFormatos getMbFormatos() {
+    public MbClientesListas getMbFormatos() {
         return mbFormatos;
     }
 
-    public void setMbFormatos(MbFormatos mbFormatos) {
+    public void setMbFormatos(MbClientesListas mbFormatos) {
         this.mbFormatos = mbFormatos;
     }
 

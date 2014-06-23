@@ -19,7 +19,7 @@
     
     <converter>
         <converter-id>converters.formatos</converter-id>
-        <converter-class>formatos.converters.FormatosConverter</converter-class>
+        <converter-class>clientesListas.converters.FormatosConverter</converter-class>
     </converter>
     <navigation-rule>
         <from-view-id>/login.xhtml</from-view-id>

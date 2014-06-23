@@ -1,5 +1,6 @@
 package clientes;
 
+import agentes.MbAgentes;
 import clientes.DAOClientes.DAOClientes;
 import clientes.dominio.Cliente;
 import clientesBancos.DAOClientesBancos.DAOClientesBancos;
@@ -35,6 +36,8 @@ public class MbClientes implements Serializable {
 
     @ManagedProperty(value = "#{mbDireccion}")
     private MbDireccion mbDireccion = new MbDireccion();
+    @ManagedProperty(value = "#{mbAgentes}")
+    private MbAgentes mbAgentes = new MbAgentes();
     @ManagedProperty(value = "#{mbContribuyente}")
     private MbContribuyentes mbContribuyente = new MbContribuyentes();
     @ManagedProperty(value = "#{mbZonas}")
@@ -57,17 +60,17 @@ public class MbClientes implements Serializable {
     }
 
     public ArrayList<Cliente> getLstCliente() {
-        if (lstCliente == null) {
-            try {
-                DAOClientes daoCliente = new DAOClientes();
-                lstCliente = daoCliente.lstClientes();
-            } catch (SQLException ex) {
-                FacesMessage fMsg = new FacesMessage(FacesMessage.SEVERITY_WARN, "Aviso:", ex.toString());
-                fMsg.setSeverity(FacesMessage.SEVERITY_ERROR);
-                FacesContext.getCurrentInstance().addMessage(null, fMsg);
-                Logger.getLogger(MbClientes.class.getName()).log(Level.SEVERE, null, ex);
-            }
-        }
+//        if (lstCliente == null) {
+//            try {
+//                DAOClientes daoCliente = new DAOClientes();
+//                lstCliente = daoCliente.lstClientes();
+//            } catch (SQLException ex) {
+//                FacesMessage fMsg = new FacesMessage(FacesMessage.SEVERITY_WARN, "Aviso:", ex.toString());
+//                fMsg.setSeverity(FacesMessage.SEVERITY_ERROR);
+//                FacesContext.getCurrentInstance().addMessage(null, fMsg);
+//                Logger.getLogger(MbClientes.class.getName()).log(Level.SEVERE, null, ex);
+//            }
+//        }
         return lstCliente;
     }
 
@@ -422,6 +425,14 @@ public class MbClientes implements Serializable {
 
     public void setActualizar(boolean actualizar) {
         this.actualizar = actualizar;
+    }
+
+    public MbAgentes getMbAgentes() {
+        return mbAgentes;
+    }
+
+    public void setMbAgentes(MbAgentes mbAgentes) {
+        this.mbAgentes = mbAgentes;
     }
 
 }

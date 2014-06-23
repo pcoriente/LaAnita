@@ -17,9 +17,6 @@
                 <h:form id="form" onkeypress="return event.keyCode !== 13;" >
                     <p:growl id="growl" showDetail="true"/>  
                     <div align="right">
-                        <p:commandButton value="click"
-                                         onclick="click.show();"
-                                         process="@this"/>
                         <p:commandButton icon="ui-icon-document"
                                          oncomplete="dlgClientesGrupos.show();"
                                          actionListener="#{mbMenuClientesGrupos.cargaContactos()}"
@@ -51,7 +48,6 @@
                             id="tablaClientesGrupos"
                             scrollable="true"
                             scrollHeight="320"
-                            scrollWidth="600"
                             value="#{mbMenuClientesGrupos.lstClientesGrupos}"
                             var="lstClienteGrupos"
                             selection="#{mbMenuClientesGrupos.clienteGrupoSeleccionado}"
@@ -136,6 +132,19 @@
                                              actionListener="#{mbMenuClientesGrupos.cargarTelefonosTipos()}"
                                              update="form:cmbTelefonoTipo :form:mttoTelefonos"
                                              oncomplete="mttoTelefonosDialog.show();"/>
+                            
+                            <h:outputLabel id="lblFormatos"
+                                           value="Formatos:" style="color: black"
+                                           rendered="#{mbMenuClientesGrupos.actualizar}"/>
+                            <p:selectOneMenu style="width: 155px" 
+                                             id="cmbFormatos"
+                                             rendered="#{mbMenuClientesGrupos.actualizar}">
+                            </p:selectOneMenu>
+                            <p:commandButton id="btnFormatos"
+                                             title="Nuevo Formato"
+                                             icon="ui-icon-document"
+                                             rendered="#{mbMenuClientesGrupos.actualizar}"
+                                             />
                         </h:panelGrid>
                         <div style="margin: auto">
                             <p:commandButton title="Guardar"

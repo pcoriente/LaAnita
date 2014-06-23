@@ -6,7 +6,7 @@
 package clientesTienda.dominio;
 
 import direccion.dominio.Direccion;
-import formatos.dominio.Formato;
+import clientesListas.dominio.ClientesFormatos;
 import java.io.Serializable;
 import rutas.dominio.Ruta;
 
@@ -21,7 +21,7 @@ public class ClienteTienda implements Serializable {
     private String nombre;
     private int codigoTienda;
     private Direccion direccion = new Direccion();
-    private Formato formatos = new Formato();
+    private ClientesFormatos formatos = new ClientesFormatos();
     private Ruta ruta = new Ruta();
 
     public ClienteTienda() {
@@ -59,11 +59,11 @@ public class ClienteTienda implements Serializable {
         this.direccion = direccion;
     }
 
-    public Formato getFormatos() {
+    public ClientesFormatos getFormatos() {
         return formatos;
     }
 
-    public void setFormatos(Formato formatos) {
+    public void setFormatos(ClientesFormatos formatos) {
         this.formatos = formatos;
     }
 
