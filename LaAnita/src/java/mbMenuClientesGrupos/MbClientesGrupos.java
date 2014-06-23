@@ -4,6 +4,7 @@
  */
 package mbMenuClientesGrupos;
 
+import Message.Mensajes;
 import contactos.MbContactos;
 import contactos.dao.DAOContactos;
 import contactos.dominio.Contacto;
@@ -130,18 +131,19 @@ public class MbClientesGrupos implements Serializable {
 
     public boolean validarClientesGrupo() {
         boolean okClienteGrupo = false;
-        RequestContext context = RequestContext.getCurrentInstance();
-        FacesMessage fMsg = new FacesMessage(FacesMessage.SEVERITY_WARN, "Aviso:", "");
-        fMsg.setSeverity(FacesMessage.SEVERITY_ERROR);
+//        RequestContext context = RequestContext.getCurrentInstance();
+//        FacesMessage fMsg = new FacesMessage(FacesMessage.SEVERITY_WARN, "Aviso:", "");
+//        fMsg.setSeverity(FacesMessage.SEVERITY_ERROR);
         if (clientesGrupos.getGrupoCte().equals("")) {
-            fMsg.setDetail("Se requiere un Cliente Grupo");
+            Mensajes.mensajeError("Se requiere un Cliente Grupo");
+//            fMsg.setDetail("Se requiere un Cliente Grupo");
         } else {
             okClienteGrupo = true;
         }
         if (okClienteGrupo == false) {
-            FacesContext.getCurrentInstance().addMessage(null, fMsg);
+//            FacesContext.getCurrentInstance().addMessage(null, fMsg);
         }
-        context.addCallbackParam("ok", okClienteGrupo);
+//        context.addCallbackParam("ok", okClienteGrupo);
         return okClienteGrupo;
     }
 

@@ -5,6 +5,7 @@
  */
 package formatos;
 
+import Message.Mensajes;
 import clientesListas.dominio.ClientesFormatos;
 import formatos.dominio.ClientesFormato;
 import javax.inject.Named;
@@ -19,11 +20,12 @@ import javax.enterprise.context.Dependent;
 public class MbFormatos {
 
     ClientesFormatos clientesFormatoa = new ClientesFormatos();
-
+    
     /**
      * Creates a new instance of MbFormatos
      */
     public MbFormatos() {
+        
     }
 
 }
