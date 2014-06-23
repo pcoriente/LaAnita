@@ -31,8 +31,12 @@ public class MbEmpresas {
     private String comenta;
     private ArrayList<SelectItem> listaObtenerEmpresas;
 
-    public MbEmpresas() throws NamingException {
-        this.dao = new DAOEmpresas();
+    public MbEmpresas() {
+        try {
+            this.dao = new DAOEmpresas();
+        } catch (NamingException e) {
+            System.err.println(e);
+        }
     }
 
     public Empresa getEmpresa() {
@@ -73,9 +77,9 @@ public class MbEmpresas {
     }
 
     public ArrayList<SelectItem> getListaObtenerEmpresas() throws NamingException {
-        if(listaObtenerEmpresas == null){
+        if (listaObtenerEmpresas == null) {
             try {
-                listaObtenerEmpresas=obtenerListaEmpresas();
+                listaObtenerEmpresas = obtenerListaEmpresas();
             } catch (SQLException ex) {
                 Logger.getLogger(MbEmpresas.class.getName()).log(Level.SEVERE, null, ex);
             }
@@ -85,10 +89,10 @@ public class MbEmpresas {
 
     public void setListaObtenerEmpresas(ArrayList<SelectItem> listaObtenerEmpresas) {
         this.listaObtenerEmpresas = listaObtenerEmpresas;
-        
+
     }
 
-        //////////////////// M E T O D O S  ////////////
+    //////////////////// M E T O D O S  ////////////
     public ArrayList<Empresa> getListaEmpresas() throws NamingException {
         try {
             if (listaEmpresas == null) {
@@ -100,7 +104,6 @@ public class MbEmpresas {
         return listaEmpresas;
     }
 
-    
     private void cargaEmpresas() throws SQLException, NamingException {
         listaEmpresas = new ArrayList<Empresa>();
         ArrayList<TOEmpresa> toLista = dao.obtenerEmpresa();
@@ -193,13 +196,13 @@ public class MbEmpresas {
             fMsg.setDetail("Se requiere la DIRECCION de la Empresa");
         } else {
             try {
-                int idEmpresa=this.empresa.getIdEmpresa();
+                int idEmpresa = this.empresa.getIdEmpresa();
                 if (idEmpresa == 0) {
-                    idEmpresa=this.dao.agregar(codigo, strEmpresa, nombreComercial, rfc, telefono, fax, correo, representanteLegal, idDireccion);
+                    idEmpresa = this.dao.agregar(codigo, strEmpresa, nombreComercial, rfc, telefono, fax, correo, representanteLegal, idDireccion);
                 } else {
                     this.dao.modificar(this.empresa.getIdEmpresa(), strEmpresa, nombreComercial, rfc, telefono, fax, correo, representanteLegal, idDireccion);
                 }
-                this.empresa=this.convertir(this.dao.obtenerEmpresa(idEmpresa));
+                this.empresa = this.convertir(this.dao.obtenerEmpresa(idEmpresa));
                 this.listaEmpresas = null;
                 fMsg.setSeverity(FacesMessage.SEVERITY_INFO);
                 fMsg.setDetail("La EMPRESA se grabó correctamente !!");
@@ -213,7 +216,7 @@ public class MbEmpresas {
     }
 
     public String salir() {
-               
+
         if (this.empresa.getIdEmpresa() == 0 && this.empresa.getDireccion().getIdDireccion() > 0) {
             mbDireccion.eliminar(this.empresa.getDireccion().getIdDireccion());
         }
@@ -223,19 +226,19 @@ public class MbEmpresas {
     public String terminar() {
         return "menuEmpresa.terminar";
     }
-    
+
     //DAVID
     public ArrayList<SelectItem> obtenerListaEmpresas() throws SQLException, NamingException {
-        ArrayList<SelectItem> listaComboEmpresas=new ArrayList<SelectItem>();
-        
+        ArrayList<SelectItem> listaComboEmpresas = new ArrayList<SelectItem>();
+
         try {
-            Empresa e0=new Empresa();
+            Empresa e0 = new Empresa();
             e0.setIdEmpresa(0);
             e0.setCodigoEmpresa(0);
             e0.setNombreComercial("Empresa");
             listaComboEmpresas.add(new SelectItem(e0, e0.toString()));
 
-            ArrayList<Empresa> empresas=this.dao.obtenerComboEmpresa();
+            ArrayList<Empresa> empresas = this.dao.obtenerComboEmpresa();
             for (Empresa e : empresas) {
                 listaComboEmpresas.add(new SelectItem(e, e.toString()));
             }
@@ -244,6 +247,5 @@ public class MbEmpresas {
         }
         return listaComboEmpresas;
     }
-    
 
 }

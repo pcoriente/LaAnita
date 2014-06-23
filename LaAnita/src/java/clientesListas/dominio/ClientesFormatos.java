@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package formatos.dominio;
+package clientesListas.dominio;
 
 import java.io.Serializable;
 import menuClientesGrupos.dominio.ClientesGrupos;
@@ -13,7 +13,7 @@ import monedas.Moneda;
  *
  * @author Usuario
  */
-public class Formato implements Serializable {
+public class ClientesFormatos implements Serializable {
 
     private int idFormato;
     private String formato;
@@ -64,7 +64,7 @@ public class Formato implements Serializable {
         if (getClass() != obj.getClass()) {
             return false;
         }
-        final Formato other = (Formato) obj;
+        final ClientesFormatos other = (ClientesFormatos) obj;
         if (this.idFormato != other.idFormato) {
             return false;
         }

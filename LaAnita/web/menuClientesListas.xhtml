@@ -23,15 +23,15 @@
                                          process="@this"
                                          title="Nuevo Formato"
                                          oncomplete="dlgFormato.show();"
-                                         actionListener="#{mbFormatos.limpiar()}"
+                                         actionListener="#{mbClientesListas.limpiar()}"
                                          update="panelMonedas"/>
                         <p:commandButton id="btnEditarFormato" 
                                          icon="ui-icon-pencil"
                                          process="@this"
-                                         actionListener="#{mbFormatos.actualizar()}"
+                                         actionListener="#{mbClientesListas.actualizar()}"
                                          update="panelMonedas"
                                          title="Actualizar Formato"
-                                         disabled="#{mbFormatos.formatoSeleccion==null}"
+                                         disabled="#{mbClientesListas.formatoSeleccion==null}"
                                          oncomplete="dlgFormato.show();"/>
                         <p:commandButton icon="ui-icon-arrowreturnthick-1-w"
                                          ajax="false"
@@ -40,16 +40,16 @@
                     </div>
                     <p:panel header="Grupo de Cliente" 
                              styleClass="quitaCuadro">
-                        <p:dataTable value="#{mbFormatos.lstFormato}"
+                        <p:dataTable value="#{mbClientesListas.lstFormato}"
                                      var="tableFormatos"
                                      id="tableFormatos"
                                      selectionMode="single"
                                      rowKey="#{tableFormatos}"
                                      emptyMessage="No hay clientes Formatos"
-                                     selection="#{mbFormatos.formatoSeleccion}">
+                                     selection="#{mbClientesListas.formatoSeleccion}">
                             <p:ajax event="rowSelect"
                                     process="@this"
-                                    listener="#{mbFormatos.cargarDatos()}"
+                                    listener="#{mbClientesListas.cargarDatos()}"
                                     update=":form:btnEditarFormato"/>
                             <p:column headerText="Formato">
                                 ${tableFormatos.formato}
@@ -70,12 +70,12 @@
                                      id="panelMonedas">
                             <h:outputText value="Formato:"/>
                             <p:inputText id="txtFormato" 
-                                         value="#{mbFormatos.formato.formato}"/>
+                                         value="#{mbClientesListas.formato.formato}"/>
                             <h:outputText value="Moneda:"/>
                             <p:selectOneMenu id="cmbMoneda"
                                              filter="true"
-                                             value="#{mbFormatos.mbMonedas.moneda}">
-                                <f:selectItems value="#{mbFormatos.mbMonedas.listaMonedas}"/>
+                                             value="#{mbClientesListas.mbMonedas.moneda}">
+                                <f:selectItems value="#{mbClientesListas.mbMonedas.listaMonedas}"/>
                                 <f:converter converterId="converters.Moneda"/>
                             </p:selectOneMenu>
                             <h:outputText value="Fecha Inicio:"/>
@@ -85,7 +85,7 @@
                         </h:panelGrid>
                         <h:panelGrid columns="2">
                             <p:dataTable emptyMessage="No hay productos seleccionados"
-                                         value="#{mbFormatos.lstFormatoDetalle}"
+                                         value="#{mbClientesListas.lstFormatoDetalle}"
                                          var="formatoDetalle"
                                          id="tablaFormatoDetalle"
                                          scrollable="true"
@@ -117,10 +117,10 @@
                             <p:commandButton icon="ui-icon-disk" 
                                              process="@this txtFormato cmbMoneda"
                                              update="growl tableFormatos"
-                                             actionListener="#{mbFormatos.guardarFormato()}"
+                                             actionListener="#{mbClientesListas.guardarFormato()}"
                                              oncomplete="nuevoFormato(xhr, status, args)"/>
                             <p:commandButton icon="ui-icon-arrowreturnthick-1-w"
-                                             actionListener="#{mbFormatos.limpiar()}"
+                                             actionListener="#{mbClientesListas.limpiar()}"
                                              onclick="dlgFormato.hide();"
                                              update=":form:btnEditarFormato :form:tableFormatos"
                                              title="Cancelar"/>
@@ -135,12 +135,12 @@
                         <p:panelGrid id="buscarProductos" styleClass="sinBorde" >
                             <p:row >
                                 <p:column colspan="6" >
-                                    <p:selectOneRadio id="opciones" value="#{mbFormatos.mbBuscar.tipoBuscar}" style="background-color: #ccc" >
+                                    <p:selectOneRadio id="opciones" value="#{mbClientesListas.mbBuscar.tipoBuscar}" style="background-color: #ccc" >
                                         <f:selectItem itemLabel="SKU" itemValue="1" />
                                         <f:selectItem itemLabel="Genérico" itemValue="2" />
                                         <f:selectItem itemLabel="Descripcion" itemValue="3" />
                                         <f:selectItem itemLabel="Clasificacion" itemValue="4" />
-                                        <p:ajax listener="#{mbFormatos.mbBuscar.verCambio()}" update="buscarProductos" />
+                                        <p:ajax listener="#{mbClientesListas.mbBuscar.verCambio()}" update="buscarProductos" />
                                     </p:selectOneRadio>
                                 </p:column>
                             </p:row>
@@ -148,56 +148,56 @@
                                 <p:column style="width: 70px;" >
                                     <h:outputLabel value="BUSCAR :" style="font-weight: bold; color: red; width: 70px;" />
                                 </p:column>
-                                <p:column rendered="#{mbFormatos.mbBuscar.tipoBuscar=='1'}" >
-                                    <p:inputText id="opcionSKU" value="#{mbFormatos.mbBuscar.strBuscar}" maxlength="8" size="10" />
+                                <p:column rendered="#{mbClientesListas.mbBuscar.tipoBuscar=='1'}" >
+                                    <p:inputText id="opcionSKU" value="#{mbClientesListas.mbBuscar.strBuscar}" maxlength="8" size="10" />
                                     <p:commandButton id="btnBuscarSKU" icon="ui-icon-check" title="Buscar" 
                                                      process="@this opcionSKU" 
                                                      actionListener="#{mbFormatos.buscar()}"
                                                      oncomplete="handleBuscar(xhr, status, args)" />
                                 </p:column>
-                                <p:column rendered="#{mbFormatos.mbBuscar.tipoBuscar=='2'}" >
-                                    <p:autoComplete id="opcionParte" value="#{mbFormatos.mbBuscar.mbParte.parte}" maxlength="24" size="24"
-                                                    completeMethod="#{mbFormatos.mbBuscar.mbParte.completePartes}" process="@this"
+                                <p:column rendered="#{mbClientesListas.mbBuscar.tipoBuscar=='2'}" >
+                                    <p:autoComplete id="opcionParte" value="#{mbClientesListas.mbBuscar.mbParte.parte}" maxlength="24" size="24"
+                                                    completeMethod="#{mbClientesListas.mbBuscar.mbParte.completePartes}" process="@this"
                                                     var="p" itemLabel="#{p.parte}" itemValue="#{p}" converter="converters.Parte" 
                                                     forceSelection="true" />
                                     <p:commandButton id="btnBuscarLista" icon="ui-icon-check" title="Buscar" 
                                                      process="@this opcionParte" 
                                                      update="multipleSelectProductos"
-                                                     actionListener="#{mbFormatos.buscar()}" />
+                                                     actionListener="#{mbClientesListas.buscar()}" />
                                 </p:column>
-                                <p:column rendered="#{mbFormatos.mbBuscar.tipoBuscar=='3'}" >
-                                    <p:inputText id="opcionDescripcion" value="#{mbFormatos.mbBuscar.strBuscar}" maxlength="24" size="24" />
+                                <p:column rendered="#{mbClientesListas.mbBuscar.tipoBuscar=='3'}" >
+                                    <p:inputText id="opcionDescripcion" value="#{mbClientesListas.mbBuscar.strBuscar}" maxlength="24" size="24" />
                                     <p:commandButton id="btnBuscarDescripcion" icon="ui-icon-check" title="Buscar" 
                                                      process="@this opcionDescripcion" 
                                                      update="multipleSelectProductos" 
-                                                     actionListener="#{mbFormatos.buscar()}"/>
+                                                     actionListener="#{mbClientesListas.buscar()}"/>
                                 </p:column>
-                                <p:column rendered="#{mbFormatos.mbBuscar.tipoBuscar=='4'}" >
-                                    <p:selectOneMenu id="grupo" value="#{mbFormatos.mbBuscar.mbGrupo.grupo}" style="width: 250px;" >
+                                <p:column rendered="#{mbClientesListas.mbBuscar.tipoBuscar=='4'}" >
+                                    <p:selectOneMenu id="grupo" value="#{mbClientesListas.mbBuscar.mbGrupo.grupo}" style="width: 250px;" >
                                         <f:converter converterId="converters.Grupos" />
-                                        <f:selectItems value="#{mbFormatos.mbBuscar.mbGrupo.listaGrupos}" />
-                                        <p:ajax event="change" listener="#{mbFormatos.mbBuscar.mbGrupo.cargaListaSubGrupos()}" 
+                                        <f:selectItems value="#{mbClientesListas.mbBuscar.mbGrupo.listaGrupos}" />
+                                        <p:ajax event="change" listener="#{mbClientesListas.mbBuscar.mbGrupo.cargaListaSubGrupos()}" 
                                                 update="subGrupo" />
                                     </p:selectOneMenu>
                                 </p:column>
-                                <p:column rendered="#{mbFormatos.mbBuscar.tipoBuscar=='4'}" >
-                                    <p:selectOneMenu id="subGrupo" value="#{mbFormatos.mbBuscar.mbGrupo.mbSubGrupo.subGrupo}" style="width: 250px;" >
+                                <p:column rendered="#{mbClientesListas.mbBuscar.tipoBuscar=='4'}" >
+                                    <p:selectOneMenu id="subGrupo" value="#{mbClientesListas.mbBuscar.mbGrupo.mbSubGrupo.subGrupo}" style="width: 250px;" >
                                         <f:converter converterId="converters.SubGrupos" />
-                                        <f:selectItems value="#{mbFormatos.mbBuscar.mbGrupo.mbSubGrupo.listaSubGrupos}" />
+                                        <f:selectItems value="#{mbClientesListas.mbBuscar.mbGrupo.mbSubGrupo.listaSubGrupos}" />
                                         <p:ajax event="change" />
                                     </p:selectOneMenu>
                                 </p:column>
-                                <p:column rendered="#{mbFormatos.mbBuscar.tipoBuscar=='4'}" >
+                                <p:column rendered="#{mbClientesListas.mbBuscar.tipoBuscar=='4'}" >
                                     <p:commandButton id="btnBuscarClasificacion" icon="ui-icon-check" title="Buscar" 
                                                      process="@this opcionDescripcion" 
                                                      update="multipleSelectProductos" 
-                                                     actionListener="#{mbFormatos.buscar()}"/>
+                                                     actionListener="#{mbClientesListas.buscar()}"/>
                                 </p:column>
                             </p:row>
                         </p:panelGrid>
                         <p:dataTable id="multipleSelectProductos" var="e" rowKey="#{e.cod_pro}"
-                                     value="#{mbFormatos.mbBuscar.productos}" 
-                                     selection="#{mbFormatos.mbBuscar.seleccionados}" >
+                                     value="#{mbClientesListas.mbBuscar.productos}" 
+                                     selection="#{mbClientesListas.mbBuscar.seleccionados}" >
 
                             <p:column selectionMode="multiple" style="width: 40px;" />
                             <p:column headerText="SKU" style="width: 70px;" >
@@ -210,7 +210,7 @@
                             <f:facet name="footer">
                                 <p:commandButton id="seleccionMultiple" value="Seleccionar" 
                                                  oncomplete="buscarProductoDlg.hide()"
-                                                 actionListener="#{mbFormatos.construir()}"
+                                                 actionListener="#{mbClientesListas.construir()}"
                                                  update=":form:tablaFormatoDetalle"/>
                             </f:facet>
                         </p:dataTable>

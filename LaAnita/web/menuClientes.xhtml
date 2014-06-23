@@ -70,11 +70,6 @@
                             <p:inputText id="txtRfc" 
                                          value="#{mbClientesBueno.mbContribuyente.contribuyente.rfc}"
                                          disabled="#{mbClientesBueno.actualizarRfc}">
-                                <p:ajax event="blur" 
-                                        listener="#{mbClientesBueno.dameStatusRfc()}"
-                                        process="txtRfc"
-                                        update="txtCurp growl
-                                        :form:panelClientes"/>
                             </p:inputText>
                             <h:outputLabel/>
                             <h:outputLabel styleClass="colorLetra" value="Contribuyente:"/>

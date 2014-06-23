@@ -3,339 +3,335 @@
 <html xmlns="http://www.w3.org/1999/xhtml"
       xmlns:h="http://java.sun.com/jsf/html"
       xmlns:p="http://primefaces.org/ui"
-      xmlns:f="http://java.sun.com/jsf/core">
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:ui="http://java.sun.com/jsf/facelets">
     <h:head>
         <title>Menu Agentes</title>
         <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"></meta>
-        <h:outputStylesheet library="css" name="bootstrap.css" />
-        <h:outputStylesheet library="css" name="css.css" />
-        <h:outputStylesheet library="css" name="style.css" />
-        <h:outputScript library="js" name="bootstrap.js"/>
-        <h:outputScript library="js" name="bootstrap.min.js"/>
+        <h:outputStylesheet library="css" name="main.css"/>
+        <h:outputStylesheet library="css" name="estilos.css"/>
     </h:head>
     <h:body>
-        <h:form  id="form" onkeypress="return event.keyCode !== 13;">
-            <div class="divPerzonalizado container">
-                <div class="divPerzonalizado col-lg-12">
+        <div id="wrapper" align="center">
+            <ui:include src="wrapper.xhtml" />
+            <div id="content" align="center"  >
+                <br></br>
+                <h:form  id="form" onkeypress="return event.keyCode !== 13;">
                     <p:growl id="growl" showDetail="true"/>  
-                    <section>
-                        <div class="divPerzonalizado row">
-                            <div  class="divPerzonalizad col-lg-10o col-lg-10 col-lg-offset-1 col-sm-10 col-sm-offset-1">
-                                <img src="resources/images/encabezado.jpg" class="img-responsive"/>
-                                <p:panel>
-                                    <f:facet name="header">
-                                        <p:commandButton icon="ui-icon-document" 
-                                                         oncomplete="dlg.show();"
-                                                         process="@this"
-                                                         title="Nuevo Agente"
-                                                         actionListener="#{mbAgentes.cargarAgentes()}"
-                                                         update=":form:panelNuevoAgente"/>
-                                        <p:commandButton id="actualizar"
-                                                         icon="ui-icon-pencil" 
-                                                         oncomplete="dlg.show();"
-                                                         process="@this"
-                                                         title="Actualizar Agente"
-                                                         disabled="#{mbAgentes.actualizar==0}"
-                                                         />
-                                        <p:commandButton icon="ui-icon-arrowreturnthick-1-w"
-                                                         ajax="false"
-                                                         title="Salir"
-                                                         action="#{mbAgentes.salir()}"/>
-                                    </f:facet>
-                                    <p:dataTable
-                                        id="listaAgentes"
-                                        value="#{mbAgentes.listaAgentes}"
-                                        var="agentes"
-                                        selection="#{mbAgentes.seleccionListaAgentes}"
-                                        selectionMode="single"
-                                        rowKey="#{agentes}"
-                                        emptyMessage="No hay agentes disponibles">
-                                        <p:ajax event="rowSelect"
-                                                listener="#{mbAgentes.cargarDatosActualizar()}"
-                                                process="@this"
-                                                update=":form:panelNuevoAgente :form:actualizar"/>
-                                        <p:column headerText="RFC">
-                                            #{agentes.contribuyente.rfc}
-                                        </p:column>
-                                        <p:column headerText="Nombre Agente">
-                                            #{agentes.agente}
-                                        </p:column>
-                                        <p:column headerText="Cedis">
-                                            #{agentes.miniCedis.cedis}
-                                        </p:column>
-                                    </p:dataTable>
-                                </p:panel>
-                            </div>
+                    <p:panel>
+                        <div align="right">
+                            <p:commandButton icon="ui-icon-document" 
+                                             oncomplete="dlg.show();"
+                                             process="@this"
+                                             title="Nuevo Agente"
+                                             actionListener="#{mbAgentes.cargarAgentes()}"
+                                             update=":form:panelNuevoAgente"/>
+                            <p:commandButton id="actualizar"
+                                             icon="ui-icon-pencil" 
+                                             oncomplete="dlg.show();"
+                                             process="@this"
+                                             title="Actualizar Agente"
+                                             disabled="#{mbAgentes.actualizar==0}"
+                                             />
+                            <p:commandButton icon="ui-icon-arrowreturnthick-1-w"
+                                             ajax="false"
+                                             title="Salir"
+                                             action="#{mbAgentes.salir()}"/>
                         </div>
-                    </section>
-                </div>
-            </div>
-            <!--- Dialog de nuevos Agentes. -->
-            <p:dialog modal="true"  
-                      widgetVar="dlg" 
-                      header="Nuevo Agente"
-                      showEffect="explode"
-                      hideEffect="explode"
-                      style="height: auto"
-                      resizable="false"
-                      closable="false">
-                <center>
-                    <h:panelGrid columns="3" 
-                                 id="panelNuevoAgente">
-                        <h:outputLabel value="Rfc:"/>
-                        <p:inputText id="txtRfc"
-                                     value="#{mbAgentes.mbContribuyente.contribuyente.rfc}">
-                            <p:ajax event="keyup"
-                                    listener="#{mbAgentes.dameStatusRfc()}"
-                                    process="txtRfc"
-                                    update="txtCurp growl"/>
-                            <p:ajax event="blur" 
-                                    listener="#{mbAgentes.dameStatusRfc()}"
-                                    process="txtRfc"
-                                    update="txtCurp growl"/>
-                        </p:inputText>
-                        <h:outputLabel/>
-                        <h:outputLabel  value="Contribuyente:"/>
-                        <p:inputText id="txtContribuyente"
-                                     value="#{mbAgentes.mbContribuyente.contribuyente.contribuyente}"/>
-                        <h:outputLabel/>
-
-                        <h:outputText id="lblCurp" value="Curp:" />
-                        <p:inputText id="txtCurp" 
-                                     disabled="#{mbAgentes.personaFisica ==2|| mbAgentes.personaFisica ==0}" 
-                                     value="#{mbAgentes.mbContribuyente.contribuyente.curp}">
-                        </p:inputText>
-                        <h:outputLabel/>
-
-                        <h:outputLabel>Dirección<br></br> Contribuyente:</h:outputLabel>
-                        <p:inputTextarea id="direccionFiscal" 
-                                         value="#{mbAgentes.agente.contribuyente.direccion}"
-                                         disabled="true"
-                                         style="font-size: 10px"
-                                         rows="5"
-                                         cols="39">
-                        </p:inputTextarea>
-                        <p:commandButton oncomplete="dlgDireccion.show();" 
-                                         icon="ui-icon-plusthick"
-                                         title="Nueva direccion Fiscal"
-                                         process="@this"
-                                         actionListener="#{mbAgentes.respaldoDireccionContribuyente()}"
-                                         update="asentamientos cboPaises cboAsentamientos localidad municipio estado gln calle  noExterior noInterior referencia :form:codigoPostal"
-                                         />
-                        <h:outputLabel>Agente:</h:outputLabel>
-                        <p:inputText id="txtNombreAgente" value="#{mbAgentes.agente.agente}"/> 
-                        <h:outputLabel/>
-                        <h:outputLabel>Cedis:</h:outputLabel>
-                        <p:selectOneMenu  id="cmbCedis" style="width: 190px" 
-                                          value="#{mbAgentes.agente.miniCedis}">
-                            <f:selectItems value="#{mbAgentes.listaMiniCedis}" />
-                            <f:converter converterId="converters.MiniCedis"/>
-                        </p:selectOneMenu>
-                        <h:outputLabel/>
-                        <h:outputLabel>Dirección:</h:outputLabel>
-                        <p:inputTextarea id="direccionAgente" 
-                                         value="#{mbAgentes.agente.direccionAgente}"
-                                         disabled="true"
-                                         style="font-size: 10px"
-                                         rows="5"
-                                         cols="39">
-                        </p:inputTextarea>
-                        <p:commandButton oncomplete="dlgDireccion.show();" 
-                                         icon="ui-icon-plusthick"
-                                         title="Nueva direccion Fiscal"
-                                         process="@this"
-                                         actionListener="#{mbAgentes.respaldoDireccionAgente()}"
-                                         update="cboPaises asentamientos cboAsentamientos localidad municipio estado gln calle  noExterior noInterior referencia :form:codigoPostal "/>
-                        <h:outputLabel value="Correo"/>
-                        <p:inputText  id="correo" 
-                                      value="#{mbAgentes.agente.contacto.correo}"/>
-                        <h:outputLabel/>
-
-
-                    </h:panelGrid>
-                    <p:commandButton  icon="#{mbAgentes.lblnuevoAgente}" 
-                                      title="Guardar Agente"
-                                      process="@this txtNombreAgente txtRfc txtContribuyente txtCurp direccionFiscal cmbCedis direccionAgente correo"
-                                      actionListener="#{mbAgentes.agregarNuevoAgente()}"
-                                      oncomplete="nuevoContribuyente(xhr, status, args)"
-                                      update="growl listaAgentes actualizar"/>
-                    <p:commandButton  icon="ui-icon-cancel" 
-                                      title="Cancelar Agente"
-                                      update=":form:listaAgentes :form:actualizar "
-                                      actionListener="#{mbAgentes.deseleccionar()}"
-                                      process="@this"
-                                      oncomplete="dlg.hide()"/>
-                </center>
-            </p:dialog>
-            <!--- Dialog de Direccion -->
-            <p:dialog  header="Nueva Dirección" 
-                       widgetVar="dlgDireccion"
-                       modal="true"
-                       resizable="false"
-                       closable="false">
-                <h:panelGrid id="panelCapturaDireccion" columns="2">
-                    <h:outputLabel value="Calle:" for="calle"  styleClass="colorLetra" />
-                    <p:inputText id="calle" value="#{mbAgentes.mbDireccion.direccion.calle}" />
-                    <h:outputLabel value="No.Exterior:"/>
-                    <p:inputText id="noExterior" value="#{mbAgentes.mbDireccion.direccion.numeroExterior}"/>
-                    <h:outputLabel value="No.Interior:" />
-                    <p:inputText id="noInterior" value="#{mbAgentes.mbDireccion.direccion.numeroInterior}"/>
-                    <h:outputLabel value="Referencia:"  />
-                    <p:inputText id="referencia" value="#{mbAgentes.mbDireccion.direccion.referencia}"/>
-                    <h:outputLabel value="País:"/>
-                    <p:selectOneMenu id="cboPaises" 
-                                     value="#{mbAgentes.mbDireccion.direccion.pais}"
-                                     style="width: 188px">
-                        <f:converter converterId="converters.Pais" />
-                        <f:selectItems value="#{mbDireccion.listaPaises}" />
-                    </p:selectOneMenu>
-                    <h:outputLabel value="Código Postal:" />
-                    <h:panelGroup>
-                        <h:panelGrid columns="3">
-                            <p:inputText id="codigoPostal" 
-                                         value="#{mbAgentes.mbDireccion.direccion.codigoPostal}"/>
-                            <p:commandButton  
-                                title="Buscar Codigo Postal"
-                                icon="ui-icon-search"
-                                action="#{mbAgentes.mbDireccion.buscarAsentamientos()}" 
-                                process="@this cboPaises codigoPostal" 
-                                update="cboAsentamientos"
-                                style="height: 30px"/>
-                        </h:panelGrid>
-                    </h:panelGroup>
-                    <h:outputLabel value="Colonia:" />
-                    <h:panelGroup id="asentamientos">
-                        <h:panelGrid rendered="#{mbAgentes.mbDireccion.editarAsentamiento}" columns="2" >
-                            <p:inputText id="txtAsentamiento" 
-                                         value="#{mbAgentes.mbDireccion.direccion.colonia}"/>
-                            <p:commandButton 
-                                icon="ui-icon-pencil"
-                                actionListener="#{mbAgentes.mbDireccion.setEditarAsentamiento(false)}" 
-                                update="asentamientos"
-                                title="Elegir Asentamiento"
-                                process="@this"/>
-                        </h:panelGrid>
-                        <p:selectOneMenu id="cboAsentamientos" 
-                                         rendered="#{!mbAgentes.mbDireccion.editarAsentamiento}" 
-                                         value="#{mbAgentes.mbDireccion.direccion.selAsentamiento}" 
-                                         style="width: 188px">
-                            <p:ajax event="change" listener="#{mbAgentes.mbDireccion.actualizaAsentamiento}" 
-                                    update="estado municipio localidad  asentamientos" />             
-                            <f:converter converterId="converters.Asentamiento" />
-                            <f:selectItems value="#{mbAgentes.mbDireccion.listaAsentamientos}" />
-                        </p:selectOneMenu>
-                    </h:panelGroup>
-                    <h:outputLabel value="Ciudad/Localidad:" />
-                    <p:inputText id="localidad" value="#{mbAgentes.mbDireccion.direccion.localidad}"/>
-                    <h:outputLabel value="Municipio/Delegación:" />
-                    <p:inputText id="municipio" value="#{mbAgentes.mbDireccion.direccion.municipio}" />
-                    <h:outputLabel value="Estado:" />
-                    <p:inputText id="estado" value="#{mbAgentes.mbDireccion.direccion.estado}" />
-                    <h:outputLabel value="GLN:" />
-                    <p:inputText id="gln" value="#{mbAgentes.mbDireccion.direccion.numeroLocalizacion}"/>
-                    <h:outputLabel />
-                    <h:panelGroup style="display: block; text-align: right" >
-                        <p:commandButton icon="#{mbAgentes.lblNuevaDireccionAgente}"
-                                         actionListener="#{mbAgentes.validarDireccion()}"
-                                         process="@this txtAsentamiento cboPaises localidad municipio estado gln calle txtAsentamiento noExterior noInterior referencia codigoPostal"
-                                         title="Grabar Direccion"
-                                         update="direccionFiscal direccionAgente growl"
-                                         oncomplete="nuevaDireccion(xhr, status, args)" />
-                        <p:commandButton icon="ui-icon-arrowreturnthick-1-w"
-                                         title="Cancelar Direccion"
-                                         actionListener="#{mbAgentes.mbDireccion.cancelarDireccion()}"
-                                         process="@this"
-                                         update="cboPaises localidad municipio estado gln calle txtAsentamiento noExterior noInterior referencia codigoPostal direccionFiscal"
-                                         oncomplete="dlgDireccion.hide();"/>
-                    </h:panelGroup>
-                </h:panelGrid>
-            </p:dialog>
-            <!--- Dialog de Mantenimiento de Telefonos -->
-            <p:dialog header="MANTENIMIENTO DE TELEFONOS"
-                      widgetVar="mttoTelefonosDialog" 
-                      resizable="false"
-                      style="width: 500px;" modal="true" 
-                      hideEffect="explode">
-                <p:panelGrid id="mttoTelefonos">
-                    <p:row rendered="#{mbAgentes.mbContactos.mbTelefonos.telefono.idTelefono==0}" >
-                        <p:column >
-                            <h:outputLabel for="celular" value="Celular:" style="font-weight: bold; color: red; width: 120px;" />
-                        </p:column>
-                        <p:column colspan="2" >
-                            <p:selectBooleanCheckbox id="celular" 
-                                                     value="#{mbAgentes.mbContactos.mbTelefonos.celular}" >
-                                <p:ajax listener="#{mbAgentes.mbContactos.mbTelefonos.cargaTipos()}" 
-                                        update="cmbTelefonoTipo" />
-                            </p:selectBooleanCheckbox>
-                        </p:column>
-                    </p:row>
-                    <p:row >
-                        <p:column >
-                            <h:outputLabel for="cmbTelefonoTipo" value="Tipo:" style="font-weight: bold; color: red; width: 120px;" />
-                        </p:column>
-                        <p:column >
-                            <p:selectOneMenu id="cmbTelefonoTipo" 
-                                             value="#{mbAgentes.mbContactos.mbTelefonos.telefono.tipo}" style="margin: 0px;" >
-                                <f:converter converterId="converters.TelefonoTipo" />
-                                <f:selectItems value="#{mbAgentes.mbContactos.mbTelefonos.listaTipos}" />
-                            </p:selectOneMenu>
-                        </p:column>
-                        <p:column >
-                            <p:commandButton id="btnAgregarTelefonosTipos" 
-                                             icon="ui-icon-pencil" title="Mtto. Telefonos Tipos" 
-                                             process="@this cmbTelefonoTipo" 
-                                             actionListener="#{mbProveedores.mttoTelefonoTipo()}" 
-                                             oncomplete="mttoTelefonosTiposDialog.show()" />
-                        </p:column>
-                    </p:row>
-                    <p:row >
-                        <p:column >
-                            <h:outputLabel for="txtLada" value="Lada:" style="font-weight: bold; color: red; width: 120px;" />
-                        </p:column>
-                        <p:column colspan="2" >
-                            <p:inputText id="txtLada" value="#{mbAgentes.mbContactos.mbTelefonos.telefono.lada}" maxlength="3" size="5" />
-                        </p:column>
-                    </p:row>
-                    <p:row >
-                        <p:column >
-                            <h:outputLabel for="txtTelefono" value="Teléfono:" style="font-weight: bold; color: red; width: 120px;" />
-                        </p:column>
-                        <p:column colspan="2" >
-                            <p:inputText id="txtTelefono" value="#{mbAgentes.mbContactos.mbTelefonos.telefono.telefono}" 
-                                         maxlength="8" size="10" />
-                        </p:column>
-                    </p:row>
-                    <p:row >
-                        <p:column >
-                            <h:outputLabel for="txtExtension" value="Extensión:" style="font-weight: bold; color: red; width: 120px;" />
-                        </p:column>
-                        <p:column colspan="2" >
-                            <p:inputText id="txtExtension" value="#{mbAgentes.mbContactos.mbTelefonos.telefono.extension}" maxlength="15" size="20" />
-                        </p:column>
-                    </p:row>
-                    <f:facet name="footer" >
-                        <p:row >
-                            <p:column colspan="3" >
-                                <p:commandButton id="btnGrabarTelefono" 
-                                                 value="Grabar" 
-                                                 process="@this celular cmbTelefonoTipo txtLada txtTelefono txtExtension" 
-                                                 actionListener="#{mbAgentes.validarTelefonos()}"
-                                                 update="growl" 
-                                                 oncomplete="nuevoTelefono(xhr, status, args)" />
-                                <p:commandButton id="btnEliminarTelefono" 
-                                                 value="Eliminar"
-                                                 disabled="#{mbAgentes.mbContactos.mbTelefonos.telefono.idTelefono==0}" 
-                                                 actionListener="#{mbAgentes.eliminarTelefono()}"
-                                                 update="growl"
-                                                 oncomplete="mttoTelefonosDialog.hide();"
-                                                 />
+                        <p:dataTable
+                            id="listaAgentes"
+                            value="#{mbAgentes.listaAgentes}"
+                            var="agentes"
+                            selection="#{mbAgentes.seleccionListaAgentes}"
+                            selectionMode="single"
+                            rowKey="#{agentes}"
+                            emptyMessage="No hay agentes disponibles"
+                            scrollable="true"
+                            scrollHeight="340"
+                            >
+                            <p:ajax event="rowSelect"
+                                    listener="#{mbAgentes.cargarDatosActualizar()}"
+                                    process="@this"
+                                    update=":form:panelNuevoAgente :form:actualizar"/>
+                            <p:column headerText="RFC">
+                                #{agentes.contribuyente.rfc}
                             </p:column>
-                        </p:row>
-                    </f:facet>
-                </p:panelGrid>
-            </p:dialog>
-        </h:form>
+                            <p:column headerText="Nombre Agente">
+                                #{agentes.agente}
+                            </p:column>
+                            <p:column headerText="Cedis">
+                                #{agentes.miniCedis.cedis}
+                            </p:column>
+                        </p:dataTable>
+                    </p:panel>
+                    <!--- Dialog de nuevos Agentes. -->
+                    <p:dialog modal="true"  
+                              widgetVar="dlg" 
+                              header="Nuevo Agente"
+                              showEffect="explode"
+                              hideEffect="explode"
+                              style="height: auto"
+                              resizable="false"
+                              closable="false">
+                        <center>
+                            <h:panelGrid columns="3" 
+                                         id="panelNuevoAgente">
+                                <h:outputText id="lblRfc" value="Rfc:" />
+                                <p:inputText id="txtRfc"
+                                             value="#{mbAgentes.mbContribuyente.contribuyente.rfc}">
+                                    <!--<p:ajax event="keyup"
+                                            listener="#{mbAgentes.dameStatusRfc()}"
+                                            process="txtRfc"
+                                            update="txtCurp growl"/>
+                                    <p:ajax event="blur" 
+                                            listener="#{mbAgentes.dameStatusRfc()}"
+                                            process="txtRfc"
+                                            update="txtCurp growl"/>-->
+                                </p:inputText>
+                                <h:outputLabel/>
+                                <h:outputText id="lblContribuyente" value="Contribuyente:" />
+                                <p:inputText id="txtContribuyente"
+                                             value="#{mbAgentes.mbContribuyente.contribuyente.contribuyente}"/>
+                                <h:outputLabel/>
 
+                                <h:outputText id="lblCurp" value="Curp:" />
+                                <p:inputText id="txtCurp" 
+                                             disabled="#{mbAgentes.personaFisica ==2|| mbAgentes.personaFisica ==0}" 
+                                             value="#{mbAgentes.mbContribuyente.contribuyente.curp}">
+                                </p:inputText>
+                                <h:outputLabel/>
+                                  <h:outputText id="lblDirContribuyente" value="Dir. Contribuyente" />
+                                <p:inputTextarea id="direccionFiscal" 
+                                                 value="#{mbAgentes.agente.contribuyente.direccion}"
+                                                 disabled="true"
+                                                 style="font-size: 10px"
+                                                 rows="5"
+                                                 cols="26">
+                                </p:inputTextarea>
+                                <p:commandButton oncomplete="dlgDireccion.show();" 
+                                                 icon="ui-icon-plusthick"
+                                                 title="Nueva direccion Fiscal"
+                                                 process="@this"
+                                                 actionListener="#{mbAgentes.respaldoDireccionContribuyente()}"
+                                                 update="asentamientos cboPaises cboAsentamientos localidad municipio estado gln calle  noExterior noInterior referencia :form:codigoPostal"
+                                                 />
+                                <h:outputText id="lblAgente" value="Agente:" />
+                                <p:inputText id="txtNombreAgente" value="#{mbAgentes.agente.agente}"/> 
+                                <h:outputLabel/>
+                                <h:outputLabel>Cedis:</h:outputLabel>
+                                <p:selectOneMenu  id="cmbCedis" style="width: 160px" 
+                                                  value="#{mbAgentes.agente.miniCedis}">
+                                    <f:selectItems value="#{mbAgentes.listaMiniCedis}" />
+                                    <f:converter converterId="converters.MiniCedis"/>
+                                </p:selectOneMenu>
+                                <h:outputLabel/>
+                                <h:outputText id="lblDireccion" value="Direccion:" />
+
+                                <p:inputTextarea id="direccionAgente" 
+                                                 value="#{mbAgentes.agente.direccionAgente}"
+                                                 disabled="true"
+                                                 style="font-size: 10px"
+                                                 rows="5"
+                                                 cols="26">
+                                </p:inputTextarea>
+                                <p:commandButton oncomplete="dlgDireccion.show();" 
+                                                 icon="ui-icon-plusthick"
+                                                 title="Nueva direccion Fiscal"
+                                                 process="@this"
+                                                 actionListener="#{mbAgentes.respaldoDireccionAgente()}"
+                                                 update="cboPaises asentamientos cboAsentamientos localidad municipio estado gln calle  noExterior noInterior referencia :form:codigoPostal "/>
+                                <h:outputText id="lblCorreo" value="Correo:" />
+                                <p:inputText  id="correo" 
+                                              value="#{mbAgentes.agente.contacto.correo}"/>
+                                <h:outputLabel/>
+
+
+                            </h:panelGrid>
+                            <p:commandButton  icon="#{mbAgentes.lblnuevoAgente}" 
+                                              title="Guardar Agente"
+                                              process="@this txtNombreAgente txtRfc txtContribuyente txtCurp direccionFiscal cmbCedis direccionAgente correo"
+                                              actionListener="#{mbAgentes.agregarNuevoAgente()}"
+                                              oncomplete="nuevoContribuyente(xhr, status, args)"
+                                              update="growl listaAgentes actualizar"/>
+                            <p:commandButton  icon="ui-icon-cancel" 
+                                              title="Cancelar Agente"
+                                              update=":form:listaAgentes :form:actualizar "
+                                              actionListener="#{mbAgentes.deseleccionar()}"
+                                              process="@this"
+                                              oncomplete="dlg.hide()"/>
+                        </center>
+                    </p:dialog>
+                    <!--- Dialog de Direccion -->
+                    <p:dialog  header="Nueva Dirección" 
+                               widgetVar="dlgDireccion"
+                               modal="true"
+                               resizable="false"
+                               closable="false">
+                        <h:panelGrid id="panelCapturaDireccion" columns="2">
+                            <h:outputLabel value="Calle:" for="calle"  styleClass="colorLetra" />
+                            <p:inputText id="calle" value="#{mbAgentes.mbDireccion.direccion.calle}" />
+                            <h:outputLabel value="No.Exterior:"/>
+                            <p:inputText id="noExterior" value="#{mbAgentes.mbDireccion.direccion.numeroExterior}"/>
+                            <h:outputLabel value="No.Interior:" />
+                            <p:inputText id="noInterior" value="#{mbAgentes.mbDireccion.direccion.numeroInterior}"/>
+                            <h:outputLabel value="Referencia:"  />
+                            <p:inputText id="referencia" value="#{mbAgentes.mbDireccion.direccion.referencia}"/>
+                            <h:outputLabel value="País:"/>
+                            <p:selectOneMenu id="cboPaises" 
+                                             value="#{mbAgentes.mbDireccion.direccion.pais}"
+                                             style="width: 188px">
+                                <f:converter converterId="converters.Pais" />
+                                <f:selectItems value="#{mbDireccion.listaPaises}" />
+                            </p:selectOneMenu>
+                            <h:outputLabel value="Código Postal:" />
+                            <h:panelGroup>
+                                <h:panelGrid columns="3">
+                                    <p:inputText id="codigoPostal" 
+                                                 value="#{mbAgentes.mbDireccion.direccion.codigoPostal}"/>
+                                    <p:commandButton  
+                                        title="Buscar Codigo Postal"
+                                        icon="ui-icon-search"
+                                        action="#{mbAgentes.mbDireccion.buscarAsentamientos()}" 
+                                        process="@this cboPaises codigoPostal" 
+                                        update="cboAsentamientos"
+                                        style="height: 30px"/>
+                                </h:panelGrid>
+                            </h:panelGroup>
+                            <h:outputLabel value="Colonia:" />
+                            <h:panelGroup id="asentamientos">
+                                <h:panelGrid rendered="#{mbAgentes.mbDireccion.editarAsentamiento}" columns="2" >
+                                    <p:inputText id="txtAsentamiento" 
+                                                 value="#{mbAgentes.mbDireccion.direccion.colonia}"/>
+                                    <p:commandButton 
+                                        icon="ui-icon-pencil"
+                                        actionListener="#{mbAgentes.mbDireccion.setEditarAsentamiento(false)}" 
+                                        update="asentamientos"
+                                        title="Elegir Asentamiento"
+                                        process="@this"/>
+                                </h:panelGrid>
+                                <p:selectOneMenu id="cboAsentamientos" 
+                                                 rendered="#{!mbAgentes.mbDireccion.editarAsentamiento}" 
+                                                 value="#{mbAgentes.mbDireccion.direccion.selAsentamiento}" 
+                                                 style="width: 188px">
+                                    <p:ajax event="change" listener="#{mbAgentes.mbDireccion.actualizaAsentamiento}" 
+                                            update="estado municipio localidad  asentamientos" />             
+                                    <f:converter converterId="converters.Asentamiento" />
+                                    <f:selectItems value="#{mbAgentes.mbDireccion.listaAsentamientos}" />
+                                </p:selectOneMenu>
+                            </h:panelGroup>
+                            <h:outputLabel value="Ciudad/Localidad:" />
+                            <p:inputText id="localidad" value="#{mbAgentes.mbDireccion.direccion.localidad}"/>
+                            <h:outputLabel value="Municipio/Delegación:" />
+                            <p:inputText id="municipio" value="#{mbAgentes.mbDireccion.direccion.municipio}" />
+                            <h:outputLabel value="Estado:" />
+                            <p:inputText id="estado" value="#{mbAgentes.mbDireccion.direccion.estado}" />
+                            <h:outputLabel value="GLN:" />
+                            <p:inputText id="gln" value="#{mbAgentes.mbDireccion.direccion.numeroLocalizacion}"/>
+                            <h:outputLabel />
+                            <h:panelGroup style="display: block; text-align: right" >
+                                <p:commandButton icon="#{mbAgentes.lblNuevaDireccionAgente}"
+                                                 actionListener="#{mbAgentes.validarDireccion()}"
+                                                 process="@this txtAsentamiento cboPaises localidad municipio estado gln calle txtAsentamiento noExterior noInterior referencia codigoPostal"
+                                                 title="Grabar Direccion"
+                                                 update="direccionFiscal direccionAgente growl"
+                                                 oncomplete="nuevaDireccion(xhr, status, args)" />
+                                <p:commandButton icon="ui-icon-arrowreturnthick-1-w"
+                                                 title="Cancelar Direccion"
+                                                 actionListener="#{mbAgentes.mbDireccion.cancelarDireccion()}"
+                                                 process="@this"
+                                                 update="cboPaises localidad municipio estado gln calle txtAsentamiento noExterior noInterior referencia codigoPostal direccionFiscal"
+                                                 oncomplete="dlgDireccion.hide();"/>
+                            </h:panelGroup>
+                        </h:panelGrid>
+                    </p:dialog>
+                    <!--- Dialog de Mantenimiento de Telefonos -->
+                    <p:dialog header="MANTENIMIENTO DE TELEFONOS"
+                              widgetVar="mttoTelefonosDialog" 
+                              resizable="false"
+                              style="width: 500px;" modal="true" 
+                              hideEffect="explode">
+                        <p:panelGrid id="mttoTelefonos">
+                            <p:row rendered="#{mbAgentes.mbContactos.mbTelefonos.telefono.idTelefono==0}" >
+                                <p:column >
+                                    <h:outputLabel for="celular" value="Celular:" style="font-weight: bold; color: red; width: 120px;" />
+                                </p:column>
+                                <p:column colspan="2" >
+                                    <p:selectBooleanCheckbox id="celular" 
+                                                             value="#{mbAgentes.mbContactos.mbTelefonos.celular}" >
+                                        <p:ajax listener="#{mbAgentes.mbContactos.mbTelefonos.cargaTipos()}" 
+                                                update="cmbTelefonoTipo" />
+                                    </p:selectBooleanCheckbox>
+                                </p:column>
+                            </p:row>
+                            <p:row >
+                                <p:column >
+                                    <h:outputLabel for="cmbTelefonoTipo" value="Tipo:" style="font-weight: bold; color: red; width: 120px;" />
+                                </p:column>
+                                <p:column >
+                                    <p:selectOneMenu id="cmbTelefonoTipo" 
+                                                     value="#{mbAgentes.mbContactos.mbTelefonos.telefono.tipo}" style="margin: 0px;" >
+                                        <f:converter converterId="converters.TelefonoTipo" />
+                                        <f:selectItems value="#{mbAgentes.mbContactos.mbTelefonos.listaTipos}" />
+                                    </p:selectOneMenu>
+                                </p:column>
+                                <p:column >
+                                    <p:commandButton id="btnAgregarTelefonosTipos" 
+                                                     icon="ui-icon-pencil" title="Mtto. Telefonos Tipos" 
+                                                     process="@this cmbTelefonoTipo" 
+                                                     actionListener="#{mbProveedores.mttoTelefonoTipo()}" 
+                                                     oncomplete="mttoTelefonosTiposDialog.show()" />
+                                </p:column>
+                            </p:row>
+                            <p:row >
+                                <p:column >
+                                    <h:outputLabel for="txtLada" value="Lada:" style="font-weight: bold; color: red; width: 120px;" />
+                                </p:column>
+                                <p:column colspan="2" >
+                                    <p:inputText id="txtLada" value="#{mbAgentes.mbContactos.mbTelefonos.telefono.lada}" maxlength="3" size="5" />
+                                </p:column>
+                            </p:row>
+                            <p:row >
+                                <p:column >
+                                    <h:outputLabel for="txtTelefono" value="Teléfono:" style="font-weight: bold; color: red; width: 120px;" />
+                                </p:column>
+                                <p:column colspan="2" >
+                                    <p:inputText id="txtTelefono" value="#{mbAgentes.mbContactos.mbTelefonos.telefono.telefono}" 
+                                                 maxlength="8" size="10" />
+                                </p:column>
+                            </p:row>
+                            <p:row >
+                                <p:column >
+                                    <h:outputLabel for="txtExtension" value="Extensión:" style="font-weight: bold; color: red; width: 120px;" />
+                                </p:column>
+                                <p:column colspan="2" >
+                                    <p:inputText id="txtExtension" value="#{mbAgentes.mbContactos.mbTelefonos.telefono.extension}" maxlength="15" size="20" />
+                                </p:column>
+                            </p:row>
+                            <f:facet name="footer" >
+                                <p:row >
+                                    <p:column colspan="3" >
+                                        <p:commandButton id="btnGrabarTelefono" 
+                                                         value="Grabar" 
+                                                         process="@this celular cmbTelefonoTipo txtLada txtTelefono txtExtension" 
+                                                         actionListener="#{mbAgentes.validarTelefonos()}"
+                                                         update="growl" 
+                                                         oncomplete="nuevoTelefono(xhr, status, args)" />
+                                        <p:commandButton id="btnEliminarTelefono" 
+                                                         value="Eliminar"
+                                                         disabled="#{mbAgentes.mbContactos.mbTelefonos.telefono.idTelefono==0}" 
+                                                         actionListener="#{mbAgentes.eliminarTelefono()}"
+                                                         update="growl"
+                                                         oncomplete="mttoTelefonosDialog.hide();"
+                                                         />
+                                    </p:column>
+                                </p:row>
+                            </f:facet>
+                        </p:panelGrid>
+                    </p:dialog> 
+                </h:form>
+            </div>
+            <ui:include src="footer.html" />
+        </div>
         <script type="text/javascript">
             function nuevoContribuyente(xhr, status, args) {
                 if (args.validationFailed || !args.okContribuyente) {
@@ -370,5 +366,6 @@
                 }
             }
         </script>
+
     </h:body>
 </html>
