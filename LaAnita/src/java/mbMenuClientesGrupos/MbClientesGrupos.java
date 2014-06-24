@@ -5,6 +5,7 @@
 package mbMenuClientesGrupos;
 
 import Message.Mensajes;
+import clientesListas.dominio.ClientesFormatos;
 import contactos.MbContactos;
 import contactos.dao.DAOContactos;
 import contactos.dominio.Contacto;
@@ -12,6 +13,7 @@ import contactos.dominio.Telefono;
 import contactos.dominio.TelefonoTipo;
 import formatos.DAOFormatos.DAOFormatos;
 import formatos.MbFormatos;
+import formatos.dominio.ClientesFormato;
 import java.io.Serializable;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -328,14 +330,28 @@ public class MbClientesGrupos implements Serializable {
         if (ok == true) {
             try {
                 DAOFormatos dao = new DAOFormatos();
-                mbFormatos.getClientesFormatos().getClientesGrupo().setIdGrupoCte(clienteGrupoSeleccionado.getIdGrupoCte());
-                dao.guardarFormato(mbFormatos.getClientesFormatos());
-                Mensajes.mensajeSucces("Datos Almacenados");
+                mbFormatos.getClientesFormatos().getClientesGrupos().setIdGrupoCte(clienteGrupoSeleccionado.getIdGrupoCte());
+                if (mbFormatos.getCmbClientesFormatos().getIdFormato() == 0) {
+                    dao.guardarFormato(mbFormatos.getClientesFormatos());
+                    Mensajes.mensajeSucces("Datos Almacenados");
+                } else {
+                    dao.actulizarFormato(mbFormatos.getClientesFormatos());
+                    Mensajes.mensajeSucces("Datos Actualizados Exitosamente");
+                }
+                mbFormatos.setLstFormatos(null);
                 mbFormatos.cargarListaFormatos(clienteGrupoSeleccionado.getIdGrupoCte());
             } catch (SQLException ex) {
                 Mensajes.mensajeError(ex.getMessage());
                 Logger.getLogger(MbClientesGrupos.class.getName()).log(Level.SEVERE, null, ex);
             }
+        }
+    }
+
+    public void limpiarCamposClientesFormatos() {
+        if (mbFormatos.getCmbClientesFormatos().getIdFormato() > 0) {
+            mbFormatos.setClientesFormatos(mbFormatos.getCmbClientesFormatos());
+        } else {
+            mbFormatos.setClientesFormatos(new ClientesFormato());
         }
     }
 

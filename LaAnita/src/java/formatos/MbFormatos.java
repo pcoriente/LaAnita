@@ -8,6 +8,7 @@ package formatos;
 import Message.Mensajes;
 import clientesListas.dominio.ClientesFormatos;
 import formatos.DAOFormatos.DAOFormatos;
+import formatos.dominio.ClientesFormato;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.logging.Level;
@@ -25,8 +26,9 @@ import javax.naming.NamingException;
 @Dependent
 public class MbFormatos {
 
-    ClientesFormatos clientesFormatos = new ClientesFormatos();
-    ArrayList<SelectItem>lstFormatos= new ArrayList<SelectItem>();
+    ClientesFormato clientesFormatos = new ClientesFormato();
+    ClientesFormato cmbClientesFormatos = new ClientesFormato();
+    ArrayList<SelectItem> lstFormatos = null;
 
     /**
      * Creates a new instance of MbFormatos
@@ -38,42 +40,35 @@ public class MbFormatos {
     public boolean validarFormatos() {
         boolean ok = false;
         if (clientesFormatos.getFormato().equals("")) {
-            Mensajes.mensajeAlert("Formato Requerido"); 
+            Mensajes.mensajeAlert("Formato Requerido");
         } else {
             ok = true;
         }
         return ok;
     }
-    
-    
-    public void cargarListaFormatos(int idGrupoClte){
-        try {
-            DAOFormatos dao = new DAOFormatos();
-            ClientesFormatos cli = new ClientesFormatos();
-            cli.setIdFormato(0);
-            cli.setFormato("Nuevo Formato");
-            lstFormatos.add(new SelectItem(cli, cli.getFormato()));
-            for(ClientesFormatos clientes : dao.dameFormatos(idGrupoClte)){
-                lstFormatos.add(new SelectItem(clientes, clientes.getFormato()));
+
+    public void cargarListaFormatos(int idGrupoClte) {
+        if (lstFormatos == null) {
+            try {
+                lstFormatos = new ArrayList<SelectItem>();
+                DAOFormatos dao = new DAOFormatos();
+                ClientesFormato cli = new ClientesFormato();
+                cli.setIdFormato(0);
+                cli.setFormato("Nuevo Formato");
+                lstFormatos.add(new SelectItem(cli, cli.getFormato()));
+                for (ClientesFormato clientes : dao.dameFormatos(idGrupoClte)) {
+                    lstFormatos.add(new SelectItem(clientes, clientes.getFormato()));
+                }
+            } catch (NamingException ex) {
+                Mensajes.mensajeError(ex.getMessage());
+                Logger.getLogger(MbFormatos.class.getName()).log(Level.SEVERE, null, ex);
+            } catch (SQLException e) {
+                Mensajes.mensajeError(e.getMessage());
             }
-        } catch (NamingException ex) {
-            Mensajes.mensajeError(ex.getMessage());
-            Logger.getLogger(MbFormatos.class.getName()).log(Level.SEVERE, null, ex);
-        }
-        catch(SQLException e){
-            Mensajes.mensajeError(e.getMessage());
         }
     }
-    
-    
 
-    public ClientesFormatos getClientesFormatos() {
-        return clientesFormatos;
-    }
-
-    public void setClientesFormatos(ClientesFormatos clientesFormatos) {
-        this.clientesFormatos = clientesFormatos;
-    }
+   
 
     public ArrayList<SelectItem> getLstFormatos() {
         return lstFormatos;
@@ -82,5 +77,23 @@ public class MbFormatos {
     public void setLstFormatos(ArrayList<SelectItem> lstFormatos) {
         this.lstFormatos = lstFormatos;
     }
+
+    public ClientesFormato getClientesFormatos() {
+        return clientesFormatos;
+    }
+
+    public void setClientesFormatos(ClientesFormato clientesFormatos) {
+        this.clientesFormatos = clientesFormatos;
+    }
+
+    public ClientesFormato getCmbClientesFormatos() {
+        return cmbClientesFormatos;
+    }
+
+    public void setCmbClientesFormatos(ClientesFormato cmbClientesFormatos) {
+        this.cmbClientesFormatos = cmbClientesFormatos;
+    }
+
+    
 
 }

@@ -139,13 +139,19 @@
                                            rendered="#{mbMenuClientesGrupos.actualizar}"/>
                             <p:selectOneMenu style="width: 155px" 
                                              id="cmbFormatos"
-                                             rendered="#{mbMenuClientesGrupos.actualizar}">
-                                <f:selectItems value="#{mbMenuClientesGrupos.mbFormatos.lstFormatos}"/>
+                                             rendered="#{mbMenuClientesGrupos.actualizar}"
+                                             value="#{mbMenuClientesGrupos.mbFormatos.cmbClientesFormatos}">
+                                 <f:converter converterId="CFormatos"/>
+                                 <f:selectItems value="#{mbMenuClientesGrupos.mbFormatos.lstFormatos}"/>
+                                 <p:ajax event="change" process="@this"/>
                             </p:selectOneMenu>
                             <p:commandButton id="btnFormatos"
                                              title="Nuevo Formato"
                                              icon="ui-icon-document"
                                              rendered="#{mbMenuClientesGrupos.actualizar}"
+                                             process="@this"
+                                             update=":form:txtFormato"
+                                             actionListener="#{mbMenuClientesGrupos.limpiarCamposClientesFormatos()}"
                                              oncomplete="dlgFormatos.show();"
                                              />
                         </h:panelGrid>

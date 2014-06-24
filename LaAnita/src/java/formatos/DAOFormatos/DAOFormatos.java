@@ -45,8 +45,8 @@ public class DAOFormatos {
         }
     }
 
-    public void guardarFormato(ClientesFormatos clientesFormatos) throws SQLException {
-        String sql = "INSERT INTO clientesFormato (formato, idGrupoCte) VALUES ('" + clientesFormatos.getFormato() + "', '" + clientesFormatos.getClientesGrupo().getIdGrupoCte() + "')";
+    public void guardarFormato(ClientesFormato clientesFormatos) throws SQLException {
+        String sql = "INSERT INTO clientesFormato (formato, idGrupoCte) VALUES ('" + clientesFormatos.getFormato() + "', '" + clientesFormatos.getClientesGrupos().getIdGrupoCte() + "')";
         Connection cn = ds.getConnection();
         Statement st = cn.createStatement();
         try {
@@ -56,24 +56,49 @@ public class DAOFormatos {
         }
     }
 
-    public ArrayList<ClientesFormatos> dameFormatos(int idGrupoClte) throws SQLException {
-        ArrayList<ClientesFormatos> lstFormatos = null;
+    public ArrayList<ClientesFormato> dameFormatos(int idGrupoClte) throws SQLException {
+        ArrayList<ClientesFormato> lstFormatos = null;
         String sql = "SELECT * FROM  clientesFormato WHERE idGrupoCte  = '" + idGrupoClte + "'";
         Connection cn = ds.getConnection();
         Statement st = cn.createStatement();
-        try { 
-            ResultSet rs  = st.executeQuery(sql);
-            lstFormatos= new ArrayList<ClientesFormatos>();
-            while(rs.next()){
-                ClientesFormatos formatos = new ClientesFormatos();
+        try {
+            ResultSet rs = st.executeQuery(sql);
+            lstFormatos = new ArrayList<ClientesFormato>();
+            while (rs.next()) {
+                ClientesFormato formatos = new ClientesFormato();
                 formatos.setIdFormato(rs.getInt("idFormato"));
                 formatos.setFormato(rs.getString("formato"));
-                formatos.getClientesGrupo().setIdGrupoCte(rs.getInt("idGrupoCte"));
+                formatos.getClientesGrupos().setIdGrupoCte(rs.getInt("idGrupoCte"));
                 lstFormatos.add(formatos);
             }
         } finally {
             cn.close();
         }
         return lstFormatos;
+    }
+
+    public ClientesFormato obtenerClientesFormato(int id) throws SQLException {
+        ClientesFormato clientes = new ClientesFormato();
+        Connection cn = ds.getConnection();
+        Statement st = cn.createStatement();
+        String sql = "SELECT * FROM clientesFormato WHERE idFormato = " + id;
+        ResultSet rs = st.executeQuery(sql);
+        while (rs.next()) {
+            clientes.setFormato(rs.getString("formato"));
+            clientes.setIdFormato(rs.getInt("idFormato"));
+            clientes.getClientesGrupos().setIdGrupoCte(rs.getInt("idGrupoCte"));
+        }
+        return clientes;
+    }
+
+    public void actulizarFormato(ClientesFormato clientesFormatos) throws SQLException {
+        String sql = "UPDATE clientesFormato set formato = '" + clientesFormatos.getFormato() + "' WHERE idFormato = '" + clientesFormatos.getIdFormato() + "'";
+        Connection cn = ds.getConnection();
+        Statement st = cn.createStatement();
+        try {
+            st.executeUpdate(sql);
+        } finally {
+            cn.close();
+        }
     }
 }
