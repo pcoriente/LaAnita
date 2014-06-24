@@ -387,7 +387,7 @@
             }
 
             function dlgFormato(xhr, status, args) {
-                if (args.validationFailed || !args.okTelefonoTipo) {
+                if (args.validationFailed || !args.ok) {
                     dlgFormatos.jq.effect("shake", {times: 5}, 100);
                 } else {
                     dlgFormatos.hide();

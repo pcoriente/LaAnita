@@ -7,8 +7,14 @@ package formatos;
 
 import Message.Mensajes;
 import clientesListas.dominio.ClientesFormatos;
-import javax.inject.Named;
+import formatos.DAOFormatos.DAOFormatos;
+import java.util.ArrayList;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.enterprise.context.Dependent;
+import javax.faces.model.SelectItem;
+import javax.inject.Named;
+import javax.naming.NamingException;
 
 /**
  *
@@ -19,6 +25,7 @@ import javax.enterprise.context.Dependent;
 public class MbFormatos {
 
     ClientesFormatos clientesFormatos = new ClientesFormatos();
+    ArrayList<SelectItem>lstFormatos= new ArrayList<SelectItem>();
 
     /**
      * Creates a new instance of MbFormatos
@@ -30,13 +37,24 @@ public class MbFormatos {
     public boolean validarFormatos() {
         boolean ok = false;
         if (clientesFormatos.getFormato().equals("")) {
-           
             Mensajes.mensajeAlert("Formato Requerido"); 
         } else {
             ok = true;
         }
         return ok;
     }
+    
+    
+    public void cargarListaFormatos(int idGrupoClte){
+        try {
+            DAOFormatos dao = new DAOFormatos();
+        } catch (NamingException ex) {
+            Mensajes.mensajeError(ex.getMessage());
+            Logger.getLogger(MbFormatos.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+    
+    
 
     public ClientesFormatos getClientesFormatos() {
         return clientesFormatos;

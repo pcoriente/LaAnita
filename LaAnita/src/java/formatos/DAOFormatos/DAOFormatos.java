@@ -5,6 +5,10 @@
  */
 package formatos.DAOFormatos;
 
+import clientesListas.dominio.ClientesFormatos;
+import java.sql.Connection;
+import java.sql.SQLException;
+import java.sql.Statement;
 import javax.faces.context.ExternalContext;
 import javax.faces.context.FacesContext;
 import javax.naming.Context;
@@ -35,6 +39,17 @@ public class DAOFormatos {
             ds = (DataSource) cI.lookup("java:comp/env/" + usuarioSesion.getJndi());
         } catch (NamingException ex) {
             throw (ex);
+        }
+    }
+
+    public void guardarFormato(ClientesFormatos clientesFormatos) throws SQLException {
+        String sql = "INSERT INTO clientesFormato (formato, idGrupoCte) VALUES ('" + clientesFormatos.getFormato() + "', '" + clientesFormatos.getClientesGrupo().getIdGrupoCte() + "')";
+        Connection cn = ds.getConnection();
+        Statement st = cn.createStatement();
+        try {
+            st.executeUpdate(sql);
+        } finally {
+            cn.close();
         }
     }
 }

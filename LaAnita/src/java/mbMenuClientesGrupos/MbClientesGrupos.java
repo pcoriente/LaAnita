@@ -10,6 +10,7 @@ import contactos.dao.DAOContactos;
 import contactos.dominio.Contacto;
 import contactos.dominio.Telefono;
 import contactos.dominio.TelefonoTipo;
+import formatos.DAOFormatos.DAOFormatos;
 import formatos.MbFormatos;
 import java.io.Serializable;
 import java.sql.SQLException;
@@ -320,11 +321,19 @@ public class MbClientesGrupos implements Serializable {
         return itemsClientesGrupos;
     }
 
-    public void guardarFormato() {
+    public void guardarFormato() throws NamingException {
         boolean ok = false;
         ok = mbFormatos.validarFormatos();
         if (ok == true) {
-            Mensajes.mensajeSucces("Datos Almacenados");
+            try {
+                DAOFormatos dao = new DAOFormatos();
+                mbFormatos.getClientesFormatos().getClientesGrupo().setIdGrupoCte(clienteGrupoSeleccionado.getIdGrupoCte());
+                dao.guardarFormato(mbFormatos.getClientesFormatos());
+                Mensajes.mensajeSucces("Datos Almacenados");
+            } catch (SQLException ex) {
+                Mensajes.mensajeError(ex.getMessage());
+                Logger.getLogger(MbClientesGrupos.class.getName()).log(Level.SEVERE, null, ex);
+            }
         }
     }
 

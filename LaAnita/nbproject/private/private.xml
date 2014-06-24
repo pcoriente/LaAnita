@@ -15,14 +15,10 @@
         <group/>
         <group name="La Anita">
             <file>file:/C:/LaAnita10Junio2014/LaAnita/LaAnita/src/java/formatos/MbFormatos.java</file>
-            <file>file:/C:/LaAnita10Junio2014/LaAnita/LaAnita/src/java/agentes/MbAgentes.java</file>
             <file>file:/C:/LaAnita10Junio2014/LaAnita/LaAnita/src/java/Message/Mensajes.java</file>
-            <file>file:/C:/LaAnita10Junio2014/LaAnita/LaAnita/src/java/clientesListas/MbClientesListas.java</file>
             <file>file:/C:/LaAnita10Junio2014/LaAnita/LaAnita/web/menuClientesGrupos.xhtml</file>
-            <file>file:/C:/LaAnita10Junio2014/LaAnita/LaAnita/web/menuClientesListas.xhtml</file>
             <file>file:/C:/LaAnita10Junio2014/LaAnita/LaAnita/src/java/mbMenuClientesGrupos/MbClientesGrupos.java</file>
-            <file>file:/C:/LaAnita10Junio2014/LaAnita/LaAnita/src/java/clientes/MbClientes.java</file>
-            <file>file:/C:/LaAnita10Junio2014/LaAnita/LaAnita/web/menuClientes.xhtml</file>
+            <file>file:/C:/LaAnita10Junio2014/LaAnita/LaAnita/src/java/formatos/DAOFormatos/DAOFormatos.java</file>
         </group>
     </open-files>
 </project-private>

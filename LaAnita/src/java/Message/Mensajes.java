@@ -24,7 +24,7 @@ public class Mensajes {
 
     public static void mensajeError(String valor) {
         RequestContext context = RequestContext.getCurrentInstance();
-        FacesMessage fMsg = new FacesMessage(FacesMessage.SEVERITY_WARN, "Error:", valor);
+        FacesMessage fMsg = new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error:", valor);
         FacesContext.getCurrentInstance().addMessage(null, fMsg);
         context.addCallbackParam("ok", false);
     }
