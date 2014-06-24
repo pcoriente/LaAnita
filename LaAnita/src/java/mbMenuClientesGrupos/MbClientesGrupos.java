@@ -294,6 +294,7 @@ public class MbClientesGrupos implements Serializable {
         this.mbContactos.cargaContactos(4, clientesGrupos.getIdGrupoCte());
         mbContactos.getContacto().setIdContacto(0);
         lblNuevoContacto = ("ui-icon-document");
+        mbFormatos.cargarListaFormatos(clientesGrupos.getIdGrupoCte());
         actualizar = true;
     }
 
@@ -330,6 +331,7 @@ public class MbClientesGrupos implements Serializable {
                 mbFormatos.getClientesFormatos().getClientesGrupo().setIdGrupoCte(clienteGrupoSeleccionado.getIdGrupoCte());
                 dao.guardarFormato(mbFormatos.getClientesFormatos());
                 Mensajes.mensajeSucces("Datos Almacenados");
+                mbFormatos.cargarListaFormatos(clienteGrupoSeleccionado.getIdGrupoCte());
             } catch (SQLException ex) {
                 Mensajes.mensajeError(ex.getMessage());
                 Logger.getLogger(MbClientesGrupos.class.getName()).log(Level.SEVERE, null, ex);

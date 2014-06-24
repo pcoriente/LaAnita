@@ -6,9 +6,12 @@
 package formatos.DAOFormatos;
 
 import clientesListas.dominio.ClientesFormatos;
+import formatos.dominio.ClientesFormato;
 import java.sql.Connection;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.ArrayList;
 import javax.faces.context.ExternalContext;
 import javax.faces.context.FacesContext;
 import javax.naming.Context;
@@ -51,5 +54,26 @@ public class DAOFormatos {
         } finally {
             cn.close();
         }
+    }
+
+    public ArrayList<ClientesFormatos> dameFormatos(int idGrupoClte) throws SQLException {
+        ArrayList<ClientesFormatos> lstFormatos = null;
+        String sql = "SELECT * FROM  clientesFormato WHERE idGrupoCte  = '" + idGrupoClte + "'";
+        Connection cn = ds.getConnection();
+        Statement st = cn.createStatement();
+        try { 
+            ResultSet rs  = st.executeQuery(sql);
+            lstFormatos= new ArrayList<ClientesFormatos>();
+            while(rs.next()){
+                ClientesFormatos formatos = new ClientesFormatos();
+                formatos.setIdFormato(rs.getInt("idFormato"));
+                formatos.setFormato(rs.getString("formato"));
+                formatos.getClientesGrupo().setIdGrupoCte(rs.getInt("idGrupoCte"));
+                lstFormatos.add(formatos);
+            }
+        } finally {
+            cn.close();
+        }
+        return lstFormatos;
     }
 }

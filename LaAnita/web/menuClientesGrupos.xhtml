@@ -31,7 +31,8 @@
                                          :form:cmbContactos 
                                          :form:cmbTelefonos
                                          :form:btnContactos
-                                         :form:btnContactosNuevo"
+                                         :form:btnContactosNuevo
+                                         :form:cmbFormatos"
                                          disabled="#{mbMenuClientesGrupos.clienteGrupoSeleccionado==null}"
                                          oncomplete="dlgClientesGrupos.show();"
                                          title="Actualizar Grupo"
@@ -139,6 +140,7 @@
                             <p:selectOneMenu style="width: 155px" 
                                              id="cmbFormatos"
                                              rendered="#{mbMenuClientesGrupos.actualizar}">
+                                <f:selectItems value="#{mbMenuClientesGrupos.mbFormatos.lstFormatos}"/>
                             </p:selectOneMenu>
                             <p:commandButton id="btnFormatos"
                                              title="Nuevo Formato"
@@ -338,8 +340,8 @@
                             <p:commandButton icon="ui-icon-disk" 
                                              title="Guardar Formato"
                                              oncomplete="dlgFormato(xhr, status, args);"
-                                             update="growl"
-                                             process="@this, txtFormato"
+                                             update="growl cmbFormatos"
+                                             process="@this txtFormato"
                                              actionListener="#{mbMenuClientesGrupos.guardarFormato()}"/>
                             <p:commandButton icon="ui-icon-arrowreturnthick-1-w"
                                              title="Cancelar"/>

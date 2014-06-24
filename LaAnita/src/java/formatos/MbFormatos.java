@@ -8,6 +8,7 @@ package formatos;
 import Message.Mensajes;
 import clientesListas.dominio.ClientesFormatos;
 import formatos.DAOFormatos.DAOFormatos;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -48,9 +49,19 @@ public class MbFormatos {
     public void cargarListaFormatos(int idGrupoClte){
         try {
             DAOFormatos dao = new DAOFormatos();
+            ClientesFormatos cli = new ClientesFormatos();
+            cli.setIdFormato(0);
+            cli.setFormato("Nuevo Formato");
+            lstFormatos.add(new SelectItem(cli, cli.getFormato()));
+            for(ClientesFormatos clientes : dao.dameFormatos(idGrupoClte)){
+                lstFormatos.add(new SelectItem(clientes, clientes.getFormato()));
+            }
         } catch (NamingException ex) {
             Mensajes.mensajeError(ex.getMessage());
             Logger.getLogger(MbFormatos.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        catch(SQLException e){
+            Mensajes.mensajeError(e.getMessage());
         }
     }
     
@@ -62,6 +73,14 @@ public class MbFormatos {
 
     public void setClientesFormatos(ClientesFormatos clientesFormatos) {
         this.clientesFormatos = clientesFormatos;
+    }
+
+    public ArrayList<SelectItem> getLstFormatos() {
+        return lstFormatos;
+    }
+
+    public void setLstFormatos(ArrayList<SelectItem> lstFormatos) {
+        this.lstFormatos = lstFormatos;
     }
 
 }
