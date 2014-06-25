@@ -80,6 +80,11 @@ public class MbClientesListas implements Serializable {
     public void actualizar() {
         actualizar = true;
     }
+    
+    public String salir(){
+        return  "index.xhtml";
+    }
+    
 
     public void guardarFormato() {
         boolean ok = validar();

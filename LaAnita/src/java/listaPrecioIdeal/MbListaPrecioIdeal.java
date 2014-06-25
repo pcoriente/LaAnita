@@ -79,6 +79,13 @@ public class MbListaPrecioIdeal implements Serializable {
             }
         }
     }
+    
+    
+    public String salir (){
+        return "index.xhtml";
+    }
+    
+    
 
     public void actualizarPrecioLista(ListaPrecioIdeal ls) {
         FacesContext context = FacesContext.getCurrentInstance();
