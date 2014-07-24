@@ -49,8 +49,8 @@ public class DAOClientesLista {
                 ClientesFormatos formato = new ClientesFormatos();
                 formato.setFormato(rs.getString("formato"));
                 formato.setIdFormato(rs.getInt("idFormato"));
-                formato.getMoneda().setIdMoneda(rs.getInt("idMoneda"));
-                formato.getMoneda().setMoneda(rs.getString("moneda"));
+//                formato.getMoneda().setIdMoneda(rs.getInt("idMoneda"));
+//                formato.getMoneda().setMoneda(rs.getString("moneda"));
 //                formato.getClientesGrupo().setIdGrupoCte(rs.getInt("idGrupo"));
                 lstFormato.add(formato);
             }
@@ -62,7 +62,7 @@ public class DAOClientesLista {
 
     public void guardarFormato(ClientesFormatos formato) throws SQLException {
         Connection cn = ds.getConnection();
-        String sql = "INSERT INTO clientesFormatos (formato, idMoneda) VALUES('" + formato.getFormato() + "', '" + formato.getMoneda().getIdMoneda() + "')";
+        String sql = "INSERT INTO clientesFormatos (formato) VALUES('" + formato.getFormato() + "')";
         Statement st = cn.createStatement();
         try {
             st.executeUpdate(sql);
@@ -93,7 +93,7 @@ public class DAOClientesLista {
     }
 
     public void actualizar(ClientesFormatos formato) throws SQLException {
-        String sql = "UPDATE clientesFormatos set formato = '" + formato.getFormato() + "', idMoneda = '" + formato.getMoneda().getIdMoneda() + "' WHERE idFormato ='" + formato.getIdFormato() + "'";
+        String sql = "UPDATE clientesFormatos set formato = '" + formato.getFormato() + "' WHERE idFormato ='" + formato.getIdFormato() + "'";
         Connection cn = ds.getConnection();
         Statement st = cn.createStatement();
         try {

@@ -4,10 +4,15 @@
  */
 package clientes.dominio;
 
+import agentes.dominio.Agentes;
+import clientesListas.dominio.ClientesFormatos;
 import contribuyentes.Contribuyente;
+import direccion.dominio.Direccion;
 import impuestos.dominio.ImpuestoZona;
 import java.io.Serializable;
 import java.util.Date;
+import menuClientesGrupos.dominio.ClientesGrupos;
+import rutas.dominio.Ruta;
 
 /**
  *
@@ -18,14 +23,29 @@ public class Cliente implements Serializable {
     private int idCliente;
     private int codigoCliente;
     private Contribuyente contribuyente = new Contribuyente();
+    private Agentes agente = new Agentes();
+     private ClientesGrupos clientesGrupos = new ClientesGrupos();
     private ImpuestoZona impuestoZona = new ImpuestoZona();
     private Date fechaAlta;
     private int diasCredito;
     private float limiteCredito;
     private float descuentoComercial;
-    private double descuentoProntoPago;
+//    private double descuentoProntoPago;
     private int diasBloqueo;
+    private int codigoTienda;
+    private String nombreComercial;
+    private ClientesFormatos clientesFormato = new ClientesFormatos();
+    private Ruta ruta = new Ruta();
+    private Direccion direccion = new Direccion();
 
+    public ClientesGrupos getClientesGrupos() {
+        return clientesGrupos;
+    }
+
+    public void setClientesGrupos(ClientesGrupos clientesGrupos) {
+        this.clientesGrupos = clientesGrupos;
+    }
+    
     public Cliente() {
     }
 
@@ -93,16 +113,6 @@ public class Cliente implements Serializable {
         this.descuentoComercial = descuentoComercial;
     }
 
-    public double getDescuentoProntoPago() {
-        return descuentoProntoPago;
-    }
-
-    public void setDescuentoProntoPago(double descuentoProntoPago) {
-        this.descuentoProntoPago = descuentoProntoPago;
-    }
-
-    
-
     public int getDiasBloqueo() {
         return diasBloqueo;
     }
@@ -110,4 +120,56 @@ public class Cliente implements Serializable {
     public void setDiasBloqueo(int diasBloqueo) {
         this.diasBloqueo = diasBloqueo;
     }
+
+    public int getCodigoTienda() {
+        return codigoTienda;
+    }
+
+    public void setCodigoTienda(int codigoTienda) {
+        this.codigoTienda = codigoTienda;
+    }
+
+    public String getNombreComercial() {
+        return nombreComercial;
+    }
+
+    public void setNombreComercial(String nombreComercial) {
+        this.nombreComercial = nombreComercial;
+    }
+
+    public Agentes getAgente() {
+        return agente;
+    }
+
+    public void setAgente(Agentes agente) {
+        this.agente = agente;
+    }
+
+    public ClientesFormatos getClientesFormato() {
+        return clientesFormato;
+    }
+
+    public void setClientesFormato(ClientesFormatos clientesFormato) {
+        this.clientesFormato = clientesFormato;
+    }
+
+    
+
+    public Ruta getRuta() {
+        return ruta;
+    }
+
+    public void setRuta(Ruta ruta) {
+        this.ruta = ruta;
+    }
+
+    public Direccion getDireccion() {
+        return direccion;
+    }
+
+    public void setDireccion(Direccion direccion) {
+        this.direccion = direccion;
+    }
+    
+    
 }

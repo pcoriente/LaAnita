@@ -1,6 +1,7 @@
 package clientes;
 
-import agentes.MbAgentes;
+import Message.Mensajes;
+import agentes.MbMiniAgentes;
 import clientes.DAOClientes.DAOClientes;
 import clientes.dominio.Cliente;
 import clientesBancos.DAOClientesBancos.DAOClientesBancos;
@@ -15,6 +16,7 @@ import impuestos.MbZonas;
 import java.io.Serializable;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.enterprise.context.SessionScoped;
@@ -24,7 +26,10 @@ import javax.faces.context.FacesContext;
 import javax.inject.Named;
 import javax.naming.NamingException;
 import leyenda.dominio.ClientesBancos;
+import mbMenuClientesGrupos.MbClientesGrupos;
 import org.primefaces.context.RequestContext;
+import rutas.MbRutas;
+import utilerias.Utilerias;
 
 /**
  *
@@ -36,11 +41,15 @@ public class MbClientes implements Serializable {
 
     @ManagedProperty(value = "#{mbDireccion}")
     private MbDireccion mbDireccion = new MbDireccion();
+    @ManagedProperty(value = "#{mbRutas}")
+    private MbRutas mbRutas = new MbRutas();
     @ManagedProperty(value = "#{mbAgentes}")
-    private MbAgentes mbAgentes = new MbAgentes();
+    private MbMiniAgentes mbAgentes = new MbMiniAgentes();
     @ManagedProperty(value = "#{mbContribuyente}")
     private MbContribuyentes mbContribuyente = new MbContribuyentes();
     @ManagedProperty(value = "#{mbZonas}")
+    private MbClientesGrupos mbClientesGrupos = new MbClientesGrupos();
+    @ManagedProperty(value = "#{mbClientesGrupos}")
     private MbZonas mbZonas = new MbZonas();
     @ManagedProperty(value = "#{mbClientesBancos}")
     private MbClientesBancos mbClientesBancos = new MbClientesBancos();
@@ -52,6 +61,9 @@ public class MbClientes implements Serializable {
     private int controlActualizar = 0;
     private ClientesBancos clientes = new ClientesBancos();
     private boolean actualizar = false;
+    private boolean direccionCliente = false;
+    private boolean nuevoContribuyente = false;
+    private boolean activarRfc = false;
 
     /**
      * Creates a new instance of MbClientes
@@ -59,18 +71,33 @@ public class MbClientes implements Serializable {
     public MbClientes() {
     }
 
+    public List<String> completarClientes(String query) {
+        List<String> lst = new ArrayList<String>();
+        try {
+            DAOContribuyentes dao = new DAOContribuyentes();
+            for (Contribuyente con : dao.dameRfcContribuyente(query)) {
+                lst.add(con.getRfc());
+            }
+        } catch (NamingException ex) {
+            Mensajes.mensajeError(ex.getMessage());
+            Logger.getLogger(MbClientes.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (SQLException ex) {
+            Mensajes.mensajeError(ex.getMessage());
+            Logger.getLogger(MbClientes.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return lst;
+    }
+
     public ArrayList<Cliente> getLstCliente() {
-//        if (lstCliente == null) {
-//            try {
-//                DAOClientes daoCliente = new DAOClientes();
-//                lstCliente = daoCliente.lstClientes();
-//            } catch (SQLException ex) {
-//                FacesMessage fMsg = new FacesMessage(FacesMessage.SEVERITY_WARN, "Aviso:", ex.toString());
-//                fMsg.setSeverity(FacesMessage.SEVERITY_ERROR);
-//                FacesContext.getCurrentInstance().addMessage(null, fMsg);
-//                Logger.getLogger(MbClientes.class.getName()).log(Level.SEVERE, null, ex);
-//            }
-//        }
+        if (lstCliente == null) {
+            try {
+                lstCliente = new ArrayList<Cliente>();
+                DAOClientes daoCliente = new DAOClientes();
+                lstCliente = daoCliente.lstClientes();
+            } catch (SQLException ex) {
+                Mensajes.mensajeError(ex.getMessage());
+            }
+        }
         return lstCliente;
     }
 
@@ -84,89 +111,121 @@ public class MbClientes implements Serializable {
                 try {
                     DAODireccion daoDireccion = new DAODireccion();
                     daoDireccion.modificar(mbDireccion.getDireccion().getIdDireccion(), mbDireccion.getDireccion().getCalle(), mbDireccion.getDireccion().getNumeroExterior(), mbDireccion.getDireccion().getNumeroInterior(), mbDireccion.getDireccion().getReferencia(), mbDireccion.getDireccion().getPais().getIdPais(), mbDireccion.getDireccion().getCodigoPostal(), mbDireccion.getDireccion().getEstado(), mbDireccion.getDireccion().getMunicipio(), mbDireccion.getDireccion().getLocalidad(), mbDireccion.getDireccion().getColonia(), mbDireccion.getDireccion().getNumeroLocalizacion());
+                    if (direccionCliente == false) {
+                        cliente.getContribuyente().setDireccion(mbDireccion.getDireccion());
+                    } else {
+                        cliente.setDireccion(mbDireccion.getDireccion());
+                    }
+                    Mensajes.mensajeSucces("Exito!! Dirección actualizada correctamente");
                 } catch (NamingException ex) {
                     Logger.getLogger(MbClientes.class.getName()).log(Level.SEVERE, null, ex);
                 } catch (SQLException ex) {
                     Logger.getLogger(MbClientes.class.getName()).log(Level.SEVERE, null, ex);
                 }
+            } else if (direccionCliente == true) {
+                cliente.setDireccion(mbDireccion.getDireccion());
+
             } else {
-                this.cliente.getContribuyente().setDireccion(mbDireccion.getDireccion());
+                cliente.getContribuyente().setDireccion(mbDireccion.getDireccion());
+                mbContribuyente.getContribuyente().setDireccion(mbDireccion.getDireccion());
             }
         }
     }
 
-    public void cargarDatos() {
-        try {
-            this.setControlActualizar(1);
-            this.setActualizarRfc(true);
-            mbZonas.getZona().setIdZona(clienteSeleccionado.getImpuestoZona().getIdZona());
-            mbDireccion.setDireccion(clienteSeleccionado.getContribuyente().getDireccion());
-            cliente.setCodigoCliente(clienteSeleccionado.getCodigoCliente());
-            cliente.getContribuyente().setDireccion(clienteSeleccionado.getContribuyente().getDireccion());
-            cliente.setDescuentoComercial(clienteSeleccionado.getDescuentoComercial());
-            cliente.setDescuentoProntoPago(clienteSeleccionado.getDescuentoProntoPago());
-            cliente.setDiasBloqueo(clienteSeleccionado.getDiasBloqueo());
-            cliente.setDiasCredito(clienteSeleccionado.getDiasCredito());
-            cliente.setLimiteCredito(clienteSeleccionado.getLimiteCredito());
-            cliente.setIdCliente(clienteSeleccionado.getIdCliente());
-            mbContribuyente.getContribuyente().setContribuyente(clienteSeleccionado.getContribuyente().getContribuyente());
-            mbContribuyente.getContribuyente().setCurp(clienteSeleccionado.getContribuyente().getCurp());
-            mbContribuyente.getContribuyente().setRfc(clienteSeleccionado.getContribuyente().getRfc());
-            mbContribuyente.getContribuyente().setIdRfc(clienteSeleccionado.getContribuyente().getIdRfc());
-            mbContribuyente.getContribuyente().setIdContribuyente(clienteSeleccionado.getContribuyente().getIdContribuyente());
-            mbClientesBancos.getMbBanco().obtenerBancos(cliente.getCodigoCliente());
-            mbClientesBancos.cargarBancos(cliente.getCodigoCliente());
-        } catch (SQLException ex) {
-            Logger.getLogger(MbClientes.class.getName()).log(Level.SEVERE, null, ex);
+    public void altaDireccionClientes() {
+        direccionCliente = true;
+        mbDireccion.setDireccion(cliente.getDireccion());
+    }
+
+    public void altaDireccionContribuyente() {
+        mbContribuyente.limpiarContribuyente();
+        mbDireccion.limpiarDireccion();
+        cliente.getContribuyente().setDireccion(new Direccion());
+        direccionCliente = false;
+        Utilerias utilerias = new Utilerias();
+        String mensaje = utilerias.verificarRfc(cliente.getContribuyente().getRfc());
+        if (mensaje == "") {
+            try {
+                Mensajes.mensajeSucces("Rfc Valido");
+                DAOContribuyentes dao = new DAOContribuyentes();
+                Contribuyente contribuyente = dao.buscarContribuyente(cliente.getContribuyente().getRfc().toUpperCase());
+                activarRfc = true;
+                if (contribuyente.getContribuyente().equals("")) {
+                    nuevoContribuyente = true;
+                } else {
+                    cliente.getContribuyente().setDireccion(contribuyente.getDireccion());
+                    mbContribuyente.setContribuyente(contribuyente);
+                }
+            } catch (NamingException ex) {
+                Mensajes.mensajeError(ex.getMessage());
+            } catch (SQLException ex) {
+                Mensajes.mensajeError(ex.getMessage());
+
+            }
+            dameStatusRfc();
+        } else {
+            if (cliente.getContribuyente().getRfc() == null) {
+                RequestContext context = RequestContext.getCurrentInstance();
+                context.addCallbackParam("ok", true);
+                activarRfc = false;
+            } else {
+                Mensajes.mensajeError("Error!!" + mensaje);
+            }
         }
     }
 
+    public void mostrarDireccionContribuyente() {
+        mbDireccion.setDireccion(mbContribuyente.getContribuyente().getDireccion());
+    }
+
+    public void cargarDatos() {
+        this.setControlActualizar(1);
+        this.setActualizarRfc(true);
+        mbZonas.getZona().setIdZona(clienteSeleccionado.getImpuestoZona().getIdZona());
+        cliente.setDireccion(clienteSeleccionado.getDireccion());
+        cliente.setCodigoCliente(clienteSeleccionado.getCodigoCliente());
+        cliente.getContribuyente().setDireccion(clienteSeleccionado.getContribuyente().getDireccion());
+        cliente.setDescuentoComercial(clienteSeleccionado.getDescuentoComercial());
+        cliente.setDiasBloqueo(clienteSeleccionado.getDiasBloqueo());
+        cliente.setDiasCredito(clienteSeleccionado.getDiasCredito());
+        cliente.setLimiteCredito(clienteSeleccionado.getLimiteCredito());
+        cliente.setIdCliente(clienteSeleccionado.getIdCliente());
+        mbZonas.getZona().setIdZona(clienteSeleccionado.getImpuestoZona().getIdZona());
+        mbClientesGrupos.getCmbClientesGrupos().setIdGrupoCte(clienteSeleccionado.getClientesGrupos().getIdGrupoCte());
+        mbAgentes.getCmbAgentes().setIdAgente(clienteSeleccionado.getAgente().getIdAgente());
+        mbRutas.getCmbRuta().setIdRuta(clienteSeleccionado.getRuta().getIdRuta());
+        cliente.getContribuyente().setRfc(clienteSeleccionado.getContribuyente().getRfc());
+    }
+
     public void cancelar() {
-        clientes.getBancoLeyenda().setIdBanco(0);
-        clientes.setIdBanco(0);
+
         clienteSeleccionado = null;
         this.controlActualizar = 0;
         this.limpiar();
         this.actualizarRfc = false;
         this.actualizar = false;
+        cliente = new Cliente();
+        mbAgentes.getCmbAgentes().setIdAgente(0);
+        mbZonas.getZona().setIdZona(0);
+        mbRutas.getCmbRuta().setIdRuta(0);
+        mbClientesGrupos.getCmbClientesGrupos().setIdGrupoCte(0);
     }
 
     public void obtenerBancosClientes() {
         try {
             mbClientesBancos.getMbBanco().obtenerBancos(cliente.getIdCliente());
+
         } catch (SQLException ex) {
-            Logger.getLogger(MbClientes.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(MbClientes.class
+                    .getName()).log(Level.SEVERE, null, ex);
         }
     }
 
     public void dameStatusRfc() {
-        int longitud = mbContribuyente.getContribuyente().getRfc().length();
+        int longitud = mbContribuyente.getContribuyente().getRfc().trim().length();
         if (longitud == 13) {
-            for (Cliente cl : lstCliente) {
-                if (cl.getContribuyente().getRfc().equals(mbContribuyente.getContribuyente().getRfc())) {
-                    boolean ok = false;
-                    RequestContext context = RequestContext.getCurrentInstance();
-                    FacesMessage fMsg = new FacesMessage(FacesMessage.SEVERITY_WARN, "Aviso:", "");
-                    fMsg.setDetail("Rfc Existente !!");
-                    FacesContext.getCurrentInstance().addMessage(null, fMsg);
-                    this.cargarDatosClientes(mbContribuyente.getContribuyente().getRfc());
-                    break;
-                }
-            }
             personaFisica = 1;
         } else {
-            for (Cliente cl : lstCliente) {
-                if (cl.getContribuyente().getRfc().equals(mbContribuyente.getContribuyente().getRfc())) {
-                    boolean ok = false;
-                    RequestContext context = RequestContext.getCurrentInstance();
-                    FacesMessage fMsg = new FacesMessage(FacesMessage.SEVERITY_WARN, "Aviso:", "");
-                    fMsg.setDetail("Rfc Existente !!");
-                    context.addCallbackParam("okContribuyente", ok);
-                    FacesContext.getCurrentInstance().addMessage(null, fMsg);
-                    this.cargarDatosClientes(mbContribuyente.getContribuyente().getRfc());
-                    break;
-                }
-            }
             personaFisica = 2;
         }
     }
@@ -182,7 +241,6 @@ public class MbClientes implements Serializable {
             cliente.setCodigoCliente(cl.getCodigoCliente());
             cliente.getContribuyente().setDireccion(cl.getContribuyente().getDireccion());
             cliente.setDescuentoComercial(cl.getDescuentoComercial());
-            cliente.setDescuentoProntoPago(cl.getDescuentoProntoPago());
             cliente.setDiasBloqueo(cl.getDiasBloqueo());
             cliente.setDiasCredito(cl.getDiasCredito());
             cliente.setLimiteCredito(cl.getLimiteCredito());
@@ -195,7 +253,8 @@ public class MbClientes implements Serializable {
             mbClientesBancos.getMbBanco().obtenerBancos(cl.getCodigoCliente());
             mbClientesBancos.cargarBancos(cl.getCodigoCliente());
         } catch (SQLException ex) {
-            Logger.getLogger(MbClientes.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(MbClientes.class
+                    .getName()).log(Level.SEVERE, null, ex);
         }
     }
 
@@ -222,7 +281,9 @@ public class MbClientes implements Serializable {
             } catch (SQLException ex) {
                 ok = false;
                 fMsg = new FacesMessage(FacesMessage.SEVERITY_INFO, "Aviso:", ex.getMessage());
-                Logger.getLogger(MbClientes.class.getName()).log(Level.SEVERE, null, ex);
+                Logger
+                        .getLogger(MbClientes.class
+                                .getName()).log(Level.SEVERE, null, ex);
             }
         }
         FacesContext.getCurrentInstance().addMessage(null, fMsg);
@@ -233,46 +294,51 @@ public class MbClientes implements Serializable {
         RequestContext context = RequestContext.getCurrentInstance();
         FacesMessage fMsg = new FacesMessage(FacesMessage.SEVERITY_WARN, "Aviso:", "");
         boolean ok = false;
-        ok = mbContribuyente.valida();
-        if (ok == true) {
-            cliente.setContribuyente(mbContribuyente.getContribuyente());
-            if (mbDireccion.getDireccion().getCalle().equals("")) {
-                ok = false;
-                fMsg.setDetail("Error!! Direccion Requerida");
-                FacesContext.getCurrentInstance().addMessage(null, fMsg);
-            } else {
-                ok = this.validarClientes();
-                if (ok == true) {
-                    cliente.setImpuestoZona(mbZonas.getZona());
-                    DAOClientes daoCliente = new DAOClientes();
-                    try {
-                        cliente.getContribuyente().setDireccion(mbDireccion.getDireccion());
-                        FacesMessage fMsgs = new FacesMessage(FacesMessage.SEVERITY_INFO, "Aviso:", "");
-                        if (controlActualizar == 0) {
-                            daoCliente.guardarCliente(cliente);
-                            fMsgs.setDetail("Exito!! Nuevo Cliente dado de Alta");
-                        } else {
-                            DAOContribuyentes daoContribuyente = new DAOContribuyentes();
-                            daoContribuyente.actualizarContribuyente(mbContribuyente.getContribuyente());
-                            daoCliente.actualizarClientes(cliente);
-                            fMsgs.setDetail("Exito!! Cliente Actualizado");
-                        }
-                        FacesContext.getCurrentInstance().addMessage(null, fMsgs);
-                        lstCliente = null;
-                        this.limpiar();
-                    } catch (SQLException ex) {
-                        ok = false;
-                        fMsg.setDetail(ex.getMessage());
-                        FacesContext.getCurrentInstance().addMessage(null, fMsg);
-                        Logger.getLogger(MbClientes.class.getName()).log(Level.SEVERE, null, ex);
-                    } catch (NamingException ex) {
-                        ok = false;
-                        fMsg.setDetail(ex.getMessage());
-                        FacesContext.getCurrentInstance().addMessage(null, fMsg);
-                        Logger.getLogger(MbClientes.class.getName()).log(Level.SEVERE, null, ex);
+        if (mbAgentes.getCmbAgentes().getIdAgente() == 0) {
+            Mensajes.mensajeAlert("Error, Se requiere un Agente");
+        } else if (mbClientesGrupos.getCmbClientesGrupos().getIdGrupoCte() == 0) {
+            Mensajes.mensajeAlert("Error, Se requiere un cliente grupo");
+        } else if (mbZonas.getZona().getIdZona() == 0) {
+            Mensajes.mensajeAlert("Error, Se requiere una zona");
+        } else {
+            cliente.setClientesGrupos(mbClientesGrupos.getCmbClientesGrupos());
+            cliente.setImpuestoZona(mbZonas.getZona());
+            ok = this.validarClientes();
+            if (ok == true) {
+                cliente.setImpuestoZona(mbZonas.getZona());
+                DAOClientes daoCliente = new DAOClientes();
+                try {
+                    cliente.setAgente(mbAgentes.getCmbAgentes());
+                    cliente.getContribuyente().setDireccion(mbDireccion.getDireccion());
+                    FacesMessage fMsgs = new FacesMessage(FacesMessage.SEVERITY_INFO, "Aviso:", "");
+                    if (controlActualizar == 0) {
+                        daoCliente.guardarCliente(cliente);
+                        fMsgs.setDetail("Exito!! Nuevo Cliente dado de Alta");
+                    } else {
+                        DAOContribuyentes daoContribuyente = new DAOContribuyentes();
+                        daoContribuyente.actualizarContribuyente(mbContribuyente.getContribuyente());
+                        daoCliente.actualizarClientes(cliente);
+                        fMsgs.setDetail("Exito!! Cliente Actualizado");
                     }
-
+                    FacesContext.getCurrentInstance().addMessage(null, fMsgs);
+                    lstCliente = null;
+                    this.limpiar();
+                } catch (SQLException ex) {
+                    ok = false;
+                    fMsg.setDetail(ex.getMessage());
+                    FacesContext.getCurrentInstance().addMessage(null, fMsg);
+                    Logger
+                            .getLogger(MbClientes.class
+                                    .getName()).log(Level.SEVERE, null, ex);
+                } catch (NamingException ex) {
+                    ok = false;
+                    fMsg.setDetail(ex.getMessage());
+                    FacesContext.getCurrentInstance().addMessage(null, fMsg);
+                    Logger
+                            .getLogger(MbClientes.class
+                                    .getName()).log(Level.SEVERE, null, ex);
                 }
+
             }
         }
         actualizar = false;
@@ -288,12 +354,39 @@ public class MbClientes implements Serializable {
         cliente.setCodigoCliente(0);
         mbContribuyente.setContribuyente(new Contribuyente());
         cliente.setDescuentoComercial((float) 0.00);
-        cliente.setDescuentoProntoPago(0.00);
+//      cliente.setDescuentoProntoPago(0.00);
         cliente.setDiasBloqueo(0);
         cliente.setDiasCredito(0);
         cliente.setIdCliente(0);
         cliente.setLimiteCredito((float) 0.00);
         cliente.getContribuyente().setDireccion(new Direccion());
+    }
+
+    public void validarContribuyente() {
+        boolean ok = false;
+        ok = mbContribuyente.valida();
+        if (ok == true) {
+            try {
+                DAOContribuyentes dao = new DAOContribuyentes();
+                if (actualizarRfc == false) {
+                    boolean paso = dao.verificarContribuyente(mbContribuyente.getContribuyente().getRfc());
+                    if (paso == false) {
+                        dao.guardarContribuyente(mbContribuyente.getContribuyente(), mbContribuyente.getContribuyente().getDireccion());
+                        Mensajes.mensajeSucces("Exito, nuevo contribuyente disponible");
+                    } else {
+                        Mensajes.mensajeAlert("Error, Este contribuyente ya esta dado de alta");
+                    }
+                } else {
+                    dao.actualizarContribuyente(mbContribuyente.getContribuyente());
+                }
+            } catch (NamingException ex) {
+                Mensajes.mensajeError(ex.getMessage());
+                Logger.getLogger(MbClientes.class.getName()).log(Level.SEVERE, null, ex);
+            } catch (SQLException ex) {
+                
+                Mensajes.mensajeError(ex.getMessage());
+            }
+        }
     }
 
     public boolean validarClientes() {
@@ -302,6 +395,10 @@ public class MbClientes implements Serializable {
         FacesMessage fMsg = new FacesMessage(FacesMessage.SEVERITY_WARN, "Aviso:", "");
         if (cliente.getCodigoCliente() == 0) {
             fMsg.setDetail("Error!! Codigo Cliente Requerido");
+            FacesContext.getCurrentInstance().addMessage(null, fMsg);
+            context.addCallbackParam("ok", ok);
+        } else if (cliente.getNombreComercial().equals("")) {
+            fMsg.setDetail("Error!! Nombre comercial Requerido");
             FacesContext.getCurrentInstance().addMessage(null, fMsg);
             context.addCallbackParam("ok", ok);
         } else if (!mbZonas.validar()) {
@@ -326,9 +423,10 @@ public class MbClientes implements Serializable {
     }
 
     public void limpiarCampos() {
-        clientes.setIdBanco(0);
+//        clientes.setIdBanco(0);
         actualizar = true;
-        mbClientesBancos.getMbBanco().getObjBanco().setIdBanco(0);
+//        mbClientesBancos.getMbBanco().getObjBanco().setIdBanco(0);
+
     }
 
     public void dameCuentasBancarias() {
@@ -427,12 +525,52 @@ public class MbClientes implements Serializable {
         this.actualizar = actualizar;
     }
 
-    public MbAgentes getMbAgentes() {
+    public MbClientesGrupos getMbClientesGrupos() {
+        return mbClientesGrupos;
+    }
+
+    public void setMbClientesGrupos(MbClientesGrupos mbClientesGrupos) {
+        this.mbClientesGrupos = mbClientesGrupos;
+    }
+
+    public MbRutas getMbRutas() {
+        return mbRutas;
+    }
+
+    public void setMbRutas(MbRutas mbRutas) {
+        this.mbRutas = mbRutas;
+    }
+
+    public boolean isDireccionCliente() {
+        return direccionCliente;
+    }
+
+    public void setDireccionCliente(boolean direccionCliente) {
+        this.direccionCliente = direccionCliente;
+    }
+
+    public MbMiniAgentes getMbAgentes() {
         return mbAgentes;
     }
 
-    public void setMbAgentes(MbAgentes mbAgentes) {
+    public void setMbAgentes(MbMiniAgentes mbAgentes) {
         this.mbAgentes = mbAgentes;
+    }
+
+    public boolean isNuevoContribuyente() {
+        return nuevoContribuyente;
+    }
+
+    public void setNuevoContribuyente(boolean nuevoContribuyente) {
+        this.nuevoContribuyente = nuevoContribuyente;
+    }
+
+    public boolean isActivarRfc() {
+        return activarRfc;
+    }
+
+    public void setActivarRfc(boolean activarRfc) {
+        this.activarRfc = activarRfc;
     }
 
 }

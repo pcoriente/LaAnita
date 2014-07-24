@@ -12,14 +12,18 @@
         <converter-class>dbs.converters.DbsConverter</converter-class>
     </converter>
     
-     <converter>
+    <converter>
         <converter-id>CFormatos</converter-id>
         <converter-class>formatos.Converter.ConverterClientesFormatos</converter-class>
     </converter>
     
-    
-    
      <converter>
+        <converter-id>agentes.Converter</converter-id>
+        <converter-class>agentes.converter.AgentesConverter</converter-class>
+    </converter>
+    
+    
+    <converter>
         <converter-id>converter.rutas</converter-id>
         <converter-class>rutas.converter.RutasConverter</converter-class>
     </converter>

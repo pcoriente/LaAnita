@@ -145,26 +145,142 @@ public class DAOContribuyentes {
     public void actualizarContribuyente(Contribuyente contribuyente) throws SQLException {
         Connection cn = this.ds.getConnection();
         Statement st = cn.createStatement();
-        String sql = "UPDATE contribuyentes set contribuyente = '"+contribuyente.getContribuyente()+"' WHERE idContribuyente = "+contribuyente.getIdContribuyente();
-        try{
-        st.executeUpdate(sql);
-        }
-        finally{
-        cn.close();
-        st.close();
+        String sql = "UPDATE contribuyentes set contribuyente = '" + contribuyente.getContribuyente() + "' WHERE idContribuyente = " + contribuyente.getIdContribuyente();
+        try {
+            st.executeUpdate(sql);
+        } finally {
+            cn.close();
+            st.close();
         }
     }
-    
-    public void actualizarContribuyenteRfc(Contribuyente contribuyente) throws SQLException{
-    Connection cn = this.ds.getConnection();
+
+    public void actualizarContribuyenteRfc(Contribuyente contribuyente) throws SQLException {
+        Connection cn = this.ds.getConnection();
         Statement st = cn.createStatement();
-        String sql = "UPDATE contribuyentesRfc set rfc = '"+contribuyente.getRfc()+"', curp='"+contribuyente.getCurp()+"' WHERE idRfc = "+contribuyente.getIdRfc();
-        try{
-        st.executeUpdate(sql);
+        String sql = "UPDATE contribuyentesRfc set rfc = '" + contribuyente.getRfc() + "', curp='" + contribuyente.getCurp() + "' WHERE idRfc = " + contribuyente.getIdRfc();
+        try {
+            st.executeUpdate(sql);
+        } finally {
+            cn.close();
+            st.close();
         }
-        finally{
-        cn.close();
-        st.close();
+    }
+
+    public ArrayList<Contribuyente> dameContribuyentes() throws SQLException {
+        ArrayList<Contribuyente> lstContribuyente = new ArrayList<Contribuyente>();
+        String sql = "SELECT * FROM contribuyentes";
+        Connection cn = ds.getConnection();
+        Statement st = cn.createStatement();
+        ResultSet rs = st.executeQuery(sql);
+        while (rs.next()) {
+            Contribuyente contribuyente = new Contribuyente();
+            contribuyente.setIdContribuyente(rs.getInt("idContribuyente"));
+            contribuyente.setContribuyente(rs.getString("contribuyente"));
+            lstContribuyente.add(contribuyente);
         }
+        return lstContribuyente;
+    }
+
+    public void guardarContribuyente(Contribuyente contribuyente, Direccion direccion) throws SQLException {
+        Connection cn = ds.getConnection();
+        Statement st = cn.createStatement();
+        ResultSet rs = null;
+        int idDireccion = 0;
+        int idRfc = 0;
+        st.executeUpdate("begin transaction");
+        try {
+            String sqlDireccion = "INSERT INTO direcciones (calle, numeroExterior, numeroInterior, colonia, localidad, referencia, municipio, estado, idPais, codigoPostal, numeroLocalizacion)"
+                    + "     VALUES ('" + direccion.getCalle() + "', '" + direccion.getNumeroExterior() + "','" + direccion.getNumeroInterior() + "', '" + direccion.getColonia() + "', '" + direccion.getLocalidad() + "', '" + direccion.getReferencia() + "', '" + direccion.getMunicipio() + "', '" + direccion.getEstado() + "', '" + direccion.getPais().getIdPais() + "', '" + direccion.getCodigoPostal() + "', '" + direccion.getNumeroLocalizacion() + "')";
+            st.executeUpdate(sqlDireccion);
+            rs = st.executeQuery("SELECT @@IDENTITY AS idDireccion");
+            if (rs.next()) {
+                idDireccion = rs.getInt("idDireccion");
+            }
+            String sqlContribuyenteRfc = "INSERT INTO contribuyentesRfc (rfc, curp) VALUES ('" + contribuyente.getRfc().toUpperCase() + "', '" + contribuyente.getCurp() + "')";
+            st.executeUpdate(sqlContribuyenteRfc);
+            rs = st.executeQuery("SELECT @@IDENTITY AS idRfc");
+            if (rs.next()) {
+                idRfc = rs.getInt("idRfc");
+            }
+            String sqlContribuyente = "INSERT INTO contribuyentes (contribuyente, idRfc, idDireccion) VALUES ('" + contribuyente.getContribuyente() + "','" + idRfc + "', '" + idDireccion + "' )";
+            st.executeUpdate(sqlContribuyente);
+            st.executeUpdate("commit transaction");
+        } catch (SQLException ex) {
+            Message.Mensajes.mensajeError(ex.getMessage());
+            st.executeUpdate("rollback transaction");
+            throw ex;
+        } finally {
+
+        }
+    }
+
+    public Contribuyente buscarContribuyente(String rfc) throws SQLException {
+        Connection cn = ds.getConnection();
+        Statement st = cn.createStatement();
+        Contribuyente contribuyente = new Contribuyente();
+        String sql = "select * from contribuyentes cr\n"
+                + "inner join contribuyentesRfc crR\n"
+                + "on cr.idContribuyente = crR.idRfc\n"
+                + "inner join direcciones dir \n"
+                + "on cr.idDireccion = dir.idDireccion\n"
+                + "where crR.rfc ='" + rfc + "';";
+        ResultSet rs = st.executeQuery(sql);
+        while (rs.next()) {
+            contribuyente.setContribuyente(rs.getString("contribuyente"));
+            contribuyente.setRfc(rs.getString("rfc"));
+            contribuyente.getDireccion().setIdDireccion(rs.getInt("idDireccion"));
+            contribuyente.getDireccion().setCalle(rs.getString("calle"));
+            contribuyente.getDireccion().setNumeroExterior(rs.getString("numeroExterior"));
+            contribuyente.getDireccion().setNumeroInterior(rs.getString("numeroInterior"));
+            contribuyente.getDireccion().setColonia(rs.getString("colonia"));
+            contribuyente.getDireccion().setLocalidad(rs.getString("localidad"));
+            contribuyente.getDireccion().setReferencia(rs.getString("referencia"));
+            contribuyente.getDireccion().setMunicipio(rs.getString("municipio"));
+            contribuyente.getDireccion().setEstado(rs.getString("estado"));
+            contribuyente.getDireccion().getPais().setIdPais(rs.getInt("idPais"));
+            contribuyente.getDireccion().setCodigoPostal(rs.getString("codigoPostal"));
+        }
+        return contribuyente;
+    }
+
+    public ArrayList<Contribuyente> dameRfcContribuyente(String query) throws SQLException {
+        ArrayList<Contribuyente> lstContribuyente = new ArrayList<Contribuyente>();
+        String slqVerificarContribuyente = "select rfc from contribuyentes cntr \n"
+                + "inner join contribuyentesRfc rfc \n"
+                + "on cntr.idRfc = rfc.idRfc WHERE rfc like '%" + query + "%'";
+        Connection cn = ds.getConnection();
+        Statement st = cn.createStatement();
+        try {
+            ResultSet rs = st.executeQuery(slqVerificarContribuyente);
+            while (rs.next()) {
+                Contribuyente contribuyente = new Contribuyente();
+                contribuyente.setRfc(rs.getString("rfc"));
+                lstContribuyente.add(contribuyente);
+            }
+        } finally {
+            cn.close();
+        }
+        return lstContribuyente;
+    }
+
+    public boolean verificarContribuyente(String rfc) throws SQLException {
+        boolean ok = false;
+        Contribuyente contribuyente = new Contribuyente();
+        String sqlVerificar = "SELECT * FROM contribuyentes con \n"
+                + "inner join contribuyentesRfc crRfc \n"
+                + "on con.idRfc = crRfc.idRfc\n"
+                + "where crRfc.rfc='" + rfc.trim() + "';";
+        Connection cn = ds.getConnection();
+        Statement st = cn.createStatement();
+        try {
+            ResultSet rs = st.executeQuery(rfc);
+            if (rs.getRow() > 0) {
+                ok = true;
+            }
+        } finally {
+            cn.close();
+        }
+
+        return ok;
     }
 }

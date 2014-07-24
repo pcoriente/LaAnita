@@ -93,7 +93,7 @@ public class MbClientesListas implements Serializable {
         if (ok == true) {
             try {
                 DAOClientesLista dao = new DAOClientesLista();
-                formato.getMoneda().setIdMoneda(mbMonedas.getMoneda().getIdMoneda());
+//                formato.getMoneda().setIdMoneda(mbMonedas.getMoneda().getIdMoneda());
                 if (actualizar == false) {
                     dao.guardarFormato(formato);
                     fMsg.setDetail("Nuevo Formato Disponible");
@@ -119,7 +119,7 @@ public class MbClientesListas implements Serializable {
         mbMonedas.getMoneda().setIdMoneda(0);
         formato.setIdFormato(0);
         formato.setFormato("");
-        formato.getMoneda().setIdMoneda(0);
+//        formato.getMoneda().setIdMoneda(0);
         actualizar = false;
         formatoSeleccion = null;
     }
@@ -127,7 +127,7 @@ public class MbClientesListas implements Serializable {
     public void cargarDatos() {
         formato.setIdFormato(formatoSeleccion.getIdFormato());
         formato.setFormato(formatoSeleccion.getFormato());
-        mbMonedas.getMoneda().setIdMoneda(formatoSeleccion.getMoneda().getIdMoneda());
+//        mbMonedas.getMoneda().setIdMoneda(formatoSeleccion.getMoneda().getIdMoneda());
     }
 
     public ArrayList<SelectItem> getLstItems() {

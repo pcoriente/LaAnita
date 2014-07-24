@@ -1,12 +1,15 @@
 package contribuyentes;
 
-import javax.inject.Named;
-import javax.enterprise.context.SessionScoped;
 import java.io.Serializable;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.enterprise.context.SessionScoped;
 import javax.faces.application.FacesMessage;
 import javax.faces.context.FacesContext;
+import javax.faces.model.SelectItem;
+import javax.inject.Named;
 import javax.naming.NamingException;
 import org.primefaces.context.RequestContext;
 import utilerias.Utilerias;
@@ -22,6 +25,7 @@ public class MbContribuyentes implements Serializable {
     private Contribuyente contribuyente;
     private ArrayList<Contribuyente> contribuyentes;
     private DAOContribuyentes dao;
+    private ArrayList<SelectItem> listaContribuyentes;
 
     public MbContribuyentes() {
         this.contribuyente = new Contribuyente();
@@ -45,14 +49,14 @@ public class MbContribuyentes implements Serializable {
         } else if (this.contribuyente.getRfc().length() > 0) {
             Utilerias utilerias = new Utilerias();
             String mensaje = utilerias.verificarRfc(this.getContribuyente().getRfc());
-            if (mensaje.equals("") && this.getContribuyente().getRfc().length() == 13) {
+            if (mensaje.equals("") && this.getContribuyente().getRfc().trim().length() == 13) {
                 boolean validacion = utilerias.validarCurp(this.contribuyente.getCurp());
                 if (validacion == false) {
                     fMsg.setDetail("Error! Curp no valido");
                 } else {
                     ok = true;
                 }
-            } else if (this.getContribuyente().getRfc().length() == 12 && mensaje.equals("")) {
+            } else if (this.getContribuyente().getRfc().trim().length() == 12 && mensaje.equals("")) {
                 ok = true;
             } else {
                 fMsg.setDetail(mensaje);
@@ -116,6 +120,12 @@ public class MbContribuyentes implements Serializable {
         }
     }
 
+    public boolean verificar(String rfc) {
+        boolean ok = false;
+
+        return ok;
+    }
+
     public Contribuyente getContribuyente() {
         return contribuyente;
     }
@@ -131,4 +141,37 @@ public class MbContribuyentes implements Serializable {
     public void setContribuyentes(ArrayList<Contribuyente> contribuyentes) {
         this.contribuyentes = contribuyentes;
     }
+
+    public void limpiarContribuyente() {
+        contribuyente = new Contribuyente();
+    }
+
+    public ArrayList<SelectItem> getListaContribuyentes() {
+        if (listaContribuyentes == null) {
+            try {
+                listaContribuyentes = new ArrayList<SelectItem>();
+                DAOContribuyentes dao = new DAOContribuyentes();
+                Contribuyente c = new Contribuyente();
+                c.setIdContribuyente(0);
+                c.setContribuyente("Seleccione Contribuyente");
+                listaContribuyentes.add(new SelectItem(c, c.getContribuyente()));
+                for (Contribuyente contr : dao.dameContribuyentes()) {
+                    listaContribuyentes.add(new SelectItem(contr, contr.getContribuyente()));
+                }
+            } catch (NamingException ex) {
+                Message.Mensajes.mensajeError(ex.getMessage());
+                Logger.getLogger(MbContribuyentes.class.getName()).log(Level.SEVERE, null, ex);
+            } catch (SQLException ex) {
+                Message.Mensajes.mensajeError(ex.getMessage());
+                Logger.getLogger(MbContribuyentes.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+
+        return listaContribuyentes;
+    }
+
+    public void setListaContribuyentes(ArrayList<SelectItem> listaContribuyentes) {
+        this.listaContribuyentes = listaContribuyentes;
+    }
+
 }

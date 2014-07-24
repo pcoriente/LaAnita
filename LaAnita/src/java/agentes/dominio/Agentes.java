@@ -80,6 +80,32 @@ public class Agentes implements Serializable {
     public void setTelefono(Telefono telefono) {
         this.telefono = telefono;
     }
-    
-    
+
+    @Override
+    public int hashCode() {
+        int hash = 7;
+        hash = 47 * hash + this.idAgente;
+        return hash;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final Agentes other = (Agentes) obj;
+        if (this.idAgente != other.idAgente) {
+            return false;
+        }
+        return true;
+    }
+
+    @Override
+    public String toString() {
+        return agente;
+    }
+
 }

@@ -50,6 +50,10 @@ public class MbDireccion implements Serializable {
         }
     }
 
+    public void limpiarDireccion() {
+        direccion = new Direccion();
+    }
+
     public void grabar() {
         boolean ok = false;
         RequestContext context = RequestContext.getCurrentInstance();

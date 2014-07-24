@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project-private xmlns="http://www.netbeans.org/ns/project-private/1">
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/1"/>
-    <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="5">
+    <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="15">
         <file>
             <url>src/java/almacenes/MbAlmacenesJS.java</url>
             <bookmark id="4">
@@ -10,19 +10,47 @@
                 <key/>
             </bookmark>
         </file>
+        <file>
+            <url>web/menuClientes.xhtml</url>
+            <bookmark id="15">
+                <name/>
+                <line>89</line>
+                <key/>
+            </bookmark>
+            <bookmark id="10">
+                <name/>
+                <line>225</line>
+                <key/>
+            </bookmark>
+        </file>
+        <file>
+            <url>src/java/clientes/MbClientes.java</url>
+            <bookmark id="12">
+                <name/>
+                <line>113</line>
+                <key/>
+            </bookmark>
+        </file>
     </editor-bookmarks>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group/>
         <group name="La Anita">
-            <file>file:/C:/LaAnita10Junio2014/LaAnita/LaAnita/src/java/formatos/MbFormatos.java</file>
-            <file>file:/C:/LaAnita10Junio2014/LaAnita/LaAnita/src/java/clientesListas/dominio/ClientesFormatos.java</file>
-            <file>file:/C:/LaAnita10Junio2014/LaAnita/LaAnita/src/java/formatos/Converter/ConverterFormatos.java</file>
-            <file>file:/C:/LaAnita10Junio2014/LaAnita/LaAnita/src/java/filtros/FiltroSesionUsuario.java</file>
-            <file>file:/C:/LaAnita10Junio2014/LaAnita/LaAnita/web/menuClientesGrupos.xhtml</file>
-            <file>file:/C:/LaAnita10Junio2014/LaAnita/LaAnita/src/java/mbMenuClientesGrupos/MbClientesGrupos.java</file>
-            <file>file:/C:/LaAnita10Junio2014/LaAnita/LaAnita/src/java/formatos/DAOFormatos/DAOFormatos.java</file>
-            <file>file:/C:/LaAnita10Junio2014/LaAnita/LaAnita/src/java/formatos/dominio/ClientesFormato.java</file>
-            <file>file:/C:/LaAnita10Junio2014/LaAnita/LaAnita/src/java/formatos/Converter/ConverterClientesFormatos.java</file>
+            <file>file:/C:/LaAnita10Junio2014/LaAnita/LaAnita/src/java/clientes/DAOClientes/DAOClientes.java</file>
+            <file>file:/C:/LaAnita10Junio2014/LaAnita/LaAnita/src/java/contribuyentes/MbContribuyentes.java</file>
+            <file>file:/C:/LaAnita10Junio2014/LaAnita/LaAnita/src/java/clientes/MbClientes.java</file>
+            <file>file:/C:/LaAnita10Junio2014/LaAnita/LaAnita/web/menuPedidos.xhtml</file>
+            <file>file:/C:/LaAnita10Junio2014/LaAnita/LaAnita/src/java/direccion/MbDireccion.java</file>
+            <file>file:/C:/LaAnita10Junio2014/LaAnita/LaAnita/src/java/producto2/dao/DAOPartes.java</file>
+            <file>file:/C:/LaAnita10Junio2014/LaAnita/LaAnita/src/java/pedidos/dominio/Chedraui.java</file>
+            <file>file:/C:/LaAnita10Junio2014/LaAnita/LaAnita/src/java/pedidos/dominio/Imss.java</file>
+            <file>file:/C:/LaAnita10Junio2014/LaAnita/LaAnita/src/java/contribuyentes/DAOContribuyentes.java</file>
+            <file>file:/C:/LaAnita10Junio2014/LaAnita/LaAnita/src/java/pedidos/MbPedido.java</file>
+            <file>file:/C:/LaAnita10Junio2014/LaAnita/LaAnita/src/java/pedidos/dominio/ComercialMexicana.java</file>
+            <file>file:/C:/LaAnita10Junio2014/LaAnita/LaAnita/web/menuClientesListas.xhtml</file>
+            <file>file:/C:/LaAnita10Junio2014/LaAnita/LaAnita/src/java/producto2/MbParte.java</file>
+            <file>file:/C:/LaAnita10Junio2014/LaAnita/LaAnita/src/java/pedidos/dominio/SamsClub.java</file>
+            <file>file:/C:/LaAnita10Junio2014/LaAnita/LaAnita/src/java/pedidos/LeerTextuales/LeerTextuales.java</file>
+            <file>file:/C:/LaAnita10Junio2014/LaAnita/LaAnita/web/menuClientes.xhtml</file>
         </group>
     </open-files>
 </project-private>

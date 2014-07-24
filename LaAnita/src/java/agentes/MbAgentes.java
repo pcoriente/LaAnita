@@ -56,6 +56,7 @@ public class MbAgentes implements Serializable {
     private ArrayList<SelectItem> listaAsentamientos = new ArrayList<SelectItem>();
     private int personaFisica = 0;
     private ArrayList<SelectItem> listaMiniCedis = null;
+    private ArrayList<SelectItem> lstAgentes = null;
     private DAOMiniCedis dao;
     private int flgDireccion = 0;
     boolean editarAsentamiento = false;
@@ -67,6 +68,7 @@ public class MbAgentes implements Serializable {
     ArrayList<SelectItem> listaTelefonos = new ArrayList<SelectItem>();
     private ArrayList<Telefono> listaTelefononosGuardar = new ArrayList();
     private String colonia;
+    private Agentes cmbAgentes = new Agentes();
 
     public MbAgentes() {
         titleCancelar = "Cancelar Contacto";
@@ -688,4 +690,32 @@ public class MbAgentes implements Serializable {
     public void setColonia(String colonia) {
         this.colonia = colonia;
     }
+
+    public ArrayList<SelectItem> getLstAgentes() {
+        if (lstAgentes == null) {
+            lstAgentes = new ArrayList<SelectItem>();
+            cargarTablaAgentes();
+            Agentes agent = new Agentes();
+            agent.setIdAgente(0);
+            agent.setAgente("Nuevo Agente");
+            lstAgentes.add(new SelectItem(agent, agent.getAgente()));
+            for (Agentes agentes : listaAgentes) {
+                lstAgentes.add(new SelectItem(agentes, agentes.getAgente()));
+            }
+        }
+        return lstAgentes;
+    }
+
+    public void setLstAgentes(ArrayList<SelectItem> lstAgentes) {
+        this.lstAgentes = lstAgentes;
+    }
+
+    public Agentes getCmbAgentes() {
+        return cmbAgentes;
+    }
+
+    public void setCmbAgentes(Agentes cmbAgentes) {
+        this.cmbAgentes = cmbAgentes;
+    }
+
 }
