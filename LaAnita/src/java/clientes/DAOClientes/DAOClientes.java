@@ -86,7 +86,7 @@ public class DAOClientes {
                 cliente.setDescuentoComercial(rs.getFloat("desctoComercial"));
                 cliente.setDiasBloqueo(rs.getInt("diasBloqueo"));
                 cliente.getContribuyente().setRfc(rs.getString("rfc"));
-                
+
                 lstClientes.add(cliente);
             }
         } finally {
@@ -173,8 +173,18 @@ public class DAOClientes {
     public void actualizarClientes(Cliente cliente) throws SQLException {
         Connection cn = ds.getConnection();
         Statement st = cn.createStatement();
+        int idContribuyente = 0;
+        String sqlDameContribuyente = "SELECT idContribuyente FROM contribuyentes cn \n"
+                + "inner join contribuyentesRfc cr \n"
+                + "on cn.idRfc = cr.idRfc where cr.rfc='" + cliente.getContribuyente().getRfc() + "'";
+        ResultSet rs = st.executeQuery(sqlDameContribuyente);
+        while (rs.next()) {
+            idContribuyente = rs.getInt("idContribuyente");
+        }
         String sqlActualizar = "UPDATE clientes SET codigoCliente = '" + cliente.getCodigoCliente() + "', idImpuestoZona = '" + cliente.getImpuestoZona().getIdZona() + "', diasCredito = '" + cliente.getDiasCredito() + "', "
-                + "limiteCredito = '" + cliente.getLimiteCredito() + "', desctoComercial = '" + cliente.getDescuentoComercial() + "',diasBloqueo = '" + cliente.getDiasBloqueo() + "' WHERE idcliente = '" + cliente.getIdCliente() + "'";
+                + "limiteCredito = '" + cliente.getLimiteCredito() + "', desctoComercial = '" + cliente.getDescuentoComercial() + "',diasBloqueo = '" + cliente.getDiasBloqueo() + "', nombreComercial = '" + cliente.getNombreComercial() + "', idAgente = ' " + cliente.getAgente().getIdAgente() + "'  "
+                + ", idContribuyente = '" + idContribuyente + "', codigoTienda='"+cliente.getCodigoTienda()+"' "
+                + "WHERE idCliente = '" + cliente.getIdCliente() + "'";
         try {
             st.executeUpdate(sqlActualizar);
         } finally {

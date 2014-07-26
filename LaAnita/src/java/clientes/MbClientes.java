@@ -100,6 +100,12 @@ public class MbClientes implements Serializable {
         }
         return lstCliente;
     }
+    
+    public void cargarFormatos(){
+        mbClientesGrupos.getMbFormatos().setLstFormatos(null);
+        mbClientesGrupos.getMbFormatos().cargarListaFormatos(mbClientesGrupos.getCmbClientesGrupos().getIdGrupoCte());
+    }
+    
 
     public String salir() {
         return "index.xhtml";
@@ -195,6 +201,8 @@ public class MbClientes implements Serializable {
         mbAgentes.getCmbAgentes().setIdAgente(clienteSeleccionado.getAgente().getIdAgente());
         mbRutas.getCmbRuta().setIdRuta(clienteSeleccionado.getRuta().getIdRuta());
         cliente.getContribuyente().setRfc(clienteSeleccionado.getContribuyente().getRfc());
+        cliente.setNombreComercial(clienteSeleccionado.getNombreComercial());
+        cliente.setCodigoTienda(clienteSeleccionado.getCodigoTienda());
     }
 
     public void cancelar() {
@@ -216,8 +224,7 @@ public class MbClientes implements Serializable {
             mbClientesBancos.getMbBanco().obtenerBancos(cliente.getIdCliente());
 
         } catch (SQLException ex) {
-            Logger.getLogger(MbClientes.class
-                    .getName()).log(Level.SEVERE, null, ex);
+           Mensajes.mensajeError(ex.getMessage());
         }
     }
 
@@ -253,8 +260,7 @@ public class MbClientes implements Serializable {
             mbClientesBancos.getMbBanco().obtenerBancos(cl.getCodigoCliente());
             mbClientesBancos.cargarBancos(cl.getCodigoCliente());
         } catch (SQLException ex) {
-            Logger.getLogger(MbClientes.class
-                    .getName()).log(Level.SEVERE, null, ex);
+            Mensajes.mensajeError(ex.getMessage());
         }
     }
 
@@ -281,9 +287,6 @@ public class MbClientes implements Serializable {
             } catch (SQLException ex) {
                 ok = false;
                 fMsg = new FacesMessage(FacesMessage.SEVERITY_INFO, "Aviso:", ex.getMessage());
-                Logger
-                        .getLogger(MbClientes.class
-                                .getName()).log(Level.SEVERE, null, ex);
             }
         }
         FacesContext.getCurrentInstance().addMessage(null, fMsg);
@@ -315,8 +318,6 @@ public class MbClientes implements Serializable {
                         daoCliente.guardarCliente(cliente);
                         fMsgs.setDetail("Exito!! Nuevo Cliente dado de Alta");
                     } else {
-                        DAOContribuyentes daoContribuyente = new DAOContribuyentes();
-                        daoContribuyente.actualizarContribuyente(mbContribuyente.getContribuyente());
                         daoCliente.actualizarClientes(cliente);
                         fMsgs.setDetail("Exito!! Cliente Actualizado");
                     }
@@ -327,23 +328,13 @@ public class MbClientes implements Serializable {
                     ok = false;
                     fMsg.setDetail(ex.getMessage());
                     FacesContext.getCurrentInstance().addMessage(null, fMsg);
-                    Logger
-                            .getLogger(MbClientes.class
-                                    .getName()).log(Level.SEVERE, null, ex);
-                } catch (NamingException ex) {
-                    ok = false;
-                    fMsg.setDetail(ex.getMessage());
-                    FacesContext.getCurrentInstance().addMessage(null, fMsg);
-                    Logger
-                            .getLogger(MbClientes.class
-                                    .getName()).log(Level.SEVERE, null, ex);
                 }
-
             }
         }
         actualizar = false;
         clienteSeleccionado = null;
         actualizarRfc = false;
+        controlActualizar = 0;
         context.addCallbackParam("ok", ok);
 
     }
@@ -383,7 +374,7 @@ public class MbClientes implements Serializable {
                 Mensajes.mensajeError(ex.getMessage());
                 Logger.getLogger(MbClientes.class.getName()).log(Level.SEVERE, null, ex);
             } catch (SQLException ex) {
-                
+
                 Mensajes.mensajeError(ex.getMessage());
             }
         }
@@ -395,6 +386,10 @@ public class MbClientes implements Serializable {
         FacesMessage fMsg = new FacesMessage(FacesMessage.SEVERITY_WARN, "Aviso:", "");
         if (cliente.getCodigoCliente() == 0) {
             fMsg.setDetail("Error!! Codigo Cliente Requerido");
+            FacesContext.getCurrentInstance().addMessage(null, fMsg);
+            context.addCallbackParam("ok", ok);
+        } else if (cliente.getCodigoTienda() == 0) {
+            fMsg.setDetail("Error!! Codigo Tienda Requerido");
             FacesContext.getCurrentInstance().addMessage(null, fMsg);
             context.addCallbackParam("ok", ok);
         } else if (cliente.getNombreComercial().equals("")) {
@@ -425,8 +420,8 @@ public class MbClientes implements Serializable {
     public void limpiarCampos() {
 //        clientes.setIdBanco(0);
         actualizar = true;
+        mbClientesBancos.cargarBancos(cliente.getCodigoCliente());
 //        mbClientesBancos.getMbBanco().getObjBanco().setIdBanco(0);
-
     }
 
     public void dameCuentasBancarias() {

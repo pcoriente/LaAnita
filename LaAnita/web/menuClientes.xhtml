@@ -41,7 +41,7 @@
                                          title="Salir"
                                          action="#{mbClientesBueno.salir()}"/>
                     </div>
-                    <p:panel header="Clientes" 
+                    <p:panel header="CLIENTES" 
                              styleClass="quitaCuadro">
                         <p:dataTable
                             id="tablaClientesGrupos"
@@ -101,6 +101,12 @@
                                             emptyValue="zero"
                                             decimalPlaces="0"/> 
                             <h:outputLabel/>
+                            <h:outputLabel styleClass="colorLetra" value="Codigo Tienda:"/>
+                            <pe:inputNumber value="#{mbClientesBueno.cliente.codigoTienda}"
+                                            emptyValue="zero"
+                                            decimalPlaces="0"/> 
+                            <h:outputLabel/>
+
                             <h:outputLabel styleClass="colorLetra" value="Nombre Comercial:"/>
                             <p:inputText value="#{mbClientesBueno.cliente.nombreComercial}"/> 
                             <h:outputLabel/>
@@ -108,7 +114,7 @@
                             <h:outputLabel styleClass="colorLetra" value="Dirección:"/>
                             <p:inputTextarea id="txtDireccionCliente" 
                                              value="#{mbClientesBueno.cliente.direccion}"
-                                             rows="10"
+                                             rows="5"
                                              cols="22"
                                              disabled="true"/> 
                             <p:commandButton icon="ui-icon-plus" 
@@ -133,6 +139,15 @@
                                              style="width: 155px">
                                 <f:selectItems value="#{mbClientesBueno.mbClientesGrupos.itemsClientesGrupos}"/>
                                 <f:converter converterId="converters.ClientesGrupos"/>
+                                <p:ajax event="change" 
+                                        listener="#{mbClientesBueno.cargarFormatos()}" 
+                                        process="@this"
+                                        update=":form:cmbFormatos"/>
+                            </p:selectOneMenu>
+                            <h:outputText/>
+                            <h:outputLabel  styleClass="colorLetra" value="Formato"/>
+                            <p:selectOneMenu filter="true" id="cmbFormatos">
+                                <f:selectItems value="#{mbClientesBueno.mbClientesGrupos.mbFormatos.lstFormatos}"/>
                             </p:selectOneMenu>
                             <h:outputText/>
                             <h:outputLabel  styleClass="colorLetra" value="Impuesto Zona:"/>
@@ -203,7 +218,10 @@
                         <p:commandButton 
                             process="@this :form:panelClientes"
                             actionListener="#{mbClientesBueno.guardar()}" 
-                            update="growl :form:tablaClientesGrupos :form:panelClientes"
+                            update="growl 
+                            :form:tablaClientesGrupos 
+                            :form:panelClientes
+                            :form:actualizarContacto"
                             oncomplete="nuevoCliente(xhr, status, args);"
                             icon="ui-icon-disk"
                             title="Guardar Cliente"
@@ -356,13 +374,14 @@
                     </p:dialog>
                     <p:dialog widgetVar="dlgCuentasBancos"
                               resizable="false"
-                              header="Clientes Bancos"
-                              closable="true"
+                              header="Numero de Cuenta"
+                              closable="false"
                               modal="true">
                         <h:panelGrid columns="2" id="panelCuentasBancos">
                             <h:outputLabel styleClass="colorLetra" value="Banco:"/>
                             <p:selectOneMenu id="cmbBancosN"
                                              filter="true"
+                                             style="width: 155px"
                                              value="#{mbClientesBueno.mbClientesBancos.mbBanco.objBanco}">
                                 <f:selectItems value="#{mbClientesBueno.mbClientesBancos.mbBanco.listaTodosBancos}"/>
                                 <f:converter converterId="converters.Banco"/>
@@ -374,11 +393,14 @@
                         </h:panelGrid>
                         <div style="margin: auto">
                             <p:commandButton icon="ui-icon-disk" 
-                                             title="Guardar Cuenta Bancaria medioPago"
+                                             title="Guardar número de cuenta"
                                              process="@this cmbBancosN nunCuenta medioPago"
                                              actionListener="#{mbClientesBueno.guardarCuentasBancarias()}"
                                              update="growl :form:cmbBancos"
                                              oncomplete="nuevaCuentaBancaria(xhr, status, args);"/>
+                            <p:commandButton oncomplete="dlgCuentasBancos.hide();"
+                                             title="Cancelar"
+                                             icon="ui-icon-arrowreturnthick-1-w"/>
                         </div>
                     </p:dialog>
                 </h:form>

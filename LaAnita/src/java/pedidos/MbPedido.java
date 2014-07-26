@@ -12,6 +12,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.Serializable;
+import java.sql.SQLException;
 import java.util.Date;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -49,15 +50,23 @@ public class MbPedido implements Serializable {
                 copyFile(file.getFileName(), file.getInputstream());
                 File archivo = new File(destino + file.getFileName());
                 LeerTextuales textuales = new LeerTextuales();
+//                textuales.leerArchivoWallMart(archivo);
 //                textuales.leerArchivoSams(archivo);
 //                textuales.leerArchivoCHedraui(archivo);
-                textuales.leerArchivoImss(archivo);
-//                String  fecha = 2014 + "-" + 07 + "-" + 23;
+//                textuales.leerArchivoImss(archivo);
+                String fecha = 2014 + "-" + 07 + "-" + 23;
 //                textuales.leerArchivoComercialMexicana(archivo,  java.sql.Date.valueOf(fecha), java.sql.Date.valueOf(fecha), false);
+//                textuales.leerArchivoComa(archivo);
+                textuales.leerArchivoCorvi(archivo, java.sql.Date.valueOf(fecha));
+
             } catch (IOException ex) {
                 Message.Mensajes.mensajeError(ex.getMessage());
                 Logger.getLogger(MbPedido.class.getName()).log(Level.SEVERE, null, ex);
             }
+//                catch (SQLException ex) {
+//                Message.Mensajes.mensajeError(ex.getMessage());
+//                Logger.getLogger(MbPedido.class.getName()).log(Level.SEVERE, null, ex);
+//            }
         } else {
             Message.Mensajes.mensajeAlert("Error, Seleccione un archov de texto a leer");
         }

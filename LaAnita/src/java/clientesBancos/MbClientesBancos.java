@@ -5,6 +5,7 @@
  */
 package clientesBancos;
 
+import Message.Mensajes;
 import bancos.MbBanco;
 import clientesBancos.DAOClientesBancos.DAOClientesBancos;
 import java.io.Serializable;
@@ -76,6 +77,7 @@ public class MbClientesBancos implements Serializable {
                 lstClientesBancos.add(new SelectItem(cli, cli.getBancoLeyenda().getNombreCorto()));
             }
         } catch (SQLException ex) {
+            Mensajes.mensajeError(ex.getMessage());
             Logger.getLogger(MbClientesBancos.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
