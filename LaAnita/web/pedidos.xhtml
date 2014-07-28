@@ -24,7 +24,7 @@
                         <h:commandButton action="#{mbPedido.rEnvioEmpresaQuimicos()}" value="EnvioQ"/>|
                         <p:commandLink styleClass="nueva"  action="#{mbPedido.Salir()}" value="Salir" ajax="false" />
                     </div>
-                    <p:growl id="growl" showDetail="true" sticky="true" />
+                    <p:growl id="growl" showDetail="true" sticky="true" autoUpdate="true"/>
                     <p:panel id="principal" header="PEDIDOS DE CEDIS" styleClass="quitaCuadro" style="float: left; width: 100%;" >
                         <p:messages id="msgs" showDetail="true" />
                         <div class="izquierdo">

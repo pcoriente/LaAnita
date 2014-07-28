@@ -31,7 +31,8 @@
                                          :form:cmbContactos 
                                          :form:cmbTelefonos
                                          :form:btnContactos
-                                         :form:btnContactosNuevo"
+                                         :form:btnContactosNuevo
+                                         :form:cmbFormatos"
                                          disabled="#{mbMenuClientesGrupos.clienteGrupoSeleccionado==null}"
                                          oncomplete="dlgClientesGrupos.show();"
                                          title="Actualizar Grupo"
@@ -132,18 +133,26 @@
                                              actionListener="#{mbMenuClientesGrupos.cargarTelefonosTipos()}"
                                              update="form:cmbTelefonoTipo :form:mttoTelefonos"
                                              oncomplete="mttoTelefonosDialog.show();"/>
-                            
+
                             <h:outputLabel id="lblFormatos"
                                            value="Formatos:" style="color: black"
                                            rendered="#{mbMenuClientesGrupos.actualizar}"/>
                             <p:selectOneMenu style="width: 155px" 
                                              id="cmbFormatos"
-                                             rendered="#{mbMenuClientesGrupos.actualizar}">
+                                             rendered="#{mbMenuClientesGrupos.actualizar}"
+                                             value="#{mbMenuClientesGrupos.mbFormatos.cmbClientesFormatos}">
+                                 <f:converter converterId="CFormatos"/>
+                                 <f:selectItems value="#{mbMenuClientesGrupos.mbFormatos.lstFormatos}"/>
+                                 <p:ajax event="change" process="@this"/>
                             </p:selectOneMenu>
                             <p:commandButton id="btnFormatos"
                                              title="Nuevo Formato"
                                              icon="ui-icon-document"
                                              rendered="#{mbMenuClientesGrupos.actualizar}"
+                                             process="@this"
+                                             update=":form:txtFormato"
+                                             actionListener="#{mbMenuClientesGrupos.limpiarCamposClientesFormatos()}"
+                                             oncomplete="dlgFormatos.show();"
                                              />
                         </h:panelGrid>
                         <div style="margin: auto">
@@ -322,51 +331,79 @@
                             </f:facet>
                         </p:panelGrid>
                     </p:dialog>
-                    
-                    
-                    <p:dialog widgetVar="click">
-                        
+
+
+                    <p:dialog widgetVar="dlgFormatos"
+                              header="Mantenimiento Formatos"
+                              resizable="false"
+                              >
+                        <h:panelGrid columns="2">
+                            <h:outputText value="Formato:"/>
+                            <p:inputText value="#{mbMenuClientesGrupos.mbFormatos.clientesFormatos.formato}"
+                                         id="txtFormato"/>
+                        </h:panelGrid>
+                        <center>
+                            <p:commandButton icon="ui-icon-disk" 
+                                             title="Guardar Formato"
+                                             oncomplete="dlgFormato(xhr, status, args);"
+                                             update="growl cmbFormatos"
+                                             process="@this txtFormato"
+                                             actionListener="#{mbMenuClientesGrupos.guardarFormato()}"/>
+                            <p:commandButton icon="ui-icon-arrowreturnthick-1-w"
+                                             title="Cancelar"/>
+                        </center>
                     </p:dialog>
-                    
+
                 </h:form>
             </div>
             <!-- FIN DE CONTENIDO -->
             <ui:include src="footer.html" />
         </div>
         <script>
-                    function nuevoClienteGrupo(xhr, status, args) {
-                        if (args.validationFailed || !args.ok) {
-                            dlgClientesGrupos.jq.effect("shake", {times: 5}, 100);
-                        }
-                        else {
-                            dlgClientesGrupos.hide();
-                        }
-                    }
-                    function nuevoContacto(xhr, status, args) {
-                        if (args.validationFailed || !args.okContacto) {
-                            dlgContactos.jq.effect("shake", {times: 5}, 100);
-                        }
-                        else {
-                            dlgContactos.hide();
-                        }
-                    }
+            function nuevoClienteGrupo(xhr, status, args) {
+                if (args.validationFailed || !args.ok) {
+                    dlgClientesGrupos.jq.effect("shake", {times: 5}, 100);
+                }
+                else {
+                    dlgClientesGrupos.hide();
+                }
+            }
+            function nuevoContacto(xhr, status, args) {
+                if (args.validationFailed || !args.okContacto) {
+                    dlgContactos.jq.effect("shake", {times: 5}, 100);
+                }
+                else {
+                    dlgContactos.hide();
+                }
+            }
 
-                    function nuevoTelefono(xhr, status, args) {
-                        if (args.validationFailed || !args.okTelefono) {
-                            mttoTelefonosDialog.jq.effect("shake", {times: 5}, 100);
-                        }
-                        else {
-                            mttoTelefonosDialog.hide();
-                        }
-                    }
+            function nuevoTelefono(xhr, status, args) {
+                if (args.validationFailed || !args.okTelefono) {
+                    mttoTelefonosDialog.jq.effect("shake", {times: 5}, 100);
+                }
+                else {
+                    mttoTelefonosDialog.hide();
+                }
+            }
 
-                    function handleTelefonoTipo(xhr, status, args) {
-                        if (args.validationFailed || !args.okTelefonoTipo) {
-                            mttoTelefonosTiposDialog.jq.effect("shake", {times: 5}, 100);
-                        } else {
-                            mttoTelefonosTiposDialog.hide();
-                        }
-                    }
+            function handleTelefonoTipo(xhr, status, args) {
+                if (args.validationFailed || !args.okTelefonoTipo) {
+                    mttoTelefonosTiposDialog.jq.effect("shake", {times: 5}, 100);
+                } else {
+                    mttoTelefonosTiposDialog.hide();
+                }
+            }
+
+            function dlgFormato(xhr, status, args) {
+                if (args.validationFailed || !args.ok) {
+                    dlgFormatos.jq.effect("shake", {times: 5}, 100);
+                } else {
+                    dlgFormatos.hide();
+                }
+            }
+
+
+
         </script>
     </body>
 </html>

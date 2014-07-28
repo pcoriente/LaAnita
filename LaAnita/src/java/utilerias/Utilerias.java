@@ -118,6 +118,9 @@ public class Utilerias {
     }
 
     public String verificarRfc(String rfc) {
+        if (rfc == null) {
+            rfc = "";
+        }
         rfc = rfc.trim();
         String mensaje = "";
         boolean comprobar;
@@ -155,4 +158,5 @@ public class Utilerias {
         validar = matcher.matches();
         return validar;
     }
+
 }

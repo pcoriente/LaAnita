@@ -5,10 +5,18 @@
  */
 package formatos;
 
+import Message.Mensajes;
 import clientesListas.dominio.ClientesFormatos;
+import formatos.DAOFormatos.DAOFormatos;
 import formatos.dominio.ClientesFormato;
-import javax.inject.Named;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.enterprise.context.Dependent;
+import javax.faces.model.SelectItem;
+import javax.inject.Named;
+import javax.naming.NamingException;
 
 /**
  *
@@ -18,12 +26,74 @@ import javax.enterprise.context.Dependent;
 @Dependent
 public class MbFormatos {
 
-    ClientesFormatos clientesFormatoa = new ClientesFormatos();
+    ClientesFormato clientesFormatos = new ClientesFormato();
+    ClientesFormato cmbClientesFormatos = new ClientesFormato();
+    ArrayList<SelectItem> lstFormatos = null;
 
     /**
      * Creates a new instance of MbFormatos
      */
     public MbFormatos() {
+
     }
+
+    public boolean validarFormatos() {
+        boolean ok = false;
+        if (clientesFormatos.getFormato().equals("")) {
+            Mensajes.mensajeAlert("Formato Requerido");
+        } else {
+            ok = true;
+        }
+        return ok;
+    }
+
+    public void cargarListaFormatos(int idGrupoClte) {
+        if (lstFormatos == null) {
+            try {
+                lstFormatos = new ArrayList<SelectItem>();
+                DAOFormatos dao = new DAOFormatos();
+                ClientesFormato cli = new ClientesFormato();
+                cli.setIdFormato(0);
+                cli.setFormato("Nuevo Formato");
+                lstFormatos.add(new SelectItem(cli, cli.getFormato()));
+                for (ClientesFormato clientes : dao.dameFormatos(idGrupoClte)) {
+                    lstFormatos.add(new SelectItem(clientes, clientes.getFormato()));
+                }
+            } catch (NamingException ex) {
+                Mensajes.mensajeError(ex.getMessage());
+                Logger.getLogger(MbFormatos.class.getName()).log(Level.SEVERE, null, ex);
+            } catch (SQLException e) {
+                Mensajes.mensajeError(e.getMessage());
+            }
+        }
+    }
+
+   
+
+    public ArrayList<SelectItem> getLstFormatos() {
+        return lstFormatos;
+    }
+
+    public void setLstFormatos(ArrayList<SelectItem> lstFormatos) {
+        this.lstFormatos = lstFormatos;
+    }
+
+    public ClientesFormato getClientesFormatos() {
+        return clientesFormatos;
+    }
+
+    public void setClientesFormatos(ClientesFormato clientesFormatos) {
+        this.clientesFormatos = clientesFormatos;
+    }
+
+    public ClientesFormato getCmbClientesFormatos() {
+        return cmbClientesFormatos;
+    }
+
+    public void setCmbClientesFormatos(ClientesFormato cmbClientesFormatos) {
+        this.cmbClientesFormatos = cmbClientesFormatos;
+    }
+
+    
 
 }

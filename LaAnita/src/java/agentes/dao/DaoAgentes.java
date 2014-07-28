@@ -205,12 +205,22 @@ public class DaoAgentes {
 
     }
 
-//    private Asentamiento construirAsentamientoAgente(ResultSet rs) throws SQLException {
-//        Asentamiento asentamiento = new Asentamiento();
-//        while(rs.next()){
-//        asentamiento.get
-//        }
-//
-//        return asentamiento;
-//    }
+    public Agentes dameAgentes(int idAgente) throws SQLException {
+        Agentes agente = new Agentes();
+        Connection cn = null;
+        String sql = "SELECT idAgente, agente FROM agentes";
+        try {
+            cn = ds.getConnection();
+            Statement st = cn.createStatement();
+            ResultSet rs = st.executeQuery(sql);
+            while(rs.next()){
+                agente.setIdAgente(rs.getInt("idAgente"));
+                agente.setAgente(rs.getString("agente"));
+            }
+        } finally {
+            cn.close();
+        }
+        return agente;
+    }
+
 }

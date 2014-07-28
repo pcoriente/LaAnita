@@ -18,7 +18,7 @@ public class ClientesFormatos implements Serializable {
     private int idFormato;
     private String formato;
     private ClientesGrupos clientesGrupo = new ClientesGrupos();
-    private Moneda moneda  = new Moneda();
+//    private Moneda moneda  = new Moneda();
 
     public int getIdFormato() {
         return idFormato;
@@ -71,13 +71,13 @@ public class ClientesFormatos implements Serializable {
         return true;
     }
 
-    public Moneda getMoneda() {
-        return moneda;
-    }
-
-    public void setMoneda(Moneda moneda) {
-        this.moneda = moneda;
-    }
+//    public Moneda getMoneda() {
+//        return moneda;
+//    }
+//
+//    public void setMoneda(Moneda moneda) {
+//        this.moneda = moneda;
+//    }
     
     
     

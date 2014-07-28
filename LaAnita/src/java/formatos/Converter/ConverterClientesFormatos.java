@@ -3,10 +3,12 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package clientesListas.converters;
+package formatos.Converter;
 
-import clientesListas.DAOClientesLista.DAOClientesLista;
+import Message.Mensajes;
 import clientesListas.dominio.ClientesFormatos;
+import formatos.DAOFormatos.DAOFormatos;
+import formatos.dominio.ClientesFormato;
 import java.sql.SQLException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -19,34 +21,34 @@ import javax.naming.NamingException;
  *
  * @author Usuario
  */
-public class FormatosConverter implements Converter {
+public class ConverterClientesFormatos implements Converter {
 
     @Override
     public Object getAsObject(FacesContext context, UIComponent component, String value) {
+        ClientesFormato clientes = null;
         int id = Integer.parseInt(value);
-        ClientesFormatos formato = null;
         if (id == 0) {
-            formato = new ClientesFormatos();
-            formato.setIdFormato(0);
-            formato.getClientesGrupo().setIdGrupoCte(0);
+            clientes = new ClientesFormato();
         } else {
             try {
-                DAOClientesLista dao = new DAOClientesLista();
-                formato = dao.dameFormato(id);
+                DAOFormatos dao = new DAOFormatos();
+                clientes = dao.obtenerClientesFormato(id);
             } catch (NamingException ex) {
-                Logger.getLogger(FormatosConverter.class.getName()).log(Level.SEVERE, null, ex);
+                Mensajes.mensajeError(ex.getMessage());
+                Logger.getLogger(ConverterFormatos.class.getName()).log(Level.SEVERE, null, ex);
             } catch (SQLException ex) {
-                Logger.getLogger(FormatosConverter.class.getName()).log(Level.SEVERE, null, ex);
+                Mensajes.mensajeError(ex.getMessage());
+                Logger.getLogger(ConverterFormatos.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
 
-        return formato;
+        return clientes;
     }
 
     @Override
     public String getAsString(FacesContext context, UIComponent component, Object value) {
-        ClientesFormatos formato = (ClientesFormatos) value;
-        return Integer.toString(formato.getIdFormato());
+        ClientesFormato cli = (ClientesFormato) value;
+        return Integer.toString(cli.getIdFormato());
     }
 
 }

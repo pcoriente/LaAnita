@@ -8,6 +8,8 @@ package listaPrecioIdeal;
 import java.io.Serializable;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.enterprise.context.SessionScoped;
@@ -16,13 +18,27 @@ import javax.faces.bean.ManagedProperty;
 import javax.faces.context.FacesContext;
 import javax.inject.Named;
 import javax.naming.NamingException;
+import javax.servlet.ServletOutputStream;
+import javax.servlet.http.HttpServletResponse;
 import listaPrecioIdeal.DAO.DAOListaPrecio;
 import listaPrecioIdeal.dominio.ListaPrecioIdeal;
 import listaPrecioIdeal.to.TOPrecioListaIdeal;
+import net.sf.jasperreports.engine.JRException;
+import net.sf.jasperreports.engine.JasperExportManager;
+import net.sf.jasperreports.engine.JasperFillManager;
+import net.sf.jasperreports.engine.JasperPrint;
+import net.sf.jasperreports.engine.JasperReport;
+import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
+import net.sf.jasperreports.engine.util.JRLoader;
+import ordenesDeCompra.dominio.OrdenCompraDetalle;
+import ordenesDeCompra.dominio.OrdenCompraEncabezado;
+import ordenesDeCompra.dominio.TotalesOrdenCompra;
 import org.primefaces.context.RequestContext;
 import org.primefaces.event.RowEditEvent;
 import producto2.MbProductosBuscar;
 import producto2.dominio.Producto;
+import utilerias.Numero_a_Letra;
+import utilerias.Utilerias;
 
 /**
  *
@@ -61,7 +77,7 @@ public class MbListaPrecioIdeal implements Serializable {
         }
         for (int x = 0; x < lstListaPrecioIdeal.size(); x++) {
             for (int y = 0; y < lstListaPrecioTable.size(); y++) {
-                if(lstListaPrecioIdeal.get(x).getProducto().getIdProducto()== lstListaPrecioTable.get(y).getProducto().getIdProducto()){
+                if (lstListaPrecioIdeal.get(x).getProducto().getIdProducto() == lstListaPrecioTable.get(y).getProducto().getIdProducto()) {
                     lstListaPrecioIdeal.remove(x);
                     x--;
                     break;
@@ -78,6 +94,10 @@ public class MbListaPrecioIdeal implements Serializable {
                 break;
             }
         }
+    }
+
+    public String salir() {
+        return "index.xhtml";
     }
 
     public void actualizarPrecioLista(ListaPrecioIdeal ls) {
@@ -233,4 +253,39 @@ public class MbListaPrecioIdeal implements Serializable {
     public void setActualizar(boolean actualizar) {
         this.actualizar = actualizar;
     }
+
+    public void generarReporte() throws JRException {
+        try {
+            DAOListaPrecio dao = new DAOListaPrecio();
+            dao.generarReporte();
+////        String ruta = "C:\\Reportes\\listaPrecioIdeal.pdf";
+//        String ubicacionCompilado = "C:\\Reportes\\miprimerreporte.jasper";
+//        JasperPrint jasperprint;
+//        JasperReport report;
+//        Map<String, Object> parametros = new HashMap<String, Object>();
+//        parametros.put("fecha", "27/06/2014");
+//        parametros.put("hola", "Mi primer Reporte");
+//        try {
+//            report = (JasperReport) JRLoader.loadObjectFromFile(ubicacionCompilado);
+//            jasperprint = JasperFillManager.fillReport(report, parametros, new JRBeanCollectionDataSource(lstListaPrecioTable));
+//            HttpServletResponse httpServletResponse = (HttpServletResponse) FacesContext.getCurrentInstance().getExternalContext().getResponse();
+//            httpServletResponse.addHeader("Content-disposition", "attachment; filename=listaPrecio.pdf");
+//            ServletOutputStream servletOutputStream = httpServletResponse.getOutputStream();
+//            JasperExportManager.exportReportToPdfStream(jasperprint, servletOutputStream);
+//            try {
+////                JasperExportManager.exportReportToPdfFile(jasperprint, ruta);
+//            } catch (Exception e) {
+//                System.out.println(e);
+//            }
+//            FacesContext.getCurrentInstance().responseComplete();
+//        } catch (Exception e) {
+//            System.out.println(e);
+//        }
+        } catch (NamingException ex) {
+            Logger.getLogger(MbListaPrecioIdeal.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (SQLException ex) {
+            Logger.getLogger(MbListaPrecioIdeal.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+
 }
