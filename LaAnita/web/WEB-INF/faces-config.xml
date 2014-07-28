@@ -565,4 +565,14 @@
         <converter-id>converters.MovimientoTipo</converter-id>
         <converter-class>movimientos.converters.MovimientoTipoConverter</converter-class>
     </converter>
+    
+    <converter>
+        <converter-id>converters.miniCliente</converter-id>
+        <converter-class>clientes.converters.MiniClienteConverter</converter-class>
+    </converter>
+    
+    <converter>
+        <converter-id>converters.miniTienda</converter-id>
+        <converter-class>clientes.converters.MiniTiendaConverter</converter-class>
+    </converter>
 </faces-config>

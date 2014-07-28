@@ -39,29 +39,36 @@ public class DAOComprobantes {
         }
     }
     
-    public boolean asegurarComprobante(int idComprobante, boolean oficina) throws SQLException {
+    public boolean cancelar(int idComprobante) throws SQLException {
         boolean ok=false;
-        byte status=0;
+        Connection cn=this.ds.getConnection();
+        Statement st=cn.createStatement();
+        try {
+            st.executeUpdate("UPDATE comprobantes SET propietario=0 WHERE idComprobante="+idComprobante);
+            ok=true;
+        } finally {
+            cn.close();
+        }
+        return ok;
+    }
+    
+    public boolean asegurarComprobante(int idComprobante, boolean oficina) throws SQLException {
+        boolean ok=true;
+        int propietario=0;
         Connection cn=this.ds.getConnection();
         Statement st=cn.createStatement();
         try {
             st.execute("BEGIN TRANSACTION");
-            ResultSet rs=st.executeQuery("SELECT statusAlmacen, statusOficina FROM comprobantes WHERE idComprobante="+idComprobante);
+            ResultSet rs=st.executeQuery("SELECT propietario FROM comprobantes WHERE idComprobante="+idComprobante);
             if(rs.next()) {
-                if(oficina) {
-                    status=rs.getByte("statusOficina");
-                } else {
-                    status=rs.getByte("statusAlmacen");
-                }
+                propietario=rs.getInt("propietario");
             } else {
                 throw new SQLException("No se encotro el comprobante");
             }
-            if(status==0) {
-                if(oficina) {
-                    st.executeUpdate("UPDATE comprobantes SET statusOficina=1 WHERE idComprobante="+idComprobante);
-                } else {
-                    st.executeUpdate("UPDATE comprobantes SET statusAlmacen=1 WHERE idComprobante="+idComprobante);
-                }
+            if(propietario==0) {
+                st.executeUpdate("UPDATE comprobantes SET propietario="+this.idUsuario+" WHERE idComprobante="+idComprobante);
+            } else if(propietario!=this.idUsuario) {
+                ok=false;
             }
             st.execute("COMMIT TRANSACTION");
         } catch(SQLException ex) {
@@ -78,9 +85,9 @@ public class DAOComprobantes {
         Connection cn=this.ds.getConnection();
         Statement st=cn.createStatement();
         try {
-            ResultSet rs=st.executeQuery("SELECT cerradaAlmacen FROM comprobantes WHERE idComprobante="+idComprobante);
+            ResultSet rs=st.executeQuery("SELECT statusAlmacen FROM comprobantes WHERE idComprobante="+idComprobante);
             if(rs.next()) {
-                cerrada=rs.getBoolean("cerradaAlmacen");
+                cerrada=rs.getBoolean("statusAlmacen");
             }
         } finally {
             cn.close();
@@ -93,9 +100,9 @@ public class DAOComprobantes {
         Connection cn=this.ds.getConnection();
         Statement st=cn.createStatement();
         try {
-            ResultSet rs=st.executeQuery("SELECT cerradaOficina FROM comprobantes WHERE idComprobante="+idComprobante);
+            ResultSet rs=st.executeQuery("SELECT statusOficina FROM comprobantes WHERE idComprobante="+idComprobante);
             if(rs.next()) {
-                cerrada=rs.getBoolean("cerradaOficina");
+                cerrada=rs.getBoolean("statusOficina");
             }
         } finally {
             cn.close();
@@ -109,7 +116,7 @@ public class DAOComprobantes {
         try {
             Date fechaFactura=new java.sql.Date(c.getFecha().getTime());
             String strSQL="UPDATE comprobantes "
-                    + "SET remision='"+c.getRemision()+"', serie='"+c.getSerie()+"', numero='"+c.getNumero()+"', fecha='"+fechaFactura.toString()+"' "
+                    + "SET remision='"+c.getRemision()+"', serie='"+c.getSerie()+"', numero='"+c.getNumero()+"', fecha='"+fechaFactura.toString()+"', propietario=0 "
                     + "WHERE idComprobante="+c.getIdComprobante();
             st.executeUpdate(strSQL);
         } finally {
@@ -124,8 +131,8 @@ public class DAOComprobantes {
         try {
             st.executeUpdate("BEGIN TRANSACTION");
             Date fechaFactura=new java.sql.Date(c.getFecha().getTime());
-            st.executeUpdate("INSERT INTO comprobantes (idAlmacen, idProveedor, tipoComprobante, remision, serie, numero, fecha, idUsuario, cerradaOficina, cerradaAlmacen) "
-                            + "VALUES ("+c.getIdAlmacen()+", "+c.getIdProveedor()+", "+c.getTipoComprobante()+", '"+c.getRemision()+"', '"+c.getSerie()+"', '"+c.getNumero()+"', '"+fechaFactura.toString()+"', "+this.idUsuario+", 0, 0)");
+            st.executeUpdate("INSERT INTO comprobantes (idAlmacen, idProveedor, tipoComprobante, remision, serie, numero, fecha, idUsuario, statusOficina, statusAlmacen, propietario) "
+                            + "VALUES ("+c.getIdAlmacen()+", "+c.getIdProveedor()+", "+c.getTipoComprobante()+", '"+c.getRemision()+"', '"+c.getSerie()+"', '"+c.getNumero()+"', '"+fechaFactura.toString()+"', "+this.idUsuario+", 0, 0, 0)");
             ResultSet rs=st.executeQuery("SELECT @@IDENTITY AS idComprobante");
             if(rs.next()) {
                 idComprobante=rs.getInt("idComprobante");
@@ -193,7 +200,7 @@ public class DAOComprobantes {
         Connection cn=this.ds.getConnection();
         Statement st=cn.createStatement();
         ArrayList<TOComprobante> comprobantes=new ArrayList<TOComprobante>();
-        String strSQL="SELECT c.idComprobante, m.idAlmacen, c.idProveedor, c.tipoComprobante, c.serie, c.numero, c.idUsuario, c.fecha, c.cerradaOficina, c.cerradaAlmacen " +
+        String strSQL="SELECT c.idComprobante, m.idAlmacen, c.idProveedor, c.tipoComprobante, c.serie, c.numero, c.idUsuario, c.fecha, c.statusOficina, c.statusAlmacen " +
                         "FROM movimientos m " +
                         "INNER JOIN comprobantes c ON c.idComprobante=m.idReferencia " +
                         "WHERE m.idTipo=2 AND m.status=1 AND c.idAlmacen="+idAlmacen+" " +
@@ -239,6 +246,7 @@ public class DAOComprobantes {
         c.setFecha(new java.util.Date(rs.getDate("fecha").getTime()));
         c.setStatusOficina(rs.getByte("statusOficina"));
         c.setStatusAlmacen(rs.getByte("statusAlmacen"));
+        c.setPropietario(rs.getInt("propietario"));
         return c;
     }
 }

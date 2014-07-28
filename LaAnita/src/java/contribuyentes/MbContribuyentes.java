@@ -77,6 +77,23 @@ public class MbContribuyentes implements Serializable {
         c.setDireccion(contribuyente.getDireccion());
         return c;
     }
+    
+    public ArrayList<Contribuyente> obtenerContribuyentesCliente() {
+        ArrayList<Contribuyente> lstContribuyentes=new ArrayList<Contribuyente>();
+        FacesMessage fMsg = new FacesMessage(FacesMessage.SEVERITY_WARN, "Aviso:", "");
+        try {
+            this.dao = new DAOContribuyentes();
+            lstContribuyentes=this.dao.obtenerContribuyentesCliente();
+        } catch (SQLException ex) {
+            fMsg.setSeverity(FacesMessage.SEVERITY_ERROR);
+            fMsg.setDetail(ex.getErrorCode() + " " + ex.getMessage());
+        } catch (NamingException ex) {
+            fMsg.setSeverity(FacesMessage.SEVERITY_ERROR);
+            fMsg.setDetail(ex.getMessage());
+        }
+        FacesContext.getCurrentInstance().addMessage(null, fMsg);
+        return lstContribuyentes;
+    }
 
     public Contribuyente obtenerContribuyente(int idContribuyente) {
         Contribuyente c = null;

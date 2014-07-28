@@ -1,6 +1,7 @@
-package movimientos.dominio;
+package clientes.dominio;
 
 import almacenes.dominio.AlmacenJS;
+import almacenes.to.TOAlmacenJS;
 import entradas.dominio.Comprobante;
 import java.util.Date;
 import monedas.Moneda;
@@ -9,11 +10,12 @@ import monedas.Moneda;
  *
  * @author jesc
  */
-public class Recepcion {
+public class Venta {
     private int idMovto;
     private int idMovtoAlmacen;
-    private AlmacenJS almacen;
     private int folio;
+    //private int folioAlmacen;
+    private TOAlmacenJS almacen;
     private Comprobante comprobante;
     private int idImpuestoZona;
     private Moneda moneda;
@@ -27,11 +29,11 @@ public class Recepcion {
     private double impuesto;
     private double total;
     
-    public Recepcion() {
-        this.almacen=new AlmacenJS();
+    public Venta() {
+        this.almacen=new TOAlmacenJS();
         this.comprobante=new Comprobante();
         this.moneda=new Moneda();
-        this.tipoCambio=1;
+        this.tipoCambio=1.00;
         this.fecha=new Date();
     }
 
@@ -51,11 +53,11 @@ public class Recepcion {
         this.idMovtoAlmacen = idMovtoAlmacen;
     }
 
-    public AlmacenJS getAlmacen() {
+    public TOAlmacenJS getAlmacen() {
         return almacen;
     }
 
-    public void setAlmacen(AlmacenJS almacen) {
+    public void setAlmacen(TOAlmacenJS almacen) {
         this.almacen = almacen;
     }
 
@@ -66,6 +68,14 @@ public class Recepcion {
     public void setFolio(int folio) {
         this.folio = folio;
     }
+
+//    public int getFolioAlmacen() {
+//        return folioAlmacen;
+//    }
+//
+//    public void setFolioAlmacen(int folioAlmacen) {
+//        this.folioAlmacen = folioAlmacen;
+//    }
 
     public Comprobante getComprobante() {
         return comprobante;

@@ -73,6 +73,25 @@ public class DAOContribuyentes {
         }
         return idRfc;
     }
+    
+    public ArrayList<Contribuyente> obtenerContribuyentesCliente() throws SQLException {
+        ArrayList<Contribuyente> cs = new ArrayList<Contribuyente>();
+        Connection cn = this.ds.getConnection();
+        Statement st = cn.createStatement();
+        String strSQL="SELECT c.idContribuyente, contribuyente, cr.idRfc, cr.rfc, c.idDireccion "
+                + "FROM contribuyentes c "
+                + "inner join contribuyentesrfc cr on cr.idRfc=c.idRfc "
+                + "WHERE c.idContribuyente IN (SELECT DISTINCT idContribuyente FROM clientes)";
+        try {
+            ResultSet rs = st.executeQuery(strSQL);
+            while (rs.next()) {
+                cs.add(construir(rs));
+            }
+        } finally {
+            cn.close();
+        }
+        return cs;
+    }
 
     public ArrayList<Contribuyente> obtenerContribuyentes(String cadena) throws SQLException {
         ArrayList<Contribuyente> cs = new ArrayList<Contribuyente>();

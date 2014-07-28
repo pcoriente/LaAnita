@@ -109,6 +109,7 @@ public class MbRecepcion implements Serializable {
     public TOMovimiento convertirTOMovimiento() {
         TOMovimiento toMovimiento = new TOMovimiento();
         toMovimiento.setIdMovto(this.recepcion.getIdMovto());
+        toMovimiento.setIdMovtoAlmacen(this.recepcion.getIdMovtoAlmacen());
         toMovimiento.setIdTipo(3);
         toMovimiento.setFolio(this.recepcion.getFolio());
         toMovimiento.setIdCedis(this.recepcion.getAlmacen().getCedis().getIdCedis());
@@ -170,6 +171,14 @@ public class MbRecepcion implements Serializable {
         }
     }
     
+    public void editarLotes() {
+        this.lote=new Lote();
+        this.sumaLotes=0;
+        for(Lote l:this.recepcionProducto.getLotes()) {
+            this.sumaLotes+=l.getSeparados();
+        }
+    }
+    
     public void respaldaFila() {
         this.resRecepcionProducto.setCantOrdenada(this.recepcionProducto.getCantOrdenada());
         this.resRecepcionProducto.setCantFacturada(this.recepcionProducto.getCantFacturada());
@@ -201,8 +210,8 @@ public class MbRecepcion implements Serializable {
             //this.idMovtoAlmacen=this.dao.obtenerIdMovtoAlmacen(this.recepcion.getComprobante().getAlmacen().getIdAlmacen(), 9, this.recepcion.getComprobante().getNumero());
             this.daoLotes = new DAOLotes();
             this.recepcionDetalle = new ArrayList<EntradaProducto>();
-            this.idMovtoOrigen=this.dao.obtenerIdMovto(this.recepcion.getComprobante().getAlmacen().getIdAlmacen(), 9, this.recepcion.getComprobante().getRemision());
-            for (TOMovimientoDetalle p : this.dao.obtenerDetalleMovimiento(this.idMovtoOrigen)) {
+//            this.idMovtoOrigen=this.dao.obtenerIdMovto(this.recepcion.getComprobante().getAlmacen().getIdAlmacen(), 35, this.recepcion.getComprobante().getNumero());
+            for (TOMovimientoDetalle p : this.dao.obtenerDetalleMovimiento(this.recepcion.getIdMovto())) {
                 this.recepcionDetalle.add(this.convertirDetalle(p));
             }
             this.recepcionProducto = new EntradaProducto();
@@ -221,8 +230,8 @@ public class MbRecepcion implements Serializable {
     private EntradaProducto convertirDetalle(TOMovimientoDetalle to) throws SQLException {
         EntradaProducto p = new EntradaProducto();
         p.setProducto(this.mbBuscar.obtenerProducto(to.getIdProducto()));
+        p.setCantOrdenada(to.getCantOrdenada());
         p.setCantFacturada(to.getCantFacturada());
-        p.setCantOrdenada(to.getCantFacturada());
         p.setCantRecibida(0);
         p.setCantSinCargo(0);
         p.setCostoOrdenado(0);
@@ -232,8 +241,8 @@ public class MbRecepcion implements Serializable {
         p.setDesctoConfidencial(to.getDesctoConfidencial());
         p.setUnitario(to.getUnitario());
         p.setImporte(to.getUnitario()*to.getCantFacturada());
-//        p.setImpuestos(this.daoImps.obtenerImpuestosProducto(this.recepcion.getIdMovto(), to.getIdProducto()));
-        p.setLotes(this.daoLotes.obtenerLotesEnvio(this.recepcion.getComprobante().getAlmacen().getIdAlmacen(), this.idMovtoOrigen, to.getIdProducto()));
+//        p.setLotes(this.daoLotes.obtenerLotesEnvio(this.recepcion.getComprobante().getAlmacen().getIdAlmacen(), this.recepcion.getIdMovtoAlmacen(), to.getIdProducto()));
+        p.setLotes(this.daoLotes.obtenerLotesMovtoEmpaque(this.recepcion.getIdMovtoAlmacen(), to.getIdProducto()));
         this.sumaLotes = 0;
         for (Lote l : p.getLotes()) {
             this.sumaLotes += l.getSeparados();
@@ -267,6 +276,7 @@ public class MbRecepcion implements Serializable {
     private Recepcion convertir(TOMovimiento to) {
         Recepcion e = new Recepcion();
         e.setIdMovto(to.getIdMovto());
+        e.setIdMovtoAlmacen(to.getIdMovtoAlmacen());
         e.setAlmacen(this.mbComprobantes.getMbAlmacenes().obtenerAlmacen(to.getIdAlmacen()));
         e.setComprobante(this.mbComprobantes.obtenerComprobante(to.getIdReferencia()));
         e.setFolio(to.getFolio());

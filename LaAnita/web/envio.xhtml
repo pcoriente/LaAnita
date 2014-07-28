@@ -17,7 +17,7 @@
             <div id="content" align="left">
                 <h:form id="main"  onkeypress="return event.keyCode !== 13;">
                     <p:messages id="msgs" showDetail="true" showSummary="false" closable="true" />
-                    <p:panel id="encabezado" header="SOLICITUD DE TRASPASO"
+                    <p:panel id="encabezado" header="ENVIO DE TRASPASO"
                              rendered="#{not empty mbEnvios.obtenerAcciones(18) and not mbEnvios.modoEdicion}">
                         <p:panelGrid id="encabezadoEnvio" >
                             <p:row >
@@ -103,7 +103,7 @@
                     </p:panel>
                     <p:dialog id="editarLotesDlg" widgetVar="editarLotesDlg" header="EDICION DE LOTES" resizable="false" modal="true" width="600" >
                         <p:messages id="msgs1" showDetail="true" showSummary="false" closable="true" />
-                        <p:ajax event="close" listener="#{mbEnvios.actualizarCantidad()}" update=":main:detalleEnvio"  />
+                        <p:ajax event="close" listener="#{mbEnvios.actualizarCantidad()}" update=":main:detalleEnvio" />
                         <p:dataTable id="listaLotes" widgetVar="listaLotes" 
                                      value="#{mbEnvios.envioProducto.lotes}" style="border: solid 1px" 
                                      var="lote" rowKey="#{lote.lote}" selection="#{mbEnvios.lote}" selectionMode="single" 
