@@ -22,109 +22,160 @@
                         <p:commandButton icon="ui-icon-document"
                                          process="@this"
                                          title="Nuevo Formato"
-                                         oncomplete="dlgFormato.show();"
-                                         actionListener="#{mbClientesListas.limpiar()}"
-                                         update="panelMonedas"/>
+                                         oncomplete="dlgListasPrecio.show();"
+                                         />
                         <p:commandButton id="btnEditarFormato" 
                                          icon="ui-icon-pencil"
                                          process="@this"
-                                         actionListener="#{mbClientesListas.actualizar()}"
-                                         update="panelMonedas"
                                          title="Actualizar Formato"
-                                         disabled="#{mbClientesListas.formatoSeleccion==null}"
                                          oncomplete="dlgFormato.show();"/>
                         <p:commandButton icon="ui-icon-arrowreturnthick-1-w"
                                          ajax="false"
                                          title="Salir"
                                          immediate="true"
-                                         action="#{mbClientesListas.salir()}"/>
+                                         action="#{mbClientesListas.salir()}"
+                                         />
                     </div>
-                    <p:panel header="Grupo de Cliente" 
+                    <p:panel header="Precio Ideal" 
                              styleClass="quitaCuadro">
-                        <p:dataTable value="#{mbClientesListas.lstFormato}"
-                                     var="tableFormatos"
-                                     id="tableFormatos"
-                                     selectionMode="single"
-                                     rowKey="#{tableFormatos}"
-                                     emptyMessage="No hay clientes Formatos"
-                                     selection="#{mbClientesListas.formatoSeleccion}">
-                            <p:ajax event="rowSelect"
-                                    process="@this"
-                                    listener="#{mbClientesListas.cargarDatos()}"
-                                    update=":form:btnEditarFormato"/>
-                            <p:column headerText="Formato">
-                                ${tableFormatos.formato}
-                            </p:column>
-                            <p:column headerText="Moneda">
-                                ${tableFormatos.moneda.moneda}
-                            </p:column>
+                        <p:dataTable> 
+
                         </p:dataTable>
                     </p:panel>
-                    <p:dialog widgetVar="dlgFormato"
+                    <p:dialog widgetVar="dlgListasPrecio"
                               modal="true"
-                              showEffect="explode"
-                              hideEffect="explode"
-                              closable="false"
-                              header="Formatos"
-                              resizable="false">
-                        <h:panelGrid columns="4"
-                                     id="panelMonedas">
-                            <h:outputText value="Formato:"/>
-                            <p:inputText id="txtFormato" 
-                                         value="#{mbClientesListas.formato.formato}"/>
-                            <h:outputText value="Moneda:"/>
-                            <p:selectOneMenu id="cmbMoneda"
-                                             filter="true"
-                                             value="#{mbClientesListas.mbMonedas.moneda}">
-                                <f:selectItems value="#{mbClientesListas.mbMonedas.listaMonedas}"/>
-                                <f:converter converterId="converters.Moneda"/>
+                              closable="true"
+                              header="Listas precio ideal"
+                              resizable="false"> 
+
+                        <br></br>
+                        <h:panelGrid columns="6"
+                                     id="panel1"
+                                     >
+                            <h:outputText value="Empresa:"/>
+                            <p:selectOneMenu filter="true"
+                                             value="#{mbClientesListas.mbEmpresas.empresa}">
+                                <f:selectItems value="#{mbClientesListas.mbEmpresas.listaMiniEmpresasCmb}"/>
+                                <f:converter converterId="converters.MiniEmpresa"/>
+                                <p:ajax event="change" 
+                                        listener="#{mbClientesListas.traerInformacionClientesListas()}"
+                                        update=":form:panel2 :form:txtDescuentos"/>
                             </p:selectOneMenu>
-                            <h:outputText value="Fecha Inicio:"/>
-                            <p:calendar/>
-                            <h:outputText value="Fecha Final:"/>
-                            <p:calendar/>
+                            <h:outputText value="Grupo Cliente: "/>
+                            <p:selectOneMenu filter="true" 
+                                             value="#{mbClientesListas.mbClientesGrupos.cmbClientesGrupos}">
+                                <f:selectItems value="#{mbClientesListas.mbClientesGrupos.itemsClientesGrupos}"/>
+                                <f:converter converterId="converters.ClientesGrupos"/>
+                                <p:ajax event="change" 
+                                        listener="#{mbClientesListas.cargarFormatos()}"
+                                        update="cmbFormatos :form:panel2 :form:txtDescuentos"/>
+                            </p:selectOneMenu>
+                            <h:outputText value="Formato: "/>
+                            <p:selectOneMenu filter="true" 
+                                             id="cmbFormatos"
+                                             style="width: 243px"
+                                             value="#{mbClientesListas.mbClientesGrupos.mbFormatos.cmbClientesFormatos}">
+                                <f:selectItems value="#{mbClientesListas.mbClientesGrupos.mbFormatos.lstFormatos}"/>
+                                <f:converter converterId="CFormatos"/>
+                                <p:ajax event="change" 
+                                        listener="#{mbClientesListas.traerInformacionClientesListas()}"
+                                        update=":form:panel2 :form:txtDescuentos"/>
+                            </p:selectOneMenu>
                         </h:panelGrid>
-                        <h:panelGrid columns="2">
+                        <p:separator/>
+                        <h:panelGrid columns="10"
+                                     id="panel2">
+                            <h:outputText value="Descuentos: "/>
+                            <p:inputText style="width: 60px"
+                                         value="#{mbClientesListas.clientesListas.descuetos}"
+                                         id="txtDescuentos"
+                                         />
+                            <h:outputText value="Mercancias sn/cargo"/>
+                            <pe:inputNumber emptyValue="zero" 
+                                            decimalPlaces="0"
+                                            style="width: 60px"
+                                            value="#{mbClientesListas.clientesListas.mercanciaSinCargo}"
+                                            />
+                            <h:outputText value="Mercancias cn/cargo"/>
+                            <pe:inputNumber emptyValue="zero" 
+                                            style="width: 80px"
+                                            value="#{mbClientesListas.clientesListas.mercanciaConCargo}"/>
+
+                            <h:outputText value="Boletin :"/>
+                            <pe:inputNumber emptyValue="zero" 
+                                            symbol="%" 
+                                            decimalPlaces="0"
+                                            symbolPosition="s"
+                                            style="width: 60px"
+                                            value="#{mbClientesListas.clientesListas.boletin}"/>
+                            <h:outputText value="Numero Proveedor :"/>
+                            <p:inputText style="width: 60px"
+                                         value="#{mbClientesListas.clientesListas.numeroProveedor}"/>
+                        </h:panelGrid>
+                        <div style="float: right">
+
+                            <p:commandButton icon="ui-icon-disk"
+                                             title="Guardar lista productos"
+                                             oncomplete="nuevaListaPrecios(xhr, status, args)"
+                                             process="@this :form:panel1 :form:panel2"
+                                             actionListener="#{mbClientesListas.guardar()}"/>
+                            <p:commandButton icon="ui-icon-trash"
+                                             id="btnEliminarProducto"
+                                             title="Quitar producto"
+                                             process="@this"
+                                             actionListener="#{mbClientesListas.quitarProductoTabla()}"
+                                             disabled="#{mbClientesListas.eliminar== false}"
+                                             update=":form:tablaFormatoDetalle 
+                                             :form:btnEliminarProducto"
+                                             />
+                            <p:commandButton icon="ui-icon-search"
+                                             title="Busqueda de Productos"
+                                             oncomplete="buscarProductoDlg.show();"
+                                             process="@this"
+                                             actionListener="#{mbClientesListas.limpiarBuscador()}"
+                                             update=":form:multipleSelectProductos"/>
+                            <p:commandButton icon="ui-icon-arrowreturnthick-1-w"
+                                             title="Cancelar"
+                                             />
+                        </div>
+
+                        <div style="margin-top: 35px">
                             <p:dataTable emptyMessage="No hay productos seleccionados"
-                                         value="#{mbClientesListas.lstFormatoDetalle}"
+                                         value="#{mbClientesListas.lstListaProductos}"
                                          var="formatoDetalle"
                                          id="tablaFormatoDetalle"
                                          scrollable="true"
                                          scrollHeight="150"
-                                         style="width: 900px"
+                                         style="width: 900px ;"
+                                         selectionMode="single"
+                                         selection="#{mbClientesListas.clientesListasSeleccion}"
+                                         rowKey="#{formatoDetalle}"
                                          >
-                                <p:column headerText="Producto" width="400">
+
+                                <p:ajax event="rowSelect"
+                                        process="@this"
+                                        update=":form:btnEliminarProducto"
+                                        listener="#{mbClientesListas.eliminarProduco()}"/>
+                                <p:column headerText="Producto" width="500">
                                     #{formatoDetalle.producto}
                                 </p:column>
-                                <p:column headerText="Precio Lista">
+                                <p:column headerText="Precio Venta">
+                                    <pe:inputNumber emptyValue="zero" decimalPlaces="4"
+                                                    value="#{formatoDetalle.precioVenta}"
+                                                    style="width: 89px"/>
                                 </p:column>
                                 <p:column headerText="Descuentos">
                                     <p:inputText value="#{formatoDetalle.descuentos}" 
                                                  style="width:89px"/>
                                 </p:column>
                                 <p:column headerText="Inicio Vigencia">
-                                    <p:calendar  size="10" />
+                                    <p:calendar  size="10" 
+                                                 value="#{formatoDetalle.inicioVigencia}" />
                                 </p:column>
-                                <p:column headerText="Fin Vigencia">
-                                    <p:calendar  style="width:89px"
-                                                 size="10"/>
-                                </p:column>
+                                <f:facet name="footer">
+                                    Tolal de Productos agregados #{(mbClientesListas.lstListaProductos.size())}
+                                </f:facet>
                             </p:dataTable>
-                            <p:commandButton icon="ui-icon-search"
-                                             title="Busqueda de Productos"
-                                             oncomplete="buscarProductoDlg.show();"/>
-                        </h:panelGrid>
-                        <div style="margin: auto">
-                            <p:commandButton icon="ui-icon-disk" 
-                                             process="@this txtFormato cmbMoneda"
-                                             update="growl tableFormatos"
-                                             actionListener="#{mbClientesListas.guardarFormato()}"
-                                             oncomplete="nuevoFormato(xhr, status, args)"/>
-                            <p:commandButton icon="ui-icon-arrowreturnthick-1-w"
-                                             actionListener="#{mbClientesListas.limpiar()}"
-                                             onclick="dlgFormato.hide();"
-                                             update=":form:btnEditarFormato :form:tableFormatos"
-                                             title="Cancelar"/>
                         </div>
                     </p:dialog>
 
@@ -222,12 +273,12 @@
         </div>
     </body>
     <script>
-        function nuevoFormato(xhr, status, args) {
+        function nuevaListaPrecios(xhr, status, args) {
             if (args.validationFailed || !args.ok) {
-                dlgFormato.jq.effect("shake", {times: 5}, 100);
+                dlgListasPrecio.jq.effect("shake", {times: 5}, 100);
             }
             else {
-                dlgFormato.hide();
+                dlgListasPrecio.hide();
             }
         }
         function handleBuscar(xhr, status, args) {

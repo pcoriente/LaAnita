@@ -79,14 +79,18 @@ public class DAOListaPrecio {
     public ArrayList<TOPrecioListaIdeal> dameValores() throws SQLException {
         ArrayList<TOPrecioListaIdeal> listaPrecioIdeal = new ArrayList<TOPrecioListaIdeal>();
         Connection cn = ds.getConnection();
-        String sql = "SELECT * FROM listaPrecios";
+        String sql = "SELECT  * FROM listaPrecios ";
         Statement st = cn.createStatement();
-        ResultSet rs = st.executeQuery(sql);
-        while (rs.next()) {
-            TOPrecioListaIdeal toListaPrecioIdeal = new TOPrecioListaIdeal();
-            toListaPrecioIdeal.setPrecioLista(rs.getDouble("precioLista"));
-            toListaPrecioIdeal.setIdProducto(rs.getInt("idProducto"));
-            listaPrecioIdeal.add(toListaPrecioIdeal);
+        try {
+            ResultSet rs = st.executeQuery(sql);
+            while (rs.next()) {
+                TOPrecioListaIdeal toListaPrecioIdeal = new TOPrecioListaIdeal();
+                toListaPrecioIdeal.setPrecioLista(rs.getDouble("precioLista"));
+                toListaPrecioIdeal.setIdProducto(rs.getInt("idEmpaque"));
+                listaPrecioIdeal.add(toListaPrecioIdeal);
+            }
+        } finally {
+            cn.close();
         }
         return listaPrecioIdeal;
 

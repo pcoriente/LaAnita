@@ -7,7 +7,6 @@ package clientesListas.formatosDetalleDominio;
 
 import java.io.Serializable;
 import java.util.Date;
-import producto2.dominio.Empaque;
 import producto2.dominio.Producto;
 
 /**
@@ -16,27 +15,13 @@ import producto2.dominio.Producto;
  */
 public class ClienteListasDetalle implements Serializable {
 
-    private int idFormato;
+    private int idClientesLista;
     private Producto producto = new Producto();
-    private double precioLista;
     private double descuentos;
     private Date finVigencia;
+     private Date inicioVigencia;
+    private double precioVenta;
 
-    public int getIdFormato() {
-        return idFormato;
-    }
-
-    public void setIdFormato(int idFormato) {
-        this.idFormato = idFormato;
-    }
-
-    public double getPrecioLista() {
-        return precioLista;
-    }
-
-    public void setPrecioLista(double precioLista) {
-        this.precioLista = precioLista;
-    }
 
     public double getDescuentos() {
         return descuentos;
@@ -64,8 +49,8 @@ public class ClienteListasDetalle implements Serializable {
 
     @Override
     public int hashCode() {
-        int hash = 3;
-        hash = 47 * hash + (this.producto != null ? this.producto.hashCode() : 0);
+        int hash = 7;
+        hash = 43 * hash + this.idClientesLista;
         return hash;
     }
 
@@ -78,10 +63,34 @@ public class ClienteListasDetalle implements Serializable {
             return false;
         }
         final ClienteListasDetalle other = (ClienteListasDetalle) obj;
-        if (this.producto != other.producto && (this.producto == null || !this.producto.equals(other.producto))) {
+        if (this.idClientesLista != other.idClientesLista) {
             return false;
         }
         return true;
+    }
+
+    public int getIdClientesLista() {
+        return idClientesLista;
+    }
+
+    public void setIdClientesLista(int idClientesLista) {
+        this.idClientesLista = idClientesLista;
+    }
+
+    public Date getInicioVigencia() {
+        return inicioVigencia;
+    }
+
+    public void setInicioVigencia(Date inicioVigencia) {
+        this.inicioVigencia = inicioVigencia;
+    }
+
+    public double getPrecioVenta() {
+        return precioVenta;
+    }
+
+    public void setPrecioVenta(double precioVenta) {
+        this.precioVenta = precioVenta;
     }
 
 }

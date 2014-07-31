@@ -17,7 +17,7 @@
                 <h:form id="form" onkeypress="return event.keyCode !== 13;" enctype="multipart/form-data">
                     <p:growl id="growl" autoUpdate="true" showDetail="true"/> 
                     <p:panel header="Pedidos Autoservicio">
-                        <div align="right">
+                        <div align="right" style="margin-right: -15px">
                             <p:commandButton icon="ui-icon-disk" 
                                              title="Guardar Archivo"
                                              value="Guardar"
@@ -30,20 +30,33 @@
                             <p:commandButton icon="ui-icon-document"/>
                         </div>
                         <br></br>
-                        <h:panelGrid columns="2">
+                        <h:panelGrid columns="8" style="margin-left: -25px">
                             <h:outputText value="Empresa:"/>
-                            <p:selectOneMenu>
+                            <p:selectOneMenu filter="true">
                                 <f:selectItems value="#{mbPedido.mbEmpresas.listaObtenerEmpresas}"/>
                             </p:selectOneMenu>
                             <h:outputText value="Grupo:"/>
-                            <p:selectOneMenu>
+                            <p:selectOneMenu value="#{mbPedido.mbClientesGrupos.cmbClientesGrupos}"
+                                             filter="true">
                                 <f:selectItems value="#{mbPedido.mbClientesGrupos.itemsClientesGrupos}"/>
+                                <f:converter converterId="converters.ClientesGrupos"/>
+                                <p:ajax event="change" 
+                                        listener="#{mbPedido.cargarInformacion()}" 
+                                        process="@this"
+                                        update=":form:cmbFormatos
+                                        :form:cmbPago"/>
                             </p:selectOneMenu>
-                             <h:outputText value="Grupo:"/>
-                            <p:selectOneMenu>
+                            <h:outputText value="Formato:"/>
+                            <p:selectOneMenu id="cmbFormatos" 
+                                             value="#{mbPedido.mbClientesGrupos.mbFormatos.cmbClientesFormatos}"
+                                             filter="true">
+                                <f:selectItems value="#{mbPedido.mbClientesGrupos.mbFormatos.lstFormatos}"/>
                             </p:selectOneMenu>
-                            <h:outputText value="Metodo de pago:"/>
-                            <p:selectOneMenu>
+                            <h:outputText value="Pago:"/>
+                            <p:selectOneMenu filter="true"
+                                             style="width: 155px"
+                                             id="cmbPago">
+                                <f:selectItems value="#{mbPedido.mbGruposBancos.lstGruposBancos}"/>
                             </p:selectOneMenu>
                         </h:panelGrid>
                         <h:panelGrid columns="2">

@@ -183,7 +183,7 @@ public class DAOClientes {
         }
         String sqlActualizar = "UPDATE clientes SET codigoCliente = '" + cliente.getCodigoCliente() + "', idImpuestoZona = '" + cliente.getImpuestoZona().getIdZona() + "', diasCredito = '" + cliente.getDiasCredito() + "', "
                 + "limiteCredito = '" + cliente.getLimiteCredito() + "', desctoComercial = '" + cliente.getDescuentoComercial() + "',diasBloqueo = '" + cliente.getDiasBloqueo() + "', nombreComercial = '" + cliente.getNombreComercial() + "', idAgente = ' " + cliente.getAgente().getIdAgente() + "'  "
-                + ", idContribuyente = '" + idContribuyente + "', codigoTienda='"+cliente.getCodigoTienda()+"' "
+                + ", idContribuyente = '" + idContribuyente + "', codigoTienda='"+cliente.getCodigoTienda()+"', idGrupoCte = '"+cliente.getClientesGrupos().getIdGrupoCte()+"', idFormato ='"+cliente.getClientesFormato().getIdFormato()+"' "
                 + "WHERE idCliente = '" + cliente.getIdCliente() + "'";
         try {
             st.executeUpdate(sqlActualizar);

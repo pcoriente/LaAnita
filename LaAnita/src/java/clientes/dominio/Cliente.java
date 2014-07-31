@@ -5,9 +5,9 @@
 package clientes.dominio;
 
 import agentes.dominio.Agentes;
-import clientesListas.dominio.ClientesFormatos;
 import contribuyentes.Contribuyente;
 import direccion.dominio.Direccion;
+import formatos.dominio.ClientesFormato;
 import impuestos.dominio.ImpuestoZona;
 import java.io.Serializable;
 import java.util.Date;
@@ -24,7 +24,7 @@ public class Cliente implements Serializable {
     private int codigoCliente;
     private Contribuyente contribuyente = new Contribuyente();
     private Agentes agente = new Agentes();
-     private ClientesGrupos clientesGrupos = new ClientesGrupos();
+    private ClientesGrupos clientesGrupos = new ClientesGrupos();
     private ImpuestoZona impuestoZona = new ImpuestoZona();
     private Date fechaAlta;
     private int diasCredito;
@@ -34,7 +34,7 @@ public class Cliente implements Serializable {
     private int diasBloqueo;
     private int codigoTienda;
     private String nombreComercial;
-    private ClientesFormatos clientesFormato = new ClientesFormatos();
+    private ClientesFormato clientesFormato = new ClientesFormato();
     private Ruta ruta = new Ruta();
     private Direccion direccion = new Direccion();
 
@@ -45,7 +45,7 @@ public class Cliente implements Serializable {
     public void setClientesGrupos(ClientesGrupos clientesGrupos) {
         this.clientesGrupos = clientesGrupos;
     }
-    
+
     public Cliente() {
     }
 
@@ -145,15 +145,13 @@ public class Cliente implements Serializable {
         this.agente = agente;
     }
 
-    public ClientesFormatos getClientesFormato() {
+    public ClientesFormato getClientesFormato() {
         return clientesFormato;
     }
 
-    public void setClientesFormato(ClientesFormatos clientesFormato) {
+    public void setClientesFormato(ClientesFormato clientesFormato) {
         this.clientesFormato = clientesFormato;
     }
-
-    
 
     public Ruta getRuta() {
         return ruta;
@@ -170,6 +168,5 @@ public class Cliente implements Serializable {
     public void setDireccion(Direccion direccion) {
         this.direccion = direccion;
     }
-    
-    
+
 }

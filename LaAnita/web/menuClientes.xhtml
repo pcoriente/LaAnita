@@ -57,7 +57,9 @@
                             <p:ajax event="rowSelect"
                                     process="@this"
                                     listener="#{mbClientesBueno.cargarDatos()}"
-                                    update=":form:actualizarContacto :form:cmbBancos :form:panelClientes"
+                                    update=":form:actualizarContacto 
+                                    :form:cmbBancos 
+                                    :form:panelClientes"
                                     />
                             <p:column headerText="Cliente" 
                                       filterBy="#{lstCliente.nombreComercial}" 
@@ -90,7 +92,7 @@
                             <p:commandButton icon="ui-icon-plus"
                                              oncomplete="validarRfc(xhr, status, args);"
                                              title="Nuevo Contribuyente"
-                                             actionListener="#{mbClientesBueno.altaDireccionContribuyente()}"
+                                             actionListener="#{mbClientesBueno.obtenerInformacionRfc()}"
                                              update="growl 
                                              :form:panelContribuyente 
                                              :form:txtDireccion
@@ -146,8 +148,12 @@
                             </p:selectOneMenu>
                             <h:outputText/>
                             <h:outputLabel  styleClass="colorLetra" value="Formato"/>
-                            <p:selectOneMenu filter="true" id="cmbFormatos">
+                            <p:selectOneMenu filter="true" 
+                                             id="cmbFormatos"
+                                             style="width: 155px"
+                                             value="#{mbClientesBueno.mbClientesGrupos.mbFormatos.cmbClientesFormatos}">
                                 <f:selectItems value="#{mbClientesBueno.mbClientesGrupos.mbFormatos.lstFormatos}"/>
+                                <f:converter converterId="CFormatos"/>
                             </p:selectOneMenu>
                             <h:outputText/>
                             <h:outputLabel  styleClass="colorLetra" value="Impuesto Zona:"/>
@@ -203,7 +209,8 @@
                             <p:selectOneMenu id="cmbBancos"
                                              value="#{mbClientesBueno.clientes}"
                                              rendered="#{mbClientesBueno.actualizar}"
-                                             filter="true">
+                                             filter="true"
+                                             style="width: 155px">
                                 <f:selectItems  value="#{mbClientesBueno.mbClientesBancos.lstClientesBancos}"/>
                                 <f:converter converterId="converters.ClientesBancos"/>
                             </p:selectOneMenu>
@@ -406,43 +413,43 @@
                 </h:form>
                 <script>
                     function nuevaDireccion(xhr, status, args) {
-                        if (args.validationFailed || !args.okContribuyente) {
+                            if (args.validationFailed || !args.okContribuyente) {
                             dlgDireccion.jq.effect("shake", {times: 5}, 100);
                         }
                         else {
-                            dlgDireccion.hide();
+                    dlgDireccion.hide();
                         }
-                    }
-                    function nuevoCliente(xhr, status, args) {
+                        }
+                            function nuevoCliente(xhr, status, args) {
                         if (args.validationFailed || !args.ok) {
                             dlgClientes.jq.effect("shake", {times: 5}, 100);
                         }
                         else {
-                            dlgClientes.hide();
+                    dlgClientes.hide();
                         }
                     }
-                    function nuevaCuentaBancaria(xhr, status, args) {
+                            function nuevaCuentaBancaria(xhr, status, args) {
                         if (args.validationFailed || !args.ok) {
                             dlgCuentasBancos.jq.effect("shake", {times: 5}, 100);
                         }
                         else {
-                            dlgCuentasBancos.hide();
+                    dlgCuentasBancos.hide();
                         }
                     }
-                    function nuevoContribuyente(xhr, status, args) {
+                            function nuevoContribuyente(xhr, status, args) {
                         if (args.validationFailed || !args.ok) {
                             dlgContribuyentes.jq.effect("shake", {times: 5}, 100);
                         }
                         else {
-                            dlgContribuyentes.hide();
+                    dlgContribuyentes.hide();
                         }
-                    }
+                        }
 
-                    function validarRfc(xhr, status, args) {
-                        if (args.validationFailed || !args.ok) {
+                        function validarRfc(xhr, status, args) {
+                            if (args.validationFailed || !args.ok) {
                         }
                         else {
-                            dlgContribuyentes.show();
+                    dlgContribuyentes.show();
                         }
                     }
                 </script>

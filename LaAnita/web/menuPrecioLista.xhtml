@@ -17,7 +17,6 @@
                 <div id="content" align="center"  >
                     <br></br>
                     <p:growl id="growl" autoUpdate="true" showDetail="true"/> 
-                    <p:growl id="growl2" showDetail="true" sticky="true" />
                     <div align="right">
                         <p:commandButton icon="ui-icon-document"
                                          title="Nuevo Formato"
@@ -31,9 +30,7 @@
                                          title="Salir"
                                          action="#{mbListaPrecioIdeal.salir()}"
                                          immediate="true"/>
-                        <p:commandButton value="Reporte"
-                                         action="#{mbListaPrecioIdeal.generarReporte()}"
-                                         ajax="false"/>
+                        
                     </div>
                     <p:panel header="Grupo de Cliente" 
                              styleClass="quitaCuadro">

@@ -5,7 +5,6 @@
 package mbMenuClientesGrupos;
 
 import Message.Mensajes;
-import clientesListas.dominio.ClientesFormatos;
 import contactos.MbContactos;
 import contactos.dao.DAOContactos;
 import contactos.dominio.Contacto;
@@ -177,7 +176,6 @@ public class MbClientesGrupos implements Serializable {
             cargarListaGruposClientes();
         }
         clienteGrupoSeleccionado = null;
-//        mbContactos.getMbTelefonos().getTelefono().setTipo(new TelefonoTipo(false));
     }
 
     public void cambiarIconoTelefono() {
@@ -197,7 +195,6 @@ public class MbClientesGrupos implements Serializable {
             this.mbContactos.getMbTelefonos().grabar(this.mbContactos.getContacto().getIdContacto());
             this.mbContactos.getMbTelefonos().cargaTelefonos(this.mbContactos.getContacto().getIdContacto());
             lblNuevoTelefono = "ui-icon-pencil";
-//            this.mbContactos.getMbTelefonos().setTelefono(new Telefono());
         }
     }
 
@@ -236,7 +233,6 @@ public class MbClientesGrupos implements Serializable {
     public void deseleccionar() {
         this.setActualizar(false);
         clienteGrupoSeleccionado = null;
-//        mbContactos= new MbContactos();
     }
 
     public void informacionTipo() {

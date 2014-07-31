@@ -6,6 +6,7 @@
 package pedidos;
 
 import empresas.MbEmpresas;
+import gruposBancos.MbGruposBancos;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -35,6 +36,8 @@ public class MbPedido implements Serializable {
     @ManagedProperty(value = "#{mbEmpresas}")
     private MbEmpresas mbEmpresas = new MbEmpresas();
     @ManagedProperty(value = "#{mbClientesGrupos}")
+    private MbGruposBancos mbGruposBancos = new MbGruposBancos();
+    @ManagedProperty(value = "#{mbGruposBancos}")
     private MbClientesGrupos mbClientesGrupos = new MbClientesGrupos();
     private final String destino = "C:\\archivos\\";
 
@@ -61,15 +64,17 @@ public class MbPedido implements Serializable {
 
             } catch (IOException ex) {
                 Message.Mensajes.mensajeError(ex.getMessage());
-                Logger.getLogger(MbPedido.class.getName()).log(Level.SEVERE, null, ex);
             }
-//                catch (SQLException ex) {
-//                Message.Mensajes.mensajeError(ex.getMessage());
-//                Logger.getLogger(MbPedido.class.getName()).log(Level.SEVERE, null, ex);
-//            }
         } else {
             Message.Mensajes.mensajeAlert("Error, Seleccione un archov de texto a leer");
         }
+    }
+
+    public void cargarInformacion() {
+        mbClientesGrupos.getMbFormatos().setLstFormatos(null);
+        mbGruposBancos.setLstGruposBancos(null);
+        mbClientesGrupos.getMbFormatos().cargarListaFormatos(mbClientesGrupos.getCmbClientesGrupos().getIdGrupoCte());
+        mbGruposBancos.cargarGruposBancos(mbClientesGrupos.getCmbClientesGrupos().getIdGrupoCte());
     }
 
     public void copyFile(String fileName, InputStream in) {
@@ -116,6 +121,14 @@ public class MbPedido implements Serializable {
 
     public void setMbClientesGrupos(MbClientesGrupos mbClientesGrupos) {
         this.mbClientesGrupos = mbClientesGrupos;
+    }
+
+    public MbGruposBancos getMbGruposBancos() {
+        return mbGruposBancos;
+    }
+
+    public void setMbGruposBancos(MbGruposBancos mbGruposBancos) {
+        this.mbGruposBancos = mbGruposBancos;
     }
 
 }

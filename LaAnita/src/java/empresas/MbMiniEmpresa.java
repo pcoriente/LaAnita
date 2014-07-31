@@ -1,5 +1,6 @@
 package empresas;
 
+import Message.Mensajes;
 import empresas.dao.DAOMiniEmpresas;
 import empresas.dominio.MiniEmpresa;
 import javax.inject.Named;
@@ -19,28 +20,35 @@ import javax.naming.NamingException;
 @Named(value = "mbMiniEmpresa")
 @SessionScoped
 public class MbMiniEmpresa implements Serializable {
+
     private MiniEmpresa empresa;
     private ArrayList<MiniEmpresa> lstEmpresas;
-    private DAOMiniEmpresas dao = new DAOMiniEmpresas();
-    
-    public MbMiniEmpresa() throws NamingException {
-        this.dao = new DAOMiniEmpresas();
-    }
-    
-    public ArrayList<SelectItem> obtenerListaMiniEmpresas() throws SQLException {
-        ArrayList<SelectItem> listaEmpresas=new ArrayList<SelectItem>();
+    private DAOMiniEmpresas dao;
+    private ArrayList<SelectItem> listaMiniEmpresasCmb = null;
+
+    public MbMiniEmpresa() {
         try {
-            MiniEmpresa e0=new MiniEmpresa();
+            this.dao = new DAOMiniEmpresas();
+        } catch (NamingException ex) {
+            Logger.getLogger(MbMiniEmpresa.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+
+    public ArrayList<SelectItem> obtenerListaMiniEmpresas() {
+        ArrayList<SelectItem> listaEmpresas = new ArrayList<SelectItem>();
+        try {
+            MiniEmpresa e0 = new MiniEmpresa();
             e0.setIdEmpresa(0);
             e0.setCodigoEmpresa("0");
             e0.setNombreComercial("Empresa");
             listaEmpresas.add(new SelectItem(e0, e0.toString()));
 
-            ArrayList<MiniEmpresa> empresas=this.dao.obtenerMiniEmpresas();
+            ArrayList<MiniEmpresa> empresas = this.dao.obtenerMiniEmpresas();
             for (MiniEmpresa e : empresas) {
                 listaEmpresas.add(new SelectItem(e, e.toString()));
             }
         } catch (SQLException e) {
+            Mensajes.mensajeError(e.getMessage());
             Logger.getLogger(MbMiniEmpresas.class.getName()).log(Level.SEVERE, null, e);
         }
         return listaEmpresas;
@@ -54,8 +62,8 @@ public class MbMiniEmpresa implements Serializable {
         this.empresa = empresa;
     }
 
-    public ArrayList<MiniEmpresa> getLstEmpresas() throws SQLException {
-        if(lstEmpresas==null) {
+    public ArrayList<MiniEmpresa> getLstEmpresas() {
+        if (lstEmpresas == null) {
             this.obtenerListaMiniEmpresas();
         }
         return lstEmpresas;
@@ -72,4 +80,28 @@ public class MbMiniEmpresa implements Serializable {
     public void setDao(DAOMiniEmpresas dao) {
         this.dao = dao;
     }
+
+    public ArrayList<SelectItem> getListaMiniEmpresasCmb() {
+        if (listaMiniEmpresasCmb == null) {
+            try {
+                listaMiniEmpresasCmb = new ArrayList<SelectItem>();
+                MiniEmpresa mini = new MiniEmpresa();
+                mini.setIdEmpresa(0);
+                mini.setNombreComercial("Empresa");
+                listaMiniEmpresasCmb.add(new SelectItem(mini, mini.getNombreComercial()));
+                for (MiniEmpresa miniEmpresa : dao.obtenerMiniEmpresas()) {
+                    listaMiniEmpresasCmb.add(new SelectItem(miniEmpresa,miniEmpresa.getNombreComercial()));
+                }
+            } catch (SQLException ex) {
+                Mensajes.mensajeError(ex.getMessage());
+                Logger.getLogger(MbMiniEmpresa.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+        return listaMiniEmpresasCmb;
+    }
+
+    public void setListaMiniEmpresasCmb(ArrayList<SelectItem> listaMiniEmpresasCmb) {
+        this.listaMiniEmpresasCmb = listaMiniEmpresasCmb;
+    }
+
 }

@@ -1,5 +1,6 @@
 package contribuyentes;
 
+import Message.Mensajes;
 import java.io.Serializable;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -120,6 +121,38 @@ public class MbContribuyentes implements Serializable {
         }
     }
 
+    
+//    public Contribuyente verificarRfc(String rfc){
+//        Utilerias utilerias = new Utilerias();
+//        String mensaje = utilerias.verificarRfc(rfc);
+//        if (mensaje == "") {
+//            try {
+//                Mensajes.mensajeSucces("Rfc Valido");
+//                DAOContribuyentes dao = new DAOContribuyentes();
+//                Contribuyente contribuyente = dao.buscarContribuyente(rfc);
+//                
+//            } catch (NamingException ex) {
+//                Mensajes.mensajeError(ex.getMessage());
+//            } catch (SQLException ex) {
+//                Mensajes.mensajeError(ex.getMessage());
+//
+//            }
+//            dameStatusRfc();
+//        } else {
+//            if (cliente.getContribuyente().getRfc() == null) {
+//                RequestContext context = RequestContext.getCurrentInstance();
+//                context.addCallbackParam("ok", true);
+//                activarRfc = false;
+//            } else {
+//                Mensajes.mensajeError("Error!!" + mensaje);
+//            }
+//        }
+//    }
+    
+    
+    
+    
+    
     public boolean verificar(String rfc) {
         boolean ok = false;
 

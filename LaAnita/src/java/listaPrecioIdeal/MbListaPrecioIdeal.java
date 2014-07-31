@@ -5,6 +5,7 @@
  */
 package listaPrecioIdeal;
 
+import Message.Mensajes;
 import java.io.Serializable;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -211,9 +212,11 @@ public class MbListaPrecioIdeal implements Serializable {
                     lstListaPrecioTable.add(this.convertir(p));
                 }
             } catch (NamingException ex) {
-                Logger.getLogger(MbListaPrecioIdeal.class.getName()).log(Level.SEVERE, null, ex);
+                Mensajes.mensajeError(ex.getMessage());
             } catch (SQLException ex) {
-                Logger.getLogger(MbListaPrecioIdeal.class.getName()).log(Level.SEVERE, null, ex);
+                Mensajes.mensajeError(ex.getMessage());
+            } catch (NullPointerException ex) {
+
             }
         }
         return lstListaPrecioTable;

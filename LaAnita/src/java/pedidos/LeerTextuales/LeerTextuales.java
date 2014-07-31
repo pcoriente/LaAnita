@@ -15,14 +15,12 @@ import java.sql.Date;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import pedidos.DAO.DAOPedidos;
 import pedidos.dominio.Chedraui;
 import pedidos.dominio.Coma;
 import pedidos.dominio.ComercialMexicana;
 import pedidos.dominio.Corvi;
 import pedidos.dominio.Imss;
-import pedidos.dominio.Pedido;
 import pedidos.dominio.SamsClub;
 import pedidos.dominio.WallMart;
 
@@ -199,7 +197,6 @@ public class LeerTextuales {
             pedidoArray = registro.split(",");
             Imss ims = new Imss();
             ComercialMexicana comercial = new ComercialMexicana();
-//            ims.setOrdenCompra(pedidoArray[0]);
             comercial.setOrdenCompra(pedidoArray[0]);
             anio = pedidoArray[1].substring(0, 4);
             mes = pedidoArray[1].substring(4, 6);

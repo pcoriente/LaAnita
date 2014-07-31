@@ -23,6 +23,7 @@ import producto2.to.TOProducto;
 @Named(value = "mbProductosBuscar")
 @SessionScoped
 public class MbProductosBuscar implements Serializable {
+
     @ManagedProperty(value = "#{mbArticulosBuscar}")
     private MbArticulosBuscar mbBuscar1;
     @ManagedProperty(value = "#{mbUpc}")
@@ -31,22 +32,22 @@ public class MbProductosBuscar implements Serializable {
     private MbGrupo mbGrupo;
     @ManagedProperty(value = "#{mbParte}")
     private MbParte mbParte;
-    
+
     private String tipoBuscar;
     private String strBuscar;
     private Producto producto;
     private ArrayList<Producto> productos;
     private Producto[] seleccionados;
     private DAOProductosBuscar dao;
-    
+
     public MbProductosBuscar() {
-        this.mbBuscar1=new MbArticulosBuscar();
-        this.mbUpc=new MbUpc();
-        this.mbGrupo=new MbGrupo();
-        this.mbParte=new MbParte();
+        this.mbBuscar1 = new MbArticulosBuscar();
+        this.mbUpc = new MbUpc();
+        this.mbGrupo = new MbGrupo();
+        this.mbParte = new MbParte();
         this.inicializaLocales();
     }
-    
+
     public void inicializar() {
         this.mbBuscar1.inicializar();
         this.mbUpc.nuevo(0);
@@ -54,23 +55,27 @@ public class MbProductosBuscar implements Serializable {
         this.mbParte.nueva();
         this.inicializaLocales();
     }
-    
+
     private void inicializaLocales() {
-        this.strBuscar="";
-        this.tipoBuscar="2";
-        this.producto=null;
+        this.strBuscar = "";
+        this.tipoBuscar = "2";
+        this.producto = null;
         this.productos = new ArrayList<Producto>();
         this.seleccionados = new Producto[]{};
     }
-    
+
+    public void limpiarBuscador() {
+        productos.clear();
+    }
+
     public void buscarLista() {
         boolean ok = false;
         RequestContext context = RequestContext.getCurrentInstance();
         FacesMessage fMsg = new FacesMessage(FacesMessage.SEVERITY_ERROR, "Aviso:", "buscarLista");
         try {
-            this.dao=new DAOProductosBuscar();
+            this.dao = new DAOProductosBuscar();
             if (this.getTipoBuscar().equals("1")) {
-                TOProducto to=this.dao.obtenerProductoSku(this.strBuscar);
+                TOProducto to = this.dao.obtenerProductoSku(this.strBuscar);
                 if (to == null) {
                     fMsg.setSeverity(FacesMessage.SEVERITY_WARN);
                     fMsg.setDetail("No se encontró producto con el SKU proporcionado");
@@ -79,99 +84,100 @@ public class MbProductosBuscar implements Serializable {
                     ok = true;
                 }
             } else {
-                Articulo a=null;
-                int idArticulo=0;
+                Articulo a = null;
+                int idArticulo = 0;
                 ArrayList<TOProducto> tos;
-                
-                this.producto=null;
-                this.productos=new ArrayList<Producto>();
-                if(this.getTipoBuscar().equals("2")){
+
+                this.producto = null;
+                this.productos = new ArrayList<Producto>();
+                if (this.getTipoBuscar().equals("2")) {
                     tos = this.dao.obtenerProductosParte(this.mbParte.getParte().getIdParte());
-                } else if(this.getTipoBuscar().equals("3")) {
+                } else if (this.getTipoBuscar().equals("3")) {
                     tos = dao.obtenerProductosDescripcion(this.strBuscar);
                 } else {
                     tos = dao.obtenerProductosClasificacion(this.mbGrupo.getGrupo().getIdGrupo(), this.mbGrupo.getMbSubGrupo().getSubGrupo().getIdSubGrupo());
                 }
-                for(TOProducto to: tos) {
-                    if(to.getIdArticulo()!=idArticulo) {
-                        idArticulo=to.getIdArticulo();
-                        a=this.mbBuscar1.obtenerArticulo(idArticulo);
+                for (TOProducto to : tos) {
+                    if (to.getIdArticulo() != idArticulo) {
+                        idArticulo = to.getIdArticulo();
+                        a = this.mbBuscar1.obtenerArticulo(idArticulo);
                     }
                     this.productos.add(this.convertir(to, a, this.mbUpc.obtenerUpc(to.getIdProducto())));
                 }
-                ok=true;
+                ok = true;
             }
         } catch (NamingException ex) {
             fMsg.setDetail(ex.getMessage());
         } catch (SQLException ex) {
             fMsg.setDetail(ex.getErrorCode() + " " + ex.getMessage());
         }
-        if(!ok) {
+        if (!ok) {
             FacesContext.getCurrentInstance().addMessage(null, fMsg);
         }
         context.addCallbackParam("okBuscar", ok);
     }
-    
+
     public void verCambio() {
-        if(this.getTipoBuscar().equals("2")) {
+        if (this.getTipoBuscar().equals("2")) {
             this.getMbParte().nueva();
         } else {
             this.setStrBuscar("");
         }
-        this.productos=null;
+        this.productos = null;
     }
-    
+
     public Producto obtenerProducto(int idProducto) {
-        boolean ok=false;
+        boolean ok = false;
         FacesMessage fMsg = new FacesMessage(FacesMessage.SEVERITY_ERROR, "Aviso:", "obtenerProducto");
-        Producto p=new Producto();
+        Producto p = new Producto();
         try {
-            this.dao=new DAOProductosBuscar();
-            TOProducto to=this.dao.obtenerProducto(idProducto);
-            p=this.convertir(to, this.mbBuscar1.obtenerArticulo(to.getIdArticulo()), this.mbUpc.obtenerUpc(to.getIdProducto()));
-            ok=true;
+            this.dao = new DAOProductosBuscar();
+            TOProducto to = this.dao.obtenerProducto(idProducto);
+            p = this.convertir(to, this.mbBuscar1.obtenerArticulo(to.getIdArticulo()), this.mbUpc.obtenerUpc(to.getIdProducto()));
+            ok = true;
         } catch (NamingException ex) {
             fMsg.setDetail(ex.getMessage());
         } catch (SQLException ex) {
             fMsg.setDetail(ex.getErrorCode() + " " + ex.getMessage());
-        }
-        if(!ok) {
+        } 
+
+        if (!ok) {
             FacesContext.getCurrentInstance().addMessage(null, fMsg);
         }
         return p;
     }
-    
+
     public void obtenerProductos(int idArticulo) {
-        boolean ok=false;
-        this.productos=new ArrayList<Producto>();
+        boolean ok = false;
+        this.productos = new ArrayList<Producto>();
         FacesMessage fMsg = new FacesMessage(FacesMessage.SEVERITY_ERROR, "Aviso:", "obtenerProductos");
         RequestContext context = RequestContext.getCurrentInstance();
         try {
-            this.dao=new DAOProductosBuscar();
-            Articulo articulo=this.mbBuscar1.obtenerArticulo(idArticulo);
-            for(TOProducto to:this.dao.obtenerProductos(idArticulo)) {
+            this.dao = new DAOProductosBuscar();
+            Articulo articulo = this.mbBuscar1.obtenerArticulo(idArticulo);
+            for (TOProducto to : this.dao.obtenerProductos(idArticulo)) {
                 this.productos.add(this.convertir(to, articulo, this.mbUpc.nuevoLista(to.getIdProducto())));
             }
-            if(this.productos.isEmpty()) {
+            if (this.productos.isEmpty()) {
                 fMsg.setSeverity(FacesMessage.SEVERITY_WARN);
                 fMsg.setDetail("No se encontraron productos");
             } else {
-                this.producto=null;
-                ok=true;
+                this.producto = null;
+                ok = true;
             }
         } catch (NamingException ex) {
             fMsg.setDetail(ex.getMessage());
         } catch (SQLException ex) {
             fMsg.setDetail(ex.getErrorCode() + " " + ex.getMessage());
         }
-        if(!ok) {
+        if (!ok) {
             FacesContext.getCurrentInstance().addMessage(null, fMsg);
         }
         context.addCallbackParam("okEmpaque", ok);
     }
-    
+
     private Producto convertir(TOProducto to, Articulo a, Upc u) {
-        Producto p=new Producto();
+        Producto p = new Producto();
         p.setIdProducto(to.getIdProducto());
         p.setCod_pro(to.getCod_pro());
         p.setUpc(u);

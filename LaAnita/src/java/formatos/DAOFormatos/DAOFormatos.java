@@ -5,7 +5,6 @@
  */
 package formatos.DAOFormatos;
 
-import clientesListas.dominio.ClientesFormatos;
 import formatos.dominio.ClientesFormato;
 import java.sql.Connection;
 import java.sql.ResultSet;
@@ -101,4 +100,29 @@ public class DAOFormatos {
             cn.close();
         }
     }
+    
+    
+//    
+//    public void guardarFormato(ClientesFormato formato) throws SQLException {
+//        Connection cn = ds.getConnection();
+//        String sql = "INSERT INTO clientesFormatos (formato) VALUES('" + formato.getFormato() + "')";
+//        Statement st = cn.createStatement();
+//        try {
+//            st.executeUpdate(sql);
+//        } finally {
+//            cn.close();
+//        }
+//    }
+    
+     public void actualizar(ClientesFormato formato) throws SQLException {
+        String sql = "UPDATE clientesFormatos set formato = '" + formato.getFormato() + "' WHERE idFormato ='" + formato.getIdFormato() + "'";
+        Connection cn = ds.getConnection();
+        Statement st = cn.createStatement();
+        try {
+            st.executeUpdate(sql);
+        } finally {
+            cn.close();
+        }
+    }
+    
 }

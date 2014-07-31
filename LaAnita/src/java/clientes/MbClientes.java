@@ -100,12 +100,11 @@ public class MbClientes implements Serializable {
         }
         return lstCliente;
     }
-    
-    public void cargarFormatos(){
+
+    public void cargarFormatos() {
         mbClientesGrupos.getMbFormatos().setLstFormatos(null);
         mbClientesGrupos.getMbFormatos().cargarListaFormatos(mbClientesGrupos.getCmbClientesGrupos().getIdGrupoCte());
     }
-    
 
     public String salir() {
         return "index.xhtml";
@@ -143,7 +142,7 @@ public class MbClientes implements Serializable {
         mbDireccion.setDireccion(cliente.getDireccion());
     }
 
-    public void altaDireccionContribuyente() {
+    public void obtenerInformacionRfc() {
         mbContribuyente.limpiarContribuyente();
         mbDireccion.limpiarDireccion();
         cliente.getContribuyente().setDireccion(new Direccion());
@@ -203,6 +202,8 @@ public class MbClientes implements Serializable {
         cliente.getContribuyente().setRfc(clienteSeleccionado.getContribuyente().getRfc());
         cliente.setNombreComercial(clienteSeleccionado.getNombreComercial());
         cliente.setCodigoTienda(clienteSeleccionado.getCodigoTienda());
+        mbClientesGrupos.getMbFormatos().setLstFormatos(null);
+        mbClientesGrupos.getMbFormatos().cargarListaFormatos(clienteSeleccionado.getClientesGrupos().getIdGrupoCte());
     }
 
     public void cancelar() {
@@ -224,7 +225,7 @@ public class MbClientes implements Serializable {
             mbClientesBancos.getMbBanco().obtenerBancos(cliente.getIdCliente());
 
         } catch (SQLException ex) {
-           Mensajes.mensajeError(ex.getMessage());
+            Mensajes.mensajeError(ex.getMessage());
         }
     }
 
@@ -301,9 +302,12 @@ public class MbClientes implements Serializable {
             Mensajes.mensajeAlert("Error, Se requiere un Agente");
         } else if (mbClientesGrupos.getCmbClientesGrupos().getIdGrupoCte() == 0) {
             Mensajes.mensajeAlert("Error, Se requiere un cliente grupo");
+        } else if (mbClientesGrupos.getMbFormatos().getLstFormatos().size() > 1 && mbClientesGrupos.getMbFormatos().getCmbClientesFormatos().getIdFormato() == 0) {
+            Mensajes.mensajeAlert("Error, Se requiere un formato para este grupo");
         } else if (mbZonas.getZona().getIdZona() == 0) {
             Mensajes.mensajeAlert("Error, Se requiere una zona");
         } else {
+
             cliente.setClientesGrupos(mbClientesGrupos.getCmbClientesGrupos());
             cliente.setImpuestoZona(mbZonas.getZona());
             ok = this.validarClientes();
@@ -311,6 +315,7 @@ public class MbClientes implements Serializable {
                 cliente.setImpuestoZona(mbZonas.getZona());
                 DAOClientes daoCliente = new DAOClientes();
                 try {
+                    cliente.getClientesFormato().setIdFormato(mbClientesGrupos.getMbFormatos().getCmbClientesFormatos().getIdFormato());
                     cliente.setAgente(mbAgentes.getCmbAgentes());
                     cliente.getContribuyente().setDireccion(mbDireccion.getDireccion());
                     FacesMessage fMsgs = new FacesMessage(FacesMessage.SEVERITY_INFO, "Aviso:", "");
@@ -324,6 +329,10 @@ public class MbClientes implements Serializable {
                     FacesContext.getCurrentInstance().addMessage(null, fMsgs);
                     lstCliente = null;
                     this.limpiar();
+                    actualizar = false;
+                    clienteSeleccionado = null;
+                    actualizarRfc = false;
+                    controlActualizar = 0;
                 } catch (SQLException ex) {
                     ok = false;
                     fMsg.setDetail(ex.getMessage());
@@ -331,12 +340,7 @@ public class MbClientes implements Serializable {
                 }
             }
         }
-        actualizar = false;
-        clienteSeleccionado = null;
-        actualizarRfc = false;
-        controlActualizar = 0;
         context.addCallbackParam("ok", ok);
-
     }
 
     private void limpiar() {
