@@ -75,7 +75,8 @@
                                     <p:commandButton icon="ui-icon-arrowreturnthick-1-w" title="Terminar"
                                                      process="@this" actionListener="#{mbRecepcion.salir()}" update="main" />
                                     <p:commandButton id="btnEditarLotes" icon="ui-icon-document" title="Editar lotes recibidos" 
-                                                     process="@this" update="listaLotes" onclick="editarLotesDlg.show();" />
+                                                     process="@this" actionListener="#{mbRecepcion.editarLotes()}" update="listaLotes" 
+                                                     oncomplete="editarLotesDlg.show();" />
                                 </p:column>
                             </p:row>
                         </p:panelGrid>
@@ -101,20 +102,19 @@
                     <p:dialog id="editarLotesDlg" widgetVar="editarLotesDlg" header="EDICION DE LOTES" resizable="false" modal="true" width="600" >
                         <p:messages id="msgs1" showDetail="true" showSummary="false" closable="true" />
                         <p:ajax event="close" listener="#{mbRecepcion.actualizarCantidad()}" update=":main:detalleRecepcion"  />
-                        <p:dataTable id="listaLotes" widgetVar="listaLotes" 
-                                     value="#{mbRecepcion.recepcionProducto.lotes}" style="border: solid 1px" 
-                                     var="lote" rowKey="#{lote.lote}" selection="#{mbRecepcion.lote}" selectionMode="single" 
+                        <p:dataTable id="listaLotes" widgetVar="listaLotes" value="#{mbRecepcion.recepcionProducto.lotes}" style="border: solid 1px" 
+                                     var="lte" rowKey="#{lte.lote}" selection="#{mbRecepcion.lote}" selectionMode="single"
                                      emptyMessage="No hay elementos que desplegar" scrollable="true" scrollHeight="220" >
-                            <p:ajax event="rowSelect" update="listaLotes" listener="#{mbRecepcion.respaldaSeparados()}" />
+                            <p:ajax event="rowSelect" listener="#{mbRecepcion.respaldaSeparados()}" update="listaLotes" />
                             
                             <p:column headerText="LOTE" style="width: 80px;" >
-                                <h:outputText value="#{lote.lote}" />
+                                <h:outputText value="#{lte.lote}" />
                             </p:column>
                             <p:column headerText="ENVIADOS" style="width: 80px;" >
-                                <h:outputText value="#{lote.cantidad}" />
+                                <h:outputText value="#{lte.cantidad}" />
                             </p:column>
                             <p:column headerText="RECIBIDOS" style="width: 80px;" >
-                                <pe:inputNumber value="#{lote.separados}" disabled="#{mbRecepcion.comparaLotes(lote)}"
+                                <pe:inputNumber value="#{lte.separados}" disabled="#{mbRecepcion.comparaLotes(lte)}"
                                                 decimalPlaces="3" style="width: 80px;" >
                                     <p:ajax event="change" process="@this" listener="#{mbRecepcion.gestionarLotes()}" 
                                             update=":main:msgs1 listaLotes lotesTotales" />

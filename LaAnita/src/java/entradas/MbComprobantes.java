@@ -45,6 +45,26 @@ public class MbComprobantes implements Serializable {
         this.inicializaLocales();
     }
     
+    public void cancelar() {
+        boolean ok=false;
+        RequestContext context = RequestContext.getCurrentInstance();
+        FacesMessage fMsg = new FacesMessage(FacesMessage.SEVERITY_ERROR, "Aviso:", "cancelar");
+        try {
+            this.dao=new DAOComprobantes();
+            if(this.dao.cancelar(this.toComprobante.getIdComprobante())) {
+                ok=true;
+            }
+        } catch (NamingException ex) {
+            fMsg.setDetail(ex.getMessage());
+        } catch (SQLException ex) {
+            fMsg.setDetail(ex.getErrorCode() + " " + ex.getMessage());
+        }
+        if (!ok) {
+            FacesContext.getCurrentInstance().addMessage(null, fMsg);
+        }
+        context.addCallbackParam("okComprobante", ok);
+    }
+    
     public void inicializaConAlmacen(TOAlmacenJS toAlmacen) {
         this.mbAlmacenes.inicializaConAlmacen(toAlmacen);
         this.mbProveedores.inicializar();
@@ -96,7 +116,7 @@ public class MbComprobantes implements Serializable {
                 ok=true;
             } else {
                 fMsg.setSeverity(FacesMessage.SEVERITY_WARN);
-                fMsg.setDetail("Em comprobante esta en uso o ya ha sido cerrado");
+                fMsg.setDetail("El comprobante esta en uso o ya ha sido cerrado");
             }
         } catch (NamingException ex) {
             fMsg.setDetail(ex.getMessage());

@@ -17,7 +17,7 @@
             <div id="content" align="left">
                 <h:form id="main"  onkeypress="return event.keyCode !== 13;">
                     <p:messages id="msgs" showDetail="true" showSummary="false" closable="true" />
-                    <p:panel id="encabezado" header="ENTRADAS DE OFICINA"
+                    <p:panel id="encabezado" header="COMPRAS"
                              rendered="#{not empty mbEntradas.obtenerAcciones(13) and not mbEntradas.modoEdicion}">
                         <p:panelGrid >
                             <p:row>
@@ -88,7 +88,7 @@
                                                      filter="true" filterMatchMode="contains" style="width: 220px;" >
                                         <f:converter converterId="converters.ComprobanteConverter" />
                                         <f:selectItems value="#{mbEntradas.mbComprobantes.listaComprobantes}" />
-                                        <p:ajax event="change" update="btnMttoComprobante lnkEditarComprobante btnCancelarMovimiento" />
+                                        <p:ajax event="change" update=":main:msgs btnMttoComprobante lnkEditarComprobante btnCancelarMovimiento" />
                                     </p:selectOneMenu>
                                 </p:column>
                                 <p:column style="width: 310px;" >
@@ -111,7 +111,7 @@
                             </p:row>
                         </p:panelGrid>
                     </p:panel>
-                    <p:panel id="mantenimiento" header="ENTRADAS AL INVENTARIO: #{mbEntradas.mbComprobantes.comprobante.almacen.empresa.nombreComercial}" 
+                    <p:panel id="mantenimiento" header="COMPRAS: #{mbEntradas.mbComprobantes.comprobante.almacen.empresa.nombreComercial}" 
                              rendered="#{mbEntradas.modoEdicion}" >
                         <p:panelGrid id="mttoEntradas" >
                             <p:row >
@@ -524,12 +524,13 @@
                             <f:facet name="footer" >
                                 <p:row >
                                     <p:column colspan="2" >
-                                        <p:commandButton icon="ui-icon-disk" title="Grabar Factura" 
+                                        <p:commandButton icon="ui-icon-disk" title="Grabar Comprobante" 
                                                          process="@this txtSerie txtNumero txtFechaFactura" 
                                                          actionListener="#{mbEntradas.mbComprobantes.grabar()}" update=":main:cmbComprobante lnkEditarComprobante" 
                                                          oncomplete="handleCerrarMttoComprobanteDlg(xhr, status, args)" />
-                                        <p:commandButton icon="ui-icon-arrowreturnthick-1-w" title="Terminar" 
-                                                         onclick="mttoComprobanteDlg.hide();" immediate="true" />
+                                        <p:commandButton icon="ui-icon-arrowreturnthick-1-w" title="Cancelar" 
+                                                         actionListener="#{mbEntradas.mbComprobantes.cancelar()}"
+                                                         oncomplete="handleCerrarMttoComprobanteDlg(xhr, status, args)" />
                                     </p:column>
                                 </p:row>
                             </f:facet>

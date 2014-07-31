@@ -11,6 +11,7 @@ import monedas.Moneda;
  */
 public class Envio {
     private int idMovto;
+    private int idMovtoAlmacen;
     private AlmacenJS almacen;
     private int folio;
     private Comprobante comprobante;
@@ -40,6 +41,14 @@ public class Envio {
 
     public void setIdMovto(int idMovto) {
         this.idMovto = idMovto;
+    }
+
+    public int getIdMovtoAlmacen() {
+        return idMovtoAlmacen;
+    }
+
+    public void setIdMovtoAlmacen(int idMovtoAlmacen) {
+        this.idMovtoAlmacen = idMovtoAlmacen;
     }
 
     public AlmacenJS getAlmacen() {

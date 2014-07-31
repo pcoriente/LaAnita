@@ -17,7 +17,7 @@
             <div id="content" align="left">
                 <h:form id="main"  onkeypress="return event.keyCode !== 14;">
                     <p:messages id="msgs" showDetail="true" showSummary="false" closable="true" />
-                    <p:panel id="encabezado" header="CONSULTA DE ENTRADAS" styleClass="quitaCuadro" 
+                    <p:panel id="encabezado" header="COMPRAS ALMACEN" styleClass="quitaCuadro" 
                              rendered="#{not empty mbEntradas.obtenerAcciones(14) and not mbEntradas.modoEdicion}">
                         <p:panelGrid >
                             <p:row>
@@ -116,7 +116,7 @@
                             </p:row>
                         </p:panelGrid>
                     </p:panel>
-                    <p:panel id="mantenimiento" header="ENTRADAS AL INVENTARIO: #{mbEntradas.mbComprobantes.comprobante.almacen.empresa.nombreComercial}" 
+                    <p:panel id="mantenimiento" header="COMPRAS ALMACEN: #{mbEntradas.mbComprobantes.comprobante.almacen.empresa.nombreComercial}" 
                              rendered="#{mbEntradas.modoEdicion}" >
                         <p:panelGrid id="mttoEntradas" >
                             <p:row >

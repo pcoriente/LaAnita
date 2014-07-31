@@ -8,6 +8,7 @@ import java.util.Date;
  */
 public class TOMovimiento {
     private int idMovto;
+    private int idMovtoAlmacen;
     private int idTipo;
     private int folio;
     private int idCedis;
@@ -26,6 +27,7 @@ public class TOMovimiento {
 
     public TOMovimiento() {
         this.idMovto=0;
+        this.idMovtoAlmacen=0;
         this.idTipo=0;
         this.folio=0;
         this.idCedis=0;
@@ -49,6 +51,14 @@ public class TOMovimiento {
 
     public void setIdMovto(int idMovto) {
         this.idMovto = idMovto;
+    }
+
+    public int getIdMovtoAlmacen() {
+        return idMovtoAlmacen;
+    }
+
+    public void setIdMovtoAlmacen(int idMovtoAlmacen) {
+        this.idMovtoAlmacen = idMovtoAlmacen;
     }
 
     public int getIdTipo() {

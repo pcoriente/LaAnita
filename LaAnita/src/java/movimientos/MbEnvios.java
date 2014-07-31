@@ -38,7 +38,7 @@ public class MbEnvios implements Serializable {
     private double resSeparados;
     private double sumaLotes;
     private Envio envio;
-    private int idMovtoAlmacen;
+//    private int idMovtoAlmacen;
     private ArrayList<Envio> envios;
     private ArrayList<SalidaProducto> envioDetalle;
     private SalidaProducto envioProducto;
@@ -125,6 +125,7 @@ public class MbEnvios implements Serializable {
     public TOMovimiento convertirTOMovimiento() {
         TOMovimiento toMovimiento = new TOMovimiento();
         toMovimiento.setIdMovto(this.envio.getIdMovto());
+        toMovimiento.setIdMovtoAlmacen(this.envio.getIdMovtoAlmacen());
         toMovimiento.setIdTipo(2);
         toMovimiento.setFolio(this.envio.getFolio());
         toMovimiento.setIdCedis(this.envio.getAlmacen().getCedis().getIdCedis());
@@ -149,14 +150,14 @@ public class MbEnvios implements Serializable {
     public void gestionarLotes() {
         boolean cierra = false;
         RequestContext context = RequestContext.getCurrentInstance();
-        this.gestionLotes(this.idMovtoAlmacen);
+        this.gestionLotes();
         if (this.envioProducto.getCantFacturada() == this.sumaLotes) {
             cierra = true;
         }
         context.addCallbackParam("okLotes", cierra);
     }
 
-    public void gestionLotes(int idMovto) {
+    public void gestionLotes() {
         boolean ok = false;
         FacesMessage fMsg = new FacesMessage(FacesMessage.SEVERITY_ERROR, "Aviso:", "gestionLotes");
         try {
@@ -167,7 +168,7 @@ public class MbEnvios implements Serializable {
                     fMsg.setDetail("Cantidad enviar mayor que cantidad solicitada");
                     this.lote.setSeparados(this.resSeparados);
                 } else {
-                    double separados = this.daoLotes.separaEnvio(this.lote, idMovto, separar);
+                    double separados = this.daoLotes.separa(this.envio.getIdMovto(), this.envio.getIdMovtoAlmacen(), this.lote, separar);
                     if (separados < separar) {
                         fMsg.setSeverity(FacesMessage.SEVERITY_WARN);
                         fMsg.setDetail("No se pudieron obtener los lotes solicitados");
@@ -179,7 +180,7 @@ public class MbEnvios implements Serializable {
                     this.resSeparados = this.lote.getSeparados();
                 }
             } else {
-                this.daoLotes.liberaEnvio(this.lote, idMovto, -separar);
+                this.daoLotes.libera(this.envio.getIdMovto(), this.envio.getIdMovtoAlmacen(), this.lote, -separar);
                 this.lote.setSeparados(this.resSeparados + separar);    // separar es negativo por esos se suma
                 this.sumaLotes += separar;
                 this.resSeparados = this.lote.getSeparados();
@@ -219,7 +220,8 @@ public class MbEnvios implements Serializable {
             try {
                 this.sumaLotes = 0;
                 this.daoLotes = new DAOLotes();
-                this.envioProducto.setLotes(this.daoLotes.obtenerLotes(this.envio.getAlmacen().getIdAlmacen(), this.idMovtoAlmacen, this.envioProducto.getProducto().getIdProducto()));
+//                this.envioProducto.setLotes(this.daoLotes.obtenerLotes(this.envio.getAlmacen().getIdAlmacen(), this.idMovtoAlmacen, this.envioProducto.getProducto().getIdProducto()));
+                this.envioProducto.setLotes(this.daoLotes.obtenerLotes(this.envio.getAlmacen().getIdAlmacen(), this.envio.getIdMovtoAlmacen(), this.envioProducto.getProducto().getIdProducto()));
                 for (Lote l : this.envioProducto.getLotes()) {
                     this.sumaLotes += l.getSeparados();
                 }
@@ -260,6 +262,7 @@ public class MbEnvios implements Serializable {
     private Envio convertir(TOMovimiento to) {
         Envio e = new Envio();
         e.setIdMovto(to.getIdMovto());
+        e.setIdMovtoAlmacen(to.getIdMovtoAlmacen());
         e.setAlmacen(this.mbComprobantes.getMbAlmacenes().obtenerAlmacen(to.getIdAlmacen()));
         e.setComprobante(this.mbComprobantes.obtenerComprobante(to.getIdReferencia()));
         e.setFolio(to.getFolio());
@@ -283,8 +286,7 @@ public class MbEnvios implements Serializable {
         FacesMessage fMsg = new FacesMessage(FacesMessage.SEVERITY_ERROR, "Aviso:", "cargaDetalleSolicitud");
         try {
             this.dao = new DAOMovimientos();
-            this.idMovtoAlmacen=this.dao.obtenerIdMovtoAlmacen(this.envio.getAlmacen().getIdAlmacen(), 35, this.envio.getComprobante().getNumero());
-            
+//            this.idMovtoAlmacen=this.dao.obtenerIdMovtoAlmacen(this.envio.getAlmacen().getIdAlmacen(), 35, this.envio.getComprobante().getNumero());
             this.daoLotes = new DAOLotes();
             this.daoImps = new DAOImpuestosProducto();
             this.envioDetalle = new ArrayList<SalidaProducto>();
@@ -319,12 +321,12 @@ public class MbEnvios implements Serializable {
         p.setImpuestos(this.daoImps.obtenerImpuestosProducto(this.envio.getIdMovto(), to.getIdProducto()));
         p.setNeto(to.getNeto());
         p.setUnitario(to.getUnitario());
-        p.setLotes(this.daoLotes.obtenerLotes(this.envio.getAlmacen().getIdAlmacen(), this.envio.getIdMovto(), to.getIdProducto()));
+        p.setLotes(this.daoLotes.obtenerLotes(this.envio.getAlmacen().getIdAlmacen(), this.envio.getIdMovtoAlmacen(), to.getIdProducto()));
         this.sumaLotes = 0;
         for (Lote l : p.getLotes()) {
             this.sumaLotes += l.getSeparados();
         }
-        if (p.getCantFacturada() + p.getCantSinCargo() != this.sumaLotes) {
+        if (p.getCantFacturada() != this.sumaLotes) {
             throw new SQLException("Error de sincronizacion Lotes en producto: " + p.getProducto().getIdProducto());
         }
         return p;

@@ -77,6 +77,13 @@ public class MbEntradas implements Serializable {
         this.inicializaLocales();
     }
     
+    public void mostrarSeleccion() {
+        FacesMessage fMsg = new FacesMessage(FacesMessage.SEVERITY_WARN, "Aviso:", "cargaOrdenes");
+        fMsg.setSeverity(FacesMessage.SEVERITY_INFO);
+        fMsg.setDetail("Mensaje de seleccionado");
+        FacesContext.getCurrentInstance().addMessage(null, fMsg);
+    }
+    
     public void inicializar() {
         this.mbBuscar.inicializar();
         this.mbComprobantes.getMbAlmacenes().inicializaAlmacen();
@@ -657,7 +664,7 @@ public class MbEntradas implements Serializable {
         if(this.idModulo==13) {
             oficina=true;
         }
-        if(this.mbComprobantes.aseguraComprobante(this.mbComprobantes.getComprobante().getIdComprobante(), oficina)) {
+        //if(this.mbComprobantes.aseguraComprobante(this.mbComprobantes.getToComprobante().getIdComprobante(), oficina)) {
             this.mbComprobantes.convertirComprobante();
             this.entrada = new Entrada();
             this.entrada.setComprobante(this.mbComprobantes.getComprobante());
@@ -667,7 +674,7 @@ public class MbEntradas implements Serializable {
             this.tipoCambio = 1;
             this.sinOrden = true;
             this.modoEdicion = true;
-        }
+        //}
     }
 
     // Este metodo se ejecutaba al seleccionar un almacen de la lista

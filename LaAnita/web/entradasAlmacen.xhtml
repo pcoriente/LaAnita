@@ -65,7 +65,7 @@
                                     <p:inputText value="#{mbEntradasAlmacen.mbComprobantes.mbAlmacenes.toAlmacen}" readonly="true" size="52" />
                                 </p:column>
                                 <p:column >
-                                    <p:commandButton id="btnGrabar" icon="ui-icon-disk" title="Grabar salida" 
+                                    <p:commandButton id="btnGrabar" icon="ui-icon-disk" title="Grabar entrada" 
                                                      process="@this" actionListener="#{mbEntradasAlmacen.grabar()}" update="main" />
                                     <p:commandButton id="btnCancelar" icon="ui-icon-trash" title="Cancelar salida de almacen" 
                                                      process="@this" actionListener="#{mbEntradasAlmacen.cancelar()}" update="main" />
@@ -147,7 +147,7 @@
                                             oncomplete="handleCerrarEditarLotes(xhr, status, args);" />
                                 </p:inputText>
                             </p:column>
-                            <p:column headerText="SEPARADOS" style="width: 100px;" >
+                            <p:column headerText="ENTRAN" style="width: 100px;" >
                                 <pe:inputNumber value="#{lote.cantidad}" disabled="#{mbEntradasAlmacen.comparaLotes(lote)}"
                                                 decimalPlaces="3" style="width: 80px;" >
                                     <p:ajax event="blur" process="@this" 
@@ -166,7 +166,7 @@
                                             <h:outputText value="#{mbEntradasAlmacen.entradaProducto.cantidad}" />
                                         </p:column>
                                         <p:column style="text-align: right" >
-                                            <h:outputText value="Separados" />
+                                            <h:outputText value="Entran" />
                                         </p:column>
                                         <p:column style="text-align: left" >
                                             <h:outputText value="#{mbEntradasAlmacen.entradaProducto.separados}" />

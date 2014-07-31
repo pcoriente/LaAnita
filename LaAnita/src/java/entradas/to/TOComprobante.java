@@ -17,6 +17,7 @@ public class TOComprobante {
     private Date fecha;
     private byte statusOficina;
     private byte statusAlmacen;
+    private int propietario;
 
     public TOComprobante() {
         this.idComprobante=0;
@@ -145,5 +146,13 @@ public class TOComprobante {
 
     public void setRemision(String remision) {
         this.remision = remision;
+    }
+
+    public int getPropietario() {
+        return propietario;
+    }
+
+    public void setPropietario(int propietario) {
+        this.propietario = propietario;
     }
 }
