@@ -1,9 +1,11 @@
 package contribuyentes;
 
 import Message.Mensajes;
+import clientes.MbClientes;
 import java.io.Serializable;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.enterprise.context.SessionScoped;
@@ -45,8 +47,6 @@ public class MbContribuyentes implements Serializable {
         FacesMessage fMsg = new FacesMessage(FacesMessage.SEVERITY_WARN, "Aviso:", "");
         if (this.contribuyente.getRfc().isEmpty()) {
             fMsg.setDetail("Se requiere el RFC !!");
-        } else if (this.contribuyente.getContribuyente().isEmpty()) {
-            fMsg.setDetail("Se requiere el nombre comercial o razón social del contribuyente !!");
         } else if (this.contribuyente.getRfc().length() > 0) {
             Utilerias utilerias = new Utilerias();
             String mensaje = utilerias.verificarRfc(this.getContribuyente().getRfc());
@@ -82,13 +82,13 @@ public class MbContribuyentes implements Serializable {
         c.setDireccion(contribuyente.getDireccion());
         return c;
     }
-    
+
     public ArrayList<Contribuyente> obtenerContribuyentesCliente() {
-        ArrayList<Contribuyente> lstContribuyentes=new ArrayList<Contribuyente>();
+        ArrayList<Contribuyente> lstContribuyentes = new ArrayList<Contribuyente>();
         FacesMessage fMsg = new FacesMessage(FacesMessage.SEVERITY_WARN, "Aviso:", "");
         try {
             this.dao = new DAOContribuyentes();
-            lstContribuyentes=this.dao.obtenerContribuyentesCliente();
+            lstContribuyentes = this.dao.obtenerContribuyentesCliente();
         } catch (SQLException ex) {
             fMsg.setSeverity(FacesMessage.SEVERITY_ERROR);
             fMsg.setDetail(ex.getErrorCode() + " " + ex.getMessage());
@@ -138,38 +138,49 @@ public class MbContribuyentes implements Serializable {
         }
     }
 
-    
-//    public Contribuyente verificarRfc(String rfc){
-//        Utilerias utilerias = new Utilerias();
-//        String mensaje = utilerias.verificarRfc(rfc);
-//        if (mensaje == "") {
-//            try {
-//                Mensajes.mensajeSucces("Rfc Valido");
-//                DAOContribuyentes dao = new DAOContribuyentes();
-//                Contribuyente contribuyente = dao.buscarContribuyente(rfc);
-//                
-//            } catch (NamingException ex) {
-//                Mensajes.mensajeError(ex.getMessage());
-//            } catch (SQLException ex) {
-//                Mensajes.mensajeError(ex.getMessage());
-//
-//            }
-//            dameStatusRfc();
-//        } else {
-//            if (cliente.getContribuyente().getRfc() == null) {
-//                RequestContext context = RequestContext.getCurrentInstance();
-//                context.addCallbackParam("ok", true);
-//                activarRfc = false;
-//            } else {
-//                Mensajes.mensajeError("Error!!" + mensaje);
-//            }
-//        }
-//    }
+    public String buscarContribuyente(String rfc) {
+        String mensaje = "";
+        try {
+            Utilerias utilerias = new Utilerias();
+            mensaje = utilerias.verificarRfc(rfc);
+            if (mensaje == "") {
+                DAOContribuyentes dao = new DAOContribuyentes();
+                contribuyente = dao.buscarContribuyente(rfc);
+                Mensajes.mensajeSucces("RFC valido!");
+            }
+        } catch (NamingException ex) {
+            Mensajes.mensajeError(ex.getMessage());
+            Logger.getLogger(MbContribuyentes.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (SQLException ex) {
+            Mensajes.mensajeError(ex.getMessage());
+            Logger.getLogger(MbContribuyentes.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return mensaje;
+    }
     
     
     
+    public List<String> completarClientes(String rfc) {
+        List<String> lst = new ArrayList<String>();
+        try {
+            DAOContribuyentes dao = new DAOContribuyentes();
+            for (Contribuyente con : dao.dameRfcContribuyente(rfc)) {
+                lst.add(con.getRfc());
+            }
+        } catch (NamingException ex) {
+            Mensajes.mensajeError(ex.getMessage());
+            Logger.getLogger(MbClientes.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (SQLException ex) {
+            Mensajes.mensajeError(ex.getMessage());
+            Logger.getLogger(MbClientes.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return lst;
+    }
     
     
+    
+    
+
     public boolean verificar(String rfc) {
         boolean ok = false;
 

@@ -126,11 +126,12 @@ public class DaoAgentes {
             int idAgente = 0;
             int idContacto = 0;
             st.executeUpdate("begin transaction");
-            String sqlContribuyenteRfc = "INSERT INTO contribuyentesRfc (rfc, curp) VALUES ('" + agente.getContribuyente().getRfc() + "', '" + agente.getContribuyente().getCurp() + "')";
-            st.executeUpdate(sqlContribuyenteRfc);
-            rs = st.executeQuery("SELECT @@IDENTITY AS idContribuyenteRfc");
-            if (rs.next()) {
-                idRfc = rs.getInt("idContribuyenteRfc");
+            String slqTraeridContribuyente = "select idContribuyente from contribuyentes  ctr \n"
+                    + "inner join contribuyentesRfc ctrRfc\n"
+                    + "on ctr.idRfc = ctrRfc.idRfc where ctrRfc.rfc='" + agente.getContribuyente().getRfc().trim() + "'";
+            rs = st.executeQuery(slqTraeridContribuyente);
+            while (rs.next()) {
+                idContribuyente = rs.getInt("idContribuyente");
             }
             String sqlDireccionAgente = "INSERT INTO direcciones (calle, numeroExterior, numeroInterior, colonia, localidad, referencia, municipio, estado, idPais, codigoPostal, numeroLocalizacion)VALUES('" + agente.getDireccionAgente().getCalle() + "', '" + agente.getDireccionAgente().getNumeroExterior() + "','" + agente.getDireccionAgente().getNumeroInterior() + "','" + agente.getDireccionAgente().getColonia() + "','" + agente.getDireccionAgente().getLocalidad() + "','" + agente.getDireccionAgente().getReferencia() + "','" + agente.getDireccionAgente().getMunicipio() + "','" + agente.getDireccionAgente().getEstado() + "','" + agente.getDireccionAgente().getPais().getIdPais() + "','" + agente.getDireccionAgente().getCodigoPostal() + "','100')";
             st.executeUpdate(sqlDireccionAgente);
@@ -138,18 +139,18 @@ public class DaoAgentes {
             if (rs.next()) {
                 idDireccionAgente = rs.getInt("idDireccionAgente");
             }
-            String sqlDireccionContribuyente = "INSERT INTO direcciones (calle, numeroExterior, numeroInterior, colonia, localidad, referencia, municipio, estado, idPais, codigoPostal,numeroLocalizacion)VALUES('" + agente.getContribuyente().getDireccion().getCalle() + "', '" + agente.getContribuyente().getDireccion().getNumeroExterior() + "','" + agente.getContribuyente().getDireccion().getNumeroInterior() + "','" + agente.getContribuyente().getDireccion().getColonia() + "','" + agente.getContribuyente().getDireccion().getLocalidad() + "','" + agente.getContribuyente().getDireccion().getReferencia() + "','" + agente.getContribuyente().getDireccion().getMunicipio() + "','" + agente.getContribuyente().getDireccion().getEstado() + "','" + agente.getContribuyente().getDireccion().getPais().getIdPais() + "','" + agente.getContribuyente().getDireccion().getCodigoPostal() + "','100')";
-            st.executeUpdate(sqlDireccionContribuyente);
-            rs = st.executeQuery("SELECT @@IDENTITY AS idDireccionContribuyente");
-            if (rs.next()) {
-                idDireccionContribuyente = rs.getInt("idDireccionContribuyente");
-            }
-            String sqlContribuyente = "INSERT INTO contribuyentes (contribuyente, idRfc, idDireccion) values('" + agente.getContribuyente().getContribuyente() + "','" + idRfc + "','" + idDireccionContribuyente + "')";
-            st.executeUpdate(sqlContribuyente);
-            rs = st.executeQuery("SELECT @@IDENTITY AS idContribuyente");
-            if (rs.next()) {
-                idContribuyente = rs.getInt("idContribuyente");
-            }
+//            String sqlDireccionContribuyente = "INSERT INTO direcciones (calle, numeroExterior, numeroInterior, colonia, localidad, referencia, municipio, estado, idPais, codigoPostal,numeroLocalizacion)VALUES('" + agente.getContribuyente().getDireccion().getCalle() + "', '" + agente.getContribuyente().getDireccion().getNumeroExterior() + "','" + agente.getContribuyente().getDireccion().getNumeroInterior() + "','" + agente.getContribuyente().getDireccion().getColonia() + "','" + agente.getContribuyente().getDireccion().getLocalidad() + "','" + agente.getContribuyente().getDireccion().getReferencia() + "','" + agente.getContribuyente().getDireccion().getMunicipio() + "','" + agente.getContribuyente().getDireccion().getEstado() + "','" + agente.getContribuyente().getDireccion().getPais().getIdPais() + "','" + agente.getContribuyente().getDireccion().getCodigoPostal() + "','100')";
+//            st.executeUpdate(sqlDireccionContribuyente);
+//            rs = st.executeQuery("SELECT @@IDENTITY AS idDireccionContribuyente");
+//            if (rs.next()) {
+//                idDireccionContribuyente = rs.getInt("idDireccionContribuyente");
+//            }
+//            String sqlContribuyente = "INSERT INTO contribuyentes (contribuyente, idRfc, idDireccion) values('" + agente.getContribuyente().getContribuyente() + "','" + idRfc + "','" + idDireccionContribuyente + "')";
+//            st.executeUpdate(sqlContribuyente);
+//            rs = st.executeQuery("SELECT @@IDENTITY AS idContribuyente");
+//            if (rs.next()) {
+//                idContribuyente = rs.getInt("idContribuyente");
+//            }
             String sqlAgentes = "INSERT INTO agentes (agente, idContribuyente, idDireccion, idCedis) VALUES('" + agente.getAgente() + "','" + idContribuyente + "','" + idDireccionAgente + "','" + agente.getMiniCedis().getIdCedis() + "')";
             st.executeUpdate(sqlAgentes);
             rs = st.executeQuery("SELECT @@IDENTITY AS idAgente");
@@ -213,7 +214,7 @@ public class DaoAgentes {
             cn = ds.getConnection();
             Statement st = cn.createStatement();
             ResultSet rs = st.executeQuery(sql);
-            while(rs.next()){
+            while (rs.next()) {
                 agente.setIdAgente(rs.getInt("idAgente"));
                 agente.setAgente(rs.getString("agente"));
             }
