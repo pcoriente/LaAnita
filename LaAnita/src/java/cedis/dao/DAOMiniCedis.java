@@ -75,7 +75,7 @@ public class DAOMiniCedis {
         
         Connection cn=ds.getConnection();
         Statement sentencia = cn.createStatement();
-        String strSQL="select * from cedis order by cedis";
+        String strSQL="select * from cedis order by idCedis";
         try {
             ResultSet rs = sentencia.executeQuery(strSQL);
             while(rs.next()) {

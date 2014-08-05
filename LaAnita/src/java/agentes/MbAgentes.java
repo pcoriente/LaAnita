@@ -199,29 +199,30 @@ public class MbAgentes implements Serializable {
     public void dameStatusRfc() {
         int longitud = mbContribuyente.getContribuyente().getRfc().length();
         if (longitud == 13) {
-            for (Agentes a : listaAgentes) {
-                if (a.getContribuyente().getRfc().equals(mbContribuyente.getContribuyente().getRfc())) {
-                    boolean ok = false;
-                    RequestContext context = RequestContext.getCurrentInstance();
-                    FacesMessage fMsg = new FacesMessage(FacesMessage.SEVERITY_WARN, "Aviso:", "");
-                    fMsg.setDetail("Rfc Existente !!");
-                    FacesContext.getCurrentInstance().addMessage(null, fMsg);
-                    break;
-                }
-            }
+//            for (Agentes a : listaAgentes) {
+//                if (a.getContribuyente().getRfc().equals(mbContribuyente.getContribuyente().getRfc())) {
+//                    boolean ok = false;
+//                    RequestContext context = RequestContext.getCurrentInstance();
+//                    FacesMessage fMsg = new FacesMessage(FacesMessage.SEVERITY_WARN, "Aviso:", "");
+//                    fMsg.setDetail("Rfc Existente !!");
+//                    FacesContext.getCurrentInstance().addMessage(null, fMsg);
+//                    break;
+//                }
+//            }
             personaFisica = 1;
         } else {
-            for (Agentes a : listaAgentes) {
-                if (a.getContribuyente().getRfc().equals(mbContribuyente.getContribuyente().getRfc())) {
-                    boolean ok = false;
-                    RequestContext context = RequestContext.getCurrentInstance();
-                    FacesMessage fMsg = new FacesMessage(FacesMessage.SEVERITY_WARN, "Aviso:", "");
-                    fMsg.setDetail("Rfc Existente !!");
-                    context.addCallbackParam("okContribuyente", ok);
-                    FacesContext.getCurrentInstance().addMessage(null, fMsg);
-                    break;
-                }
-            }
+            mbContribuyente.getContribuyente().setCurp("");
+//            for (Agentes a : listaAgentes) {
+//                if (a.getContribuyente().getRfc().equals(mbContribuyente.getContribuyente().getRfc())) {
+//                    boolean ok = false;
+//                    RequestContext context = RequestContext.getCurrentInstance();
+//                    FacesMessage fMsg = new FacesMessage(FacesMessage.SEVERITY_WARN, "Aviso:", "");
+//                    fMsg.setDetail("Rfc Existente !!");
+//                    context.addCallbackParam("okContribuyente", ok);
+//                    FacesContext.getCurrentInstance().addMessage(null, fMsg);
+//                    break;
+//                }
+//            }
             personaFisica = 2;
         }
     }
