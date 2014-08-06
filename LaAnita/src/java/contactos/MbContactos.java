@@ -27,7 +27,7 @@ public class MbContactos implements Serializable {
     private ArrayList<Contacto> contactos;
     private ArrayList<SelectItem> listaContactos;
     @ManagedProperty(value = "#{mbTelefonos}")
-    private MbTelefonos mbTelefonos;
+    private MbTelefonos mbTelefonos = new MbTelefonos();
     private DAOContactos dao;
 
     public MbContactos() {
@@ -105,8 +105,8 @@ public class MbContactos implements Serializable {
             if (validarCorreo == false) {
                 fMsg.setDetail("Correo no valido");
             } else {
-                fMsg = new FacesMessage(FacesMessage.SEVERITY_INFO, "Aviso", "");
-                fMsg.setDetail("Exito! Nuevo Contacto Disponible");
+//                fMsg = new FacesMessage(FacesMessage.SEVERITY_INFO, "Aviso", "");
+//                fMsg.setDetail("Exito! Nuevo Contacto Disponible");
                 ok = true;
             }
         }

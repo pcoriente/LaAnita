@@ -62,9 +62,7 @@ public class DaoAgentes {
                 + "inner join cedis cd\n"
                 + "on cd.idCedis = a.idCedis\n"
                 + "inner join contribuyentesRfc cR\n"
-                + "on cR.idRfc = c.idRfc\n"
-                + "inner join contactos cont\n"
-                + "on cont.idPadre = a.idAgente";
+                + "on cR.idRfc = c.idRfc\n";
         Connection cn = ds.getConnection();
         Statement st = cn.createStatement();
         ResultSet rs = st.executeQuery(slq);
@@ -103,8 +101,8 @@ public class DaoAgentes {
             agentes.getMiniCedis().setCedis(rs.getString("cedis"));
             agentes.getContribuyente().setRfc(rs.getString("rfc"));
             agentes.getContribuyente().setCurp(rs.getString("curp"));
-            agentes.getContacto().setIdContacto(rs.getInt("idContacto"));
-            agentes.getContacto().setCorreo(rs.getString("correo"));
+//            agentes.getContacto().setIdContacto(rs.getInt("idContacto"));
+//            agentes.getContacto().setCorreo(rs.getString("correo"));
             listagentes.add(agentes);
         }
         return listagentes;
