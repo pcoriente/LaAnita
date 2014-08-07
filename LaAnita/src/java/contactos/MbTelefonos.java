@@ -23,7 +23,7 @@ import org.primefaces.context.RequestContext;
 public class MbTelefonos implements Serializable {
 
     private boolean celular;
-    private Telefono telefono;
+    private Telefono telefono = new Telefono();
     private ArrayList<Telefono> telefonos;
     private ArrayList<SelectItem> listaTelefonos;
     private TelefonoTipo tipo = new TelefonoTipo(false);

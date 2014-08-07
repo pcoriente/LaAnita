@@ -47,6 +47,8 @@ public class MbContribuyentes implements Serializable {
         FacesMessage fMsg = new FacesMessage(FacesMessage.SEVERITY_WARN, "Aviso:", "");
         if (this.contribuyente.getRfc().isEmpty()) {
             fMsg.setDetail("Se requiere el RFC !!");
+        } else if (this.contribuyente.getContribuyente().equals("") || this.contribuyente.getContribuyente() == null) {
+            fMsg.setDetail("Se requiere un contribuyente !!");
         } else if (this.contribuyente.getRfc().length() > 0) {
             Utilerias utilerias = new Utilerias();
             String mensaje = utilerias.verificarRfc(this.getContribuyente().getRfc());
@@ -157,9 +159,7 @@ public class MbContribuyentes implements Serializable {
         }
         return mensaje;
     }
-    
-    
-    
+
     public List<String> completarClientes(String rfc) {
         List<String> lst = new ArrayList<String>();
         try {
@@ -176,10 +176,6 @@ public class MbContribuyentes implements Serializable {
         }
         return lst;
     }
-    
-    
-    
-    
 
     public boolean verificar(String rfc) {
         boolean ok = false;
@@ -234,5 +230,4 @@ public class MbContribuyentes implements Serializable {
     public void setListaContribuyentes(ArrayList<SelectItem> listaContribuyentes) {
         this.listaContribuyentes = listaContribuyentes;
     }
-
 }

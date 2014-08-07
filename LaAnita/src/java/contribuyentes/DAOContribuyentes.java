@@ -176,7 +176,7 @@ public class DAOContribuyentes {
     public void actualizarContribuyenteRfc(Contribuyente contribuyente) throws SQLException {
         Connection cn = this.ds.getConnection();
         Statement st = cn.createStatement();
-        String sql = "UPDATE contribuyentesRfc set rfc = '" + contribuyente.getRfc() + "', curp='" + contribuyente.getCurp() + "' WHERE idRfc = " + contribuyente.getIdRfc();
+        String sql = "UPDATE contribuyentesRfc set  curp='" + contribuyente.getCurp().toUpperCase() + "' WHERE idRfc = " + contribuyente.getIdRfc();
         try {
             st.executeUpdate(sql);
         } finally {
