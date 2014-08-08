@@ -188,8 +188,7 @@ public class DaoAgentes {
         } catch (SQLException ex) {
             System.err.println(ex);
             st.executeUpdate("rollback transaction");
-            Logger.getLogger(DaoAgentes.class.getName()).log(Level.SEVERE, null, ex);
-            x = false;
+            throw (ex);
         } finally {
             cn.close();
             st.close();
@@ -200,7 +199,7 @@ public class DaoAgentes {
     public void actualizarAgente(Agentes agente) throws SQLException {
         Connection cn = this.ds.getConnection();
         Statement st = cn.createStatement();
-        String sql = "UPDATE agentes set agente='" + agente.getAgente() + "', idcedis ='" + agente.getMiniCedis().getIdCedis() + "' WHERE idAgente=" + agente.getIdAgente();
+        String sql = "UPDATE agentes set agente='" + agente.getAgente() + "', idCedis ='" + agente.getMiniCedis().getIdCedis() + "' WHERE idAgente=" + agente.getIdAgente();
         try {
             st.executeUpdate(sql);
         } finally {

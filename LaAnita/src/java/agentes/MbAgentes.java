@@ -121,13 +121,16 @@ public class MbAgentes implements Serializable {
                     } else {
                         if (ok == true) {
                             try {
-                                if (this.agente.getContacto().getCorreo().equals("")) {
+                                if (this.agente.getContacto().getCorreo().equals("") && actualizar == 0) {
                                     ok = false;
                                     fMsg.setDetail("Error!! Correo Requerido");
                                     FacesContext.getCurrentInstance().addMessage(null, fMsg);
                                 } else {
                                     Utilerias u = new Utilerias();
-                                    boolean paso = u.validarEmail(this.agente.getContacto().getCorreo());
+                                    boolean paso = true;
+                                    if (actualizar == 0) {
+                                        paso = u.validarEmail(this.agente.getContacto().getCorreo());
+                                    }
                                     if (paso == true) {
                                         listaAgentes = null;
                                         DaoAgentes daoAgentes = new DaoAgentes();
@@ -149,12 +152,13 @@ public class MbAgentes implements Serializable {
                                                 daoContribuyente.actualizarContribuyenteRfc(mbContribuyente.getContribuyente());
                                                 daoAgente.actualizarAgente(agente);
                                                 this.setActualizar(0);
+//                                                seleccionListaAgentes=null;
                                                 ok = true;
                                                 fMsg = new FacesMessage(FacesMessage.SEVERITY_INFO, "Aviso:", "");
-                                                fMsg.setDetail("Exito!! Nuevo Agente Actualizado");
+                                                fMsg.setDetail("Exito!! Agente Actualizado");
                                                 FacesContext.getCurrentInstance().addMessage(null, fMsg);
-
                                             } catch (NamingException ex) {
+                                                Mensajes.mensajeError(ex.getMessage());
                                                 Logger.getLogger(MbAgentes.class.getName()).log(Level.SEVERE, null, ex);
                                             }
                                         }
@@ -166,6 +170,7 @@ public class MbAgentes implements Serializable {
                                 }
                                 context.addCallbackParam("okContribuyente", ok);
                             } catch (SQLException ex) {
+                                Mensajes.mensajeError(ex.getMessage());
                                 Logger.getLogger(MbAgentes.class.getName()).log(Level.SEVERE, null, ex);
                             }
                         }
@@ -174,6 +179,7 @@ public class MbAgentes implements Serializable {
             }
         }
         mbContactos = new MbContactos();
+        seleccionListaAgentes = null;
         context.addCallbackParam("okContribuyente", ok);
     }
 
@@ -370,9 +376,9 @@ public class MbAgentes implements Serializable {
 
     public void deseleccionar() {
         if (this.getActualizar() == 1) {
-            seleccionListaAgentes = null;
             this.setActualizar(0);
-        }
+        } 
+        seleccionListaAgentes = null;
         mbContactos = new MbContactos();
         personaFisica = 0;
     }
