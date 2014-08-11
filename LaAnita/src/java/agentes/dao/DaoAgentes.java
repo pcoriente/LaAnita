@@ -6,6 +6,7 @@ package agentes.dao;
 
 import agentes.dominio.Agentes;
 import contactos.dominio.Telefono;
+import contribuyentes.Contribuyente;
 import direccion.dominio.Asentamiento;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -197,13 +198,20 @@ public class DaoAgentes {
         return x;
     }
 
-    public void actualizarAgente(Agentes agente) throws SQLException {
+    public void actualizarAgente(Agentes agente, Contribuyente contribuyente) throws SQLException {
         Connection cn = this.ds.getConnection();
         Statement st = cn.createStatement();
+        String sqlContribuyente = "UPDATE contribuyentes set contribuyente = '" + contribuyente.getContribuyente() + "' WHERE idContribuyente = " + contribuyente.getIdContribuyente();
+        String sqlContribuyenteRfc = "UPDATE contribuyentesRfc set  curp='" + contribuyente.getCurp().toUpperCase() + "' WHERE idRfc = " + contribuyente.getIdRfc();
         String sql = "UPDATE agentes set agente='" + agente.getAgente() + "', idcedis ='" + agente.getMiniCedis().getIdCedis() + "' WHERE idAgente=" + agente.getIdAgente();
         try {
+            st.executeUpdate("begin transaction");
             st.executeUpdate(sql);
+            st.executeUpdate(sqlContribuyente);
+            st.executeUpdate(sqlContribuyenteRfc);
+            st.executeUpdate("commit transaction");
         } finally {
+            st.executeUpdate("rollback transaction");
             cn.close();
             st.close();
         }

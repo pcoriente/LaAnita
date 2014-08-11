@@ -8,12 +8,9 @@ package agentes.converter;
 import agentes.dao.DaoAgentes;
 import agentes.dominio.Agentes;
 import java.sql.SQLException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.faces.component.UIComponent;
 import javax.faces.context.FacesContext;
 import javax.faces.convert.Converter;
-import mondrian.olap.Category;
 
 /**
  *

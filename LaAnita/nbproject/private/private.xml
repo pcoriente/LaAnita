@@ -1,15 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project-private xmlns="http://www.netbeans.org/ns/project-private/1">
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/1"/>
-    <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="23">
-        <file>
-            <url>src/java/agentes/MbAgentes.java</url>
-            <bookmark id="23">
-                <name/>
-                <line>372</line>
-                <key/>
-            </bookmark>
-        </file>
+    <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="22">
         <file>
             <url>src/java/almacenes/MbAlmacenesJS.java</url>
             <bookmark id="4">
@@ -45,11 +37,7 @@
             </bookmark>
             <bookmark id="22">
                 <name/>
-<<<<<<< HEAD
-                <line>150</line>
-=======
-                <line>171</line>
->>>>>>> origin/master
+                <line>147</line>
                 <key/>
             </bookmark>
         </file>
@@ -63,6 +51,7 @@
             <file>file:/C:/LaAnita10Junio2014/LaAnita/LaAnita/src/java/agentes/dao/DaoAgentes.java</file>
             <file>file:/C:/LaAnita10Junio2014/LaAnita/LaAnita/src/java/agentes/MbAgentes.java</file>
             <file>file:/C:/LaAnita10Junio2014/LaAnita/LaAnita/src/java/cedis/dao/DAOMiniCedis.java</file>
+            <file>file:/C:/LaAnita10Junio2014/LaAnita/LaAnita/src/java/agentes/converter/AgentesConverter.java</file>
         </group>
     </open-files>
 </project-private>

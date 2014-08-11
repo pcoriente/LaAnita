@@ -145,9 +145,9 @@ public class MbAgentes implements Serializable {
                                                 daoContactos.modificar(agente.getContacto());
                                                 DAOContribuyentes daoContribuyente = new DAOContribuyentes();
                                                 DaoAgentes daoAgente = new DaoAgentes();
-                                                daoContribuyente.actualizarContribuyente(mbContribuyente.getContribuyente());
-                                                daoContribuyente.actualizarContribuyenteRfc(mbContribuyente.getContribuyente());
-                                                daoAgente.actualizarAgente(agente);
+//                                                daoContribuyente.actualizarContribuyente(mbContribuyente.getContribuyente());
+//                                                daoContribuyente.actualizarContribuyenteRfc(mbContribuyente.getContribuyente());
+                                                daoAgente.actualizarAgente(agente, mbContribuyente.getContribuyente() );
                                                 this.setActualizar(0);
                                                 ok = true;
                                                 fMsg = new FacesMessage(FacesMessage.SEVERITY_INFO, "Aviso:", "");
@@ -166,6 +166,7 @@ public class MbAgentes implements Serializable {
                                 }
                                 context.addCallbackParam("okContribuyente", ok);
                             } catch (SQLException ex) {
+                                
                                 Logger.getLogger(MbAgentes.class.getName()).log(Level.SEVERE, null, ex);
                             }
                         }
@@ -370,9 +371,9 @@ public class MbAgentes implements Serializable {
 
     public void deseleccionar() {
         if (this.getActualizar() == 1) {
-            seleccionListaAgentes = null;
             this.setActualizar(0);
         }
+        seleccionListaAgentes = null;
         mbContactos = new MbContactos();
         personaFisica = 0;
     }
