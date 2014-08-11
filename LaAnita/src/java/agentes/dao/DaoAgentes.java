@@ -189,8 +189,7 @@ public class DaoAgentes {
         } catch (SQLException ex) {
             System.err.println(ex);
             st.executeUpdate("rollback transaction");
-            Logger.getLogger(DaoAgentes.class.getName()).log(Level.SEVERE, null, ex);
-            x = false;
+            throw (ex);
         } finally {
             cn.close();
             st.close();

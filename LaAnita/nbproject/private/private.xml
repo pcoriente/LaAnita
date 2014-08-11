@@ -1,7 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project-private xmlns="http://www.netbeans.org/ns/project-private/1">
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/1"/>
+<<<<<<< HEAD
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="22">
+=======
+    <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="25">
+>>>>>>> origin/master
         <file>
             <url>src/java/almacenes/MbAlmacenesJS.java</url>
             <bookmark id="4">
@@ -37,7 +41,21 @@
             </bookmark>
             <bookmark id="22">
                 <name/>
+<<<<<<< HEAD
                 <line>147</line>
+=======
+                <line>175</line>
+                <key/>
+            </bookmark>
+            <bookmark id="24">
+                <name/>
+                <line>297</line>
+                <key/>
+            </bookmark>
+            <bookmark id="25">
+                <name/>
+                <line>380</line>
+>>>>>>> origin/master
                 <key/>
             </bookmark>
         </file>

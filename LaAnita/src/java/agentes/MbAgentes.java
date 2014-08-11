@@ -26,12 +26,12 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.inject.Named;
 import javax.enterprise.context.SessionScoped;
 import javax.faces.application.FacesMessage;
 import javax.faces.bean.ManagedProperty;
 import javax.faces.context.FacesContext;
 import javax.faces.model.SelectItem;
+import javax.inject.Named;
 import javax.naming.NamingException;
 import org.primefaces.context.RequestContext;
 import utilerias.Utilerias;
@@ -121,13 +121,16 @@ public class MbAgentes implements Serializable {
                     } else {
                         if (ok == true) {
                             try {
-                                if (this.agente.getContacto().getCorreo().equals("")) {
+                                if (this.agente.getContacto().getCorreo().equals("") && actualizar == 0) {
                                     ok = false;
                                     fMsg.setDetail("Error!! Correo Requerido");
                                     FacesContext.getCurrentInstance().addMessage(null, fMsg);
                                 } else {
                                     Utilerias u = new Utilerias();
-                                    boolean paso = u.validarEmail(this.agente.getContacto().getCorreo());
+                                    boolean paso = true;
+                                    if (actualizar == 0) {
+                                        paso = u.validarEmail(this.agente.getContacto().getCorreo());
+                                    }
                                     if (paso == true) {
                                         listaAgentes = null;
                                         DaoAgentes daoAgentes = new DaoAgentes();
@@ -147,14 +150,15 @@ public class MbAgentes implements Serializable {
                                                 DaoAgentes daoAgente = new DaoAgentes();
 //                                                daoContribuyente.actualizarContribuyente(mbContribuyente.getContribuyente());
 //                                                daoContribuyente.actualizarContribuyenteRfc(mbContribuyente.getContribuyente());
-                                                daoAgente.actualizarAgente(agente, mbContribuyente.getContribuyente() );
+                                                daoAgente.actualizarAgente(agente, mbContribuyente.getContribuyente());
                                                 this.setActualizar(0);
+//                                                seleccionListaAgentes=null;
                                                 ok = true;
                                                 fMsg = new FacesMessage(FacesMessage.SEVERITY_INFO, "Aviso:", "");
-                                                fMsg.setDetail("Exito!! Nuevo Agente Actualizado");
+                                                fMsg.setDetail("Exito!! Agente Actualizado");
                                                 FacesContext.getCurrentInstance().addMessage(null, fMsg);
-
                                             } catch (NamingException ex) {
+                                                Mensajes.mensajeError(ex.getMessage());
                                                 Logger.getLogger(MbAgentes.class.getName()).log(Level.SEVERE, null, ex);
                                             }
                                         }
@@ -166,7 +170,7 @@ public class MbAgentes implements Serializable {
                                 }
                                 context.addCallbackParam("okContribuyente", ok);
                             } catch (SQLException ex) {
-                                
+                                Mensajes.mensajeError(ex.getMessage());
                                 Logger.getLogger(MbAgentes.class.getName()).log(Level.SEVERE, null, ex);
                             }
                         }
@@ -175,6 +179,7 @@ public class MbAgentes implements Serializable {
             }
         }
         mbContactos = new MbContactos();
+        seleccionListaAgentes = null;
         context.addCallbackParam("okContribuyente", ok);
     }
 
@@ -372,13 +377,16 @@ public class MbAgentes implements Serializable {
     public void deseleccionar() {
         if (this.getActualizar() == 1) {
             this.setActualizar(0);
+
         }
         seleccionListaAgentes = null;
         mbContactos = new MbContactos();
         personaFisica = 0;
     }
 
-    public String getLblCancelar() {
+
+
+public String getLblCancelar() {
         return lblCancelar;
     }
 
@@ -432,7 +440,6 @@ public class MbAgentes implements Serializable {
             p0.setCedis("Seleccione un CEDIS");
             SelectItem cero = new SelectItem(p0, p0.toString());
             listaMiniCedis.add(cero);
-
             this.dao = new DAOMiniCedis();
             for (MiniCedis m : this.dao.obtenerListaMiniCedisTodos()) {
                 listaMiniCedis.add(new SelectItem(m, m.toString()));
@@ -505,7 +512,13 @@ public class MbAgentes implements Serializable {
                         Mensajes.mensajeSucces("Exito, Nuevo telefono disponible");
                     } catch (SQLException ex) {
                         Mensajes.mensajeError(ex.getMessage());
-                        Logger.getLogger(MbAgentes.class.getName()).log(Level.SEVERE, null, ex);
+                        Logger
+
+
+
+.getLogger(MbAgentes.class  
+
+.getName()).log(Level.SEVERE, null, ex);
                     }
                 } else {
                     dao.modificar(mbContactos.getMbTelefonos().getTelefono());
@@ -553,10 +566,22 @@ public class MbAgentes implements Serializable {
             FacesMessage fMsg = new FacesMessage(FacesMessage.SEVERITY_WARN, "Aviso:", "");
             fMsg.setDetail("Telefono Eliminado");
             FacesContext.getCurrentInstance().addMessage(null, fMsg);
-        } catch (NamingException ex) {
-            Logger.getLogger(MbAgentes.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (SQLException ex) {
-            Logger.getLogger(MbAgentes.class.getName()).log(Level.SEVERE, null, ex);
+        
+
+
+
+} catch (NamingException ex) {
+            Logger.getLogger(MbAgentes.class  
+
+.getName()).log(Level.SEVERE, null, ex);
+        } 
+
+
+
+catch (SQLException ex) {
+            Logger.getLogger(MbAgentes.class  
+
+.getName()).log(Level.SEVERE, null, ex);
         }
     }
 
@@ -687,4 +712,6 @@ public class MbAgentes implements Serializable {
     public void setCmbAgentes(Agentes cmbAgentes) {
         this.cmbAgentes = cmbAgentes;
     }
+
+
 }
