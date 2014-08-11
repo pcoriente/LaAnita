@@ -110,7 +110,7 @@
                                                  disabled="true"
                                                  style="font-size: 10px"
                                                  rows="5"
-                                                 cols="24">
+                                                 cols="26">
                                 </p:inputTextarea>
                                 <p:commandButton oncomplete="dlgDireccion.show();" 
                                                  icon="ui-icon-plusthick"
@@ -120,11 +120,14 @@
                                                  update="asentamientos cboPaises cboAsentamientos localidad municipio estado gln calle  noExterior noInterior referencia :form:codigoPostal"
                                                  />
                                 <h:outputText id="lblAgente" value="Agente:" />
-                                <p:inputText id="txtNombreAgente" value="#{mbAgentes.agente.agente}"/> 
+                                <p:inputText id="txtNombreAgente"
+                                             value="#{mbAgentes.agente.agente}"
+                                             /> 
                                 <h:outputLabel/>
                                 <h:outputText id="lblCedis" value="Cedis :" />
-                                <p:selectOneMenu  id="cmbCedis" style="width: 167px" 
-                                                  value="#{mbAgentes.agente.miniCedis}">
+                                <p:selectOneMenu  id="cmbCedis" style="width: 145px" 
+                                                  value="#{mbAgentes.agente.miniCedis}"
+                                                  filter="true">
                                     <f:selectItems value="#{mbAgentes.listaMiniCedis}" />
                                     <f:converter converterId="converters.MiniCedis"/>
                                 </p:selectOneMenu>
@@ -136,7 +139,7 @@
                                                  disabled="true"
                                                  style="font-size: 10px"
                                                  rows="5"
-                                                 cols="24">
+                                                 cols="26">
                                 </p:inputTextarea>
                                 <p:commandButton oncomplete="dlgDireccion.show();" 
                                                  icon="ui-icon-plusthick"
@@ -153,7 +156,8 @@
                                 <p:selectOneMenu style="width: 167px"
                                                  value="#{mbAgentes.mbContactos.contacto}"
                                                  id="cmbContacto"
-                                                 rendered="#{mbAgentes.actualizar==1}">
+                                                 rendered="#{mbAgentes.actualizar==1}"
+                                                 filter="true">
                                     <f:selectItems value="#{mbAgentes.mbContactos.listaContactos}"/>
                                     <f:converter converterId="converters.Contacto"/>
                                     <p:ajax event="change" 
@@ -165,7 +169,8 @@
                                 <p:selectOneMenu style="width: 167px"
                                                  value="#{mbAgentes.mbContactos.mbTelefonos.telefono}"
                                                  id="cmbTelefonos"
-                                                 rendered="#{mbAgentes.actualizar==1}">
+                                                 rendered="#{mbAgentes.actualizar==1}"
+                                                 filter="true">
                                     <f:selectItems value="#{mbAgentes.mbContactos.mbTelefonos.listaTelefonos}"/>
                                     <f:converter converterId="converters.Telefono"/>
                                 </p:selectOneMenu>
@@ -212,7 +217,8 @@
                             <h:outputLabel value="País:" for="cboPaises" styleClass="colorLetra" />
                             <p:selectOneMenu id="cboPaises" 
                                              value="#{mbAgentes.mbDireccion.direccion.pais}"
-                                             style="width: 188px">
+                                             style="width: 178px"
+                                             filter="true">
                                 <f:converter converterId="converters.Pais" />
                                 <f:selectItems value="#{mbDireccion.listaPaises}" />
                             </p:selectOneMenu>
@@ -245,7 +251,8 @@
                                 <p:selectOneMenu id="cboAsentamientos" 
                                                  rendered="#{!mbAgentes.mbDireccion.editarAsentamiento}" 
                                                  value="#{mbAgentes.mbDireccion.direccion.selAsentamiento}" 
-                                                 style="width: 188px">
+                                                 style="width: 188px"
+                                                 filter="true">
                                     <p:ajax event="change" listener="#{mbAgentes.mbDireccion.actualizaAsentamiento}" 
                                             update="estado municipio localidad  asentamientos" />             
                                     <f:converter converterId="converters.Asentamiento" />
@@ -301,7 +308,9 @@
                                 </p:column>
                                 <p:column >
                                     <p:selectOneMenu id="cmbTelefonoTipo" 
-                                                     value="#{mbAgentes.mbContactos.mbTelefonos.telefono.tipo}" style="margin: 0px;" >
+                                                     value="#{mbAgentes.mbContactos.mbTelefonos.telefono.tipo}" 
+                                                     style="margin: 0px;" 
+                                                     filter="true">
                                         <f:converter converterId="converters.TelefonoTipo" />
                                         <f:selectItems value="#{mbAgentes.mbContactos.mbTelefonos.listaTipos}" />
                                     </p:selectOneMenu>

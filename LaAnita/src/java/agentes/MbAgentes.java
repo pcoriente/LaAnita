@@ -146,7 +146,7 @@ public class MbAgentes implements Serializable {
                                             try {
                                                 DAOContactos daoContactos = new DAOContactos();
                                                 daoContactos.modificar(agente.getContacto());
-                                                DAOContribuyentes daoContribuyente = new DAOContribuyentes();
+//                                                DAOContribuyentes daoContribuyente = new DAOContribuyentes();
                                                 DaoAgentes daoAgente = new DaoAgentes();
 //                                                daoContribuyente.actualizarContribuyente(mbContribuyente.getContribuyente());
 //                                                daoContribuyente.actualizarContribuyenteRfc(mbContribuyente.getContribuyente());
@@ -384,9 +384,7 @@ public class MbAgentes implements Serializable {
         personaFisica = 0;
     }
 
-
-
-public String getLblCancelar() {
+    public String getLblCancelar() {
         return lblCancelar;
     }
 
@@ -513,12 +511,8 @@ public String getLblCancelar() {
                     } catch (SQLException ex) {
                         Mensajes.mensajeError(ex.getMessage());
                         Logger
-
-
-
-.getLogger(MbAgentes.class  
-
-.getName()).log(Level.SEVERE, null, ex);
+                                .getLogger(MbAgentes.class
+                                        .getName()).log(Level.SEVERE, null, ex);
                     }
                 } else {
                     dao.modificar(mbContactos.getMbTelefonos().getTelefono());
@@ -566,22 +560,13 @@ public String getLblCancelar() {
             FacesMessage fMsg = new FacesMessage(FacesMessage.SEVERITY_WARN, "Aviso:", "");
             fMsg.setDetail("Telefono Eliminado");
             FacesContext.getCurrentInstance().addMessage(null, fMsg);
-        
 
-
-
-} catch (NamingException ex) {
-            Logger.getLogger(MbAgentes.class  
-
-.getName()).log(Level.SEVERE, null, ex);
-        } 
-
-
-
-catch (SQLException ex) {
-            Logger.getLogger(MbAgentes.class  
-
-.getName()).log(Level.SEVERE, null, ex);
+        } catch (NamingException ex) {
+            Logger.getLogger(MbAgentes.class
+                    .getName()).log(Level.SEVERE, null, ex);
+        } catch (SQLException ex) {
+            Logger.getLogger(MbAgentes.class
+                    .getName()).log(Level.SEVERE, null, ex);
         }
     }
 
@@ -712,6 +697,5 @@ catch (SQLException ex) {
     public void setCmbAgentes(Agentes cmbAgentes) {
         this.cmbAgentes = cmbAgentes;
     }
-
 
 }

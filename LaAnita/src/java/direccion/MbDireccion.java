@@ -137,6 +137,12 @@ public class MbDireccion implements Serializable {
             fMsg.setDetail("Se requiere el pais !!");
         } else if (codigoPostal.isEmpty()) {
             fMsg.setDetail("Se requiere el códigoPostal");
+        } else if (codigoPostal.length() < 5) {
+            fMsg.setDetail("Verifique la longitud de su codigo postal");
+        } else if (localidad.equals("")) {
+            fMsg.setDetail("Se requiere una localidad");
+        } else if (municipio.equals("")) {
+            fMsg.setDetail("Se requiere un municipioi");
         } else if (estado.isEmpty()) {
             fMsg.setDetail("Se requiere el estado");
         } else if (municipio.isEmpty()) {
