@@ -135,7 +135,7 @@ public class DAOContribuyentes {
         ArrayList<Contribuyente> cs = new ArrayList<Contribuyente>();
         Connection cn = this.ds.getConnection();
         Statement st = cn.createStatement();
-        String strSQL = "Select c.idContribuyente, contribuyente, cr.idRfc, cr.rfc, c.idDireccion, cr.curp "
+        String strSQL = "Select c.idContribuyente, contribuyente, cr.idRfc, cr.rfc, c.idDireccion, curp "
                 + "from contribuyentes c "
                 + "inner join contribuyentesRfc cr on cr.idRfc=c.idRfc "
                 + "where cr.rfc='" + rfc + "'";
