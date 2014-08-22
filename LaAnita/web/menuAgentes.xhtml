@@ -32,7 +32,7 @@
                                              process="@this"
                                              title="Actualizar Agente"
                                              disabled="#{mbAgentes.actualizar==0}"
-                                             update=":form:txtRfc"
+                                             update=":form:txtRfc :form:btnBuscar"
                                              />
                             <p:commandButton icon="ui-icon-arrowreturnthick-1-w"
                                              ajax="false"
@@ -80,7 +80,7 @@
                                 <h:outputText id="lblRfc" value="Rfc:" />
                                 <p:inputText id="txtRfc"
                                              value="#{mbAgentes.mbContribuyente.contribuyente.rfc}"
-                                             disabled="#{mbAgentes.actualizar==1}">
+                                             disabled="#{mbAgentes.actualizar==1 || mbAgentes.buscadorContribuyentes==true}">
                                     <p:ajax event="keyup"
                                             listener="#{mbAgentes.dameStatusRfc()}"
                                             process="txtRfc"
@@ -89,10 +89,12 @@
                                             listener="#{mbAgentes.dameStatusRfc()}"
                                             process="@this"
                                             update="txtCurp growl"/>
-                                   
-
                                 </p:inputText>
-                                <h:outputLabel/>
+                                <p:commandButton icon="ui-icon-search" 
+                                                 id="btnBuscar"
+                                                 title="Buscar contribuyente"
+                                                 oncomplete="buscarProvDlg.show();"
+                                                 disabled="#{mbAgentes.actualizar ==1}"/>
                                 <h:outputText id="lblContribuyente" value="Contribuyente:" />
                                 <p:inputText id="txtContribuyente"
                                              value="#{mbAgentes.mbContribuyente.contribuyente.contribuyente}"/>
@@ -161,16 +163,38 @@
                                     <f:selectItems value="#{mbAgentes.mbContactos.listaContactos}"/>
                                     <f:converter converterId="converters.Contacto"/>
                                     <p:ajax event="change" 
-                                            update=":form:btnTelefonos :form:cmbTelefonos"
+                                            update=":form:btnTelefonos 
+                                            :form:cmbTelefonos 
+                                            :form:cmbCorreo
+                                            :form:growl
+                                            :form:btnCorreos"
                                             listener="#{mbAgentes.cargarTelefonos()}"/>
                                 </p:selectOneMenu>
                                 <h:outputLabel rendered="#{mbAgentes.actualizar==1}"/>
+                                <h:outputText id="lblCorreos" value="Correo :" rendered="#{mbAgentes.actualizar==1}" />
+                                <p:selectOneMenu style="width: 167px"
+                                                 value="#{mbAgentes.mbContactos.correo}"
+                                                 id="cmbCorreo"
+                                                 rendered="#{mbAgentes.actualizar==1}"
+                                                 filter="true">
+                                    <f:selectItems value="#{mbAgentes.mbContactos.listaCorreos}"/>
+                                    <f:converter converterId="converters.Contacto"/>
+                                    <p:ajax event="change" update="btnCorreos "/>
+                                </p:selectOneMenu>
+                                <p:commandButton icon="ui-icon-pencil" 
+                                                 id="btnCorreos"
+                                                 rendered="#{mbAgentes.actualizar==1}"
+                                                 disabled="#{mbAgentes.mbContactos.correo.idContacto==0}"
+                                                 update=":form:txtCorreoA"
+                                                 process="@this"
+                                                 oncomplete="dlgCorreos.show();"/>
                                 <h:outputText id="lblTelefonos" value="Telefonos :" rendered="#{mbAgentes.actualizar==1}"/>
                                 <p:selectOneMenu style="width: 167px"
                                                  value="#{mbAgentes.mbContactos.mbTelefonos.telefono}"
                                                  id="cmbTelefonos"
                                                  rendered="#{mbAgentes.actualizar==1}"
-                                                 filter="true">
+                                                 filter="true"
+                                                 >
                                     <f:selectItems value="#{mbAgentes.mbContactos.mbTelefonos.listaTelefonos}"/>
                                     <f:converter converterId="converters.Telefono"/>
                                 </p:selectOneMenu>
@@ -284,6 +308,27 @@
                             </h:panelGroup>
                         </h:panelGrid>
                     </p:dialog>
+                    <p:dialog widgetVar="dlgCorreos"
+                              resizable="false"
+                              modal="true">
+                        <h:panelGrid columns="2">
+                            <h:outputText value="Correo"/>
+                            <p:inputText id="txtCorreoA" 
+                                         value="#{mbAgentes.mbContactos.correo.correo}"/>
+                        </h:panelGrid>
+                        <center>
+                            <p:commandButton icon="ui-icon-disk"
+                                             title="Actualizar correo"
+                                             update=":form:cmbCorreo :form:growl"
+                                             process="@this :form:txtCorreoA"
+                                             actionListener="#{mbAgentes.actualizarCorreos()}"
+                                             oncomplete="nuevoCorreos(xhr, status, args);"/>
+                        </center>
+                    </p:dialog>
+
+
+
+
                     <!--- Dialog de Mantenimiento de Telefonos -->
                     <p:dialog header="MANTENIMIENTO DE TELEFONOS"
                               widgetVar="mttoTelefonosDialog" 
@@ -369,7 +414,7 @@
                                 </p:row>
                             </f:facet>
                         </p:panelGrid>
-                    </p:dialog> 
+                    </p:dialog>
                     <!--- Dialog de Mantenimiento de tipos telefonos -->
                     <p:dialog header="MANTENIMIENTO DE TIPOS DE TELEFONOS" 
                               widgetVar="mttoTelefonosTiposDialog"
@@ -382,7 +427,7 @@
                                 </p:column>
                                 <p:column >
                                     <p:inputText id="txtTelefonoTipo" 
-                                                 
+
                                                  value="#{mbAgentes.mbContactos.mbTelefonos.tipo.tipo}" 
                                                  />
                                 </p:column>
@@ -441,12 +486,85 @@
                     </p:dialog>
 
 
+                    <p:dialog header="BUSCADOR DE PROVEEDORES" widgetVar="buscarProvDlg" resizable="false" style="width: 600px;" modal="true" >
+                        <p:messages id="messages4" showDetail="true" closable="true" />
+                        <p:panelGrid id="buscarProveedores" styleClass="sinBorde" >
+                            <p:row >
+                                <p:column >
+                                    <h:outputLabel for="opciones" value="OPCIONES :" style="font-weight: bold; color: red;" />
+                                </p:column>
+                                <p:column >
+                                    <p:selectOneRadio id="opciones" 
+                                                      value="#{mbAgentes.mbBuscarContribuyente.tipoBuscar}" 
+                                                      style="background-color: #ccc" >
+                                        <f:selectItem itemLabel="RFC" itemValue="1" />
+                                        <f:selectItem itemLabel="Contribuyente" itemValue="2" />
+                                        <p:ajax listener="#{mbAgentes.mbBuscarContribuyente.verCambio()}" 
+                                                update=":form:buscarProveedores" />
+                                    </p:selectOneRadio>
+                                </p:column>
+                                <p:column >
+                                    <p:inputText id="opcion" value="#{mbAgentes.mbBuscarContribuyente.strBuscar}" maxlength="13" size="15" />
+                                    <p:commandButton id="btnBuscar1" icon="ui-icon-check" title="Buscar" 
+                                                     rendered="#{mbAgentes.mbBuscarContribuyente.tipoBuscar=='1'}"
+                                                     process="@this opciones opcion" actionListener="#{mbAgentes.buscar()}" 
+                                                     update=":form:listaContribuyentes :form:growl" 
+                                                     oncomplete="handleBuscarContribuyente(xhr, status, args)" />
+                                    <p:commandButton id="btnBuscar2" icon="ui-icon-check" title="Buscar" 
+                                                     rendered="#{mbAgentes.mbBuscarContribuyente.tipoBuscar=='2'}"
+                                                     process="@this opcion" actionListener="#{mbAgentes.buscar()}" 
+                                                     update=":form:listaContribuyentes 
+                                                     :form:growl" 
+                                                     oncomplete="handleBuscarContribuyente(xhr, status, args)" />
+                                </p:column>
+                            </p:row>
+                        </p:panelGrid>
+                        <p:dataTable id="listaContribuyentes" value="#{mbAgentes.mbBuscarContribuyente.contribuyentes}" 
+                                     filteredValue="#{mbAgentes.mbBuscarContribuyente.filtrados}"
+                                     var="prov" scrollable="true" scrollHeight="200" style="width: 800px;"
+                                     rowKey="#{prov.idContribuyente}" selectionMode="single" 
+                                     selection="#{mbAgentes.mbBuscarContribuyente.contribuyente}" >
+                            <p:ajax event = "rowSelect" update="seleccion" />
+
+                            <f:facet name="header">
+                                Seleccione un producto  
+                            </f:facet>
+
+                            <p:column id="idRFC" headerText="RFC" style="width: 150px;"  >
+                                <h:outputText value="#{prov.rfc}" />
+                            </p:column>
+
+                            <p:column id="idContribuyente" headerText="Contribuyente" style="width: 150px;" 
+                                      filterBy="#{prov.contribuyente}" filterMatchMode="left" >
+                                <h:outputText value="#{prov.contribuyente}" />
+                            </p:column>
+
+                            <f:facet name="footer">
+                                <p:commandButton id="seleccion" value="Seleccionar" 
+                                                 disabled="#{mbAgentes.mbBuscarContribuyente.contribuyente==null}"
+                                                 actionListener="#{mbAgentes.seleccionContribuyente()}"
+                                                 oncomplete="buscarProvDlg.hide()" 
+                                                 update=":form:panelNuevoAgente"/>
+                            </f:facet>
+                        </p:dataTable>
+                    </p:dialog>
+
+
 
                 </h:form>
             </div>
             <ui:include src="footer.html" />
         </div>
         <script type="text/javascript">
+                    
+                    function nuevoCorreos(xhr, status, args) {
+                        if (args.validationFailed || !args.ok) {
+                            dlgCorreos.jq.effect("shake", {times: 5}, 100);
+                        }
+                        else {
+                            dlgCorreos.hide();
+                        }
+                    }
                     function nuevoContribuyente(xhr, status, args) {
                         if (args.validationFailed || !args.okContribuyente) {
                             dlg.jq.effect("shake", {times: 5}, 100);
@@ -471,7 +589,7 @@
                             dlgContactos.hide();
                         }
                     }
-
+                    
                     function nuevoTelefono(xhr, status, args) {
                         if (args.validationFailed || !args.okTelefono) {
                             mttoTelefonosDialog.jq.effect("shake", {times: 5}, 100);
@@ -480,7 +598,7 @@
                             mttoTelefonosDialog.hide();
                         }
                     }
-
+                    
                     function handleTelefonoTipo(xhr, status, args) {
                         if (args.validationFailed || !args.okTelefonoTipo) {
                             mttoTelefonosTiposDialog.jq.effect("shake", {times: 5}, 100);
@@ -488,8 +606,12 @@
                             mttoTelefonosTiposDialog.hide();
                         }
                     }
-
-        </script>
+                    
+                    function handleBuscarContribuyente(xhr, status, args) {
+                        if (!(args.validationFailed || !args.okBuscarContribuyente)) {
+                            buscarProvDlg.hide();
+                        }
+                    }</script>
 
     </h:body>
 </html>

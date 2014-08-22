@@ -7,6 +7,8 @@ import javax.enterprise.context.SessionScoped;
 import java.io.Serializable;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.faces.application.FacesMessage;
 import javax.faces.bean.ManagedProperty;
 import javax.faces.context.FacesContext;
@@ -26,9 +28,12 @@ public class MbContactos implements Serializable {
     private Contacto contacto;
     private ArrayList<Contacto> contactos;
     private ArrayList<SelectItem> listaContactos;
+    private ArrayList<SelectItem> listaCorreos;
     @ManagedProperty(value = "#{mbTelefonos}")
     private MbTelefonos mbTelefonos = new MbTelefonos();
     private DAOContactos dao;
+    private Contacto correo = new Contacto();
+//    private ArrayList<Contacto> listaCorreo;
 
     public MbContactos() {
         this.contacto = new Contacto();
@@ -105,8 +110,6 @@ public class MbContactos implements Serializable {
             if (validarCorreo == false) {
                 fMsg.setDetail("Correo no valido");
             } else {
-//                fMsg = new FacesMessage(FacesMessage.SEVERITY_INFO, "Aviso", "");
-//                fMsg.setDetail("Exito! Nuevo Contacto Disponible");
                 ok = true;
             }
         }
@@ -122,6 +125,20 @@ public class MbContactos implements Serializable {
             c.setTelefonos(this.mbTelefonos.obtenerTelefonos(c.getIdContacto()));
         }
         return lstContactos;
+    }
+
+    public void obtenerCorreo(int idContacto) throws NamingException, SQLException {
+        if (listaCorreos == null) {
+            this.dao = new DAOContactos();
+            Contacto correo = new Contacto();
+            correo.setIdContacto(0);
+            correo.setCorreo("Correo disponible");
+            listaCorreos = new ArrayList<SelectItem>();
+            listaCorreos.add(new SelectItem(correo, correo.getCorreo()));
+            for (Contacto c : this.dao.obtenerCorreos(idContacto)) {
+                listaCorreos.add(new SelectItem(c, c.getCorreo()));
+            }
+        }
     }
 
     public void cargaContactos(int idTipo, int idPadre) {
@@ -193,5 +210,21 @@ public class MbContactos implements Serializable {
 
     public void setMbTelefonos(MbTelefonos mbTelefonos) {
         this.mbTelefonos = mbTelefonos;
+    }
+
+    public ArrayList<SelectItem> getListaCorreos() {
+        return listaCorreos;
+    }
+
+    public void setListaCorreos(ArrayList<SelectItem> listaCorreos) {
+        this.listaCorreos = listaCorreos;
+    }
+
+    public Contacto getCorreo() {
+        return correo;
+    }
+
+    public void setCorreo(Contacto correo) {
+        this.correo = correo;
     }
 }

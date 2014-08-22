@@ -39,6 +39,7 @@ public class MbBuscarContribuyente implements Serializable {
     }
     
     public void verCambio() {
+        
         this.strBuscar="";
     }
     
