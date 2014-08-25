@@ -17,39 +17,41 @@ import org.primefaces.context.RequestContext;
 @Named(value = "mbBuscarContribuyente")
 @SessionScoped
 public class MbBuscarContribuyente implements Serializable {
+
     private String tipoBuscar;
     private String strBuscar;
     private Contribuyente contribuyente;
     private ArrayList<Contribuyente> contribuyentes;
     private ArrayList<Contribuyente> filtrados;
-    
+
     public MbBuscarContribuyente() {
         inicializa();
     }
-    
+
     public void inicializar() {
         inicializa();
     }
-    
+
     private void inicializa() {
-        this.tipoBuscar="2";
-        this.strBuscar="";
-        this.contribuyentes=null;
-        this.filtrados=null;
+        this.tipoBuscar = "2";
+        this.strBuscar = "";
+        this.contribuyentes = null;
+        this.filtrados = null;
     }
-    
+
     public void verCambio() {
-        this.strBuscar="";
+
+        this.strBuscar = "";
     }
-    
+
     public void obtenerContribuyente(int idContribuyente) {
         boolean ok = false;
         RequestContext context = RequestContext.getCurrentInstance();
         FacesMessage fMsg = new FacesMessage(FacesMessage.SEVERITY_WARN, "Aviso:", "");
         try {
-            DAOContribuyentes dao=new DAOContribuyentes();
-            this.contribuyente=dao.obtenerContribuyente(idContribuyente);
-            ok=true;
+            DAOContribuyentes dao = new DAOContribuyentes();
+            this.contribuyente = dao.obtenerContribuyente(idContribuyente);
+            ok = true;
         } catch (NamingException ex) {
             fMsg.setSeverity(FacesMessage.SEVERITY_ERROR);
             fMsg.setDetail(ex.getMessage());
@@ -61,28 +63,25 @@ public class MbBuscarContribuyente implements Serializable {
         }
         context.addCallbackParam("okBuscarContribuyente", ok);
     }
-    
+
     public void buscar() {
         boolean ok = false;
         RequestContext context = RequestContext.getCurrentInstance();
         FacesMessage fMsg = new FacesMessage(FacesMessage.SEVERITY_WARN, "Aviso:", "");
         try {
-            DAOContribuyentes dao=new DAOContribuyentes();
-            if(this.tipoBuscar.equals("1")) {
-                this.contribuyentes=dao.obtenerContribuyentesRFC(this.strBuscar);
+            DAOContribuyentes dao = new DAOContribuyentes();
+            if (this.tipoBuscar.equals("1")) {
+                this.contribuyentes = dao.obtenerContribuyentesRFC(this.strBuscar);
                 if (this.contribuyentes.isEmpty()) {
                     fMsg.setDetail("No se encontró contribuyente con el RFC proporcionado");
                     FacesContext.getCurrentInstance().addMessage(null, fMsg);
-//                } else if(this.contribuyentes.size()==1) {
-//                    this.contribuyente=this.contribuyentes.get(0);
-//                    ok=true;
                 } else {
-                    this.contribuyente=null;
+                    this.contribuyente = null;
                 }
             } else {
-                this.contribuyente=null;
-                this.contribuyentes=dao.obtenerContribuyentes(this.strBuscar);
-                if(this.contribuyentes.isEmpty()) {
+                this.contribuyente = null;
+                this.contribuyentes = dao.obtenerContribuyentes(this.strBuscar);
+                if (this.contribuyentes.isEmpty()) {
                     fMsg.setSeverity(FacesMessage.SEVERITY_INFO);
                     fMsg.setDetail("No se encontraron contribuyentes en la busqueda");
                     FacesContext.getCurrentInstance().addMessage(null, fMsg);
@@ -98,6 +97,47 @@ public class MbBuscarContribuyente implements Serializable {
             FacesContext.getCurrentInstance().addMessage(null, fMsg);
         }
         context.addCallbackParam("okBuscarContribuyente", ok);
+      
+    }
+
+    public Contribuyente buscarRfc() {
+        boolean ok = false;
+        RequestContext context = RequestContext.getCurrentInstance();
+        FacesMessage fMsg = new FacesMessage(FacesMessage.SEVERITY_WARN, "Aviso:", "");
+        try {
+            DAOContribuyentes dao = new DAOContribuyentes();
+            if (this.tipoBuscar.equals("1")) {
+                this.contribuyentes = dao.obtenerContribuyentesRFC(this.strBuscar);
+                if (this.contribuyentes.isEmpty()) {
+                    fMsg.setDetail("No se encontró contribuyente con el RFC proporcionado");
+                    FacesContext.getCurrentInstance().addMessage(null, fMsg);
+                    contribuyente= new Contribuyente();
+                    contribuyente.setRfc(strBuscar);
+                } else {
+                    for (Contribuyente c : contribuyentes) {
+                        this.setContribuyente(c);
+                        break;
+                    }
+                }
+            } else {
+                this.contribuyentes = dao.obtenerContribuyentes(this.strBuscar);
+                if (this.contribuyentes.isEmpty()) {
+                    fMsg.setSeverity(FacesMessage.SEVERITY_INFO);
+                    fMsg.setDetail("No se encontraron contribuyentes en la busqueda");
+                    FacesContext.getCurrentInstance().addMessage(null, fMsg);
+                }
+            }
+        } catch (NamingException ex) {
+            fMsg.setSeverity(FacesMessage.SEVERITY_ERROR);
+            fMsg.setDetail(ex.getMessage());
+            FacesContext.getCurrentInstance().addMessage(null, fMsg);
+        } catch (SQLException ex) {
+            fMsg.setSeverity(FacesMessage.SEVERITY_ERROR);
+            fMsg.setDetail(ex.getErrorCode() + " " + ex.getMessage());
+            FacesContext.getCurrentInstance().addMessage(null, fMsg);
+        }
+        context.addCallbackParam("okBuscarContribuyente", ok);
+        return contribuyente;
     }
 
     public String getTipoBuscar() {
