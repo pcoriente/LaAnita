@@ -650,10 +650,14 @@
                                     <h:outputLabel for="opciones" value="OPCIONES :" style="font-weight: bold; color: red;" />
                                 </p:column>
                                 <p:column >
-                                    <p:selectOneRadio id="opciones" value="#{mbProveedores.mbBuscarContribuyente.tipoBuscar}" style="background-color: #ccc" >
+                                    <p:selectOneRadio id="opciones" 
+                                                      value="#{mbProveedores.mbBuscarContribuyente.tipoBuscar}"
+                                                      style="background-color: #ccc">
                                         <f:selectItem itemLabel="RFC" itemValue="1" />
                                         <f:selectItem itemLabel="Contribuyente" itemValue="2" />
-                                        <p:ajax listener="#{mbProveedores.mbBuscarContribuyente.verCambio()}" update="buscarProveedores" />
+                                        <p:ajax listener="#{mbProveedores.mbBuscarContribuyente.verCambio()}" 
+                                                update="buscarProveedores" 
+                                                process="@this"/>
                                     </p:selectOneRadio>
                                 </p:column>
                                 <p:column >

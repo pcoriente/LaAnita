@@ -73,14 +73,14 @@ public class DAOContribuyentes {
         }
         return idRfc;
     }
-    
+
     public ArrayList<Contribuyente> obtenerContribuyentesCliente() throws SQLException {
         ArrayList<Contribuyente> cs = new ArrayList<Contribuyente>();
         Connection cn = this.ds.getConnection();
         Statement st = cn.createStatement();
-        String strSQL="SELECT c.idContribuyente, contribuyente, cr.idRfc, cr.rfc, c.idDireccion "
+        String strSQL = "SELECT c.idContribuyente, contribuyente, cr.idRfc, cr.rfc, c.idDireccion "
                 + "FROM contribuyentes c "
-                + "inner join contribuyentesrfc cr on cr.idRfc=c.idRfc "
+                + "inner join contribuyentesRfc cr on cr.idRfc=c.idRfc "
                 + "WHERE c.idContribuyente IN (SELECT DISTINCT idContribuyente FROM clientes)";
         try {
             ResultSet rs = st.executeQuery(strSQL);
@@ -99,7 +99,7 @@ public class DAOContribuyentes {
         Statement st = cn.createStatement();
         String strSQL = "Select c.idContribuyente, contribuyente, cr.idRfc, cr.rfc, c.idDireccion "
                 + "from contribuyentes c "
-                + "inner join contribuyentesrfc cr on cr.idRfc=c.idRfc "
+                + "inner join contribuyentesRfc cr on cr.idRfc=c.idRfc "
                 + "where c.contribuyente like '%" + cadena + "%'";
         try {
             ResultSet rs = st.executeQuery(strSQL);
@@ -118,7 +118,7 @@ public class DAOContribuyentes {
         Statement st = cn.createStatement();
         String strSQL = "Select c.idContribuyente, c.contribuyente, cr.idRfc, cr.rfc, c.idDireccion "
                 + "from contribuyentes c "
-                + "inner join contribuyentesrfc cr on cr.idRfc=c.idRfc "
+                + "inner join contribuyentesRfc cr on cr.idRfc=c.idRfc "
                 + "where c.idContribuyente=" + idContribuyente;
         try {
             ResultSet rs = st.executeQuery(strSQL);
@@ -135,9 +135,9 @@ public class DAOContribuyentes {
         ArrayList<Contribuyente> cs = new ArrayList<Contribuyente>();
         Connection cn = this.ds.getConnection();
         Statement st = cn.createStatement();
-        String strSQL = "Select c.idContribuyente, contribuyente, cr.idRfc, cr.rfc, c.idDireccion "
+        String strSQL = "Select c.idContribuyente, contribuyente, cr.idRfc, cr.rfc, c.idDireccion, cr.curp "
                 + "from contribuyentes c "
-                + "inner join contribuyentesrfc cr on cr.idRfc=c.idRfc "
+                + "inner join contribuyentesRfc cr on cr.idRfc=c.idRfc "
                 + "where cr.rfc='" + rfc + "'";
         try {
             ResultSet rs = st.executeQuery(strSQL);
@@ -156,6 +156,7 @@ public class DAOContribuyentes {
         contribuyente.setContribuyente(rs.getString("contribuyente"));
         contribuyente.setIdRfc(rs.getInt("idRfc"));
         contribuyente.setRfc(rs.getString("rfc"));
+        contribuyente.setCurp(rs.getString("curp"));
         contribuyente.setDireccion(new Direccion());
         contribuyente.getDireccion().setIdDireccion(rs.getInt("idDireccion"));
         return contribuyente;
@@ -229,7 +230,6 @@ public class DAOContribuyentes {
             st.executeUpdate("rollback transaction");
             throw ex;
         } finally {
-
         }
     }
 
