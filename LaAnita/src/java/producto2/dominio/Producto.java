@@ -37,10 +37,29 @@ public class Producto {
     @Override
     public String toString() {
         String str=this.articulo.toString();
-        if(this.piezas>1) {
-            str+=" "+this.empaque.toString()+" c/"+Integer.toString(this.piezas);
-            if(this.subProducto.getIdProducto()!=0) {
-                str+=" "+this.subProducto.getEmpaque().getAbreviatura()+" x "+Integer.toString(this.subProducto.getPiezas());
+//        if(this.piezas>1) {
+//            str+=" "+(this.empaque.getAbreviatura().equals("")?this.empaque.toString():this.empaque.getAbreviatura())+" c/"+Integer.toString(this.piezas);
+//            if(this.subProducto.getIdProducto()!=0) {
+//                str+=" ("+this.subProducto.getEmpaque().getAbreviatura()+" x "+Integer.toString(this.subProducto.getPiezas())+")";
+//            }
+//        }
+        if(this.empaque.getIdEmpaque()!=1) {
+            str+=" "+(this.empaque.getAbreviatura().equals("")?this.empaque.toString():this.empaque.getAbreviatura());
+            if(this.piezas!=1) {
+                str+=" c/"+Integer.toString(this.piezas);
+            }
+//            if(this.subProducto.getIdProducto()!=0 && this.subProducto.getEmpaque().getIdEmpaque()!=1) {
+//                str+=" ("+(this.subProducto.getEmpaque().getAbreviatura().equals("")?this.subProducto.getEmpaque():this.subProducto.getEmpaque().getAbreviatura());
+//                if(this.piezas!=1) {
+//                    str+=" x "+Integer.toString(this.subProducto.getPiezas());
+//                }
+//                str+=")";
+//            }
+            if(this.subProducto==null) {
+                str+="";
+            } else {
+//                if(this.subProducto.getIdProducto()!=0) {
+                str+=" "+this.subProducto.toString();
             }
         }
         return str;

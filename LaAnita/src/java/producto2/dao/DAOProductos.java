@@ -41,13 +41,20 @@ public class DAOProductos {
         try {
             st.executeUpdate("BEGIN TRANSACTION");
             
+            int total=0;
             String strSQL="SELECT COUNT(*) AS total FROM empaques WHERE idSubEmpaque="+idProducto;
             ResultSet rs=st.executeQuery(strSQL);
             if(rs.next()) {
-                throw new SQLException("No se puede eliminar, esta siendo utilizado como subProducto");
-            } else {
+                total=rs.getInt("total");
+            }
+            if(total==0) {
+                strSQL="DELETE FROM empaquesUpcs WHERE idProducto="+idProducto;
+                st.executeUpdate(strSQL);
+                
                 strSQL="DELETE FROM empaques WHERE idEmpaque="+idProducto;
                 st.executeUpdate(strSQL);
+            } else {
+                throw new SQLException("No se puede eliminar, esta siendo utilizado como subProducto");
             }
             st.executeUpdate("COMMIT TRANSACTION");
         } catch(SQLException ex) {

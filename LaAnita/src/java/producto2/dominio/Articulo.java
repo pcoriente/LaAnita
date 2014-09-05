@@ -36,6 +36,14 @@ public class Articulo {
         this.impuestoGrupo=new ImpuestoGrupo(0, "");
     }
     
+//    @Override
+//    public String toString() {
+//        return (this.marca.getIdMarca()==0 ? "" : this.marca.toString()+" ")
+//                + this.parte + (this.descripcion.equals("") ? "" : " "+this.descripcion) 
+//                + (this.presentacion.getIdPresentacion()==1 ? "" : " " + this.presentacion.getAbreviatura()) 
+//                + (this.contenido == 0 ? "" : " " + Double.toString(this.contenido))
+//                + (this.contenido == 0 ? " ("+this.unidadMedida.getAbreviatura()+")" : " " + this.unidadMedida.getAbreviatura());
+//    }
     @Override
     public String toString() {
         return (this.marca.getIdMarca()==0 ? "" : this.marca.toString()+" ")

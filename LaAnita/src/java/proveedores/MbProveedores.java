@@ -391,9 +391,10 @@ public class MbProveedores implements Serializable {
         FacesMessage fMsg = new FacesMessage(FacesMessage.SEVERITY_WARN, "Aviso:", "");
         String strContribuyente=Utilerias.Acentos(this.proveedor.getContribuyente().getContribuyente());
         this.proveedor.getContribuyente().setContribuyente(strContribuyente);
-        if(this.proveedor.getNombreComercial().equals("")) {
-            fMsg.setDetail("Se requiere el nombre comercial del proveedor !!");
-        } else if(this.proveedor.getContribuyente().getRfc().equals("")) {
+//        if(this.proveedor.getNombreComercial().equals("")) {
+//            fMsg.setDetail("Se requiere el nombre comercial del proveedor !!");
+//        } else 
+        if(this.proveedor.getContribuyente().getRfc().equals("")) {
             fMsg.setDetail("Se requiere el RFC del contribuyente !!");
         } else if(this.proveedor.getContribuyente().getContribuyente().isEmpty()) {
             fMsg.setDetail("Se requiere el nombre del proveedor !!");   

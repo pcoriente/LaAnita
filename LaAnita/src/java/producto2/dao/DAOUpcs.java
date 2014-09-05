@@ -85,8 +85,8 @@ public class DAOUpcs {
             st.execute("COMMIT TRANSACTION");
         } catch (SQLException ex) {
             st.execute("ROLLBACK TRANSACTION");
-            if(ex.getErrorCode()==2627) {
-                throw new SQLException("Codigo de barras ya existe, no se permite duplicar");
+            if(ex.getErrorCode()==2601) {
+                throw new SQLException("UPC ya existe");
             } else {
                 throw ex;
             }

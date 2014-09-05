@@ -8,6 +8,7 @@ import javax.faces.application.FacesMessage;
 import javax.faces.bean.ManagedProperty;
 import javax.faces.context.FacesContext;
 import javax.naming.NamingException;
+import org.primefaces.context.RequestContext;
 import producto2.dao.DAOProductos;
 import producto2.dominio.Empaque;
 import producto2.dominio.Producto;
@@ -58,6 +59,14 @@ public class FrmProductos implements Serializable {
         this.producto=new Producto();
     }
     
+    public void mttoSubProductos() {
+        this.mbSubProductos.setSubProducto(this.producto.getSubProducto());
+    }
+    
+//    public void grabarSubEmpaque() {
+//        this.mbSubProductos.grabar();
+//    }
+    
     public void grabarCombo() {
         this.mbCombo.grabarCombo(this.producto.getIdProducto());
     }
@@ -74,23 +83,18 @@ public class FrmProductos implements Serializable {
     }
     
     public void grabarUpc() {
+        boolean ok;
         if(this.mbBuscar.getMbUpc().isNueva()) {
-            this.mbBuscar.getMbUpc().agregar();
+            ok=this.mbBuscar.getMbUpc().agregar();
         } else {
-            this.mbBuscar.getMbUpc().modificar();
+            ok=this.mbBuscar.getMbUpc().modificar();
         }
-        this.producto.setUpc(this.mbBuscar.getMbUpc().obtenerUpc(this.mbBuscar.getMbUpc().getUpc().getUpc()));
-        this.mbBuscar.getMbUpc().cargaListaUpcs();
-//            if (this.mbBuscar.getMbUpc().agregar()) {
-//                this.producto.setUpc(this.mbBuscar.getMbUpc().getUpc());
-//                this.mbBuscar.getMbUpc().cargaListaUpcs();
-//            }
-//        } else {
-//            if(this.mbBuscar.getMbUpc().modificar()) {
-//                
-//            }
-//        }
-//        this.producto.setUpc(this.mbBuscar.getMbUpc().o);
+        RequestContext context = RequestContext.getCurrentInstance();
+        if(ok) {
+            this.producto.setUpc(this.mbBuscar.getMbUpc().obtenerUpc(this.mbBuscar.getMbUpc().getUpc().getUpc()));
+            this.mbBuscar.getMbUpc().cargaListaUpcs();
+        }
+        context.addCallbackParam("okUpc", ok);
     }
     
     public void mttoUpc() {
@@ -152,6 +156,8 @@ public class FrmProductos implements Serializable {
             this.producto.setPeso(0);
             this.producto.setVolumen(0);
             this.producto.setDun14("");
+            this.mbBuscar.getMbUpc().nuevo(0);
+            this.mbBuscar.getMbUpc().cargaListaUpcs();
             fMsg.setSeverity(FacesMessage.SEVERITY_INFO);
             fMsg.setDetail("El empaque se ha eliminado con exito");
         } catch (NamingException ex) {
@@ -178,6 +184,7 @@ public class FrmProductos implements Serializable {
                 } else {
                     this.dao.modificar(this.producto);
                 }
+                this.mbSubProductos.cargaListaSubProductos(this.producto.getArticulo().getIdArticulo(), this.producto.getIdProducto());
                 fMsg.setSeverity(FacesMessage.SEVERITY_INFO);
                 fMsg.setDetail("El producto se grabó correctamente !!");
             } catch (NamingException ex) {
@@ -192,7 +199,11 @@ public class FrmProductos implements Serializable {
     }
     
     public void actualizaContenido() {
-        this.producto.setPiezas(1);
+        if(this.producto.getEmpaque().getIdEmpaque()==1) {
+            this.producto.setPiezas(1);
+        } else {
+            this.producto.setPiezas(0);
+        }
         this.producto.setSubProducto(new SubProducto());
     }
     
@@ -200,7 +211,8 @@ public class FrmProductos implements Serializable {
         this.producto=new Producto(this.mbArticulos.getArticulo(), this.mbBuscar.getMbUpc().nuevoLista(0));
         this.mbBuscar.getMbUpc().nuevo(0);
         this.mbBuscar.getMbUpc().cargaListaUpcs();
-        this.mbSubProductos.cargaListaSubProductos();
+        this.mbSubProductos.setIdArticulo(this.mbArticulos.getArticulo().getIdArticulo());
+        this.mbSubProductos.cargaListaSubProductos(this.mbArticulos.getArticulo().getIdArticulo(), 0);
     }
     
     public String terminar() {
