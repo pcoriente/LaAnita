@@ -651,7 +651,7 @@
                         </p:panelGrid>
                         <p:dataTable id="listaArticulos" value="#{frmProductos.mbArticulos.mbBuscar.articulos}" 
                                      filteredValue="#{frmProductos.mbArticulos.mbBuscar.filtrados}"
-                                     var="art" scrollable="true" scrollHeight="200" style="width: 800px;"
+                                     var="art" scrollable="true" scrollHeight="200" style="width: 900px;"
                                      rowKey="#{art.idArticulo}" selectionMode="single" selection="#{frmProductos.mbArticulos.mbBuscar.articulo}" >
                             <p:ajax event = "rowSelect" update="btnSelArticulo" />
 
@@ -659,22 +659,22 @@
                                 Seleccione un articulo  
                             </f:facet>
 
-                            <p:column id="idListaTipos" headerText="Tipo Inventario" style="width: 150px;" 
+                            <p:column id="idListaTipos" headerText="Tipo Inventario" width="120" 
                                       filterBy="#{art.tipo}" filterOptions="#{frmProductos.mbArticulos.mbBuscar.arrayTipos}" filterMatchMode="exact" >
                                 <h:outputText value="#{art.tipo}" />
                             </p:column>
 
-                            <p:column id="idListaGrupos" headerText="Grupo" style="width: 150px;" 
+                            <p:column id="idListaGrupos" headerText="Grupo" width="120"
                                       filterBy="#{art.grupo}" filterOptions="#{frmProductos.mbArticulos.mbBuscar.arrayGrupos}" filterMatchMode="exact" >
                                 <h:outputText value="#{art.grupo}" />
                             </p:column>
 
-                            <p:column id="idListaSubGrupos" headerText="SubGrupo" style="width: 150px;" 
+                            <p:column id="idListaSubGrupos" headerText="SubGrupo" width="120"
                                       filterBy="#{art.subGrupo}" filterOptions="#{frmProductos.mbArticulos.mbBuscar.arraySubGrupos}" filterMatchMode="exact" >
                                 <h:outputText value="#{art.subGrupo}" />
                             </p:column>
 
-                            <p:column headerText="Articulo" style="width: 250px;" >
+                            <p:column headerText="Articulo" >
                                 <h:outputText value="#{art.articulo}" />
                             </p:column>
                             <f:facet name="footer">
