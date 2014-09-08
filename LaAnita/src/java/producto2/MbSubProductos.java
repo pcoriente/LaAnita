@@ -52,7 +52,9 @@ public class MbSubProductos implements Serializable {
     public void grabar() {
 //        boolean ok=false;
         FacesMessage fMsg = new FacesMessage(FacesMessage.SEVERITY_WARN, "Aviso:", "");
-        if(this.subProducto.getEmpaque().getIdEmpaque()==0) {
+        if(this.subProducto.getEmpaque()==null) {
+            fMsg.setDetail("El empaque es nulo !!");
+        } else if(this.subProducto.getEmpaque().getIdEmpaque()==0) {
             fMsg.setDetail("Se requiere un empaque !!");
         } else if (this.subProducto.getPiezas() < 0) {
             fMsg.setDetail("Las piezas deben ser mayor o igual que cero !!");

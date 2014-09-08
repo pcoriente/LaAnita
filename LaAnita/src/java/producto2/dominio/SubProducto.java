@@ -28,13 +28,14 @@ public class SubProducto {
 
     @Override
     public String toString() {
-        String str=this.empaque.getAbreviatura().equals("")?this.empaque.getEmpaque():this.empaque.getAbreviatura();
+        String str="";
         if(this.empaque.getIdEmpaque()!=1) {
             if(this.piezas > 1) {
-                str+=" x " + Integer.toString(this.piezas);
+                str+=Integer.toString(this.piezas)+"/";
             }
-            str+=this.subSubProducto==null?"":(" "+this.subSubProducto.toString());
+            str+=this.empaque.getAbreviatura().equals("")?this.empaque.getEmpaque():this.empaque.getAbreviatura();
         }
+        str+=this.subSubProducto==null?"":(" "+this.subSubProducto.toString());
         return str;
     }
 

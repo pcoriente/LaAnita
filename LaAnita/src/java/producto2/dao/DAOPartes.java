@@ -72,7 +72,16 @@ public class DAOPartes {
         Connection cn=ds.getConnection();
         Statement st=cn.createStatement();
         try {
+            st.executeUpdate("BEGIN TRANSACTION");
+            ResultSet rs=st.executeQuery("SELECT idProducto FROM productos WHERE idParte="+idParte);
+            if(rs.next()) {
+                throw new SQLException("No se puede eliminar, esta en otro producto !");
+            }
             st.executeUpdate("DELETE FROM productosPartes WHERE idParte="+idParte);
+            st.executeUpdate("COMMIT TRANSACTION");
+        } catch(SQLException ex) {
+            st.executeUpdate("ROLLBACK TRANSACTION");
+            throw(ex);
         } finally {
             cn.close();
         }
@@ -106,7 +115,10 @@ public class DAOPartes {
     
     public ArrayList<Parte> completePartes(String strParte) throws SQLException {
         ArrayList<Parte> partes=new ArrayList<Parte>();
-        String strSQL="SELECT idParte, parte FROM productosPartes WHERE parte like '%"+strParte+"%' ORDER BY parte";
+        String strSQL="SELECT idParte, parte "
+                + "FROM productosPartes "
+                + "WHERE parte like '%"+strParte+"%' "
+                + "ORDER BY parte";
         Connection cn=ds.getConnection();
         Statement st=cn.createStatement();
         try {

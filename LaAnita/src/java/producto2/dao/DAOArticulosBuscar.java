@@ -95,6 +95,22 @@ public class DAOArticulosBuscar {
         return articulos;
     }
     
+    public ArrayList<Articulo> obtenerArticulos(Parte parte) throws SQLException {
+        ArrayList<Articulo> articulos=new ArrayList<Articulo>();
+        String strSQL=sqlArticulo() +" WHERE a.idParte IN (SELECT idParte FROM "+this.tabla+"Partes WHERE parte like '%"+parte.getParte()+"%')";
+        Connection cn=ds.getConnection();
+        Statement st=cn.createStatement();
+        try {
+            ResultSet rs=st.executeQuery(strSQL);
+            while(rs.next()) {
+                articulos.add(construir(rs));
+            }
+        } finally {
+            cn.close();
+        }
+        return articulos;
+    }
+    
     public ArrayList<Articulo> obtenerArticulos(int idParte) throws SQLException {
         ArrayList<Articulo> articulos=new ArrayList<Articulo>();
         String strSQL=sqlArticulo() +" WHERE a.idParte="+idParte;

@@ -59,6 +59,13 @@ public class FrmProductos implements Serializable {
         this.producto=new Producto();
     }
     
+    public void eliminarParte() {
+        this.mbArticulos.getMbParte().setParte(this.mbArticulos.getArticulo().getParte());
+        if(this.mbArticulos.getMbParte().eliminar()) {
+            this.mbArticulos.getArticulo().setParte(this.mbArticulos.getMbParte().getParte());
+        }
+    }
+    
     public void mttoSubProductos() {
         this.mbSubProductos.setSubProducto(this.producto.getSubProducto());
     }
