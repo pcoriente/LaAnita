@@ -192,21 +192,13 @@ public class MbAgentes implements Serializable {
                                                 FacesContext.getCurrentInstance().addMessage(null, fMsg);
                                             }
                                         } else {
-                                            try {
-                                                DAOContactos daoContactos = new DAOContactos();
-                                                daoContactos.modificar(agente.getContacto());
-                                                DaoAgentes daoAgente = new DaoAgentes();
-                                                daoAgente.actualizarAgente(agente, mbContribuyente.getContribuyente());
-                                                this.setActualizar(0);
-//                                                seleccionListaAgentes=null;
-                                                ok = true;
-                                                fMsg = new FacesMessage(FacesMessage.SEVERITY_INFO, "Aviso:", "");
-                                                fMsg.setDetail("Exito!! Agente Actualizado");
-                                                FacesContext.getCurrentInstance().addMessage(null, fMsg);
-                                            } catch (NamingException ex) {
-                                                Mensajes.mensajeError(ex.getMessage());
-                                                Logger.getLogger(MbAgentes.class.getName()).log(Level.SEVERE, null, ex);
-                                            }
+                                            DaoAgentes daoAgente = new DaoAgentes();
+                                            daoAgente.actualizarAgente(agente, mbContribuyente.getContribuyente());
+                                            this.setActualizar(0);
+                                            ok = true;
+                                            fMsg = new FacesMessage(FacesMessage.SEVERITY_INFO, "Aviso:", "");
+                                            fMsg.setDetail("Exito!! Agente Actualizado");
+                                            FacesContext.getCurrentInstance().addMessage(null, fMsg);
                                         }
                                     } else {
                                         ok = false;
@@ -216,8 +208,16 @@ public class MbAgentes implements Serializable {
                                 }
                                 context.addCallbackParam("okContribuyente", ok);
                             } catch (SQLException ex) {
-                                Mensajes.mensajeError(ex.getMessage());
-                                Logger.getLogger(MbAgentes.class.getName()).log(Level.SEVERE, null, ex);
+                                ok = false;
+                                int errorCode = ex.getErrorCode();
+                                switch (errorCode) {
+                                    case 2601:
+                                        Mensajes.mensajeAlert("Este Contribuyente ya esta dado de alta. Implemente el buscador");
+                                        break;
+                                    default:
+                                        Mensajes.mensajeError(ex.getMessage());
+                                        break;
+                                }
                             }
                         }
                     }
@@ -226,7 +226,7 @@ public class MbAgentes implements Serializable {
         }
         mbContactos = new MbContactos();
         seleccionListaAgentes = null;
-        context.addCallbackParam("okContribuyente", ok);
+        context.addCallbackParam("ok", ok);
     }
 
     public boolean validarAgente() {

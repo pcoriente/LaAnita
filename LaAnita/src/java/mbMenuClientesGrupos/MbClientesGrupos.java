@@ -61,7 +61,6 @@ public class MbClientesGrupos implements Serializable {
     }
 
     public void guaradarClientesTienda() {
-
     }
 
     public boolean validar() {
@@ -292,6 +291,7 @@ public class MbClientesGrupos implements Serializable {
         this.mbContactos.cargaContactos(4, clientesGrupos.getIdGrupoCte());
         mbContactos.getContacto().setIdContacto(0);
         lblNuevoContacto = ("ui-icon-document");
+        mbFormatos.setLstFormatos(null);
         mbFormatos.cargarListaFormatos(clientesGrupos.getIdGrupoCte());
         actualizar = true;
     }
@@ -410,5 +410,4 @@ public class MbClientesGrupos implements Serializable {
     public void setMbFormatos(MbFormatos mbFormatos) {
         this.mbFormatos = mbFormatos;
     }
-
 }

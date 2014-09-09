@@ -567,7 +567,7 @@
                         }
                     }
                     function nuevoContribuyente(xhr, status, args) {
-                        if (args.validationFailed || !args.okContribuyente) {
+                        if (args.validationFailed || !args.ok) {
                             dlg.jq.effect("shake", {times: 5}, 100);
                         }
                         else {
