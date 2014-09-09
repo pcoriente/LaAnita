@@ -8,9 +8,16 @@ public class SubProducto {
     private int idProducto;
     private int piezas;
     private Empaque empaque;
+    private SubProducto subSubProducto;
 
     public SubProducto() {
         this.empaque=new Empaque();
+//        this.subProducto=new SubProducto(0,0,new Empaque());
+    }
+    
+    public SubProducto(int idProducto) {
+        this.idProducto = idProducto;
+        this.empaque = new Empaque();
     }
 
     public SubProducto(int idProducto, int piezas, Empaque empaque) {
@@ -21,10 +28,14 @@ public class SubProducto {
 
     @Override
     public String toString() {
-        String str=this.empaque.toString();
-        if(this.piezas > 1) {
-            str+=" x " + Integer.toString(this.piezas);
+        String str="";
+        if(this.empaque.getIdEmpaque()!=1) {
+            if(this.piezas > 1) {
+                str+=Integer.toString(this.piezas)+"/";
+            }
+            str+=this.empaque.getAbreviatura().equals("")?this.empaque.getEmpaque():this.empaque.getAbreviatura();
         }
+        str+=this.subSubProducto==null?"":(" "+this.subSubProducto.toString());
         return str;
     }
 
@@ -49,6 +60,10 @@ public class SubProducto {
         }
         return true;
     }
+    
+    public int piezasTotales() {
+        return this.piezas*(this.subSubProducto==null?1:this.subSubProducto.piezasTotales());
+    }
 
     public int getIdProducto() {
         return idProducto;
@@ -72,5 +87,13 @@ public class SubProducto {
 
     public void setEmpaque(Empaque empaque) {
         this.empaque = empaque;
+    }
+
+    public SubProducto getSubSubProducto() {
+        return subSubProducto;
+    }
+
+    public void setSubSubProducto(SubProducto subSubProducto) {
+        this.subSubProducto = subSubProducto;
     }
 }

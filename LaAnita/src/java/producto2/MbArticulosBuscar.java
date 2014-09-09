@@ -101,7 +101,8 @@ public class MbArticulosBuscar implements Serializable {
                 ArrayList<SubGrupo> lstSubGrupos = new ArrayList<SubGrupo>();
                 ArrayList<Articulo> lstArticulos;
                 if(this.tipoBuscar.equals("2")) {
-                    lstArticulos=this.dao.obtenerArticulos(this.mbParte.getParte().getIdParte());
+//                    lstArticulos=this.dao.obtenerArticulos(this.mbParte.getParte().getIdParte());
+                    lstArticulos=this.dao.obtenerArticulos(this.mbParte.getParte());
                 } else {
                     lstArticulos=this.dao.obtenerArticulos(this.strBuscar);
                 }

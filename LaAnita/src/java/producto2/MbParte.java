@@ -57,8 +57,10 @@ public class MbParte implements Serializable {
         RequestContext context = RequestContext.getCurrentInstance();
         FacesMessage fMsg = new FacesMessage(FacesMessage.SEVERITY_ERROR, "Aviso:", "eliminar: mbParte");
         try {
-            this.dao=new DAOPartes();
-            this.dao.eliminar(this.parte.getIdParte());
+            if(this.parte.getIdParte()!=0) {
+                this.dao=new DAOPartes();
+                this.dao.eliminar(this.parte.getIdParte());
+            }
             this.parte=new Parte();
             ok=true;
         } catch (NamingException ex) {

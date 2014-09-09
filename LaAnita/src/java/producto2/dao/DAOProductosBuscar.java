@@ -126,7 +126,7 @@ public class DAOProductosBuscar {
     
     public ArrayList<TOProducto> obtenerProductos(int idArticulo) throws SQLException {
         ArrayList<TOProducto> productos=new ArrayList<TOProducto>();
-        String strSQL=sqlEmpaque()+ " WHERE e.idProducto="+idArticulo;
+        String strSQL=sqlEmpaque()+ " WHERE e.idProducto="+idArticulo+" ORDER BY cod_pro";
         Connection cn=ds.getConnection();
         Statement st=cn.createStatement();
         try {
@@ -172,6 +172,22 @@ public class DAOProductosBuscar {
         return to;
     }
     
+//    public TOProducto construir(ResultSet rs) throws SQLException {
+//        TOProducto to=new TOProducto();
+//        to.setIdProducto(rs.getInt("idEmpaque"));
+//        to.setCod_pro(rs.getString("cod_pro"));
+//        to.setIdArticulo(rs.getInt("idProducto"));
+//        to.setPiezas(rs.getInt("piezas"));
+//        Empaque empaque=new Empaque(rs.getInt("idUnidadEmpaque"), rs.getString("unidadEmpaque"), rs.getString("abreviaturaEmpaque"));
+//        to.setEmpaque(empaque);
+//        SubProducto sub=new SubProducto(rs.getInt("idSubEmpaque"), rs.getInt("piezasSubEmpaque"), new Empaque(rs.getInt("idUnidadSubEmpaque"), rs.getString("unidadSubEmpaque"), rs.getString("abreviaturaSubEmpaque")));
+//        to.setSubProducto(sub);
+//        to.setDun14(rs.getString("dun14"));
+//        to.setPeso(rs.getDouble("peso"));
+//        to.setVolumen(rs.getDouble("volumen"));
+//        return to;
+//    }
+    
     public TOProducto construir(ResultSet rs) throws SQLException {
         TOProducto to=new TOProducto();
         to.setIdProducto(rs.getInt("idEmpaque"));
@@ -180,7 +196,7 @@ public class DAOProductosBuscar {
         to.setPiezas(rs.getInt("piezas"));
         Empaque empaque=new Empaque(rs.getInt("idUnidadEmpaque"), rs.getString("unidadEmpaque"), rs.getString("abreviaturaEmpaque"));
         to.setEmpaque(empaque);
-        SubProducto sub=new SubProducto(rs.getInt("idSubEmpaque"), rs.getInt("piezas"), new Empaque(rs.getInt("idUnidadSubEmpaque"), rs.getString("unidadSubEmpaque"), rs.getString("abreviaturaSubEmpaque")));
+        SubProducto sub=new SubProducto(rs.getInt("idSubEmpaque"));
         to.setSubProducto(sub);
         to.setDun14(rs.getString("dun14"));
         to.setPeso(rs.getDouble("peso"));
@@ -188,16 +204,25 @@ public class DAOProductosBuscar {
         return to;
     }
     
-    private String sqlEmpaque() {
+//    private String sqlEmpaque() {
+//        String strSQL=""
+//                + "SELECT e.idEmpaque, e.cod_pro, e.idProducto, e.piezas, e.dun14, e.peso, e.volumen"
+//                + "     , u.idUnidad as idUnidadEmpaque, u.unidad as unidadEmpaque, u.abreviatura as abreviaturaEmpaque"
+//                + "     , isnull(se.idEmpaque, 0) as idSubEmpaque, se.piezas as piezasSubEmpaque"
+//                + "     , su.idUnidad as idUnidadSubEmpaque, su.unidad as unidadSubEmpaque, su.abreviatura as abreviaturaSubEmpaque "
+//                + "FROM empaques e "
+//                + "INNER JOIN empaquesUnidades u ON u.idUnidad=e.idUnidadEmpaque "
+//                + "LEFT JOIN empaques se ON se.idEmpaque=e.idSubEmpaque "
+//                + "LEFT JOIN empaquesUnidades su ON su.idUnidad=se.idUnidadEmpaque";
+//        return strSQL;
+//    }
+    
+     private String sqlEmpaque() {
         String strSQL=""
-                + "SELECT e.idEmpaque, e.cod_pro, e.idProducto, e.piezas, e.dun14, e.peso, e.volumen"
-                + "     , u.idUnidad as idUnidadEmpaque, u.unidad as unidadEmpaque, u.abreviatura as abreviaturaEmpaque"
-                + "     , isnull(se.idEmpaque, 0) as idSubEmpaque, se.piezas as piezasSubEmpaque"
-                + "     , su.idUnidad as idUnidadSubEmpaque, su.unidad as unidadSubEmpaque, su.abreviatura as abreviaturaSubEmpaque "
+                + "SELECT e.idEmpaque, e.cod_pro, e.idProducto, e.piezas, e.idSubEmpaque, e.dun14, e.peso, e.volumen"
+                + "     , u.idUnidad as idUnidadEmpaque, u.unidad as unidadEmpaque, u.abreviatura as abreviaturaEmpaque "
                 + "FROM empaques e "
-                + "INNER JOIN empaquesUnidades u ON u.idUnidad=e.idUnidadEmpaque "
-                + "LEFT JOIN empaques se ON se.idEmpaque=e.idSubEmpaque "
-                + "LEFT JOIN empaquesUnidades su ON su.idUnidad=se.idUnidadEmpaque";
+                + "INNER JOIN empaquesUnidades u ON u.idUnidad=e.idUnidadEmpaque";
         return strSQL;
     }
 }

@@ -93,10 +93,10 @@ public class MbUpc implements Serializable {
         return u;
     }
     
-    public void modificar() {
+    public boolean modificar() {
         boolean ok = false;
         FacesMessage fMsg = new FacesMessage(FacesMessage.SEVERITY_ERROR, "Aviso:", "modificar: mbUpc");
-        RequestContext context = RequestContext.getCurrentInstance();
+//        RequestContext context = RequestContext.getCurrentInstance();
         try {
             this.dao=new DAOUpcs();
             this.dao.modificar(this.upc);
@@ -109,13 +109,14 @@ public class MbUpc implements Serializable {
         if(!ok) {
             FacesContext.getCurrentInstance().addMessage(null, fMsg);
         }
-        context.addCallbackParam("okUpc", ok);
+//        context.addCallbackParam("okUpc", ok);
+        return ok;
     }
     
-    public void agregar() {
+    public boolean agregar() {
         boolean ok = false;
         FacesMessage fMsg = new FacesMessage(FacesMessage.SEVERITY_ERROR, "Aviso:", "agregar: mbUpc");
-        RequestContext context = RequestContext.getCurrentInstance();
+//        RequestContext context = RequestContext.getCurrentInstance();
         try {
             if(this.upc.getUpc().equals("")) {
                 fMsg.setSeverity(FacesMessage.SEVERITY_WARN);
@@ -134,7 +135,8 @@ public class MbUpc implements Serializable {
         if(!ok) {
             FacesContext.getCurrentInstance().addMessage(null, fMsg);
         }
-        context.addCallbackParam("okUpc", ok);
+//        context.addCallbackParam("okUpc", ok);
+        return ok;
     }
     
     public void cargaListaUpcs() {
