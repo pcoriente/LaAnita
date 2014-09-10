@@ -5,6 +5,7 @@ import almacenes.to.TOAlmacenJS;
 import entradas.dominio.Comprobante;
 import java.util.Date;
 import monedas.Moneda;
+import ventas.dominio.VentaComprobante;
 
 /**
  *
@@ -16,7 +17,7 @@ public class Venta {
     private int folio;
     //private int folioAlmacen;
     private TOAlmacenJS almacen;
-    private Comprobante comprobante;
+    private VentaComprobante comprobante;
     private int idImpuestoZona;
     private Moneda moneda;
     private double tipoCambio;
@@ -31,7 +32,7 @@ public class Venta {
     
     public Venta() {
         this.almacen=new TOAlmacenJS();
-        this.comprobante=new Comprobante();
+        this.comprobante=new VentaComprobante();
         this.moneda=new Moneda();
         this.tipoCambio=1.00;
         this.fecha=new Date();
@@ -69,19 +70,26 @@ public class Venta {
         this.folio = folio;
     }
 
-//    public int getFolioAlmacen() {
-//        return folioAlmacen;
-//    }
-//
-//    public void setFolioAlmacen(int folioAlmacen) {
-//        this.folioAlmacen = folioAlmacen;
-//    }
-
-    public Comprobante getComprobante() {
+    //    public int getFolioAlmacen() {
+    //        return folioAlmacen;
+    //    }
+    //
+    //    public void setFolioAlmacen(int folioAlmacen) {
+    //        this.folioAlmacen = folioAlmacen;
+    //    }
+    //    public Comprobante getComprobante() {
+    //        return comprobante;
+    //    }
+    //
+    //    public void setComprobante(Comprobante comprobante) {
+    //        this.comprobante = comprobante;
+    //    }
+    
+    public VentaComprobante getComprobante() {
         return comprobante;
     }
 
-    public void setComprobante(Comprobante comprobante) {
+    public void setComprobante(VentaComprobante comprobante) {
         this.comprobante = comprobante;
     }
 

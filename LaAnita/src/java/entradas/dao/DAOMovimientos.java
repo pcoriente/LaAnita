@@ -1,6 +1,7 @@
 package entradas.dao;
 
 import entradas.dominio.MovimientoProducto;
+import entradas.to.TOComprobante;
 import entradas.to.TOMovimiento;
 import entradas.to.TOMovimientoDetalle;
 import impuestos.dominio.ImpuestosProducto;
@@ -499,9 +500,9 @@ public class DAOMovimientos {
         return cantidad;
     }
     
-    public int agregarMovimientoRelacionado(TOMovimiento to) throws SQLException {
-        int idMovto=0;
-        int idMovtoAlmacen=0;
+    public int agregarMovimientoRelacionado(TOMovimiento to, TOComprobante toC) throws SQLException {
+        int idMovto, idMovtoAlmacen, idComprobante;
+        
         Connection cn=this.ds.getConnection();
         Statement st=cn.createStatement();
         String strSQL;
@@ -510,15 +511,26 @@ public class DAOMovimientos {
             strSQL="INSERT INTO movimientos (idTipo, idCedis, idEmpresa, idAlmacen, folio, idComprobante, idImpuestoZona, desctoComercial, desctoProntoPago, fecha, idUsuario, idMoneda, tipoCambio, status) "
                     + "VALUES("+to.getIdTipo()+", "+to.getIdCedis()+", "+to.getIdEmpresa()+", "+to.getIdAlmacen()+", 0, 0, 0, 0, 0, GETDATE(), "+this.idUsuario+", 1, 1, 0)";
             st.executeUpdate(strSQL);
-            
+            idMovto=0;
             ResultSet rs=st.executeQuery("SELECT @@IDENTITY AS idMovto");
             if(rs.next()) {
                 idMovto=rs.getInt("idMovto");
             }
-            strSQL="INSERT INTO movimientosAlmacen (idTipo, idCedis, idEmpresa, idAlmacen, folio, idComprobante, fecha, idUsuario, status) "
-                            + "VALUES ("+to.getIdTipo()+", "+to.getIdCedis()+", "+to.getIdEmpresa()+", "+to.getIdAlmacen()+", 0, 0, GETDATE(), "+this.idUsuario+", 0)";
+            strSQL="INSERT INTO comprobantes (idAlmacen, idProveedor, tipoComprobante, remision, serie, numero, idUsuario, fecha, statusOficina, statusAlmacen, propietario) "
+                    + "VALUES ("+toC.getIdAlmacen()+", "+toC.getIdProveedor()+", 0, '"+idMovto+"', '', '', "+this.idUsuario+", GETDATE(), 0, 0, "+this.idUsuario+")";
+            st.executeUpdate(strSQL);
+            idComprobante=0;
+            rs=st.executeQuery("SELECT @@IDENTITY AS idComprobante");
+            if(rs.next()) {
+                idComprobante=rs.getInt("idComprobante");
+            }
+            strSQL="UPDATE movimientos SET idComprobante="+idComprobante+" WHERE idMovto="+idMovto;
             st.executeUpdate(strSQL);
             
+            strSQL="INSERT INTO movimientosAlmacen (idTipo, idCedis, idEmpresa, idAlmacen, folio, idComprobante, fecha, idUsuario, status) "
+                            + "VALUES ("+to.getIdTipo()+", "+to.getIdCedis()+", "+to.getIdEmpresa()+", "+to.getIdAlmacen()+", 0, "+idComprobante+", GETDATE(), "+this.idUsuario+", 0)";
+            st.executeUpdate(strSQL);
+            idMovtoAlmacen=0;
             rs=st.executeQuery("SELECT @@IDENTITY AS idMovto");
             if(rs.next()) {
                 idMovtoAlmacen=rs.getInt("idMovto");
@@ -1067,14 +1079,13 @@ public class DAOMovimientos {
         try {
             st.executeUpdate("BEGIN TRANSACTION");
             
-            folio=0;
+            folio=1;
             strSQL="SELECT folio FROM movimientosFolios WHERE idAlmacen="+solicitud.getIdAlmacen()+" AND idTipo=35";
             rs=st.executeQuery(strSQL);
             if(rs.next()) {
                 folio=rs.getInt("folio");
                 strSQL="UPDATE movimientosFolios SET folio=folio+1 WHERE idAlmacen="+solicitud.getIdAlmacen()+" AND idTipo=35";
             } else {
-                folio=1;
                 strSQL="INSERT INTO movimientosFolios (idAlmacen, idTipo, folio) VALUES ("+solicitud.getIdAlmacen()+", 35, 2)";
             }
             st.executeUpdate(strSQL);
@@ -1099,14 +1110,13 @@ public class DAOMovimientos {
             strSQL="UPDATE movimientos SET idComprobante="+idComprobante+" WHERE idMovto="+idMovto;
             st.executeUpdate(strSQL);
             
-            int folioAlmacen=0;
+            int folioAlmacen=1;
             strSQL="SELECT folio FROM movimientosFoliosAlmacen WHERE idAlmacen="+solicitud.getIdAlmacen()+" AND idTipo=35";
             rs=st.executeQuery(strSQL);
             if(rs.next()) {
                 folioAlmacen=rs.getInt("folio");
                 strSQL="UPDATE movimientosFoliosAlmacen SET folio=folio+1 WHERE idAlmacen="+solicitud.getIdAlmacen()+" AND idTipo=35";
             } else {
-                folioAlmacen=1;
                 strSQL="INSERT INTO movimientosFoliosAlmacen (idAlmacen, idTipo, folio) VALUES ("+solicitud.getIdAlmacen()+", 35, 2)";
             }
             st.executeUpdate(strSQL);
@@ -1274,14 +1284,13 @@ public class DAOMovimientos {
             } else {
                 throw new SQLException("No se encontro el comprobante");
             }
-            int folio=0;
+            int folio=1;
             strSQL="SELECT folio FROM movimientosFoliosAlmacen WHERE idAlmacen="+m.getIdAlmacen()+" AND idTipo=1";
             rs=st.executeQuery(strSQL);
             if(rs.next()) {
                 folio=rs.getInt("folio");
                 strSQL="UPDATE movimientosFoliosAlmacen SET folio=folio+1 WHERE idAlmacen="+m.getIdAlmacen()+" AND idTipo=1";
             } else {
-                folio=1;
                 strSQL="INSERT INTO movimientosFoliosAlmacen (idAlmacen, idTipo, folio) VALUES ("+m.getIdAlmacen()+", 1, 2)";
             }
             st.executeUpdate(strSQL);
@@ -1404,14 +1413,13 @@ public class DAOMovimientos {
                 throw new SQLException("No se encontro el comprobante");
             }
             if(m.getIdMovto()==0) {
-                folio=0;
+                folio=1;
                 nueva=true;
                 rs=st.executeQuery("SELECT folio FROM movimientosFolios WHERE idAlmacen="+m.getIdAlmacen()+" AND idTipo=1");
                 if(rs.next()) {
                     folio=rs.getInt("folio");
                     strSQL="UPDATE movimientosFolios SET folio=folio+1 WHERE idAlmacen="+m.getIdAlmacen()+" AND idTipo=1";
                 } else {
-                    folio=1;
                     strSQL="INSERT INTO movimientosFolios (idAlmacen, idTipo, folio) VALUES ("+m.getIdAlmacen()+", 1, 2)";
                 }
                 st.executeUpdate(strSQL);

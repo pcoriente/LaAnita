@@ -5,6 +5,7 @@
 package mbMenuClientesGrupos;
 
 import Message.Mensajes;
+import clientesListas.dominio.ClientesFormatos;
 import contactos.MbContactos;
 import contactos.dao.DAOContactos;
 import contactos.dominio.Contacto;
@@ -59,6 +60,11 @@ public class MbClientesGrupos implements Serializable {
             cargarListaGruposClientes();
         }
     }
+    
+    public void inicializar() {
+        this.mbContactos=new MbContactos();
+        lstClientesGrupos=null;
+    }
 
     public void guaradarClientesTienda() {
 
@@ -85,6 +91,9 @@ public class MbClientesGrupos implements Serializable {
     }
 
     public ArrayList<ClientesGrupos> getLstClientesGrupos() {
+        if(this.lstClientesGrupos==null) {
+            this.cargarListaGruposClientes();
+        }
         return lstClientesGrupos;
     }
 
@@ -176,6 +185,7 @@ public class MbClientesGrupos implements Serializable {
             cargarListaGruposClientes();
         }
         clienteGrupoSeleccionado = null;
+//        mbContactos.getMbTelefonos().getTelefono().setTipo(new TelefonoTipo(false));
     }
 
     public void cambiarIconoTelefono() {
@@ -195,6 +205,7 @@ public class MbClientesGrupos implements Serializable {
             this.mbContactos.getMbTelefonos().grabar(this.mbContactos.getContacto().getIdContacto());
             this.mbContactos.getMbTelefonos().cargaTelefonos(this.mbContactos.getContacto().getIdContacto());
             lblNuevoTelefono = "ui-icon-pencil";
+//            this.mbContactos.getMbTelefonos().setTelefono(new Telefono());
         }
     }
 
@@ -233,6 +244,7 @@ public class MbClientesGrupos implements Serializable {
     public void deseleccionar() {
         this.setActualizar(false);
         clienteGrupoSeleccionado = null;
+//        mbContactos= new MbContactos();
     }
 
     public void informacionTipo() {
@@ -297,27 +309,35 @@ public class MbClientesGrupos implements Serializable {
     }
 
     public ArrayList<SelectItem> getItemsClientesGrupos() {
-        if (itemsClientesGrupos == null) {
-            try {
-                ArrayList<ClientesGrupos> lstClientes = new ArrayList<ClientesGrupos>();
-                DAOClientesGrupo dao = new DAOClientesGrupo();
-                lstClientes = dao.dameListaClientesGrupos();
-                ClientesGrupos clientes = new ClientesGrupos();
-                clientes.setIdGrupoCte(0);
-                clientes.setGrupoCte("Nuevo Cliente Grupo");
-                itemsClientesGrupos = new ArrayList<SelectItem>();
-                itemsClientesGrupos.add(new SelectItem(clientes, clientes.getGrupoCte()));
-                for (ClientesGrupos cl : lstClientes) {
-                    SelectItem select = new SelectItem(cl, cl.getGrupoCte());
-                    itemsClientesGrupos.add(select);
-                }
-            } catch (NamingException ex) {
-                Logger.getLogger(MbClientesGrupos.class.getName()).log(Level.SEVERE, null, ex);
-            } catch (SQLException ex) {
-                Logger.getLogger(MbClientesGrupos.class.getName()).log(Level.SEVERE, null, ex);
-            }
+        if (this.itemsClientesGrupos == null) {
+            cargaListaClientesGrupos();
         }
-        return itemsClientesGrupos;
+        return this.itemsClientesGrupos;
+    }
+    
+    public void cargaListaClientesGrupos() {
+        this.itemsClientesGrupos = new ArrayList<SelectItem>();
+        ClientesGrupos clientes = new ClientesGrupos();
+        clientes.setIdGrupoCte(0);
+        clientes.setGrupoCte("Nuevo Cliente Grupo");
+
+        this.itemsClientesGrupos.add(new SelectItem(clientes, clientes.getGrupoCte()));
+        for (ClientesGrupos cl : this.getLstClientesGrupos()) {
+            this.itemsClientesGrupos.add(new SelectItem(cl, cl.getGrupoCte()));
+        }
+    }
+    
+    public ClientesGrupos obtenerClienteGpo(int idClienteGpo) {
+        ClientesGrupos gpo=null;
+        try {
+            DAOClientesGrupo daoClientes = new DAOClientesGrupo();
+            gpo = daoClientes.dameClientesGrupo(idClienteGpo);
+        } catch (NamingException ex) {
+            Mensajes.mensajeError(ex.getMessage());
+        } catch (SQLException ex) {
+            Mensajes.mensajeError(ex.getErrorCode() + " " + ex.getMessage());
+        }
+        return gpo;
     }
 
     public void guardarFormato() throws NamingException {

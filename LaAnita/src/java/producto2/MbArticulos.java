@@ -213,6 +213,7 @@ public class MbArticulos implements Serializable {
         try {
             this.dao=new DAOArticulos();
             this.dao.eliminar(this.articulo.getIdArticulo());
+            this.articulo=new Articulo();
             ok=true;
         } catch (NamingException ex) {
             fMsg.setSeverity(FacesMessage.SEVERITY_ERROR);

@@ -102,11 +102,21 @@ public class DAOPartes {
         Connection cn=ds.getConnection();
         Statement st=cn.createStatement();
         try {
-            st.executeUpdate("INSERT INTO productosPartes (parte) VALUES ('"+parte+"')");
-            ResultSet rs=st.executeQuery("SELECT MAX(idParte) AS idParte FROM productosPartes");
+            st.executeUpdate("BEGIN TRANSACTION");
+            ResultSet rs=st.executeQuery("SELECT idParte FROM productosPartes WHERE parte='"+parte+"'");
             if(rs.next()) {
                 idParte=rs.getInt("idParte");
+            } else {
+                st.executeUpdate("INSERT INTO productosPartes (parte) VALUES ('"+parte+"')");
+                rs=st.executeQuery("SELECT MAX(idParte) AS idParte FROM productosPartes");
+                if(rs.next()) {
+                    idParte=rs.getInt("idParte");
+                }
             }
+            st.executeUpdate("COMMIT TRANSACTION");
+        } catch(SQLException ex) {
+            st.executeUpdate("ROLLBACK TRANSACTION");
+            throw(ex);
         } finally {
             cn.close();
         }

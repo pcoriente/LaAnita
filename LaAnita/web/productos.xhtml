@@ -71,6 +71,7 @@
                                     <p:selectOneMenu id="tipo" value="#{frmProductos.mbArticulos.articulo.tipo}" style="width: 300px" >
                                         <f:converter converterId="converters.TipoProducto" />
                                         <f:selectItems value="#{frmProductos.mbArticulos.mbTipo.listaTipos}" />
+                                        <p:ajax event="change" />
                                     </p:selectOneMenu>
                                 </p:column>
                             </p:row>
@@ -101,7 +102,7 @@
                                     <p:selectOneMenu id="subGrupo" value="#{frmProductos.mbArticulos.articulo.subGrupo}" style="width: 300px;" >
                                         <f:converter converterId="converters.SubGrupos" />
                                         <f:selectItems value="#{frmProductos.mbArticulos.mbGrupo.mbSubGrupo.listaSubGrupos}" />
-                                        <p:ajax event="change" process="@this" />
+                                        <p:ajax event="change" />
                                     </p:selectOneMenu>
                                 </p:column>
                                 <p:column >
@@ -120,6 +121,7 @@
                                     <p:selectOneMenu id="marca" value="#{frmProductos.mbArticulos.articulo.marca}" style="width: 300px;" >
                                         <f:converter converterId="converters.Marca" />
                                         <f:selectItems value="#{frmProductos.mbArticulos.mbMarca.listaMarcas}" />
+                                        <p:ajax event="change" />
                                     </p:selectOneMenu>
                                 </p:column>
                                 <p:column >
@@ -169,6 +171,7 @@
                                                      disabled="#{frmProductos.mbArticulos.articulo.presentacion.idPresentacion==0}" >
                                         <f:converter converterId="converters.UnidadMedida" />
                                         <f:selectItems value="#{frmProductos.mbArticulos.listaUnidadesMedida}" />
+                                        <p:ajax event="change" />
                                     </p:selectOneMenu>
                                 </p:column>
                             </p:row>
@@ -180,6 +183,7 @@
                                     <p:selectOneMenu id="impuesto" value="#{frmProductos.mbArticulos.articulo.impuestoGrupo}" style="width: 300px" >
                                         <f:converter converterId="converters.ImpuestoGrupo" />
                                         <f:selectItems value="#{frmProductos.mbArticulos.mbImpuesto.mbGrupos.listaGrupos}" />
+                                        <p:ajax event="change" />
                                     </p:selectOneMenu>
                                 </p:column>
                             </p:row>
@@ -191,10 +195,10 @@
                                                          update="messages mttoArticulos" />
                                         <p:commandButton id="grabarArticulo" icon="ui-icon-disk" title="Grabar Articulo" 
                                                          process="@this mttoArticulos" actionListener="#{frmProductos.mbArticulos.grabar()}" 
-                                                         update="messages mttoArticulos" />
+                                                         update="messages descripcion contenido" />
                                         <p:commandButton id="btnEliminarArticulo" icon="ui-icon-trash" title="Eliminar Articulo" 
                                                          disabled="#{frmProductos.mbArticulos.articulo.idArticulo==0}" 
-                                                         process="@this mttoArticulos" actionListener="#{frmProductos.mbArticulos.eliminar()}"
+                                                         process="@this" actionListener="#{frmProductos.mbArticulos.eliminar()}"
                                                          update="messages mttoArticulos" />
                                     </p:column>
                                 </p:row>
@@ -869,6 +873,11 @@
                                     mttoGruposDlg.jq.effect("shake", {times: 5}, 100);
                                 } else {
                                     mttoGruposDlg.hide();
+                                }
+                            }
+                            function handleBuscar(xhr, status, args) {
+                                if (!(args.validationFailed || !args.okBuscar)) {
+                                    buscarProductoDlg.hide();
                                 }
                             }
                 </script>
