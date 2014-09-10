@@ -209,7 +209,10 @@
                         </p:panelGrid>
                         <p:dataTable id="multipleSelectProductos" var="e" rowKey="#{e.cod_pro}"
                                      value="#{mbListaPrecioIdeal.mbBuscar.productos}" 
-                                     selection="#{mbListaPrecioIdeal.mbBuscar.seleccionados}" >
+                                     selection="#{mbListaPrecioIdeal.mbBuscar.seleccionados}" 
+                                     scrollable="true"
+                                     scrollHeight="200"
+                                     style="width: 800px">
                             <p:column selectionMode="multiple" style="width: 40px;" />
                             <p:column headerText="SKU" style="width: 70px;" >
                                 <h:outputText value="#{e.cod_pro}" />
