@@ -71,6 +71,7 @@ public class MbTelefonos implements Serializable {
             } else {
                 this.dao = new DAOTelefonos();
                 if (this.tipo.getIdTipo() == 0) {
+                    tipo.setCelular(celular);
                     this.tipo.setIdTipo(this.dao.agregarTipo(this.tipo));
                 } else {
                     this.dao.modificarTipo(this.tipo);

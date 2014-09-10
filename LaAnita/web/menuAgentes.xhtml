@@ -437,7 +437,7 @@
                                 <p:row >
                                     <p:column colspan="2" >
                                         <p:commandButton id="btnGrabarTelefonoTipo" value="Grabar" 
-                                                         process="@this :form:txtTelefonoTipo" 
+                                                         process="@this :form:txtTelefonoTipo :form:celular" 
                                                          actionListener="#{mbAgentes.guardarTelefonoTipo()}"
                                                          update="cmbTelefonoTipo growl" 
                                                          oncomplete="handleTelefonoTipo(xhr, status, args)" />

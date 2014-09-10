@@ -30,7 +30,7 @@
                                          title="Salir"
                                          action="#{mbListaPrecioIdeal.salir()}"
                                          immediate="true"/>
-                        
+
                     </div>
                     <p:panel header="Grupo de Cliente" 
                              styleClass="quitaCuadro">
@@ -128,6 +128,7 @@
                                          :form:btnEliminarProducto"/>
                         <p:commandButton icon="ui-icon-arrowreturnthick-1-w" 
                                          title="Cancelar"
+                                         process="@this"
                                          actionListener="#{mbListaPrecioIdeal.cancelar()}"
                                          update=":form:tablePrecioIdeal 
                                          :form:btnBUscarProducto
@@ -143,7 +144,9 @@
                         <p:panelGrid id="buscarProductos" styleClass="sinBorde" >
                             <p:row >
                                 <p:column colspan="6" >
-                                    <p:selectOneRadio id="opciones" value="#{mbListaPrecioIdeal.mbBuscar.tipoBuscar}" style="background-color: #ccc" >
+                                    <p:selectOneRadio id="opciones" 
+                                                      value="#{mbListaPrecioIdeal.mbBuscar.tipoBuscar}" 
+                                                      style="background-color: #ccc" >
                                         <f:selectItem itemLabel="SKU" itemValue="1" />
                                         <f:selectItem itemLabel="Genérico" itemValue="2" />
                                         <f:selectItem itemLabel="Descripcion" itemValue="3" />
@@ -161,7 +164,8 @@
                                     <p:commandButton id="btnBuscarSKU" icon="ui-icon-search" title="Buscar" 
                                                      process="@this opcionSKU" 
                                                      actionListener="#{mbListaPrecioIdeal.buscar()}"
-                                                     oncomplete="handleBuscar(xhr, status, args)" />
+                                                     oncomplete="handleBuscar(xhr, status, args)"
+                                                     />
                                 </p:column>
                                 <p:column rendered="#{mbListaPrecioIdeal.mbBuscar.tipoBuscar=='2'}" >
                                     <p:autoComplete id="opcionParte" value="#{mbListaPrecioIdeal.mbBuscar.mbParte.parte}" maxlength="24" size="24"
@@ -238,6 +242,15 @@
                 dlgPrecioIdeal.hide();
             }
         }
+
+        function handleBuscar(xhr, status, args) {
+            if (!(args.validationFaild || !args.okBuscar)) {
+                buscarProductoDlg.hide();
+            }
+        }
+
+
+
 
     </script>
 

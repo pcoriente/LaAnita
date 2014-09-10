@@ -409,7 +409,7 @@
                         <p:dataTable id="multipleSelectProductos" var="e" rowKey="#{e.cod_pro}"
                                      value="#{frmProductos.mbCombo.mbBuscar.productos}" 
                                      selection="#{frmProductos.mbCombo.mbBuscar.seleccionados}" >
-                            
+
                             <p:column selectionMode="multiple" style="width: 40px;" />
                             <p:column headerText="SKU" style="width: 70px;" >
                                 <h:outputText value="#{e.cod_pro}" />
@@ -417,7 +417,7 @@
                             <p:column headerText="Producto" style="width: 575px;" >
                                 <h:outputText value="#{e.toString()}" />
                             </p:column>
-                            
+
                             <f:facet name="footer">
                                 <p:commandButton id="seleccionMultiple" value="Seleccionar" 
                                                  actionListener="#{frmProductos.mbCombo.agregarProductosCombo()}"
@@ -812,65 +812,69 @@
                     </p:dialog>
                 </h:form>
                 <script type="text/javascript">
-                            function handleCombo(xhr, status, args) {
-                                if (!(args.validationFailed || !args.okCombo)) {
-                                    comboDlg.hide();
-                                }
-                            }
-                            
-                            function handleUpc(xhr, status, args) {
-                                if (args.validationFailed || !args.okUpc) {
-                                    mttoUpcDlg.jq.effect("shake", {times: 5}, 100);
-                                } else {
-                                    mttoUpcDlg.hide();
-                                }
-                            }
+                    function handleCombo(xhr, status, args) {
+                        if (!(args.validationFailed || !args.okCombo)) {
+                            comboDlg.hide();
+                        }
+                    }
+                    function handleBuscar(xhr, status, args) {
+                        if (!(args.validationFaild || !args.okBuscar)) {
+                            buscarProductoDlg.hide();
+                        }
+                    }
+                    function handleUpc(xhr, status, args) {
+                        if (args.validationFailed || !args.okUpc) {
+                            mttoUpcDlg.jq.effect("shake", {times: 5}, 100);
+                        } else {
+                            mttoUpcDlg.hide();
+                        }
+                    }
 
-                            function handleEmpaque(xhr, status, args) {
-                                if (args.validationFailed || !args.okEmpaque) {
-                                    mttoEmpaquesDlg.jq.effect("shake", {times: 5}, 100);
-                                } else {
-                                    mttoEmpaquesDlg.hide();
-                                }
-                            }
+                    function handleEmpaque(xhr, status, args) {
+                        if (args.validationFailed || !args.okEmpaque) {
+                            mttoEmpaquesDlg.jq.effect("shake", {times: 5}, 100);
+                        } else {
+                            mttoEmpaquesDlg.hide();
+                        }
+                    }
 
-                            function handleArticulosBuscar(xhr, status, args) {
-                                if (!(args.validationFailed || !args.okBuscar)) {
-                                    buscarArticulosDlg.hide();
-                                }
-                            }
+                    function handleArticulosBuscar(xhr, status, args) {
+                        if (!(args.validationFailed || !args.okBuscar)) {
+                            buscarArticulosDlg.hide();
+                        }
+                    }
 
-                            function handlePresentacion(xhr, status, args) {
-                                if (args.validationFailed || !args.okPresentacion) {
-                                    mttoPresentacionesDlg.jq.effect("shake", {times: 5}, 100);
-                                } else {
-                                    mttoPresentacionesDlg.hide();
-                                }
-                            }
+                    function handlePresentacion(xhr, status, args) {
+                        if (args.validationFailed || !args.okPresentacion) {
+                            mttoPresentacionesDlg.jq.effect("shake", {times: 5}, 100);
+                        } else {
+                            mttoPresentacionesDlg.hide();
+                        }
+                    }
 
-                            function handleMarca(xhr, status, args) {
-                                if (args.validationFailed || !args.okMarca) {
-                                    mttoMarcasDlg.jq.effect("shake", {times: 5}, 100);
-                                } else {
-                                    mttoMarcasDlg.hide();
-                                }
-                            }
+                    function handleMarca(xhr, status, args) {
+                        if (args.validationFailed || !args.okMarca) {
+                            mttoMarcasDlg.jq.effect("shake", {times: 5}, 100);
+                        } else {
+                            mttoMarcasDlg.hide();
+                        }
+                    }
 
-                            function handleSubGrupo(xhr, status, args) {
-                                if (args.validationFailed || !args.okSubGrupo) {
-                                    mttoSubGruposDlg.jq.effect("shake", {times: 5}, 100);
-                                } else {
-                                    mttoSubGruposDlg.hide();
-                                }
-                            }
+                    function handleSubGrupo(xhr, status, args) {
+                        if (args.validationFailed || !args.okSubGrupo) {
+                            mttoSubGruposDlg.jq.effect("shake", {times: 5}, 100);
+                        } else {
+                            mttoSubGruposDlg.hide();
+                        }
+                    }
 
-                            function handleGrupo(xhr, status, args) {
-                                if (args.validationFailed || !args.okGrupo) {
-                                    mttoGruposDlg.jq.effect("shake", {times: 5}, 100);
-                                } else {
-                                    mttoGruposDlg.hide();
-                                }
-                            }
+                    function handleGrupo(xhr, status, args) {
+                        if (args.validationFailed || !args.okGrupo) {
+                            mttoGruposDlg.jq.effect("shake", {times: 5}, 100);
+                        } else {
+                            mttoGruposDlg.hide();
+                        }
+                    }
                 </script>
             </div>
         </div>
