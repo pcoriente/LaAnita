@@ -12,7 +12,6 @@ public class SubProducto {
 
     public SubProducto() {
         this.empaque=new Empaque();
-//        this.subProducto=new SubProducto(0,0,new Empaque());
     }
     
     public SubProducto(int idProducto) {
@@ -61,8 +60,8 @@ public class SubProducto {
         return true;
     }
     
-    public int piezasTotales() {
-        return this.piezas*(this.subSubProducto==null?1:this.subSubProducto.piezasTotales());
+    public int piezasSubProducto() {
+        return this.piezas*(this.subSubProducto==null?1:this.subSubProducto.piezasSubProducto());
     }
 
     public int getIdProducto() {

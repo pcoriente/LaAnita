@@ -68,9 +68,14 @@ public class DAOProductos {
     public void modificar(Producto to) throws SQLException {
         Connection cn=this.ds.getConnection();
         Statement st=cn.createStatement();
+//        String strSQL="UPDATE empaques "
+//            + "SET cod_pro='"+to.getCod_pro()+"', idProducto="+to.getArticulo().getIdArticulo() + ", "
+//            + "piezas="+to.getPiezas()+", idUnidadEmpaque="+to.getEmpaque().getIdEmpaque()+", idSubEmpaque="+to.getSubProducto().getIdProducto()+", "
+//            + "dun14='"+to.getDun14()+"', peso="+to.getPeso()+", volumen= "+to.getVolumen()+ " "
+//            + "WHERE idEmpaque="+to.getIdProducto();
         String strSQL="UPDATE empaques "
             + "SET cod_pro='"+to.getCod_pro()+"', idProducto="+to.getArticulo().getIdArticulo() + ", "
-            + "piezas="+to.getPiezas()+", idUnidadEmpaque="+to.getEmpaque().getIdEmpaque()+", idSubEmpaque="+to.getSubProducto().getIdProducto()+", "
+            + "piezas="+to.getPiezas()+", idUnidadEmpaque="+to.getEmpaque().getIdEmpaque()+", idSubEmpaque="+to.getIdSubEmpaque()+", "
             + "dun14='"+to.getDun14()+"', peso="+to.getPeso()+", volumen= "+to.getVolumen()+ " "
             + "WHERE idEmpaque="+to.getIdProducto();
         try {
@@ -85,9 +90,13 @@ public class DAOProductos {
     
     public int agregar(Producto to) throws SQLException {
         int idProducto=0;
+//        String strSQL="INSERT INTO empaques (cod_pro, idProducto, piezas, idUnidadEmpaque, idSubEmpaque, dun14, peso, volumen) "
+//                + "VALUES ('"+to.getCod_pro() + "', " + to.getArticulo().getIdArticulo() + ", "
+//                + " "+to.getPiezas() + ", " + to.getEmpaque().getIdEmpaque() + ", " + to.getSubProducto().getIdProducto() + ","
+//                + " '"+to.getDun14() + "', " + to.getPeso() + ", " + to.getVolumen() + ")";
         String strSQL="INSERT INTO empaques (cod_pro, idProducto, piezas, idUnidadEmpaque, idSubEmpaque, dun14, peso, volumen) "
                 + "VALUES ('"+to.getCod_pro() + "', " + to.getArticulo().getIdArticulo() + ", "
-                + " "+to.getPiezas() + ", " + to.getEmpaque().getIdEmpaque() + ", " + to.getSubProducto().getIdProducto() + ","
+                + " "+to.getPiezas() + ", " + to.getEmpaque().getIdEmpaque() + ", " + to.getIdSubEmpaque() + ","
                 + " '"+to.getDun14() + "', " + to.getPeso() + ", " + to.getVolumen() + ")";
         Connection cn=this.ds.getConnection();
         Statement st=cn.createStatement();

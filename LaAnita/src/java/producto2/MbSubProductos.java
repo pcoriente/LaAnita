@@ -5,8 +5,6 @@ import javax.enterprise.context.SessionScoped;
 import java.io.Serializable;
 import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.faces.application.FacesMessage;
 import javax.faces.context.FacesContext;
 import javax.faces.model.SelectItem;
@@ -76,6 +74,27 @@ public class MbSubProductos implements Serializable {
         }
         FacesContext.getCurrentInstance().addMessage(null, fMsg);
 //        return ok;
+    }
+    
+    public SubProducto obtenerSubProducto(int idSubProducto) {
+        boolean ok=true;
+        SubProducto subProd=null;
+        FacesMessage fMsg = new FacesMessage(FacesMessage.SEVERITY_WARN, "Aviso:", "");
+        try {
+            this.dao=new DAOSubProductos();
+            subProd=this.dao.obtenerSubProducto(idSubProducto);
+            ok=true;
+        } catch (NamingException ex) {
+            fMsg.setSeverity(FacesMessage.SEVERITY_ERROR);
+            fMsg.setDetail(ex.getMessage());
+        } catch (SQLException ex) {
+            fMsg.setSeverity(FacesMessage.SEVERITY_ERROR);
+            fMsg.setDetail(ex.getErrorCode() + " " + ex.getMessage());
+        }
+        if(!ok) {
+            FacesContext.getCurrentInstance().addMessage(null, fMsg);
+        }
+        return subProd;
     }
     
     public void mttoSubProductos() {

@@ -67,7 +67,8 @@ public class FrmProductos implements Serializable {
     }
     
     public void mttoSubProductos() {
-        this.mbSubProductos.setSubProducto(this.producto.getSubProducto());
+////        this.mbSubProductos.obtenerSubProducto(this.producto.getIdSubEmpaque());
+//        this.mbSubProductos.setSubProducto(this.mbSubProductos.obtenerSubProducto(this.producto.getIdSubEmpaque()));
     }
     
 //    public void grabarSubEmpaque() {
@@ -142,6 +143,7 @@ public class FrmProductos implements Serializable {
     
     public void actualizaProductoSeleccionado() {
         this.setProducto(this.mbBuscar.getProducto());
+        this.mbSubProductos.setSubProducto(this.mbSubProductos.obtenerSubProducto(this.producto.getIdSubEmpaque()));
         this.mbSubProductos.cargaListaSubProductos(this.producto.getArticulo().getIdArticulo(), this.producto.getIdProducto());
         this.mbBuscar.getMbUpc().getUpc().setIdProducto(this.producto.getIdProducto());
         this.mbBuscar.getMbUpc().cargaListaUpcs();
@@ -159,7 +161,9 @@ public class FrmProductos implements Serializable {
             this.producto.setCod_pro("");
             this.producto.setEmpaque(new Empaque());
             this.producto.setPiezas(0);
-            this.producto.setSubProducto(new SubProducto());
+            this.producto.setIdSubEmpaque(0);
+            this.producto.setSubEmpaque("");
+            this.producto.setPiezasSubEmpaque(0);
             this.producto.setPeso(0);
             this.producto.setVolumen(0);
             this.producto.setDun14("");
@@ -185,6 +189,7 @@ public class FrmProductos implements Serializable {
             fMsg.setDetail("Las piezas deben ser mayor o igual que cero !!");
         } else {
             try {
+                this.producto.setIdSubEmpaque(this.mbSubProductos.getSubProducto().getIdProducto());
                 this.dao = new DAOProductos();
                 if (this.producto.getIdProducto() == 0) {
                     this.producto.setIdProducto(this.dao.agregar(this.producto));
@@ -211,7 +216,8 @@ public class FrmProductos implements Serializable {
         } else {
             this.producto.setPiezas(0);
         }
-        this.producto.setSubProducto(new SubProducto());
+//        this.producto.setSubProducto(new SubProducto());
+        this.mbSubProductos.setSubProducto(new SubProducto());
     }
     
     public void nuevoProducto() {
@@ -219,7 +225,9 @@ public class FrmProductos implements Serializable {
         this.mbBuscar.getMbUpc().nuevo(0);
         this.mbBuscar.getMbUpc().cargaListaUpcs();
         this.mbSubProductos.setIdArticulo(this.mbArticulos.getArticulo().getIdArticulo());
+        this.mbSubProductos.setSubProducto(new SubProducto());
         this.mbSubProductos.cargaListaSubProductos(this.mbArticulos.getArticulo().getIdArticulo(), 0);
+//        this.mbSubProductos.setSubProducto(new SubProducto());
     }
     
     public String terminar() {

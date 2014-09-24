@@ -11,7 +11,10 @@ public class Producto {
     private Articulo articulo;
     private int piezas;
     private Empaque empaque;
-    private SubProducto subProducto;
+//    private SubProducto subProducto;
+    private int idSubEmpaque;
+    private String subEmpaque;
+    private double piezasSubEmpaque;
     private String dun14;
     private double peso;
     private double volumen;
@@ -21,7 +24,8 @@ public class Producto {
         this.upc=new Upc();
         this.articulo=new Articulo();
         this.empaque=new Empaque();
-        this.subProducto=new SubProducto();
+//        this.subProducto=new SubProducto();
+        this.subEmpaque="";
         this.dun14="";
     }
     
@@ -30,7 +34,8 @@ public class Producto {
         this.upc=upc;
         this.articulo=articulo;
         this.empaque=new Empaque();
-        this.subProducto=new SubProducto();
+//        this.subProducto=new SubProducto();
+        this.subEmpaque="";
         this.dun14="";
     }
 
@@ -67,10 +72,15 @@ public class Producto {
     public String toString() {
         String str=this.articulo.toString();
         if(this.empaque.getIdEmpaque()!=1) {
-            if(this.subProducto==null) {
+//            if(this.subProducto==null) {
+//                str+="";
+//            } else {
+//                str+=" "+this.subProducto.toString();
+//            }
+            if(this.idSubEmpaque==0) {
                 str+="";
             } else {
-                str+=" "+this.subProducto.toString();
+                str+=" "+this.subEmpaque;
             }
             str+=" ";
             if(this.piezas!=1) {
@@ -144,13 +154,37 @@ public class Producto {
         this.empaque = empaque;
     }
 
-    public SubProducto getSubProducto() {
-        return subProducto;
+    //    public SubProducto getSubProducto() {
+    //        return subProducto;
+    //    }
+    //
+    //    public void setSubProducto(SubProducto subProducto) {
+    //        this.subProducto = subProducto;
+    //    }
+    public int getIdSubEmpaque() {
+        return idSubEmpaque;
     }
 
-    public void setSubProducto(SubProducto subProducto) {
-        this.subProducto = subProducto;
+    public void setIdSubEmpaque(int idSubEmpaque) {
+        this.idSubEmpaque = idSubEmpaque;
     }
+
+    public String getSubEmpaque() {
+        return subEmpaque;
+    }
+
+    public void setSubEmpaque(String subEmpaque) {
+        this.subEmpaque = subEmpaque;
+    }
+
+    public double getPiezasSubEmpaque() {
+        return piezasSubEmpaque;
+    }
+
+    public void setPiezasSubEmpaque(double piezasSubEmpaque) {
+        this.piezasSubEmpaque = piezasSubEmpaque;
+    }
+    
 
     public String getDun14() {
         return dun14;

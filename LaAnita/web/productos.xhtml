@@ -27,8 +27,8 @@
                                                          process="@this"
                                                          update="buscarArticulos listaArticulos" oncomplete="buscarArticulosDlg.show()" />
                                         <p:commandButton icon="ui-icon-pencil" title="Mtto.Productos" 
-                                                         disabled="#{frmProductos.mbArticulos.articulo.idArticulo==0}"
-                                                         actionListener="#{frmProductos.nuevoProducto()}" update="mttoProductos" 
+                                                         disabled="#{frmProductos.mbArticulos.articulo.idArticulo==0}" 
+                                                         process="@this" actionListener="#{frmProductos.nuevoProducto()}" update="mttoProductos" 
                                                          oncomplete="mttoProductosDlg.show()" />
                                         <p:commandButton icon="ui-icon-home" title="Terminar" 
                                                          action="#{frmProductos.terminar()}" ajax="false" immediate="true" />
@@ -191,11 +191,11 @@
                                 <p:row >
                                     <p:column colspan="4" style="text-align: right" >
                                         <p:commandButton id="nuevoArticulo" icon="ui-icon-document" title="Nuevo Articulo" 
-                                                         process="@this mttoArticulos" actionListener="#{frmProductos.mbArticulos.nuevo()}" 
+                                                         process="@this" actionListener="#{frmProductos.mbArticulos.nuevo()}" 
                                                          update="messages mttoArticulos" />
                                         <p:commandButton id="grabarArticulo" icon="ui-icon-disk" title="Grabar Articulo" 
-                                                         process="@this mttoArticulos" actionListener="#{frmProductos.mbArticulos.grabar()}" 
-                                                         update="messages descripcion contenido" />
+                                                         process="@this descripcion contenido" actionListener="#{frmProductos.mbArticulos.grabar()}" 
+                                                         update="messages" />
                                         <p:commandButton id="btnEliminarArticulo" icon="ui-icon-trash" title="Eliminar Articulo" 
                                                          disabled="#{frmProductos.mbArticulos.articulo.idArticulo==0}" 
                                                          process="@this" actionListener="#{frmProductos.mbArticulos.eliminar()}"
@@ -455,8 +455,7 @@
                                     <h:outputLabel for="subEmpaquePiezas" value="PIEZAS :" style="font-weight: bold; color: black; width: 90px;" />
                                 </p:column>
                                 <p:column >
-                                    <p:inputText id="subEmpaquePiezas" value="#{frmProductos.mbSubProductos.subProducto.piezas}" style="width: 100px;"
-                                                 maxlength="5" size="7" >
+                                    <p:inputText id="subEmpaquePiezas" value="#{frmProductos.mbSubProductos.subProducto.piezas}" style="width: 100px;" maxlength="5" size="7" >
                                         <p:ajax event="change" />
                                     </p:inputText>
                                 </p:column >
@@ -480,7 +479,7 @@
                                                          process="@this" actionListener="#{frmProductos.mbSubProductos.nuevo()}" 
                                                          update="messages0 subEmpaque subEmpaquePiezas subSubEmpaque btnEliminarSubEmpaque" />
                                         <p:commandButton id="btnGrabarSubEmpaque" icon="ui-icon-disk" title="Grabar subempaque" 
-                                                         process="@this" actionListener="#{frmProductos.mbSubProductos.grabar()}" 
+                                                         process="@this subEmpaquePiezas" actionListener="#{frmProductos.mbSubProductos.grabar()}" 
                                                          update="messages0 subSubEmpaque btnEliminarSubEmpaque" />
                                         <p:commandButton id="btnEliminarSubEmpaque" icon="ui-icon-trash" title="Eliminar subempaque" 
                                                          disabled="#{frmProductos.mbSubProductos.subProducto.idProducto==0}"
@@ -569,7 +568,7 @@
                                     <h:outputLabel for="subProducto" value="SUBEMPAQUE :" style="font-weight: bold; color: black; width: 120px; text-align: right;" />
                                 </p:column>
                                 <p:column colspan="2" >
-                                    <p:selectOneMenu id="subProducto" value="#{frmProductos.producto.subProducto}" style="width: 250px;" 
+                                    <p:selectOneMenu id="subProducto" value="#{frmProductos.mbSubProductos.subProducto}" style="width: 250px;" 
                                                      disabled="#{frmProductos.producto.empaque.idEmpaque==1}" >
                                         <f:converter converterId="converters.SubProducto" />
                                         <f:selectItems value="#{frmProductos.mbSubProductos.listaSubProductos}" />
@@ -603,13 +602,13 @@
                                 <p:row >
                                     <p:column colspan="6" >
                                         <p:commandButton id="nuevoProducto" icon="ui-icon-document" title="Nuevo Producto" 
-                                                         process="mttoProductos" actionListener="#{frmProductos.nuevoProducto()}" 
+                                                         process="@this" actionListener="#{frmProductos.nuevoProducto()}" 
                                                          update="messages2 mttoProductos" />
                                         <p:commandButton id="grabarProducto" icon="ui-icon-disk" title="Grabar Producto" 
-                                                         process="mttoProductos" actionListener="#{frmProductos.grabar()}" 
-                                                         update="messages2 mttoProductos" />
+                                                         process="@this sku piezas peso volumen dun14" actionListener="#{frmProductos.grabar()}" 
+                                                         update="messages2" />
                                         <p:commandButton id="eliminarProducto" icon="ui-icon-trash" title="Eliminar Producto" 
-                                                         process="mttoProductos" onclick="eProducto.show();" />
+                                                         process="@this" onclick="eProducto.show();" />
                                     </p:column>
                                 </p:row>
                             </f:facet>

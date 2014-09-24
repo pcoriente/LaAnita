@@ -13,15 +13,19 @@ public class TOProducto {
     private int idArticulo;
     private int piezas;
     private Empaque empaque;
-    private SubProducto subProducto;
+//    private SubProducto subProducto;
     private String dun14;
     private double peso;
     private double volumen;
+    private int idSubProducto;
+    private String subProducto;
+    private double piezasSubEmpaque;
     
     public TOProducto() {
         this.cod_pro="";
         this.empaque=new Empaque();
-        this.subProducto=new SubProducto();
+//        this.subProducto=new SubProducto();
+        this.subProducto="";
         this.dun14="";
     }
 
@@ -65,12 +69,36 @@ public class TOProducto {
         this.empaque = empaque;
     }
 
-    public SubProducto getSubProducto() {
+//    public SubProducto getSubProducto() {
+//        return subProducto;
+//    }
+//
+//    public void setSubProducto(SubProducto subProducto) {
+//        this.subProducto = subProducto;
+//    }
+
+    public int getIdSubProducto() {
+        return idSubProducto;
+    }
+
+    public void setIdSubProducto(int idSubProducto) {
+        this.idSubProducto = idSubProducto;
+    }
+
+    public String getSubProducto() {
         return subProducto;
     }
 
-    public void setSubProducto(SubProducto subProducto) {
+    public void setSubProducto(String subProducto) {
         this.subProducto = subProducto;
+    }
+
+    public double getPiezasSubEmpaque() {
+        return piezasSubEmpaque;
+    }
+
+    public void setPiezasSubEmpaque(double piezasSubEmpaque) {
+        this.piezasSubEmpaque = piezasSubEmpaque;
     }
 
     public String getDun14() {

@@ -57,6 +57,9 @@ public class MbArticulos implements Serializable {
     
     public void actualizaArticuloSeleccionado() {
         this.articulo=this.mbBuscar.obtenerArticulo(this.mbBuscar.getArticulo().getIdArticulo());
+        if(this.articulo==null) {
+            this.articulo=new Articulo();
+        }
         this.mbGrupo.getMbSubGrupo().cargaListaSubGrupos(this.articulo.getGrupo().getIdGrupo());
     }
     
@@ -64,6 +67,9 @@ public class MbArticulos implements Serializable {
         this.mbBuscar.buscarLista();
         if(this.mbBuscar.getArticulo()!=null) {
             this.articulo=this.mbBuscar.obtenerArticulo(this.mbBuscar.getArticulo().getIdArticulo());
+            if(this.articulo==null) {
+                this.articulo=new Articulo();
+            }
         }
     }
     
@@ -239,9 +245,9 @@ public class MbArticulos implements Serializable {
             fMsg.setDetail("Se requiere el grupo !!");
         } else if(this.articulo.getPresentacion().getIdPresentacion() == 0) {
             fMsg.setDetail("Se requiere una presentacion");
-        } else if(this.articulo.getPresentacion().getIdPresentacion() > 1 && (this.articulo.getContenido() < 0 || this.articulo.getContenido() >= 1000)) {
+        } else if(this.articulo.getPresentacion().getIdPresentacion() > 1 && this.articulo.getContenido() < 0) {
             this.articulo.setContenido(0);
-            fMsg.setDetail("Se requiere un número mayor que cero y menor a 1000");
+            fMsg.setDetail("Se requiere un número mayor que cero");
         } else if (this.articulo.getPresentacion().getIdPresentacion() > 1 && this.articulo.getUnidadMedida().getIdUnidadMedida() == 0) {
             fMsg.setDetail("Se requiere la unidad de medida !!");
         } else if (this.articulo.getImpuestoGrupo().getIdGrupo() == 0) {

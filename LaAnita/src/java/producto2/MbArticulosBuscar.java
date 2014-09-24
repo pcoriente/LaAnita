@@ -74,6 +74,9 @@ public class MbArticulosBuscar implements Serializable {
         try {
             this.dao=new DAOArticulosBuscar();
             a=dao.obtenerArticulo(idArticulo);
+            if(a==null) {
+                a=new Articulo();
+            }
             ok=true;
         } catch (NamingException ex) {
             fMsg.setDetail(ex.getMessage());

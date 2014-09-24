@@ -75,8 +75,10 @@ public class DAOSubProductos {
     
     public int agregar(int idArticulo, SubProducto subProducto) throws SQLException {
         int idProducto=0;
-        String strSQL="INSERT INTO empaquesSubEmpaques (idProducto, idUnidad, piezas, idSubEmpaque) "
-                + "VALUES ("+idArticulo+", "+subProducto.getEmpaque().getIdEmpaque()+", "+subProducto.getPiezas()+", "+(subProducto.getSubSubProducto()==null?0:subProducto.getSubSubProducto().getIdProducto())+")";
+        String strSQL="INSERT INTO empaquesSubEmpaques (idProducto, idUnidad, piezas, idSubEmpaque, descripcion, piezasSubEmpaque) "
+                + "VALUES ("+idArticulo+", "+subProducto.getEmpaque().getIdEmpaque()+", "+subProducto.getPiezas()+", "
+                +(subProducto.getSubSubProducto()==null?0:subProducto.getSubSubProducto().getIdProducto())+", '"+subProducto.toString()+"', "
+                +(subProducto.getSubSubProducto()==null?1:subProducto.getSubSubProducto().piezasSubProducto())+")";
         Connection cn=this.ds.getConnection();
         Statement st=cn.createStatement();
         try {
@@ -215,23 +217,64 @@ public class DAOSubProductos {
 //        return subProducto;
 //    }
     
+//    public SubProducto obtenerSubProducto(int idSubEmpaque) throws SQLException {
+//        SubProducto subProducto=null;
+//         String strSQL="SELECT E.idEmpaque, E.piezas, U.idUnidad, U.unidad, U.abreviatura AS abreviaturaEmpaque, E.idSubEmpaque " +
+//                        "FROM empaquesSubEmpaques E " +
+//                        "INNER JOIN empaquesUnidades U ON U.idUnidad=E.idUnidad " +
+//                        "WHERE E.idEmpaque="+idSubEmpaque;
+//        Connection cn=ds.getConnection();
+//        Statement st=cn.createStatement();
+//        try {
+//            ResultSet rs=st.executeQuery(strSQL);
+//            if(rs.next()) {
+//                subProducto=new SubProducto(idSubEmpaque);
+//                subProducto.setPiezas(rs.getInt("piezas"));
+//                subProducto.setEmpaque(new Empaque(rs.getInt("idUnidad"), rs.getString("unidad"), rs.getString("abreviaturaEmpaque")));
+//                if(rs.getInt("idSubEmpaque")!=0 && rs.getInt("idSubEmpaque")!=idSubEmpaque) {
+//                    subProducto.setSubSubProducto(obtenerSubProducto(rs.getInt("idSubEmpaque")));
+//                }
+//            }
+//        } finally {
+//            cn.close();
+//        }
+//        return subProducto;
+//    }
+    
     public SubProducto obtenerSubProducto(int idSubEmpaque) throws SQLException {
         SubProducto subProducto=null;
-         String strSQL="SELECT E.idEmpaque, E.piezas, U.idUnidad, U.unidad, U.abreviatura AS abreviaturaEmpaque, E.idSubEmpaque " +
-                        "FROM empaquesSubEmpaques E " +
-                        "INNER JOIN empaquesUnidades U ON U.idUnidad=E.idUnidad " +
-                        "WHERE E.idEmpaque="+idSubEmpaque;
+        ArrayList<SubProducto> subEmpaques=new ArrayList<SubProducto>();
+        String strSQL;
+        ResultSet rs;
+        int i;
         Connection cn=ds.getConnection();
         Statement st=cn.createStatement();
         try {
-            ResultSet rs=st.executeQuery(strSQL);
-            if(rs.next()) {
-                subProducto=new SubProducto(idSubEmpaque);
-                subProducto.setPiezas(rs.getInt("piezas"));
-                subProducto.setEmpaque(new Empaque(rs.getInt("idUnidad"), rs.getString("unidad"), rs.getString("abreviaturaEmpaque")));
-                if(rs.getInt("idSubEmpaque")!=0 && rs.getInt("idSubEmpaque")!=idSubEmpaque) {
-                    subProducto.setSubSubProducto(obtenerSubProducto(rs.getInt("idSubEmpaque")));
+            i=0;
+            do {
+                strSQL="SELECT E.idEmpaque, E.piezas, U.idUnidad, U.unidad, U.abreviatura AS abreviaturaEmpaque, E.idSubEmpaque " +
+                        "FROM empaquesSubEmpaques E " +
+                        "INNER JOIN empaquesUnidades U ON U.idUnidad=E.idUnidad " +
+                        "WHERE E.idEmpaque="+idSubEmpaque;
+                rs=st.executeQuery(strSQL);
+                if(rs.next()) {
+                    subProducto=new SubProducto(rs.getInt("idEmpaque"));
+                    subProducto.setPiezas(rs.getInt("piezas"));
+                    subProducto.setEmpaque(new Empaque(rs.getInt("idUnidad"), rs.getString("unidad"), rs.getString("abreviaturaEmpaque")));
+                    idSubEmpaque=rs.getInt("idSubEmpaque");
+                    subEmpaques.add(subProducto);
+                    if(i>0) {
+                        subEmpaques.get(i-1).setSubSubProducto(subEmpaques.get(i));
+                    }
+                    i++;
+                } else {
+                    idSubEmpaque=0;
                 }
+            } while(idSubEmpaque>0);
+            if(i==0) {
+                subProducto=new SubProducto(0);
+            } else {
+                subProducto=subEmpaques.get(0);
             }
         } finally {
             cn.close();

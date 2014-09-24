@@ -13,9 +13,7 @@ import javax.naming.NamingException;
 import javax.servlet.http.HttpSession;
 import javax.sql.DataSource;
 import producto2.dominio.Empaque;
-import producto2.dominio.SubProducto;
 import producto2.to.TOProducto;
-import producto2.to.TOProductoCombo;
 import usuarios.UsuarioSesion;
 
 /**
@@ -68,10 +66,10 @@ public class DAOProductosBuscar {
     public ArrayList<TOProducto> obtenerProductosClasificacion(int idGrupo, int idSubGrupo) throws SQLException {
         ArrayList<TOProducto> productos=new ArrayList<TOProducto>();
         String strSQL=sqlEmpaque()+" "+
-            "INNER JOIN productos p on p.idProducto=e.idProducto " +
-            "LEFT JOIN productosPartes pp on pp.idParte=p.idParte " +
-            "WHERE p.idGrupo="+idGrupo+" OR p.idSubGrupo="+idSubGrupo+" " +
-            "ORDER BY pp.parte, p.descripcion";
+            "INNER JOIN productos P on P.idProducto=E.idProducto " +
+            "LEFT JOIN productosPartes PP on PP.idParte=P.idParte " +
+            "WHERE P.idGrupo="+idGrupo+" OR P.idSubGrupo="+idSubGrupo+" " +
+            "ORDER BY PP.parte, P.descripcion";
         Connection cn=ds.getConnection();
         Statement st=cn.createStatement();
         try {
@@ -88,10 +86,10 @@ public class DAOProductosBuscar {
     public ArrayList<TOProducto> obtenerProductosDescripcion(String descripcion) throws SQLException {
         ArrayList<TOProducto> productos=new ArrayList<TOProducto>();
         String strSQL=sqlEmpaque()+" "+
-            "INNER JOIN productos p on p.idProducto=e.idProducto " +
-            "LEFT JOIN productosPartes pp on pp.idParte=p.idParte " +
-            "WHERE p.descripcion like '%"+descripcion+"%' "+
-            "ORDER BY pp.parte, p.descripcion";
+            "INNER JOIN productos P on P.idProducto=E.idProducto " +
+            "LEFT JOIN productosPartes PP on PP.idParte=P.idParte " +
+            "WHERE P.descripcion like '%"+descripcion+"%' "+
+            "ORDER BY PP.parte, P.descripcion";
         Connection cn=ds.getConnection();
         Statement st=cn.createStatement();
         try {
@@ -108,9 +106,9 @@ public class DAOProductosBuscar {
     public ArrayList<TOProducto> obtenerProductosParte(int idParte) throws SQLException {
         ArrayList<TOProducto> productos=new ArrayList<TOProducto>();
         String strSQL=sqlEmpaque()+" "+
-            "INNER JOIN productos p on p.idProducto=e.idProducto " +
-            "WHERE p.idParte="+idParte+" "+
-            "ORDER BY p.descripcion";
+            "INNER JOIN productos P on P.idProducto=E.idProducto " +
+            "WHERE P.idParte="+idParte+" "+
+            "ORDER BY P.descripcion";
         Connection cn=ds.getConnection();
         Statement st=cn.createStatement();
         try {
@@ -126,7 +124,7 @@ public class DAOProductosBuscar {
     
     public ArrayList<TOProducto> obtenerProductos(int idArticulo) throws SQLException {
         ArrayList<TOProducto> productos=new ArrayList<TOProducto>();
-        String strSQL=sqlEmpaque()+ " WHERE e.idProducto="+idArticulo+" ORDER BY cod_pro";
+        String strSQL=sqlEmpaque()+ " WHERE E.idProducto="+idArticulo+" ORDER BY E.cod_pro";
         Connection cn=ds.getConnection();
         Statement st=cn.createStatement();
         try {
@@ -142,7 +140,7 @@ public class DAOProductosBuscar {
     
     public TOProducto obtenerProductoSku(String sku) throws SQLException {
         TOProducto to=null;
-        String strSQL=sqlEmpaque()+ " WHERE e.cod_pro='"+sku+"'";
+        String strSQL=sqlEmpaque()+ " WHERE E.cod_pro='"+sku+"'";
         Connection cn=ds.getConnection();
         Statement st=cn.createStatement();
         try {
@@ -158,7 +156,7 @@ public class DAOProductosBuscar {
     
     public TOProducto obtenerProducto(int idProducto) throws SQLException {
         TOProducto to=null;
-        String strSQL=sqlEmpaque()+ " WHERE e.idEmpaque="+idProducto;
+        String strSQL=sqlEmpaque()+ " WHERE E.idEmpaque="+idProducto;
         Connection cn=ds.getConnection();
         Statement st=cn.createStatement();
         try {
@@ -196,11 +194,14 @@ public class DAOProductosBuscar {
         to.setPiezas(rs.getInt("piezas"));
         Empaque empaque=new Empaque(rs.getInt("idUnidadEmpaque"), rs.getString("unidadEmpaque"), rs.getString("abreviaturaEmpaque"));
         to.setEmpaque(empaque);
-        SubProducto sub=new SubProducto(rs.getInt("idSubEmpaque"));
-        to.setSubProducto(sub);
-        to.setDun14(rs.getString("dun14"));
+//        SubProducto sub=new SubProducto(rs.getInt("idSubEmpaque"));
+//        to.setSubProducto(sub);
+        to.setIdSubProducto(rs.getInt("idSubEmpaque"));
+        to.setSubProducto(rs.getString("descripcion"));
+        to.setPiezasSubEmpaque(rs.getDouble("piezasSubEmpaque"));
         to.setPeso(rs.getDouble("peso"));
         to.setVolumen(rs.getDouble("volumen"));
+        to.setDun14(rs.getString("dun14"));
         return to;
     }
     
@@ -218,11 +219,14 @@ public class DAOProductosBuscar {
 //    }
     
      private String sqlEmpaque() {
-        String strSQL=""
-                + "SELECT e.idEmpaque, e.cod_pro, e.idProducto, e.piezas, e.idSubEmpaque, e.dun14, e.peso, e.volumen"
-                + "     , u.idUnidad as idUnidadEmpaque, u.unidad as unidadEmpaque, u.abreviatura as abreviaturaEmpaque "
-                + "FROM empaques e "
-                + "INNER JOIN empaquesUnidades u ON u.idUnidad=e.idUnidadEmpaque";
+        String strSQL="" +
+                "SELECT E.idEmpaque, E.cod_pro, E.idProducto, E.piezas " +
+"                     , U.idUnidad as idUnidadEmpaque, U.unidad as unidadEmpaque, U.abreviatura as abreviaturaEmpaque " +
+"                     , E.idSubEmpaque, ISNULL(ES.descripcion,'') AS descripcion, ISNULL(ES.piezas,1)*ISNULL(ES.piezasSubEmpaque,1) AS piezasSubEmpaque " +
+"                     , E.peso, E.volumen, E.dun14 " +
+"                FROM empaques E " +
+"                LEFT JOIN empaquesSubEmpaques ES ON ES.idEmpaque=E.idSubEmpaque " +
+"                INNER JOIN empaquesUnidades U ON U.idUnidad=E.idUnidadEmpaque";
         return strSQL;
     }
 }
