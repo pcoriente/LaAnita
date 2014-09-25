@@ -14,6 +14,7 @@ import javax.faces.bean.ManagedProperty;
 import javax.faces.context.FacesContext;
 import javax.faces.model.SelectItem;
 import javax.naming.NamingException;
+import menuClientesGrupos.dominio.ClientesGruposDetalle;
 import org.primefaces.context.RequestContext;
 import utilerias.Utilerias;
 
@@ -33,13 +34,31 @@ public class MbContactos implements Serializable {
     private MbTelefonos mbTelefonos = new MbTelefonos();
     private DAOContactos dao;
     private Contacto correo = new Contacto();
-//    private ArrayList<Contacto> listaCorreo;
+    private ArrayList<ClientesGruposDetalle> lstContactosDetalle = null;
 
     public MbContactos() {
         this.contacto = new Contacto();
         this.mbTelefonos = new MbTelefonos();
         listaContactos = new ArrayList<SelectItem>();
         mbTelefonos = new MbTelefonos();
+    }
+
+    public void cargarListaContactoDetalle(int idGrupoCte) {
+        lstContactosDetalle = new ArrayList<ClientesGruposDetalle>();
+        try {
+            DAOContactos dao = new DAOContactos();
+            for (Contacto contacto : dao.obtenerContactos(4, idGrupoCte)) {
+                ClientesGruposDetalle detalle = new ClientesGruposDetalle();
+                detalle.setContacto(contacto);
+                mbTelefonos.cargaTelefonos(contacto.getIdContacto());
+                detalle.setListaContactos(mbTelefonos.getListaTelefonos());
+                lstContactosDetalle.add(detalle);
+            }
+        } catch (NamingException ex) {
+            Logger.getLogger(MbContactos.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (SQLException ex) {
+            Logger.getLogger(MbContactos.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
 
     public boolean eliminar(int idPadre) {
@@ -96,25 +115,37 @@ public class MbContactos implements Serializable {
 
     public boolean validarContactos() {
         boolean ok = false;
-        RequestContext context = RequestContext.getCurrentInstance();
-        FacesMessage fMsg = new FacesMessage(FacesMessage.SEVERITY_WARN, "Aviso:", "");
+        RequestContext context = null ;
+        FacesMessage fMsg = null;
         if (this.contacto.getContacto().equals("")) {
+            context = RequestContext.getCurrentInstance();
+            fMsg = new FacesMessage(FacesMessage.SEVERITY_WARN, "Aviso:", "");
             fMsg.setDetail("Se requiere la descripción del contacto");
+            FacesContext.getCurrentInstance().addMessage(null, fMsg);
         } else if (this.contacto.getPuesto().equals("")) {
+            context = RequestContext.getCurrentInstance();
+            fMsg = new FacesMessage(FacesMessage.SEVERITY_WARN, "Aviso:", "");
             fMsg.setDetail("Se requiere un puesto");
+            FacesContext.getCurrentInstance().addMessage(null, fMsg);
         } else if (this.contacto.getCorreo().equals("")) {
+            context = RequestContext.getCurrentInstance();
+            fMsg = new FacesMessage(FacesMessage.SEVERITY_WARN, "Aviso:", "");
             fMsg.setDetail("Se requiere un correo");
+            FacesContext.getCurrentInstance().addMessage(null, fMsg);
         } else {
+            context = RequestContext.getCurrentInstance();
+            fMsg = new FacesMessage(FacesMessage.SEVERITY_WARN, "Aviso:", "");
             Utilerias utilerias = new Utilerias();
             boolean validarCorreo = utilerias.validarEmail(this.contacto.getCorreo());
             if (validarCorreo == false) {
                 fMsg.setDetail("Correo no valido");
+                FacesContext.getCurrentInstance().addMessage(null, fMsg);
             } else {
                 ok = true;
             }
         }
-        FacesContext.getCurrentInstance().addMessage(null, fMsg);
-        context.addCallbackParam("okContacto", ok);
+        
+//        context.addCallbackParam("okContacto", ok);
         return ok;
     }
 
@@ -227,4 +258,15 @@ public class MbContactos implements Serializable {
     public void setCorreo(Contacto correo) {
         this.correo = correo;
     }
+
+    public ArrayList<ClientesGruposDetalle> getLstContactosDetalle() {
+        return lstContactosDetalle;
+    }
+
+    public void setLstContactosDetalle(ArrayList<ClientesGruposDetalle> lstContactosDetalle) {
+        this.lstContactosDetalle = lstContactosDetalle;
+    }
+    
+    
+    
 }

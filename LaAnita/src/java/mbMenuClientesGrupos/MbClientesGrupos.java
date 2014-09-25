@@ -27,6 +27,7 @@ import javax.inject.Named;
 import javax.naming.NamingException;
 import menuClientesGrupos.dao.DAOClientesGrupo;
 import menuClientesGrupos.dominio.ClientesGrupos;
+import menuClientesGrupos.dominio.ClientesGruposDetalle;
 import menuClientesGrupos.dominio.ClientesGruposIconos;
 import org.primefaces.context.RequestContext;
 
@@ -67,6 +68,14 @@ public class MbClientesGrupos implements Serializable {
         boolean ok = false;
 
         return ok;
+    }
+
+    public void dameDetalleFormato(int grupoCliente) {
+        mbFormatos.cargarArrayListListaFormatos(grupoCliente);
+    }
+
+    public void dameDetalle(int idGrupoCliente) {
+        mbContactos.cargarListaContactoDetalle(idGrupoCliente);
     }
 
     public void cargaContactos() {
@@ -136,6 +145,8 @@ public class MbClientesGrupos implements Serializable {
         boolean okClienteGrupo = false;
         if (clientesGrupos.getGrupoCte().equals("")) {
             Mensajes.mensajeError("Se requiere un Cliente Grupo");
+        } else if (clientesGrupos.getCodigoGrupo().equals("")) {
+            Mensajes.mensajeError("Se requiere un Codigo");
         } else {
             okClienteGrupo = true;
         }
@@ -239,24 +250,34 @@ public class MbClientesGrupos implements Serializable {
     }
 
     public void guardarContacto() {
+        boolean ok = false;
+        FacesMessage fMsg = null;
+        RequestContext context = null;
         try {
             DAOContactos daoContactos = new DAOContactos();
-            boolean validar = false;
-            validar = this.mbContactos.validarContactos();
+            boolean validar = this.mbContactos.validarContactos();
             if (validar == true) {
+                context = RequestContext.getCurrentInstance();
+                fMsg = new FacesMessage(FacesMessage.SEVERITY_INFO, "Aviso:", "");
                 if (mbContactos.getContacto().getIdContacto() == 0) {
                     daoContactos.agregar(mbContactos.getContacto(), clientesGrupos.getIdGrupoCte(), 4);
+                    fMsg.setDetail("Exito nuevo contacto disponible");
+                    ok = true;
                 } else {
                     daoContactos.modificar(mbContactos.getContacto());
+                    fMsg.setDetail("Exito Contacto Modificado");
+                    ok = true;
                 }
                 this.mbContactos.cargaContactos(4, clientesGrupos.getIdGrupoCte());
             }
         } catch (NamingException ex) {
             Logger.getLogger(MbClientesGrupos.class.getName()).log(Level.SEVERE, null, ex);
         } catch (SQLException ex) {
+            fMsg.setDetail(ex.getMessage());
             Logger.getLogger(MbClientesGrupos.class.getName()).log(Level.SEVERE, null, ex);
         }
-
+        FacesContext.getCurrentInstance().addMessage(null, fMsg);
+        context.addCallbackParam("okContacto", ok);
     }
 
     public void cargarDatos() {
@@ -409,5 +430,9 @@ public class MbClientesGrupos implements Serializable {
 
     public void setMbFormatos(MbFormatos mbFormatos) {
         this.mbFormatos = mbFormatos;
+    }
+
+    public void entroEvento() {
+        System.err.println("entro al evento");
     }
 }

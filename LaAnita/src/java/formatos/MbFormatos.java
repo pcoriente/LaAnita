@@ -37,7 +37,7 @@ public class MbFormatos {
     ClientesFormato clientesFormatos = new ClientesFormato();
     ClientesFormato cmbClientesFormatos = new ClientesFormato();
     ArrayList<SelectItem> lstFormatos = null;
-//    private ArrayList<SelectItem> lstItems = null;
+    ArrayList<ClientesFormato> listaFormatosFormatos = new ArrayList<ClientesFormato>();
     @ManagedProperty(value = "#{mbBuscar}")
     private MbProductosBuscar mbBuscar = new MbProductosBuscar();
     private ArrayList<ClientesFormato> lstFormato;
@@ -54,7 +54,6 @@ public class MbFormatos {
      * Creates a new instance of MbFormatos
      */
     public MbFormatos() {
-
     }
 
     public boolean validarFormatos() {
@@ -85,6 +84,19 @@ public class MbFormatos {
             } catch (SQLException e) {
                 Mensajes.mensajeError(e.getMessage());
             }
+        }
+    }
+
+    public void cargarArrayListListaFormatos(int idGrupoCliete) {
+        try {
+            DAOFormatos dao = new DAOFormatos();
+            listaFormatosFormatos = dao.dameFormatos(idGrupoCliete);
+        } catch (NamingException ex) {
+            Mensajes.mensajeError(ex.getMessage());
+            Logger.getLogger(MbFormatos.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (SQLException ex) {
+            Mensajes.mensajeError(ex.getMessage());
+            Logger.getLogger(MbFormatos.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 
@@ -224,7 +236,6 @@ public class MbFormatos {
     }
 
     public void actualizaProductoSeleccionado() {
-
     }
 //
 //    public void setLstItems(ArrayList<SelectItem> lstItems) {
@@ -303,4 +314,14 @@ public class MbFormatos {
         this.dao = dao;
     }
 
+    public ArrayList<ClientesFormato> getListaFormatosFormatos() {
+        return listaFormatosFormatos;
+    }
+
+    public void setListaFormatosFormatos(ArrayList<ClientesFormato> listaFormatosFormatos) {
+        this.listaFormatosFormatos = listaFormatosFormatos;
+    }
+    
+    
+    
 }

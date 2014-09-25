@@ -48,18 +48,22 @@ public class DAOClientesGrupo {
 
     public ArrayList<ClientesGrupos> dameListaClientesGrupos() throws SQLException {
         ArrayList<ClientesGrupos> lstClientesGrupos = new ArrayList();
+        ResultSet rs = null;
         String sql = "SELECT * FROM clientesGrupos";
         Connection cn = ds.getConnection();
-        Statement dt = cn.createStatement();
+        Statement st = cn.createStatement();
         try {
-            ResultSet rs = dt.executeQuery(sql);
+            rs = st.executeQuery(sql);
             while (rs.next()) {
                 ClientesGrupos clientesGrupos = new ClientesGrupos();
                 clientesGrupos.setIdGrupoCte(rs.getInt("idGrupoCte"));
                 clientesGrupos.setGrupoCte(rs.getString("grupoCte"));
+                clientesGrupos.setCodigoGrupo(rs.getString("codigoGrupo"));
                 lstClientesGrupos.add(clientesGrupos);
             }
         } finally {
+            st.close();
+            rs.close();
             cn.close();
         }
         return lstClientesGrupos;
@@ -68,10 +72,11 @@ public class DAOClientesGrupo {
     public void guardarClientesGrupo(ClientesGrupos clientesGrupos) throws SQLException {
         Connection cn = ds.getConnection();
         Statement st = cn.createStatement();
-        String sql = "INSERT INTO clientesGrupos (grupoCte) VALUES('" + clientesGrupos.getGrupoCte() + "')";
+        String sql = "INSERT INTO clientesGrupos (grupoCte,codigoGrupo) VALUES('" + clientesGrupos.getGrupoCte() + "','" + clientesGrupos.getCodigoGrupo() + "')";
         try {
             st.executeUpdate(sql);
         } finally {
+            st.close();
             cn.close();
         }
     }
@@ -79,26 +84,30 @@ public class DAOClientesGrupo {
     public void actualizar(ClientesGrupos clientesGrupos) throws SQLException {
         Connection cn = ds.getConnection();
         Statement st = cn.createStatement();
-        String sql = "UPDATE clientesGrupos set grupoCte = '" + clientesGrupos.getGrupoCte() + "' WHERE idGrupoCte = '" + clientesGrupos.getIdGrupoCte() + "'";
+        String sql = "UPDATE clientesGrupos set grupoCte = '" + clientesGrupos.getGrupoCte() + "', codigoGrupo='" + clientesGrupos.getCodigoGrupo() + "' WHERE idGrupoCte = '" + clientesGrupos.getIdGrupoCte() + "'";
         try {
             st.executeUpdate(sql);
         } finally {
+            st.close();
             cn.close();
         }
     }
 
     public ClientesGrupos dameClientesGrupo(int id) throws SQLException {
         ClientesGrupos clientesGrupos = new ClientesGrupos();
+        ResultSet rs = null;
         String sql = "SELECT * FROM clientesGrupos WHERE idGrupoCte = '" + id + "'";
         Connection c = ds.getConnection();
         Statement st = c.createStatement();
         try {
-            ResultSet rs = st.executeQuery(sql);
+            rs = st.executeQuery(sql);
             while (rs.next()) {
                 clientesGrupos.setIdGrupoCte(rs.getInt("idGrupoCte"));
                 clientesGrupos.setGrupoCte(rs.getString("grupoCte"));
             }
         } finally {
+            st.close();
+            rs.close();
             c.close();
         }
         return clientesGrupos;

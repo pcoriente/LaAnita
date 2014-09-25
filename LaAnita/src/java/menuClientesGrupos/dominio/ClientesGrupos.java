@@ -15,6 +15,7 @@ public class ClientesGrupos implements Serializable {
 
     private int idGrupoCte;
     private String grupoCte;
+    private String codigoGrupo;
     private Contacto contaco = new Contacto();
 
     public int getIdGrupoCte() {
@@ -67,4 +68,15 @@ public class ClientesGrupos implements Serializable {
     public void setContaco(Contacto contaco) {
         this.contaco = contaco;
     }
+
+    public String getCodigoGrupo() {
+        return codigoGrupo;
+    }
+
+    public void setCodigoGrupo(String codigoGrupo) {
+        this.codigoGrupo = codigoGrupo;
+    }
+    
+    
+    
 }
