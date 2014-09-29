@@ -58,7 +58,7 @@ public class DAOProveedores {
                     }
                 }
             } else {
-                st.executeUpdate("UPDATE contribuyentesRfc SET rfc='"+p.getContribuyente().getRfc()+"' WHERE idrfc="+p.getContribuyente().getIdRfc());
+                st.executeUpdate("UPDATE contribuyentesRfc SET rfc='"+p.getContribuyente().getRfc()+"' WHERE idRfc="+p.getContribuyente().getIdRfc());
             }
             if((idContribuyente=p.getContribuyente().getIdContribuyente())==0) {
                 st.executeUpdate("INSERT INTO contribuyentes (idRfc, contribuyente, idDireccion) "
