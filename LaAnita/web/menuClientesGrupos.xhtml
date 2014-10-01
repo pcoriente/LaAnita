@@ -21,13 +21,14 @@
                                          oncomplete="dlgClientesGrupos.show();"
                                          actionListener="#{mbMenuClientesGrupos.cargaContactos()}"
                                          process="@this"
-                                         update="form :form:txtClienteGrupo"
+                                         update="form :form:txtClienteGrupo :form:txtCodigoGrupo"
                                          title="Nuevo Grupo"/>
                         <p:commandButton id="actualizarContacto"
                                          icon="ui-icon-pencil"
                                          actionListener="#{mbMenuClientesGrupos.actualizar()}"
                                          process="@this cmbContactos"
                                          update=":form:dlgClientesGrupos 
+                                         :form:txtCodigoGrupo
                                          :form:cmbContactos 
                                          :form:cmbTelefonos
                                          :form:btnContactos
@@ -54,7 +55,9 @@
                             selection="#{mbMenuClientesGrupos.clienteGrupoSeleccionado}"
                             selectionMode="single"
                             rowKey="#{lstClienteGrupos}"
-                            emptyMessage="No hay clientes Grupos">
+                            emptyMessage="No hay clientes Grupos"
+                            paginator="true"
+                            rows="7">
                             <p:ajax event="rowSelect"
                                     process="@this"
                                     listener="#{mbMenuClientesGrupos.cargarDatos()}"
@@ -99,18 +102,21 @@
                               showEffect="explode"
                               modal="true"
                               closable="false"
-                              resizable="false">
+                              resizable="false"
+                              >
                         <h:panelGrid columns="3" 
                                      id="renderdd">
                             <h:outputLabel  value="Codigo Grupo :" style="color: black"/>
                             <p:inputText value="#{mbMenuClientesGrupos.clientesGrupos.codigoGrupo}" 
-                                         id="txtCodigoGrupo"/>
+                                         id="txtCodigoGrupo"
+                                         maxlength="3"
+                                         disabled="#{mbMenuClientesGrupos.clienteGrupoSeleccionado!=null}"/>
                             <h:outputLabel/>
                             <h:outputLabel  value="Grupo :" style="color: black"/>
                             <p:inputText value="#{mbMenuClientesGrupos.clientesGrupos.grupoCte}" 
                                          id="txtClienteGrupo"/>
                             <h:outputLabel/>
-                            
+
                             <h:outputLabel id="lblContactos"
                                            value="Contactos" style="color: black"
                                            rendered="#{mbMenuClientesGrupos.actualizar}"/>
@@ -189,7 +195,7 @@
                             <p:commandButton title="Guardar"
                                              icon="ui-icon-disk"
                                              actionListener="#{mbMenuClientesGrupos.guardar()}"
-                                             process="@this txtClienteGrupo"
+                                             process="@this txtClienteGrupo txtCodigoGrupo"
                                              oncomplete="nuevoClienteGrupo(xhr, status, args);"
                                              update="growl tablaClientesGrupos 
                                              :form:tablaClientesGrupos 
@@ -410,7 +416,7 @@
                                      scrollable="true"
                                      scrollHeight="200"
                                      style="width: 600px"
-                                    >
+                                     >
                             <p:column headerText="Contacto">
                                 #{detalle.contacto.contacto}
                             </p:column>
