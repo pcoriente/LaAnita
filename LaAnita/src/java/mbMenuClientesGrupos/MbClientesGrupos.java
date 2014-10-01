@@ -80,6 +80,7 @@ public class MbClientesGrupos implements Serializable {
 
     public void cargaContactos() {
         clientesGrupos.setGrupoCte("");
+        clientesGrupos.setCodigoGrupo("");
         this.setActualizar(false);
         clienteGrupoSeleccionado = null;
     }
@@ -177,8 +178,15 @@ public class MbClientesGrupos implements Serializable {
                 fMsg.setSeverity(FacesMessage.SEVERITY_ERROR);
                 fMsg.setDetail(" " + ex.getMessage());
             } catch (SQLException ex) {
-                fMsg.setSeverity(FacesMessage.SEVERITY_ERROR);
-                fMsg.setDetail(" " + ex.getMessage());
+                ok = false;
+                if (ex.getErrorCode() == 2601) {
+                    fMsg.setSeverity(FacesMessage.SEVERITY_WARN);
+                    fMsg.setDetail("Este codigo ya fue capturado, ingresa otro.");
+                } else {
+                    fMsg.setSeverity(FacesMessage.SEVERITY_ERROR);
+                    fMsg.setDetail(" " + ex.getMessage() + " EL CODIGO DEL ERROR ES " + ex.getErrorCode());
+                }
+
             }
             FacesContext.getCurrentInstance().addMessage(null, fMsg);
             context.addCallbackParam("ok", ok);
@@ -283,6 +291,7 @@ public class MbClientesGrupos implements Serializable {
     public void cargarDatos() {
         clientesGrupos.setGrupoCte(clienteGrupoSeleccionado.getGrupoCte());
         clientesGrupos.setIdGrupoCte(clienteGrupoSeleccionado.getIdGrupoCte());
+        clientesGrupos.setCodigoGrupo(clienteGrupoSeleccionado.getCodigoGrupo());
     }
 
     public String salir() {

@@ -18,6 +18,10 @@ public class UnidadMedida {
         this.idTipo = 0;
     }
 
+    UnidadMedida() {
+        
+    }
+
     @Override
     public String toString() {
         return unidadMedida;

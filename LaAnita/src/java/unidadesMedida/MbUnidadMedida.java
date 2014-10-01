@@ -1,5 +1,6 @@
 package unidadesMedida;
 
+import Message.Mensajes;
 import javax.inject.Named;
 import javax.enterprise.context.SessionScoped;
 import java.io.Serializable;
@@ -19,41 +20,41 @@ import usuarios.dominio.Accion;
 @Named(value = "mbUnidadMedida")
 @SessionScoped
 public class MbUnidadMedida implements Serializable {
+
     private boolean modoEdicion;
     private UnidadMedida unidadMedidaSeleccionada;
-    private UnidadMedida unidadMedida;
+    private UnidadMedida unidadMedida = new UnidadMedida();
     private ArrayList<UnidadMedida> unidadesMedida;
     private DAOUnidadesMedida dao;
-    
     private ArrayList<Accion> acciones;
-    @ManagedProperty(value="#{mbAcciones}")
+    @ManagedProperty(value = "#{mbAcciones}")
     private MbAcciones mbAcciones;
-    
+
     public MbUnidadMedida() {
-        this.modoEdicion=false;
-        this.mbAcciones=new MbAcciones();
+        this.modoEdicion = false;
+        this.mbAcciones = new MbAcciones();
     }
-    
+
     public String grabar() {
-        String destino=null;
+        String destino = null;
         FacesMessage fMsg = new FacesMessage(FacesMessage.SEVERITY_WARN, "Aviso:", "");
-        if(this.unidadMedida.getUnidadMedida().equals("")) {
+        if (this.unidadMedida.getUnidadMedida().equals("")) {
             fMsg.setDetail("Se requiere la descripcion de la unidad de medida !!");
-        } else if(this.unidadMedida.getAbreviatura().equals("")) {
+        } else if (this.unidadMedida.getAbreviatura().equals("")) {
             fMsg.setDetail("Se requiere la abreviatura de la unidad de medida !!");
         } else {
             try {
-                this.dao=new DAOUnidadesMedida();
-                if(this.unidadMedida.getIdUnidadMedida()==0) {
+                this.dao = new DAOUnidadesMedida();
+                if (this.unidadMedida.getIdUnidadMedida() == 0) {
                     this.unidadMedida.setIdUnidadMedida(this.dao.agregar(this.unidadMedida));
-                    this.unidadMedidaSeleccionada=this.unidadMedida;
+                    this.unidadMedidaSeleccionada = this.unidadMedida;
                 } else {
                     this.dao.modificar(this.unidadMedida);
                 }
-                this.modoEdicion=false;
-                this.unidadMedidaSeleccionada=this.unidadMedida;
-                this.unidadesMedida=null;
-                destino="unidadesMedida.xhtml";
+                this.modoEdicion = false;
+                this.unidadMedidaSeleccionada = this.unidadMedida;
+                this.unidadesMedida = null;
+                destino = "unidadesMedida.xhtml";
             } catch (NamingException ex) {
                 fMsg.setSeverity(FacesMessage.SEVERITY_ERROR);
                 fMsg.setDetail(ex.getMessage());
@@ -62,51 +63,87 @@ public class MbUnidadMedida implements Serializable {
                 fMsg.setDetail(ex.getErrorCode() + " " + ex.getMessage());
             }
         }
-        if(destino==null) {
+        if (destino == null) {
             FacesContext.getCurrentInstance().addMessage(null, fMsg);
         }
         return destino;
     }
-    
+
+    public boolean validar() {
+        boolean ok = false;
+        if (this.unidadMedida.getUnidadMedida().equals("")) {
+            Mensajes.mensajeAlert("Se requiere una unidad de medida");
+        } else if (this.unidadMedida.getAbreviatura().equals("")) {
+            Mensajes.mensajeAlert("Se requiere una abreviatura para esta unidad de medida");
+        } else {
+            ok = true;
+        }
+        return ok;
+    }
+
+    public void guardarUnidadMedida() {
+        boolean ok = validar();
+        if (ok == true) {
+            try {
+                this.dao = new DAOUnidadesMedida();
+                if (this.unidadMedida.getIdUnidadMedida() == 0) {
+                    this.unidadMedida.setIdUnidadMedida(this.dao.agregar(this.unidadMedida));
+                    Mensajes.mensajeSucces("Exito! Nueva unidad de medida disponible");
+                } else {
+                    this.dao.modificar(this.unidadMedida);
+                    Mensajes.mensajeSucces("Exito! Unidad de medida actualizada");
+                    this.unidadMedidaSeleccionada = null;
+                }
+                this.modoEdicion = false;
+//                this.unidadMedidaSeleccionada = this.unidadMedida;
+                this.unidadesMedida = null;
+            } catch (NamingException ex) {
+                Message.Mensajes.mensajeError(ex.getMessage());
+            } catch (SQLException ex) {
+                Mensajes.mensajeError(ex.getMessage());
+            }
+        }
+    }
+
     public String cancelar() {
-        this.modoEdicion=false;
+        this.modoEdicion = false;
         return "unidadesMedida.xhtml";
     }
-    
+
     public String terminar() {
-        this.modoEdicion=false;
-        this.unidadMedidaSeleccionada=null;
-        this.unidadesMedida=null;
-        this.acciones=null;
         return "index.xhtml";
     }
-    
-    public String nuevaUnidadMedida() {
-       this.modoEdicion=true;
-       this.unidadMedida=new UnidadMedida(0, "", "");
-       return "unidadesMedida.xhtml";
+
+    public String salir() {
+        return "index.xhtml";
     }
-    
+
+    public String nuevaUnidadMedida() {
+        this.modoEdicion = true;
+        this.unidadMedida = new UnidadMedida(0, "", "");
+        return "unidadesMedida.xhtml";
+    }
+
     public String modificarUnidadMedida() {
-        this.modoEdicion=true;
+        this.modoEdicion = true;
         this.copia();
         return "unidadesMedida.xhtml";
     }
-    
+
     private void copia() {
-        this.unidadMedida=new UnidadMedida(0, "", "");
+        this.unidadMedida = new UnidadMedida(0, "", "");
         this.unidadMedida.setIdUnidadMedida(this.unidadMedidaSeleccionada.getIdUnidadMedida());
         this.unidadMedida.setUnidadMedida(this.unidadMedidaSeleccionada.getUnidadMedida());
         this.unidadMedida.setAbreviatura(this.unidadMedidaSeleccionada.getAbreviatura());
     }
-    
+
     public void cargaUnidadesMedida() {
-        boolean ok=false;
+        boolean ok = false;
         FacesMessage fMsg = new FacesMessage(FacesMessage.SEVERITY_WARN, "Aviso:", "");
         try {
-            this.dao=new DAOUnidadesMedida();
-            this.unidadesMedida=this.dao.obtenerUnidades();
-            ok=true;
+            this.dao = new DAOUnidadesMedida();
+            this.unidadesMedida = this.dao.obtenerUnidades();
+            ok = true;
         } catch (NamingException ex) {
             fMsg.setSeverity(FacesMessage.SEVERITY_ERROR);
             fMsg.setDetail(ex.getMessage());
@@ -114,9 +151,18 @@ public class MbUnidadMedida implements Serializable {
             fMsg.setSeverity(FacesMessage.SEVERITY_ERROR);
             fMsg.setDetail(ex.getErrorCode() + " " + ex.getMessage());
         }
-        if(!ok) {
+        if (!ok) {
             FacesContext.getCurrentInstance().addMessage(null, fMsg);
         }
+    }
+
+    public void limpiarUnidadMedida() {
+        unidadMedida = new UnidadMedida();
+        unidadMedidaSeleccionada = null;
+    }
+
+    public void obtenerUnidadMedida() {
+        unidadMedida = unidadMedidaSeleccionada;
     }
 
     public UnidadMedida getUnidadMedida() {
@@ -128,7 +174,7 @@ public class MbUnidadMedida implements Serializable {
     }
 
     public ArrayList<UnidadMedida> getUnidadesMedida() {
-        if(this.unidadesMedida==null) {
+        if (this.unidadesMedida == null) {
             this.cargaUnidadesMedida();
         }
         return unidadesMedida;
@@ -139,8 +185,8 @@ public class MbUnidadMedida implements Serializable {
     }
 
     public ArrayList<Accion> getAcciones() {
-        if(this.acciones==null) {
-            this.acciones=this.mbAcciones.obtenerAcciones(8);
+        if (this.acciones == null) {
+            this.acciones = this.mbAcciones.obtenerAcciones(8);
         }
         return acciones;
     }

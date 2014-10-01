@@ -54,7 +54,10 @@
                             selection="#{mbMenuClientesGrupos.clienteGrupoSeleccionado}"
                             selectionMode="single"
                             rowKey="#{lstClienteGrupos}"
-                            emptyMessage="No hay clientes Grupos">
+                            emptyMessage="No hay clientes Grupos"
+                            paginator="true"
+                            rows="7"
+                           >
                             <p:ajax event="rowSelect"
                                     process="@this"
                                     listener="#{mbMenuClientesGrupos.cargarDatos()}"
@@ -104,7 +107,8 @@
                                      id="renderdd">
                             <h:outputLabel  value="Codigo Grupo :" style="color: black"/>
                             <p:inputText value="#{mbMenuClientesGrupos.clientesGrupos.codigoGrupo}" 
-                                         id="txtCodigoGrupo"/>
+                                         id="txtCodigoGrupo"
+                                         maxlength="3"/>
                             <h:outputLabel/>
                             <h:outputLabel  value="Grupo :" style="color: black"/>
                             <p:inputText value="#{mbMenuClientesGrupos.clientesGrupos.grupoCte}" 
@@ -189,7 +193,7 @@
                             <p:commandButton title="Guardar"
                                              icon="ui-icon-disk"
                                              actionListener="#{mbMenuClientesGrupos.guardar()}"
-                                             process="@this txtClienteGrupo"
+                                             process="@this txtClienteGrupo txtCodigoGrupo"
                                              oncomplete="nuevoClienteGrupo(xhr, status, args);"
                                              update="growl tablaClientesGrupos 
                                              :form:tablaClientesGrupos 
@@ -204,7 +208,8 @@
                     </p:dialog>
                     <p:dialog widgetVar="dlgContactos"
                               modal="true"
-                              header="Mantenimiento de Contactos">
+                              header="Mantenimiento de Contactos"
+                              resizable="false">
                         <h:panelGrid columns="2" id="panelContactos">
                             <h:outputLabel value="Contacto :" style="color: black"/>
                             <p:inputText id="txtContacto" value="#{mbMenuClientesGrupos.mbContactos.contacto.contacto}"/>
@@ -237,8 +242,10 @@
                     <p:dialog header="MANTENIMIENTO DE TELEFONOS"
                               widgetVar="mttoTelefonosDialog" 
                               resizable="false"
-                              style="width: 500px;" modal="true" 
-                              hideEffect="explode">
+                              style="width: 500px;" 
+                              modal="true" 
+                              hideEffect="explode"
+                              >
                         <p:panelGrid id="mttoTelefonos">
                             <p:row rendered="#{mbMenuClientesGrupos.mbContactos.mbTelefonos.telefono.idTelefono==0}" >
                                 <p:column >
@@ -361,6 +368,7 @@
                     <p:dialog widgetVar="dlgFormatos"
                               header="Mantenimiento Formatos"
                               resizable="false"
+                              modal="true"
                               >
                         <h:panelGrid columns="2">
                             <h:outputText value="Formato:"/>
@@ -402,6 +410,7 @@
                               resizable="false"
                               showEffect="fold"
                               hideEffect="fold"
+                              modal="true"
                               >
                         <p:dataTable emptyMessage="No tiene Contactos" 
                                      id="tableDetalle"

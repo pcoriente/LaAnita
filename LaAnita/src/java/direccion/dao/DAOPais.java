@@ -71,4 +71,10 @@ public class DAOPais {
         pais.setPais(rs.getString("pais"));
         return pais;
     }
+
+    public void guardarPais(Pais pais) throws SQLException {
+        Connection cn = ds.getConnection();
+        Statement st = cn.createStatement();
+        String sql ="INSERT INTO paises()";
+    }
 }
