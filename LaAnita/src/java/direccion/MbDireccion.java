@@ -105,9 +105,9 @@ public class MbDireccion implements Serializable {
                 Logger.getLogger(MbDireccion.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
-        if (!ok) {
+//        if (!ok) {
             FacesContext.getCurrentInstance().addMessage(null, fMsg);
-        }
+//        }
         context.addCallbackParam("okContribuyente", ok);
 //        return destino;
     }

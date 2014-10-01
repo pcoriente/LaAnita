@@ -43,7 +43,7 @@ public class DAOContribuyentes {
         Statement st = cn.createStatement();
         try {
             st.executeUpdate("begin transaction");
-            st.executeUpdate("INSERT INTO contribuyentesRfc (rfc) values ('" + rfc + "')");
+            st.executeUpdate("INSERT INTO contribuyentesRfc (rfc, curp) values ('" + rfc + "', '')");
             ResultSet rs = st.executeQuery("SELECT @@IDENTITY AS idRfc");
             if (rs.next()) {
                 idRfc = rs.getInt("idRfc");
@@ -78,7 +78,7 @@ public class DAOContribuyentes {
         ArrayList<Contribuyente> cs = new ArrayList<Contribuyente>();
         Connection cn = this.ds.getConnection();
         Statement st = cn.createStatement();
-        String strSQL = "SELECT c.idContribuyente, contribuyente, cr.idRfc, cr.rfc, c.idDireccion "
+        String strSQL = "SELECT c.idContribuyente, contribuyente, cr.idRfc, cr.rfc, c.idDireccion, cr.curp "
                 + "FROM contribuyentes c "
                 + "inner join contribuyentesRfc cr on cr.idRfc=c.idRfc "
                 + "WHERE c.idContribuyente IN (SELECT DISTINCT idContribuyente FROM clientes)";
@@ -97,7 +97,7 @@ public class DAOContribuyentes {
         ArrayList<Contribuyente> cs = new ArrayList<Contribuyente>();
         Connection cn = this.ds.getConnection();
         Statement st = cn.createStatement();
-        String strSQL = "Select c.idContribuyente, contribuyente, cr.idRfc, cr.rfc, c.idDireccion "
+        String strSQL = "Select c.idContribuyente, contribuyente, cr.idRfc, cr.rfc, c.idDireccion, cr.curp "
                 + "from contribuyentes c "
                 + "inner join contribuyentesRfc cr on cr.idRfc=c.idRfc "
                 + "where c.contribuyente like '%" + cadena + "%'";
@@ -116,7 +116,7 @@ public class DAOContribuyentes {
         Contribuyente to = null;
         Connection cn = this.ds.getConnection();
         Statement st = cn.createStatement();
-        String strSQL = "Select c.idContribuyente, c.contribuyente, cr.idRfc, cr.rfc, c.idDireccion "
+        String strSQL = "Select c.idContribuyente, c.contribuyente, cr.idRfc, cr.rfc, c.idDireccion, cr.curp "
                 + "from contribuyentes c "
                 + "inner join contribuyentesRfc cr on cr.idRfc=c.idRfc "
                 + "where c.idContribuyente=" + idContribuyente;
@@ -285,9 +285,9 @@ public class DAOContribuyentes {
     public boolean verificarContribuyente(String rfc) throws SQLException {
         boolean ok = false;
         Contribuyente contribuyente = new Contribuyente();
-        String sqlVerificar = "SELECT * FROM contribuyentes con \n"
-                + "inner join contribuyentesRfc crRfc \n"
-                + "on con.idRfc = crRfc.idRfc\n"
+        String sqlVerificar = "SELECT * FROM contribuyentes con "
+                + "inner join contribuyentesRfc crRfc "
+                + "on con.idRfc = crRfc.idRfc "
                 + "where crRfc.rfc='" + rfc.trim() + "';";
         Connection cn = ds.getConnection();
         Statement st = cn.createStatement();
@@ -299,7 +299,6 @@ public class DAOContribuyentes {
         } finally {
             cn.close();
         }
-
         return ok;
     }
 }

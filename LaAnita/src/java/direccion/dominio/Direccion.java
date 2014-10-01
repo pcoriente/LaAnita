@@ -40,11 +40,11 @@ public class Direccion implements Serializable {
 
     @Override
     public String toString() {
-        return calle.isEmpty() ? "" : (" CALLE: "+calle + "\n NUMERO: " + numeroExterior + "\n NO. INTERIOR: " + numeroInterior
-                + "\n REFERENCIA: "+ referencia
-                + "\n MUNICIPIO: " + municipio + "\n ESTADO: "+ estado + "\n PAIS: " + pais.toString()
-                + (localidad.isEmpty() ? "": "\n LOCALIDAD: "+localidad)
-                + "\n COLONIA: " + (colonia.isEmpty() ? ": "+codigoPostal : colonia + "\n C.P.:"+codigoPostal));
+        return calle.isEmpty() ? "" : (calle + " " + numeroExterior + (numeroInterior.isEmpty()?"":" " + numeroInterior)
+                + (referencia.isEmpty()?"":"\n" + referencia)
+                + "\n" + (colonia.isEmpty()?"":colonia) 
+                + "\n" + (localidad.isEmpty() || localidad.equals(municipio)?"":localidad + ", ") + municipio + ", "+ estado
+                + "\n" + pais + ", "+codigoPostal);
     }
 
 

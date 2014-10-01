@@ -185,6 +185,7 @@ public class MbClientesGrupos implements Serializable {
                 } else {
                     fMsg.setSeverity(FacesMessage.SEVERITY_ERROR);
                     fMsg.setDetail(" " + ex.getMessage() + " EL CODIGO DEL ERROR ES " + ex.getErrorCode());
+
                 }
 
             }

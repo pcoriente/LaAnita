@@ -20,7 +20,7 @@
                         <p:messages id="msgs" showDetail="true" showSummary="false" closable="true" />
                         <p:panelGrid id="panelCapturaProveedores" styleClass="quitaCuadro" >
                             <p:row >
-                                <p:column >
+                                <p:column style="width: 120px;" >
                                     <h:outputLabel for="nombreComercial" value="Nombre Comercial:" styleClass="colorLetra"/>
                                 </p:column>
                                 <p:column colspan="5" >
@@ -38,7 +38,7 @@
                                                  maxlength="13" size="13" >
                                     </p:inputText>
                                 </p:column>
-                                <p:column colspan="4" >
+                                <p:column style="width: 90px;" >
                                     <p:commandButton icon="ui-icon-search" title="Buscar Contribuyentes"
                                                      process="@this" actionListener="#{mbProveedores.mbBuscarContribuyente.inicializar()}" 
                                                      update="buscarProveedores listaContribuyentes" oncomplete="buscarProvDlg.show()" />
@@ -46,6 +46,14 @@
                                                      disabled="#{not mbProveedores.mbAcciones.validarAccion('btnAgregarContribuyente')}"
                                                      process="@this" actionListener="#{mbProveedores.nuevoContribuyente()}"
                                                      update="mttoContribuyentes" oncomplete="mttoContribDialog.show()" />
+                                </p:column>
+                                <p:column style="width: 50px;" >
+                                    <h:outputLabel for="curp" value="CURP:" styleClass="colorLetra"/>
+                                </p:column>
+                                <p:column colspan="2" >
+                                    <p:inputText id="curp" value="#{mbProveedores.proveedor.contribuyente.curp}" readonly="true"
+                                                 maxlength="18" size="20" >
+                                    </p:inputText>
                                 </p:column>
                             </p:row>
                             <p:row >
@@ -85,15 +93,15 @@
                                 <p:column >
                                     <h:outputLabel value="Clasificación:" styleClass="colorLetra"/>
                                 </p:column>
-                                <p:column colspan="3" >
-                                    <p:selectOneMenu id="clasificacion" value="#{mbProveedores.proveedor.clasificacion}" style="width: 300px" >
+                                <p:column colspan="4" >
+                                    <p:selectOneMenu id="clasificacion" value="#{mbProveedores.proveedor.clasificacion}" style="width: 375px" >
                                         <f:converter converterId="converters.Proveedor.Clasificacion" />
                                         <f:selectItems value="#{mbProveedores.listaClasificaciones}" />
                                         <p:ajax event="change" listener="#{mbProveedores.cargaSubClasificaciones()}" 
                                                 update="subClasificacion btnMttoSubClasificaciones" />
                                     </p:selectOneMenu>
                                 </p:column>
-                                <p:column colspan="2" >
+                                <p:column >
                                     <p:commandButton id="btnMttoClasificaciones" icon="ui-icon-pencil" title="Mtto.Clasificaciones" 
                                                      disabled="#{not mbProveedores.mbAcciones.validarAccion('btnMttoClasificaciones')}"
                                                      process="@this clasificacion" actionListener="#{mbProveedores.mttoClasificacion()}" 
@@ -104,14 +112,13 @@
                                 <p:column >
                                     <h:outputLabel value="Sub Clasificación:" styleClass="colorLetra"/>
                                 </p:column>
-                                <p:column colspan="3" >
-                                    <p:selectOneMenu id="subClasificacion" value="#{mbProveedores.proveedor.subClasificacion}"
-                                                     style="width: 300px" >
+                                <p:column colspan="4" >
+                                    <p:selectOneMenu id="subClasificacion" value="#{mbProveedores.proveedor.subClasificacion}" style="width: 375px" >
                                         <f:converter converterId="converters.Proveedor.SubClasificacion" />
                                         <f:selectItems value="#{mbProveedores.listaSubClasificaciones}" />
                                     </p:selectOneMenu>
                                 </p:column>
-                                <p:column colspan="2" >
+                                <p:column >
                                     <p:commandButton id="btnMttoSubClasificaciones" icon="ui-icon-pencil" title="Mtto.SubClasificaciones" 
                                                      disabled="#{mbProveedores.proveedor.clasificacion.idClasificacion==0 or not mbProveedores.mbAcciones.validarAccion('btnMttoSubClasificaciones')}"
                                                      process="@this subClasificacion" actionListener="#{mbProveedores.mttoSubClasificacion()}"
@@ -122,13 +129,13 @@
                                 <p:column >
                                     <h:outputLabel value="Tipo Tercero:" styleClass="colorLetra"/>
                                 </p:column>
-                                <p:column colspan="3" >
-                                    <p:selectOneMenu id="tipoTercero" value="#{mbProveedores.proveedor.tipoTercero}" style="width: 300px" >
+                                <p:column colspan="4" >
+                                    <p:selectOneMenu id="tipoTercero" value="#{mbProveedores.proveedor.tipoTercero}" style="width: 375px" >
                                         <f:converter converterId="converters.Proveedor.TipoTercero" />
                                         <f:selectItems value="#{mbProveedores.listaTipoTerceros}" />
                                     </p:selectOneMenu>
                                 </p:column>
-                                <p:column colspan="2" >
+                                <p:column >
                                     <p:commandButton id="btnMttoTipoTerceros" icon="ui-icon-pencil" title="Mtto.TipoTerceros" 
                                                      disabled="#{not mbProveedores.mbAcciones.validarAccion('btnMttoTipoTerceros')}"
                                                      process="@this tipoTercero" actionListener="#{mbProveedores.mttoTipoTercero()}" 
@@ -139,13 +146,13 @@
                                 <p:column >
                                     <h:outputLabel value="Tipo Operación:" styleClass="colorLetra"/>
                                 </p:column>
-                                <p:column colspan="3" >
-                                    <p:selectOneMenu id="tipoOperacion" value="#{mbProveedores.proveedor.tipoOperacion}" style="width: 300px" >
+                                <p:column colspan="4" >
+                                    <p:selectOneMenu id="tipoOperacion" value="#{mbProveedores.proveedor.tipoOperacion}" style="width: 375px" >
                                         <f:converter converterId="converters.Proveedor.TipoOperacion" />
                                         <f:selectItems value="#{mbProveedores.listaTipoOperaciones}" />
                                     </p:selectOneMenu>
                                 </p:column>
-                                <p:column colspan="2" >
+                                <p:column >
                                     <p:commandButton id="btnMttoTipoOperaciones" icon="ui-icon-pencil" title="Mtto.Tipo Operaciones" 
                                                      disabled="#{not mbProveedores.mbAcciones.validarAccion('btnMttoTipoOperaciones')}"
                                                      process="@this tipoOperacion" actionListener="#{mbProveedores.mttoTipoOperacion()}" 
@@ -156,15 +163,16 @@
                                 <p:column >
                                     <h:outputLabel value="Contactos:" styleClass="colorLetra"/>
                                 </p:column>
-                                <p:column colspan="3" >
-                                    <p:selectOneMenu id="contacto" value="#{mbProveedores.contacto}" style="width: 300px" >
+                                <p:column colspan="4" >
+                                    <p:selectOneMenu id="contacto" value="#{mbProveedores.contacto}" style="width: 375px" >
                                         <f:converter converterId="converters.Contacto" />
                                         <f:selectItems value="#{mbProveedores.mbContactos.listaContactos}" />
                                         <p:ajax event="change" listener="#{mbProveedores.cargarTelefonos()}" update="telefono btnMttoTelefonos" />
                                     </p:selectOneMenu>
                                 </p:column>
-                                <p:column colspan="2" >
+                                <p:column >
                                     <p:commandButton id="btnMttoContactos" icon="ui-icon-pencil" title="Mtto.Contactos" 
+                                                     disabled="#{mbProveedores.proveedor.idProveedor==0}"
                                                      process="@this contacto" actionListener="#{mbProveedores.mttoContacto()}" 
                                                      update="msgs mttoContactos" oncomplete="mttoContactosDialog.show()" />
                                 </p:column>
@@ -173,13 +181,13 @@
                                 <p:column >
                                     <h:outputLabel value="Teléfonos:" styleClass="colorLetra" />
                                 </p:column>
-                                <p:column colspan="3" >
-                                    <p:selectOneMenu id="telefono" value="#{mbProveedores.telefono}" style="width: 300px;" >
+                                <p:column colspan="4" >
+                                    <p:selectOneMenu id="telefono" value="#{mbProveedores.telefono}" style="width: 375px;" >
                                         <f:converter converterId="converters.Telefono" />
                                         <f:selectItems value="#{mbProveedores.mbContactos.mbTelefonos.listaTelefonos}" />
                                     </p:selectOneMenu>
                                 </p:column>
-                                <p:column colspan="2" >
+                                <p:column >
                                     <p:commandButton id="btnMttoTelefonos" icon="ui-icon-pencil" title="Mtto.Teléfonos" 
                                                      disabled="#{mbProveedores.contacto.idContacto==0}"
                                                      process="@this telefono" actionListener="#{mbProveedores.mttoTelefono()}" 
@@ -190,64 +198,58 @@
                                 <p:column >
                                     <h:outputLabel value="Dias Crédito:" styleClass="colorLetra"/>
                                 </p:column>
-                                <p:column >
+                                <p:column colspan="2" >
                                     <p:inputText id="diasCredito"
                                                  readonly="#{not mbProveedores.mbAcciones.validarAccion('diasCredito')}"
                                                  value="#{mbProveedores.proveedor.diasCredito}"
-                                                 maxlength="10"
-                                                 size="15" />
+                                                 maxlength="5" size="6" />
                                 </p:column>
-                                <p:column >
+                                <p:column colspan="2" >
                                     <h:outputLabel value="Límite Crédito:"  styleClass="colorLetra"/>
                                 </p:column>
-                                <p:column colspan="3" >
+                                <p:column >
                                     <p:inputText id="limiteCredito"
                                                  readonly="#{not mbProveedores.mbAcciones.validarAccion('limiteCredito')}"
                                                  value="#{mbProveedores.proveedor.limiteCredito}"
-                                                 maxlength="10"
-                                                 size="15" />
+                                                 maxlength="10" size="11" />
                                 </p:column>
                             </p:row>
                             <p:row >
                                 <p:column >
                                     <h:outputLabel value="Descto.Comercial:" styleClass="colorLetra"/>
                                 </p:column>
-                                <p:column >
+                                <p:column colspan="2" >
                                     <p:inputText id="desctoComercial"
                                                  readonly="#{not mbProveedores.mbAcciones.validarAccion('desctoComercial')}"
                                                  value="#{mbProveedores.proveedor.desctoComercial}"
-                                                 maxlength="10"
-                                                 size="15" />
+                                                 maxlength="5" size="6" />
                                 </p:column>
-                                <p:column >
+                                <p:column colspan="2" >
                                     <h:outputLabel value="Descto.Pronto Pago:"  styleClass="colorLetra"/>
                                 </p:column>
-                                <p:column colspan="3" >
+                                <p:column >
                                     <p:inputText id="prontoPago"
                                                  readonly="#{not mbProveedores.mbAcciones.validarAccion('desctoProntoPago')}"
                                                  value="#{mbProveedores.proveedor.desctoProntoPago}"
-                                                 maxlength="10"
-                                                 size="15" />
+                                                 maxlength="10" size="11" />
                                 </p:column>
                             </p:row>
                             <p:row >
                                 <p:column >
                                     <h:outputLabel for="impuestoZona" value="Impuestos Zona:" styleClass="colorLetra" />
                                 </p:column>
-                                <p:column >
+                                <p:column colspan="2" >
                                     <p:selectOneMenu id="impuestoZona" value="#{mbProveedores.proveedor.impuestoZona}" style="margin: 0px;" >
                                         <f:converter converterId="converters.ImpuestoZona" />
                                         <f:selectItems value="#{mbProveedores.mbImpuestoZona.listaZonas}" />
                                     </p:selectOneMenu>
                                 </p:column>
-                                <p:column rendered="#{mbProveedores.proveedor.idProveedor > 0}" >
+                                <p:column colspan="2" >
                                     <h:outputLabel value="Fecha Alta:"  styleClass="colorLetra"/>
                                 </p:column>
-                                <p:column colspan="3" rendered="#{mbProveedores.proveedor.idProveedor > 0}" >
-                                    <p:inputText id="alta" readonly="true"
-                                                 value="#{mbProveedores.proveedor.fechaAlta}"
-                                                 maxlength="10"
-                                                 size="15" />
+                                <p:column >
+                                    <p:inputText id="alta" readonly="true" value="#{mbProveedores.proveedor.fechaAlta}"
+                                                 maxlength="10" size="11" />
                                 </p:column>
                             </p:row>
                             <p:row >
@@ -268,8 +270,8 @@
                             <f:facet name="footer" >
                                 <p:row >
                                     <p:column colspan="6" style="text-align: right;" >
-                                        <p:commandButton icon="ui-icon-disk" title="Grabar"
-                                                         actionListener="#{mbProveedores.grabar()}" update="msgs" />
+                                        <p:commandButton icon="ui-icon-disk" title="Grabar" actionListener="#{mbProveedores.grabar()}" 
+                                                         update="msgs btnMttoContactos btnMttoTelefonos alta" />
                                         <p:commandButton icon="ui-icon-arrowreturnthick-1-w" title="Terminar"
                                                          action="#{mbProveedores.salir()}" ajax="false" immediate="true" />
                                     </p:column>
@@ -393,7 +395,7 @@
                                 </p:column>
                                 <p:column colspan="2" >
                                     <p:inputText id="txtPuesto" value="#{mbProveedores.mbContactos.contacto.puesto}"
-                                                 maxlength="20" size="25" >
+                                                 maxlength="60" size="25" >
                                     </p:inputText>
                                 </p:column>
                             </p:row>
@@ -474,19 +476,26 @@
                                     <h:outputLabel for="txtContribuyente" value="CONTRIBUYENTE:" style="font-weight: bold; color: red; width: 120px;" />
                                 </p:column>
                                 <p:column >
-                                    <p:inputText id="txtContribuyente"
-                                                 value="#{mbProveedores.mbContribuyentes.contribuyente.contribuyente}"
-                                                 maxlength="100"
-                                                 size="50" />
+                                    <p:inputText id="txtContribuyente" value="#{mbProveedores.mbContribuyentes.contribuyente.contribuyente}"
+                                                 maxlength="100" size="60" />
+                                </p:column>
+                            </p:row>
+                            <p:row >
+                                <p:column >
+                                    <h:outputLabel for="txtCurp" value="CURP" style="font-weight: bold; color: red; width: 120px;" />
+                                </p:column>
+                                <p:column >
+                                    <p:inputText id="txtCurp" value="#{mbProveedores.mbContribuyentes.contribuyente.curp}"
+                                                 maxlength="20" size="25" />
                                 </p:column>
                             </p:row>
                             <f:facet name="footer" >
                                 <p:row >
                                     <p:column colspan="3" >
                                         <p:commandButton id="btnGrabarContribuyente" value="Aceptar" 
-                                                         process="@this txtRfc txtContribuyente" 
+                                                         process="@this txtRfc txtContribuyente txtCurp" 
                                                          actionListener="#{mbProveedores.actualizarContribuyente()}"
-                                                         update="rfc contribuyente direccionFiscal" 
+                                                         update="rfc contribuyente direccionFiscal curp" 
                                                          oncomplete="handleContribuyente(xhr, status, args)" />
                                     </p:column>
                                 </p:row>
@@ -656,12 +665,11 @@
                                         <f:selectItem itemLabel="RFC" itemValue="1" />
                                         <f:selectItem itemLabel="Contribuyente" itemValue="2" />
                                         <p:ajax listener="#{mbProveedores.mbBuscarContribuyente.verCambio()}" 
-                                                update="buscarProveedores" 
-                                                process="@this"/>
+                                                update="buscarProveedores" process="@this"/>
                                     </p:selectOneRadio>
                                 </p:column>
                                 <p:column >
-                                    <p:inputText id="opcion" value="#{mbProveedores.mbBuscarContribuyente.strBuscar}" maxlength="13" size="15" />
+                                    <p:inputText id="opcion" value="#{mbProveedores.mbBuscarContribuyente.strBuscar}" maxlength="30" size="35" />
                                     <p:commandButton id="btnBuscar1" icon="ui-icon-check" title="Buscar" 
                                                      rendered="#{mbProveedores.mbBuscarContribuyente.tipoBuscar=='1'}"
                                                      process="@this opcion" actionListener="#{mbProveedores.buscar()}" 
@@ -699,7 +707,7 @@
                                 <p:commandButton id="seleccion" value="Seleccionar" 
                                                  disabled="#{mbProveedores.mbBuscarContribuyente.contribuyente==null}"
                                                  actionListener="#{mbProveedores.seleccionaContribuyente()}"
-                                                 update=":main:contribuyente :main:rfc :main:direccionFiscal :main:messages4" 
+                                                 update=":main:messages4 :main:contribuyente :main:rfc :main:curp :main:direccionFiscal" 
                                                  oncomplete="buscarProvDlg.hide()" />
                             </f:facet>
                         </p:dataTable>
