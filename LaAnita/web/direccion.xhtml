@@ -17,7 +17,7 @@
             <ui:include src="wrapper.xhtml" />
             <div id="content" align="center"  >
                 <br></br>
-                <h:form >
+                <h:form id="main" onkeypress="return event.keyCode !== 13;" >
                     <div align="right" >
                         |<p:commandLink value="Salir" ajax="false" action="#{mbDireccion.salir()}"  />
                     </div>
@@ -25,7 +25,7 @@
                         <h:messages layout="table" />
                     </h:panelGroup>
                     <p:panel header="MANTENIMIENTO DE DIRECCIONES" styleClass="quitaCuadro">
-                        <p:messages id="msgs" showDetail="true" />
+                        <p:messages id="msgs" showDetail="true" closable="true" />
                         <h:panelGrid id="panelCapturaDireccion" frame="box" border="0" columns="2" styleClass="quitaCuadro" >
                             <h:outputLabel value="Calle:" for="calle"  styleClass="colorLetra" />
                             <p:inputText id="calle" value="#{mbDireccion.direccion.calle}" maxlength="100" size="50" />
@@ -76,7 +76,7 @@
 
                             <h:outputLabel />
                             <h:panelGroup style="display: block; text-align: right" >
-                                <p:commandButton value="Grabar" actionListener="#{mbDireccion.grabar()}" update="msgs" ajax="false" />
+                                <p:commandButton value="Grabar" actionListener="#{mbDireccion.grabar()}" update=":main:msgs"/>
                             </h:panelGroup>
                         </h:panelGrid>
 

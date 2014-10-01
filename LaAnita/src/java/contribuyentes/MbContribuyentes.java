@@ -45,30 +45,24 @@ public class MbContribuyentes implements Serializable {
         boolean ok = false;
         RequestContext context = RequestContext.getCurrentInstance();
         FacesMessage fMsg = new FacesMessage(FacesMessage.SEVERITY_WARN, "Aviso:", "");
-        if (this.contribuyente.getRfc().isEmpty()) {
-            fMsg.setDetail("Se requiere el RFC !!");
-        } else if (this.contribuyente.getContribuyente().equals("") || this.contribuyente.getContribuyente() == null) {
+        if (this.contribuyente.getContribuyente().equals("")) {
             fMsg.setDetail("Se requiere un contribuyente !!");
-        } else if (this.contribuyente.getRfc().length() > 0) {
-            Utilerias utilerias = new Utilerias();
-            String mensaje = utilerias.verificarRfc(this.getContribuyente().getRfc());
-            if (mensaje.equals("") && this.getContribuyente().getRfc().trim().length() == 13) {
-                boolean validacion = utilerias.validarCurp(this.contribuyente.getCurp());
-                if (validacion == false) {
-                    fMsg.setDetail("Error! Curp no valido");
-                } else {
-                    ok = true;
-                }
-            } else if (this.getContribuyente().getRfc().trim().length() == 12 && mensaje.equals("")) {
-                ok = true;
-            } else {
-                fMsg.setDetail(mensaje);
-            }
+        } else if (this.contribuyente.getRfc().isEmpty()) {
+            fMsg.setDetail("Se requiere el RFC !!");
         } else {
-            ok = true;
+            this.contribuyente.setRfc(this.contribuyente.getRfc().trim().toUpperCase());
+            this.contribuyente.setCurp(this.contribuyente.getCurp().trim().toUpperCase());
+            Utilerias utilerias = new Utilerias();
+            String mensaje = utilerias.verificarRfc(this.contribuyente.getRfc());
+            if (!mensaje.equals("")) {
+                fMsg.setDetail(mensaje);
+            } else if(this.contribuyente.getRfc().length()==12 || utilerias.validarCurp(this.contribuyente.getCurp())) {
+                ok=true;
+            } else {
+                fMsg.setDetail("Error! Curp no valido");
+            }
         }
         if (!ok) {
-
             FacesContext.getCurrentInstance().addMessage(null, fMsg);
         }
         context.addCallbackParam("okContribuyente", ok);

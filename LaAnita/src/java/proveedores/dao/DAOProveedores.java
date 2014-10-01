@@ -47,18 +47,19 @@ public class DAOProveedores {
         try {
             st.executeUpdate("begin transaction");
             if((idRfc=p.getContribuyente().getIdRfc())==0) {
-                rs=st.executeQuery("SELECT idRfc, rfc FROM contribuyentesRfc WHERE rfc='"+p.getContribuyente().getRfc()+"'");
+                rs=st.executeQuery("SELECT idRfc, rfc, curp FROM contribuyentesRfc WHERE rfc='"+p.getContribuyente().getRfc()+"'");
                 if(rs.next()) {
                     idRfc=rs.getInt("idRfc");
                 } else {
-                    st.executeUpdate("INSERT INTO contribuyentesRfc (rfc) values ('"+p.getContribuyente().getRfc()+"')");
+                    st.executeUpdate("INSERT INTO contribuyentesRfc (rfc, curp) values ('"+p.getContribuyente().getRfc()+"', '"+p.getContribuyente().getCurp()+"')");
                     rs=st.executeQuery("SELECT @@IDENTITY AS idRfc");
                     if(rs.next()) {
                         idRfc=rs.getInt("idRfc");
                     }
                 }
             } else {
-                st.executeUpdate("UPDATE contribuyentesRfc SET rfc='"+p.getContribuyente().getRfc()+"' WHERE idRfc="+p.getContribuyente().getIdRfc());
+                st.executeUpdate("UPDATE contribuyentesRfc SET rfc='"+p.getContribuyente().getRfc()+"', curp='"+p.getContribuyente().getCurp()+"' "
+                        + "WHERE idRfc="+p.getContribuyente().getIdRfc());
             }
             if((idContribuyente=p.getContribuyente().getIdContribuyente())==0) {
                 st.executeUpdate("INSERT INTO contribuyentes (idRfc, contribuyente, idDireccion) "
@@ -107,18 +108,19 @@ public class DAOProveedores {
         try {
             st.executeUpdate("begin transaction");
             if((idRfc=p.getContribuyente().getIdRfc())==0) {
-                rs=st.executeQuery("SELECT idRfc, rfc FROM contribuyentesRfc WHERE rfc='"+p.getContribuyente().getRfc()+"'");
+                rs=st.executeQuery("SELECT idRfc, rfc, curp FROM contribuyentesRfc WHERE rfc='"+p.getContribuyente().getRfc()+"'");
                 if(rs.next()) {
                     idRfc=rs.getInt("idRfc");
                 } else {
-                    st.executeUpdate("INSERT INTO contribuyentesRfc (rfc) values ('"+p.getContribuyente().getRfc()+"')");
+                    st.executeUpdate("INSERT INTO contribuyentesRfc (rfc, curp) values ('"+p.getContribuyente().getRfc()+"', '"+p.getContribuyente().getCurp()+"')");
                     rs=st.executeQuery("SELECT @@IDENTITY AS idRfc");
                     if(rs.next()) {
                         idRfc=rs.getInt("idRfc");
                     }
                 }
             } else {
-                st.executeUpdate("UPDATE contribuyentesRfc SET rfc='"+p.getContribuyente().getRfc()+"' WHERE idRfc="+p.getContribuyente().getIdRfc());
+                st.executeUpdate("UPDATE contribuyentesRfc SET rfc='"+p.getContribuyente().getRfc()+"', curp='"+p.getContribuyente().getCurp()+"' "
+                                + "WHERE idRfc="+p.getContribuyente().getIdRfc());
             }
             if((idContribuyente=p.getContribuyente().getIdContribuyente())==0) {
                 st.executeUpdate("INSERT INTO contribuyentes (idRfc, contribuyente, idDireccion) "
@@ -158,7 +160,7 @@ public class DAOProveedores {
     private String sqlProveedor() {
         String strSQL="" +
 "select p.idProveedor, p.nombreComercial\n" +
-"       , c.idContribuyente, c.contribuyente, r.idRfc, r.rfc, c.idDireccion as idDireccionFiscal\n" +
+"       , c.idContribuyente, c.contribuyente, r.idRfc, r.rfc, r.curp, c.idDireccion as idDireccionFiscal\n" +
 "	, cl.idClasificacion, cl.clasificacion, isnull(sc.idSubClasificacion, 0) as idSubClasificacion, isnull(sc.subClasificacion, '') as subClasificacion\n" +
 "	, isnull(tipOpe.idTipoOperacion, 0) as idTipoOperacion, isnull(tipOpe.operacion, '') as operacion\n" +
 "	, isnull(tipTer.idTipoTercero, 0) as idTipoTercero, isnull(tipTer.tercero, '') as tercero\n" +
@@ -266,6 +268,7 @@ public class DAOProveedores {
         contribuyente.setContribuyente(rs.getString("contribuyente"));
         contribuyente.setIdRfc(rs.getInt("idRfc"));
         contribuyente.setRfc(rs.getString("rfc"));
+        contribuyente.setCurp(rs.getString("curp"));
         contribuyente.getDireccion().setIdDireccion(rs.getInt("idDireccionFiscal"));
         
         Proveedor p=new Proveedor();
