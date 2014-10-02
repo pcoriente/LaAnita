@@ -57,12 +57,8 @@
                             rowKey="#{lstClienteGrupos}"
                             emptyMessage="No hay clientes Grupos"
                             paginator="true"
-<<<<<<< HEAD
                             rows="7"
                            >
-=======
-                            rows="7">
->>>>>>> branch 'master' of https://github.com/pcoriente/LaAnita.git
                             <p:ajax event="rowSelect"
                                     process="@this"
                                     listener="#{mbMenuClientesGrupos.cargarDatos()}"
@@ -114,12 +110,8 @@
                             <h:outputLabel  value="Codigo Grupo :" style="color: black"/>
                             <p:inputText value="#{mbMenuClientesGrupos.clientesGrupos.codigoGrupo}" 
                                          id="txtCodigoGrupo"
-<<<<<<< HEAD
-                                         maxlength="3"/>
-=======
                                          maxlength="3"
                                          disabled="#{mbMenuClientesGrupos.clienteGrupoSeleccionado!=null}"/>
->>>>>>> branch 'master' of https://github.com/pcoriente/LaAnita.git
                             <h:outputLabel/>
                             <h:outputLabel  value="Grupo :" style="color: black"/>
                             <p:inputText value="#{mbMenuClientesGrupos.clientesGrupos.grupoCte}" 
