@@ -210,7 +210,6 @@ public class MbListaPrecioIdeal implements Serializable {
                 lstListaPrecioTable = new ArrayList<ListaPrecioIdeal>();
                 DAOListaPrecio dao = new DAOListaPrecio();
                 for (TOPrecioListaIdeal p : dao.dameValores()) {
-                    System.out.println(p.getIdProducto());
                     lstListaPrecioTable.add(this.convertir(p));
                 }
             } catch (NamingException ex) {
