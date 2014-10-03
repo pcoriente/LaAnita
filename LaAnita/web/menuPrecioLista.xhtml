@@ -37,14 +37,18 @@
                         <p:dataTable value="#{mbListaPrecioIdeal.lstListaPrecioTable}"
                                      var="listaPrecioIdeal"
                                      id="tablePrecioIdeal"
-                                     scrollable="true"
-                                     scrollHeight="328">
-
-                            <p:column headerText="Producto">
+                                     paginator="true"
+                                     rows="10"
+                                     filteredValue="#{mbListaPrecioIdeal.filterLstPrecioIdeal}">
+                            <p:column headerText="Producto"
+                                      filterBy="#{listaPrecioIdeal.producto}"
+                                      filterMatchMode="contains">
                                 #{listaPrecioIdeal.producto}
                             </p:column>
                             <p:column headerText="Precio"
-                                      style="width: 210px">
+                                      style="width: 210px"
+                                      filterBy="#{listaPrecioIdeal.precioLista}"
+                                      filterMatchMode="contains">
                                 <center>
                                     <p:inplace id="ajaxInplace" 
                                                editor="true"
@@ -62,6 +66,9 @@
                                     </p:inplace>
                                 </center>
                             </p:column>
+                            <f:facet name="footer">
+                                Cantidad de Productos : #{mbListaPrecioIdeal.lstListaPrecioTable.size()}
+                            </f:facet>
                         </p:dataTable>
                     </p:panel>
 

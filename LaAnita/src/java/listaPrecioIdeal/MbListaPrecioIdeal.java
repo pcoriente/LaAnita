@@ -61,6 +61,7 @@ public class MbListaPrecioIdeal implements Serializable {
     private ListaPrecioIdeal listaPrecioSeleccionPrincipal;
     private ListaPrecioIdeal listaPrecioSeleccionSecundaria;
     private boolean actualizar = false;
+    private ArrayList<ListaPrecioIdeal>filterLstPrecioIdeal;
 
     public MbListaPrecioIdeal() {
     }
@@ -209,6 +210,7 @@ public class MbListaPrecioIdeal implements Serializable {
                 lstListaPrecioTable = new ArrayList<ListaPrecioIdeal>();
                 DAOListaPrecio dao = new DAOListaPrecio();
                 for (TOPrecioListaIdeal p : dao.dameValores()) {
+                    System.out.println(p.getIdProducto());
                     lstListaPrecioTable.add(this.convertir(p));
                 }
             } catch (NamingException ex) {
@@ -216,7 +218,7 @@ public class MbListaPrecioIdeal implements Serializable {
             } catch (SQLException ex) {
                 Mensajes.mensajeError(ex.getMessage());
             } catch (NullPointerException ex) {
-
+                System.err.println("Hubo un error" + ex.getMessage());
             }
         }
         return lstListaPrecioTable;
@@ -289,6 +291,14 @@ public class MbListaPrecioIdeal implements Serializable {
         } catch (SQLException ex) {
             Logger.getLogger(MbListaPrecioIdeal.class.getName()).log(Level.SEVERE, null, ex);
         }
+    }
+
+    public ArrayList<ListaPrecioIdeal> getFilterLstPrecioIdeal() {
+        return filterLstPrecioIdeal;
+    }
+
+    public void setFilterLstPrecioIdeal(ArrayList<ListaPrecioIdeal> filterLstPrecioIdeal) {
+        this.filterLstPrecioIdeal = filterLstPrecioIdeal;
     }
 
 }

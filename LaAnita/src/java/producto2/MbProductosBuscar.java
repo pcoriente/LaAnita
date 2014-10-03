@@ -33,7 +33,6 @@ public class MbProductosBuscar implements Serializable {
     private MbGrupo mbGrupo;
     @ManagedProperty(value = "#{mbParte}")
     private MbParte mbParte;
-
     private String tipoBuscar;
     private String strBuscar;
     private Producto producto;
@@ -76,7 +75,7 @@ public class MbProductosBuscar implements Serializable {
         FacesMessage fMsg = new FacesMessage(FacesMessage.SEVERITY_ERROR, "Aviso:", "buscarLista");
         try {
             this.dao = new DAOProductosBuscar();
-            this.daoSubProductos=new DAOSubProductos();
+            this.daoSubProductos = new DAOSubProductos();
             if (this.getTipoBuscar().equals("1")) {
                 TOProducto to = this.dao.obtenerProductoSku(this.strBuscar);
                 if (to == null) {
@@ -135,7 +134,7 @@ public class MbProductosBuscar implements Serializable {
         Producto p = new Producto();
         try {
             this.dao = new DAOProductosBuscar();
-            this.daoSubProductos=new DAOSubProductos();
+            this.daoSubProductos = new DAOSubProductos();
             TOProducto to = this.dao.obtenerProducto(idProducto);
             p = this.convertir(to, this.mbBuscar1.obtenerArticulo(to.getIdArticulo()), this.mbUpc.obtenerUpc(to.getIdProducto()));
             ok = true;
@@ -143,7 +142,11 @@ public class MbProductosBuscar implements Serializable {
             fMsg.setDetail(ex.getMessage());
         } catch (SQLException ex) {
             fMsg.setDetail(ex.getErrorCode() + " " + ex.getMessage());
-        } 
+        } catch (NullPointerException ex) {
+            System.err.println("hubo un null Ponter exception al buscar un producto y su id es " + idProducto);
+        } catch (Exception e) {
+            System.err.println(e.getMessage());
+        }
 
         if (!ok) {
             FacesContext.getCurrentInstance().addMessage(null, fMsg);
@@ -158,7 +161,7 @@ public class MbProductosBuscar implements Serializable {
         RequestContext context = RequestContext.getCurrentInstance();
         try {
             this.dao = new DAOProductosBuscar();
-            this.daoSubProductos=new DAOSubProductos();
+            this.daoSubProductos = new DAOSubProductos();
             Articulo articulo = this.mbBuscar1.obtenerArticulo(idArticulo);
             for (TOProducto to : this.dao.obtenerProductos(idArticulo)) {
                 this.productos.add(this.convertir(to, articulo, this.mbUpc.nuevoLista(to.getIdProducto())));
@@ -189,7 +192,7 @@ public class MbProductosBuscar implements Serializable {
         p.setArticulo(a);
         p.setPiezas(to.getPiezas());
         p.setEmpaque(to.getEmpaque());
-        if(to.getSubProducto().getIdProducto()==0) {
+        if (to.getSubProducto().getIdProducto() == 0) {
             p.setSubProducto(null);
         } else {
             p.setSubProducto(this.daoSubProductos.obtenerSubProducto(to.getSubProducto().getIdProducto()));
