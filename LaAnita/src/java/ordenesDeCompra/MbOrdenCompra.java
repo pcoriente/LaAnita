@@ -386,7 +386,7 @@ public class MbOrdenCompra implements Serializable {
             }
         } catch (SQLException ex) {
             Logger.getLogger(MbOrdenCompra.class.getName()).log(Level.SEVERE, null, ex);
-            fMsg.setDetail("No se realizó la cancelación de la orden de compra..");
+            fMsg.setDetail("No se realizó la cancelación de la orden de compra.." + ex.getMessage());
         }
 
         if (!correcto) {

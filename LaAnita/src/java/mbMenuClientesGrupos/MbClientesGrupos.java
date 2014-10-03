@@ -181,10 +181,11 @@ public class MbClientesGrupos implements Serializable {
                 ok = false;
                 if (ex.getErrorCode() == 2601) {
                     fMsg.setSeverity(FacesMessage.SEVERITY_WARN);
-                    fMsg.setDetail("Este codigo ya fue capturado, ingrese otro.  ");
+                    fMsg.setDetail("Este codigo ya fue capturado, ingresa otro.");
                 } else {
                     fMsg.setSeverity(FacesMessage.SEVERITY_ERROR);
-                    fMsg.setDetail(" " + ex.getMessage());
+                    fMsg.setDetail(" " + ex.getMessage() + " EL CODIGO DEL ERROR ES " + ex.getErrorCode());
+
                 }
 
             }

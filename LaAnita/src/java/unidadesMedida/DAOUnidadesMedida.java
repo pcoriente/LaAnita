@@ -70,7 +70,7 @@ public class DAOUnidadesMedida {
     
     public ArrayList<UnidadMedida> obtenerUnidades() throws SQLException {
         ArrayList<UnidadMedida> unidades=new ArrayList<UnidadMedida>();
-        String strSQL="SELECT * FROM unidadesMedida ORDER BY unidadMedida";
+        String strSQL="SELECT * FROM unidadesMedida ORDER BY idUnidadMedida desc";
         Connection cn=ds.getConnection();
         Statement st=cn.createStatement();
         try {

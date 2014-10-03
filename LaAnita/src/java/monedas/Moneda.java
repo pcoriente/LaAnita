@@ -16,12 +16,7 @@ public class Moneda implements Serializable {
     private String sufijo;
     private String simbolo;
 
-   
-
     public Moneda() {
-        this.idMoneda=1;
-        this.moneda="";
-        this.codigoIso="";
     }
 
     @Override
@@ -46,16 +41,10 @@ public class Moneda implements Serializable {
         return true;
     }
 
-   
-
-    
-
     @Override
     public String toString() {
-        return  moneda ;
+        return moneda;
     }
-    
-    
 
     public int getIdMoneda() {
         return idMoneda;
