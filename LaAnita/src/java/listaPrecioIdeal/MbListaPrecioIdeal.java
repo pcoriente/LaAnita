@@ -224,7 +224,13 @@ public class MbListaPrecioIdeal implements Serializable {
 
     public ListaPrecioIdeal convertir(TOPrecioListaIdeal to) {
         ListaPrecioIdeal precioIdeal = new ListaPrecioIdeal();
-        precioIdeal.setProducto(this.mbBuscar.obtenerProducto(to.getIdProducto()));
+        Producto pr=this.mbBuscar.obtenerProducto(to.getIdProducto());
+        if(pr==null) {
+            pr=new Producto();
+            pr.setIdProducto(to.getIdProducto());
+            System.out.println(to.getIdProducto());
+        }
+        precioIdeal.setProducto(pr);
         precioIdeal.setPrecioLista(to.getPrecioLista());
         return precioIdeal;
     }

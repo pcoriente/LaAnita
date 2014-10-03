@@ -5,6 +5,7 @@ package producto2.dominio;
  * @author jesc
  */
 public class Producto {
+
     private int idProducto;
     private String cod_pro;
     private Upc upc;
@@ -15,23 +16,23 @@ public class Producto {
     private String dun14;
     private double peso;
     private double volumen;
-    
+
     public Producto() {
-        this.cod_pro="";
-        this.upc=new Upc();
-        this.articulo=new Articulo();
-        this.empaque=new Empaque();
-        this.subProducto=new SubProducto();
-        this.dun14="";
+        this.cod_pro = "";
+        this.upc = new Upc();
+        this.articulo = new Articulo();
+        this.empaque = new Empaque();
+        this.subProducto = new SubProducto();
+        this.dun14 = "";
     }
-    
+
     public Producto(Articulo articulo, Upc upc) {
-        this.cod_pro="";
-        this.upc=upc;
-        this.articulo=articulo;
-        this.empaque=new Empaque();
-        this.subProducto=new SubProducto();
-        this.dun14="";
+        this.cod_pro = "";
+        this.upc = upc;
+        this.articulo = articulo;
+        this.empaque = new Empaque();
+        this.subProducto = new SubProducto();
+        this.dun14 = "";
     }
 
 //    public String toString() {
@@ -65,20 +66,29 @@ public class Producto {
 //    }
     @Override
     public String toString() {
-        String str=this.articulo.toString();
-        if(this.empaque.getIdEmpaque()!=1) {
-            if(this.subProducto==null) {
-                str+="";
-            } else {
-                str+=" "+this.subProducto.toString();
+        String str;
+        try {
+            str = this.articulo.toString();
+            if (this.empaque.getIdEmpaque() != 1) {
+                if (this.subProducto == null) {
+                    str += "";
+                } else {
+                    str += " " + this.subProducto.toString();
+                }
+                str += " ";
+                if (this.piezas != 1) {
+                    str += Integer.toString(this.piezas) + "/";
+                }
+                str += (this.empaque.getAbreviatura().equals("") ? this.empaque.toString() : this.empaque.getAbreviatura());
+
             }
-            str+=" ";
-            if(this.piezas!=1) {
-                str+=Integer.toString(this.piezas)+"/";
+            if (str == null) {
+                str = "-------------------" + Integer.toString(idProducto) + "-------------------";
             }
-            str+=(this.empaque.getAbreviatura().equals("")?this.empaque.toString():this.empaque.getAbreviatura());
-            
+        } catch (NullPointerException e) {
+            str = "-------------------" + Integer.toString(idProducto) + "-------------------";
         }
+
         return str;
     }
 
