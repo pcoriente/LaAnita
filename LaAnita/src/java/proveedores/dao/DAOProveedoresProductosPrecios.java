@@ -46,7 +46,7 @@ public class DAOProveedoresProductosPrecios {
         Format formatter=new SimpleDateFormat("yyyy-MM-dd");
         
         String strSQL="DELETE proveedoresPrecios "
-                + " WHERE IDPROVEEDOR="+idProveedor+" AND IDPRODUCTO="+idProducto+" AND INICIOVIGENCIA='"+formatter.format(precio.getInicioVigencia())+"'";
+                + " WHERE idProveedor="+idProveedor+" AND idProducto="+idProducto+" AND inicioVigencia='"+formatter.format(precio.getInicioVigencia())+"'";
         try {
             st.executeUpdate(strSQL);
         } finally {
@@ -60,14 +60,14 @@ public class DAOProveedoresProductosPrecios {
         Format formatter=new SimpleDateFormat("yyyy-MM-dd");
         
         String strSQL="UPDATE proveedoresPrecios "
-                + "SET PRECIOLISTA="+precio.getPrecioLista()
-                + ", DESCTOCOMERCIAL1="+precio.getDesctoComercial1()
-                + ", DESCTOCOMERCIAL2="+precio.getDesctoComercial2()
-                + ", DESCTOCONFIDENCIAL="+precio.getDesctoConfidencial();
+                + "SET precioLista="+precio.getPrecioLista()
+                + ", desctoComercial1="+precio.getDesctoComercial1()
+                + ", desctoComercial2="+precio.getDesctoComercial2()
+                + ", desctoConfidencial="+precio.getDesctoConfidencial();
                 if(precio.getFinVigencia()!=null) {
-                    strSQL+=", FINVIGENCIA='"+formatter.format(precio.getFinVigencia())+"'";
+                    strSQL+=", finVigencia='"+formatter.format(precio.getFinVigencia())+"'";
                 }
-                strSQL+=" WHERE IDPROVEEDOR="+idProveedor+" AND IDPRODUCTO="+idProducto+" AND INICIOVIGENCIA='"+formatter.format(precio.getInicioVigencia())+"'";
+                strSQL+=" WHERE idProveedor="+idProveedor+" AND idProducto="+idProducto+" AND inicioVigencia='"+formatter.format(precio.getInicioVigencia())+"'";
         try {
             st.executeUpdate(strSQL);
         } finally {
@@ -81,10 +81,10 @@ public class DAOProveedoresProductosPrecios {
         Format formatter=new SimpleDateFormat("yyyy-MM-dd");
         
         if(precio.getFinVigencia()==null) {
-            strSQL="INSERT INTO proveedoresPrecios (IDPROVEEDOR, IDPRODUCTO, FECHALISTA, PRECIOLISTA, DESCTOCOMERCIAL1, DESCTOCOMERCIAL2, DESCTOCONFIDENCIAL, INICIOVIGENCIA) "
+            strSQL="INSERT INTO proveedoresPrecios (idProveedor, idProducto, fechaLista, precioLista, desctoComercial1, desctoComercial2, desctoConfidencial, inicioVigencia) "
                 + "VALUES ("+idProveedor+", "+idProducto+", CONVERT (date, GETDATE()), "+precio.getPrecioLista()+", "+precio.getDesctoComercial1()+", "+precio.getDesctoComercial2()+", "+precio.getDesctoConfidencial()+", '"+formatter.format(precio.getInicioVigencia())+"')";
         } else {
-            strSQL="INSERT INTO proveedoresPrecios (IDPROVEEDOR, IDPRODUCTO, FECHALISTA, PRECIOLISTA, DESCTOCOMERCIAL1, DESCTOCOMERCIAL2, DESCTOCONFIDENCIAL, INICIOVIGENCIA, FINVIGENCIA) "
+            strSQL="INSERT INTO proveedoresPrecios (idProveedor, idProducto, fechaLista, precioLista, desctoComercial1, desctoComercial2, desctoConfidencial, inicioVigencia, finVigencia) "
                 + "VALUES ("+idProveedor+", "+idProducto+", CONVERT (date, GETDATE()), "+precio.getPrecioLista()+", "+precio.getDesctoComercial1()+", "+precio.getDesctoComercial2()+", "+precio.getDesctoConfidencial()+", '"+formatter.format(precio.getInicioVigencia())+"', '"+formatter.format(precio.getFinVigencia())+"')";
         }
         Connection cn=this.ds.getConnection();
@@ -103,9 +103,9 @@ public class DAOProveedoresProductosPrecios {
         ProveedorProductoPrecio precio=new ProveedorProductoPrecio();
         
         Connection cn=ds.getConnection();
-        String strSQL="SELECT FECHALISTA, PRECIOLISTA, DESCTOCOMERCIAL1, DESCTOCOMERCIAL2, DESCTOCONFIDENCIAL, INICIOVIGENCIA, FINVIGENCIA "
+        String strSQL="SELECT fechaLista, precioLista, desctoComercial1, desctoComercial2, desctoConfidencial, inicioVigencia, finVigencia "
                 + "FROM proveedoresPrecios "
-                + "WHERE idProveedor="+idProveedor+" AND idProducto="+idProducto+"  AND INICIOVIGENCIA='"+fecha.toString()+"'";
+                + "WHERE idProveedor="+idProveedor+" AND idProducto="+idProducto+"  AND inicioVigencia='"+fecha.toString()+"'";
         try {
             Statement sentencia = cn.createStatement();
             ResultSet rs = sentencia.executeQuery(strSQL);
@@ -122,10 +122,10 @@ public class DAOProveedoresProductosPrecios {
         ArrayList<ProveedorProductoPrecio> lista=new ArrayList<ProveedorProductoPrecio>();
         
         Connection cn=ds.getConnection();
-        String strSQL="SELECT FECHALISTA, PRECIOLISTA, DESCTOCOMERCIAL1, DESCTOCOMERCIAL2, DESCTOCONFIDENCIAL, INICIOVIGENCIA, FINVIGENCIA "
+        String strSQL="SELECT fechaLista, precioLista, desctoComercial1, desctoComercial2, desctoConfidencial, inicioVigencia, finVigencia "
                 + "FROM proveedoresPrecios "
                 + "WHERE idProveedor="+idProveedor+" AND idProducto="+idProducto+" "
-                + "     AND (CONVERT(date, GETDATE()) BETWEEN INICIOVIGENCIA AND FINVIGENCIA OR INICIOVIGENCIA > CONVERT(date, GETDATE()))";
+                + "     AND (CONVERT(date, GETDATE()) BETWEEN inicioVigencia AND finVigencia OR inicioVigencia > CONVERT(date, GETDATE()))";
         try {
             Statement sentencia = cn.createStatement();
             ResultSet rs = sentencia.executeQuery(strSQL);

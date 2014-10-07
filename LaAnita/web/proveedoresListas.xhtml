@@ -361,7 +361,7 @@
                                 </p:column>
                                 <p:column >
                                     <p:commandButton id="btnEquivalencias" icon="ui-icon-search" title="Buscar Productos" 
-                                                     process="@this" actionListener="#{mbListas.mbBuscar.inicializar()}" 
+                                                     process="@this" actionListener="#{mbListas.mbProducto.mbBuscar.inicializar()}" 
                                                      disabled="#{not mbListas.mbAcciones.validarAccion('btnEquivalencias')}"
                                                      update="buscarProductos listaBuscarProductos" oncomplete="buscarProductoDlg.show()" />
                                 </p:column>
@@ -717,22 +717,22 @@
                                     <h:outputLabel for="opciones" value="OPCIONES :" style="font-weight: bold; color: red;" />
                                 </p:column>
                                 <p:column >
-                                    <p:selectOneRadio id="opciones" value="#{mbListas.mbBuscar.tipoBuscar}" style="background-color: #ccc" >
+                                    <p:selectOneRadio id="opciones" value="#{mbListas.mbProducto.mbBuscar.tipoBuscar}" style="background-color: #ccc" >
                                         <f:selectItem itemLabel="SKU" itemValue="1" />
                                         <f:selectItem itemLabel="Genérico" itemValue="2" />
-                                        <p:ajax listener="#{mbListas.mbBuscar.verCambio()}" update="buscarProductos listaBuscarProductos" />
+                                        <p:ajax listener="#{mbListas.mbProducto.mbBuscar.verCambio()}" update="buscarProductos listaBuscarProductos" />
                                     </p:selectOneRadio>
                                 </p:column>
-                                <p:column rendered="#{mbListas.mbBuscar.tipoBuscar=='1'}" >
-                                    <p:inputText id="opcionSKU" value="#{mbListas.mbBuscar.strBuscar}" maxlength="8" size="10" />
+                                <p:column rendered="#{mbListas.mbProducto.mbBuscar.tipoBuscar=='1'}" >
+                                    <p:inputText id="opcionSKU" value="#{mbListas.mbProducto.mbBuscar.strBuscar}" maxlength="8" size="10" />
                                     <p:commandButton id="btnBuscarSKU" icon="ui-icon-check" title="Buscar" 
                                                      process="@this opcionSKU" actionListener="#{mbListas.buscar()}" 
                                                      oncomplete="handleBuscar(xhr, status, args)" />
                                     <!--update=":main:mttoProductos"-->
                                 </p:column>
-                                <p:column rendered="#{mbListas.mbBuscar.tipoBuscar=='2'}" >
-                                    <p:autoComplete id="opcionParte" value="#{mbListas.mbBuscar.mbParte.parte}" maxlength="50" size="30"
-                                                    completeMethod="#{mbListas.mbBuscar.mbParte.completePartes}" process="@this"
+                                <p:column rendered="#{mbListas.mbProducto.mbBuscar.tipoBuscar=='2'}" >
+                                    <p:autoComplete id="opcionParte" value="#{mbListas.mbProducto.mbBuscar.mbParte.parte}" maxlength="50" size="30"
+                                                    completeMethod="#{mbListas.mbProducto.mbBuscar.mbParte.completePartes}" process="@this"
                                                     var="p" itemLabel="#{p.parte}" itemValue="#{p}" converter="converters.Parte" 
                                                     forceSelection="true" />
                                     <p:commandButton id="btnBuscarLista" icon="ui-icon-check" title="Buscar" 
@@ -741,9 +741,9 @@
                                 </p:column>
                             </p:row>
                         </p:panelGrid>
-                        <p:dataTable id="listaBuscarProductos" value="#{mbListas.mbBuscar.productos}" 
+                        <p:dataTable id="listaBuscarProductos" value="#{mbListas.mbProducto.mbBuscar.productos}" 
                                      var="prod" scrollable="true" scrollHeight="200" style="width: 800px;"
-                                     rowKey="#{prod.idProducto}" selectionMode="single" selection="#{mbListas.mbBuscar.producto}" >
+                                     rowKey="#{prod.idProducto}" selectionMode="single" selection="#{mbListas.mbProducto.mbBuscar.producto}" >
                             <p:ajax event = "rowSelect" update="seleccion" />
 
                             <f:facet name="header">
@@ -760,7 +760,7 @@
 
                             <f:facet name="footer">
                                 <p:commandButton id="seleccion" value="Seleccionar" 
-                                                 disabled="#{mbListas.mbBuscar.producto==null}"
+                                                 disabled="#{mbListas.mbProducto.mbBuscar.producto==null}"
                                                  actionListener="#{mbListas.actualizaProductoSeleccionado()}"
                                                  update=":form:txtEquivalencia" oncomplete="buscarProductoDlg.hide()" />
                             </f:facet>
