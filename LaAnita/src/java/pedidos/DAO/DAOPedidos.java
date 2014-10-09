@@ -21,7 +21,7 @@ import javax.servlet.http.HttpSession;
 import javax.sql.DataSource;
 import leyenda.dao.DAOBancosLeyendas;
 import pedidos.dominio.EntregasWallMart;
-import usuarios.UsuarioSesion;
+import usuarios.dominio.UsuarioSesion;
 
 /**
  *

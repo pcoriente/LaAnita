@@ -19,7 +19,7 @@ import producto2.dominio.Presentacion;
 import producto2.dominio.Producto;
 import proveedores.dominio.ProveedorProducto;
 import unidadesMedida.UnidadMedida;
-import usuarios.UsuarioSesion;
+import usuarios.dominio.UsuarioSesion;
 
 /**
  *
@@ -46,7 +46,7 @@ public class DAOProveedoresProductos {
         Connection cn=this.ds.getConnection();
         Statement st=cn.createStatement();
         String strSQL="UPDATE proveedoresProductos"
-                + " SET SKU='"+pp.getSku()+"'"
+                + " SET sku='"+pp.getSku()+"'"
                 + ",    diasEntrega="+pp.getDiasEntrega()
                 + ",    idUnidadEmpaque="+pp.getEmpaque().getIdEmpaque()
                 + ",    piezas="+pp.getPiezas()
@@ -154,7 +154,7 @@ public class DAOProveedoresProductos {
                 "       , p.producto\n" +
                 "       ,pp.idPresentacion, pp.presentacion, pp.abreviatura as presAbrev\n" +
                 "       , p.contenido\n" +
-                "	,um1.idUnidadMedida as idUnidadMedida1, um1.unidadmedida as unidadMedida1, um1.abreviatura as abreviatura1\n" +
+                "	,um1.idUnidadMedida as idUnidadMedida1, um1.unidadMedida as unidadMedida1, um1.abreviatura as abreviatura1\n" +
                 "	,isnull(um2.idUnidadMedida, 0) as idUnidadMedida2, isnull(um2.unidadMedida, '') as unidadMedida2, isnull(um2.abreviatura, '') as abreviatura2\n" +
                 "       , i.idGrupo, i.grupo \n" +
                 "from proveedoresProductos p\n" +

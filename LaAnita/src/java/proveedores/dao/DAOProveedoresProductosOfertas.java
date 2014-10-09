@@ -16,7 +16,7 @@ import javax.naming.NamingException;
 import javax.servlet.http.HttpSession;
 import javax.sql.DataSource;
 import proveedores.dominio.ProveedorProductoOferta;
-import usuarios.UsuarioSesion;
+import usuarios.dominio.UsuarioSesion;
 import utilerias.Utilerias;
 
 /**
@@ -46,7 +46,7 @@ public class DAOProveedoresProductosOfertas {
         Format formatter=new SimpleDateFormat("yyyy-MM-dd");
         
         String strSQL="DELETE proveedoresOfertas "
-                + " WHERE IDPROVEEDOR="+idProveedor+" AND IDPRODUCTO="+idProducto+" AND INICIOVIGENCIA='"+formatter.format(oferta.getInicioVigencia())+"'";
+                + " WHERE idProveedor="+idProveedor+" AND idProducto="+idProducto+" AND inicioVigencia='"+formatter.format(oferta.getInicioVigencia())+"'";
         try {
             st.executeUpdate(strSQL);
         } finally {
@@ -60,14 +60,14 @@ public class DAOProveedoresProductosOfertas {
         Format formatter=new SimpleDateFormat("yyyy-MM-dd");
         
         String strSQL="UPDATE proveedoresOfertas "
-                + "SET PTJEOFERTA="+oferta.getPtjeOferta()
-                + ", PRECIOOFERTA="+oferta.getPrecioOferta()
-                + ", SINCARGOBASE="+oferta.getBase()
-                + ", SINCARGOCANT="+oferta.getSinCargo();
+                + "SET ptjeOferta="+oferta.getPtjeOferta()
+                + ", precioOferta="+oferta.getPrecioOferta()
+                + ", sinCargoBase="+oferta.getBase()
+                + ", sinCargoCant="+oferta.getSinCargo();
                 if(oferta.getFinVigencia()!=null) {
-                    strSQL+=", FINVIGENCIA='"+formatter.format(oferta.getFinVigencia())+"'";
+                    strSQL+=", finVigencia='"+formatter.format(oferta.getFinVigencia())+"'";
                 }
-                strSQL+=" WHERE IDPROVEEDOR="+idProveedor+" AND IDPRODUCTO="+idProducto+" AND INICIOVIGENCIA='"+formatter.format(oferta.getInicioVigencia())+"'";
+                strSQL+=" WHERE idProveedor="+idProveedor+" AND idProducto="+idProducto+" AND inicioVigencia='"+formatter.format(oferta.getInicioVigencia())+"'";
         try {
             st.executeUpdate(strSQL);
         } finally {
@@ -81,10 +81,10 @@ public class DAOProveedoresProductosOfertas {
         Format formatter=new SimpleDateFormat("yyyy-MM-dd");
         
         if(oferta.getFinVigencia()==null) {
-            strSQL="INSERT INTO proveedoresOfertas (IDPROVEEDOR, IDPRODUCTO, FECHALISTA, PRECIOOFERTA, PTJEOFERTA, SINCARGOBASE, SINCARGOCANT, INICIOVIGENCIA) "
+            strSQL="INSERT INTO proveedoresOfertas (idProveedor, idProducto, fechaLista, precioOferta, ptjeOferta, sinCargoBase, sinCargoCant, inicioVigencia) "
                 + "VALUES ("+idProveedor+", "+idProducto+", CONVERT (date, GETDATE()), "+oferta.getPrecioOferta()+", "+oferta.getPtjeOferta()+", "+oferta.getBase()+", "+oferta.getSinCargo()+", '"+formatter.format(oferta.getInicioVigencia())+"')";
         } else {
-            strSQL="INSERT INTO proveedoresOfertas (IDPROVEEDOR, IDPRODUCTO, FECHALISTA, PRECIOOFERTA, PTJEOFERTA, SINCARGOBASE, SINCARGOCANT, INICIOVIGENCIA, FINVIGENCIA) "
+            strSQL="INSERT INTO proveedoresOfertas (idProveedor, idProducto, fechaLista, precioOferta, ptjeOferta, sinCargoBase, sinCargoCant, inicioVigencia, finVigencia) "
                 + "VALUES ("+idProveedor+", "+idProducto+", CONVERT (date, GETDATE()), "+oferta.getPrecioOferta()+", "+oferta.getPtjeOferta()+", "+oferta.getBase()+", "+oferta.getSinCargo()+", '"+formatter.format(oferta.getInicioVigencia())+"', '"+formatter.format(oferta.getFinVigencia())+"')";
         }
         Connection cn=this.ds.getConnection();
@@ -103,9 +103,9 @@ public class DAOProveedoresProductosOfertas {
         ProveedorProductoOferta precio=new ProveedorProductoOferta();
         
         Connection cn=ds.getConnection();
-        String strSQL="SELECT FECHALISTA, PTJEOFERTA, PRECIOOFERTA, SINCARGOBASE, SINCARGOCANT, INICIOVIGENCIA, FINVIGENCIA "
+        String strSQL="SELECT fechaLista, ptjeOferta, precioOferta, sinCargoBase, sinCargoCant, inicioVigencia, finVigencia "
                 + "FROM proveedoresOfertas "
-                + "WHERE idProveedor="+idProveedor+" AND idProducto="+idProducto+"  AND INICIOVIGENCIA='"+fecha.toString()+"'";
+                + "WHERE idProveedor="+idProveedor+" AND idProducto="+idProducto+"  AND inicioVigencia='"+fecha.toString()+"'";
         try {
             Statement sentencia = cn.createStatement();
             ResultSet rs = sentencia.executeQuery(strSQL);
@@ -122,10 +122,10 @@ public class DAOProveedoresProductosOfertas {
         ArrayList<ProveedorProductoOferta> lista=new ArrayList<ProveedorProductoOferta>();
         
         Connection cn=ds.getConnection();
-        String strSQL="SELECT FECHALISTA, PTJEOFERTA, PRECIOOFERTA, SINCARGOBASE, SINCARGOCANT, INICIOVIGENCIA, FINVIGENCIA "
+        String strSQL="SELECT fechaLista, ptjeOferta, precioOferta, sinCargoBase, sinCargoCant, inicioVigencia, finVigencia "
                 + "FROM proveedoresOfertas "
                 + "WHERE idProveedor="+idProveedor+" AND idProducto="+idProducto+" "
-                + "     AND (CONVERT(date, GETDATE()) BETWEEN INICIOVIGENCIA AND FINVIGENCIA OR INICIOVIGENCIA > CONVERT(date, GETDATE()))";
+                + "     AND (CONVERT(date, GETDATE()) BETWEEN inicioVigencia AND finVigencia OR inicioVigencia > CONVERT(date, GETDATE()))";
         try {
             Statement sentencia = cn.createStatement();
             ResultSet rs = sentencia.executeQuery(strSQL);

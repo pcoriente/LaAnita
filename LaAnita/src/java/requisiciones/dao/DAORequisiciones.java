@@ -23,7 +23,7 @@ import requisiciones.dominio.RequisicionDetalle;
 import requisiciones.dominio.RequisicionEncabezado;
 import requisiciones.to.TORequisicionDetalle;
 import requisiciones.to.TORequisicionEncabezado;
-import usuarios.UsuarioSesion;
+import usuarios.dominio.UsuarioSesion;
 
 public class DAORequisiciones {
 

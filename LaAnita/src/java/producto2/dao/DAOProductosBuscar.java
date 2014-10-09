@@ -16,7 +16,7 @@ import producto2.dominio.Empaque;
 import producto2.dominio.SubProducto;
 import producto2.to.TOProducto;
 import producto2.to.TOProductoCombo;
-import usuarios.UsuarioSesion;
+import usuarios.dominio.UsuarioSesion;
 
 /**
  *

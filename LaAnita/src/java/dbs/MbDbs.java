@@ -17,7 +17,7 @@ import javax.faces.model.SelectItem;
 import javax.naming.NamingException;
 import main.MbMenu;
 import usuarios.MbAcciones;
-import usuarios.UsuarioSesion;
+import usuarios.dominio.UsuarioSesion;
 import usuarios.dominio.Usuario;
 
 @ManagedBean(name = "mbDbs")

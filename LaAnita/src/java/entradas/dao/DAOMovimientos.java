@@ -23,7 +23,7 @@ import movimientos.to.TOEntradaProducto;
 import movimientos.to.TOMovimientoAlmacenProducto;
 import mvEntradas.TOEntradaOficinaProducto;
 import salidas.TOSalidaOficinaProducto;
-import usuarios.UsuarioSesion;
+import usuarios.dominio.UsuarioSesion;
 
 /**
  *
