@@ -390,7 +390,7 @@ public class MbRequisiciones implements Serializable {
             boolean control = false;
             for (RequisicionDetalle p : this.requisicionDetalles) {
                 if (p.getCantidad() <= 0) {
-                    fMsg = new FacesMessage(FacesMessage.SEVERITY_WARN, "Aviso: Para el producto " + p.getProducto().toString(), " Capture una cantidad numérica y positiva. ");
+                    fMsg = new FacesMessage(FacesMessage.SEVERITY_WARN, "Aviso: Para el producto " + p.getProducto().toString(), " Capture una cantidad. ");
                     control = true;
                     break;
                 }

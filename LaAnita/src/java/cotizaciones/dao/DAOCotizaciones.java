@@ -43,7 +43,7 @@ public class DAOCotizaciones {
         Connection cn = ds.getConnection();
         try {
 
-            String stringSQL = "SELECT c.idRequisicion,  ed.depto, r.fechaRequisicion, r.fechaAprobacion,  COUNT(distinct cd.idProducto) as numProductos, COUNT(distinct cd.idCotizacion)as numCotizaciones,c.estado,c.idMoneda\n"
+            String stringSQL = "SELECT c.idRequisicion,  ed.depto, r.fechaRequisicion, r.fechaAprobacion,  COUNT(distinct cd.idEmpaque) as numProductos, COUNT(distinct cd.idCotizacion)as numCotizaciones,c.estado,c.idMoneda\n"
                     + "                    FROM cotizaciones c\n"
                     + "                    INNER JOIN cotizacionesDetalle cd ON cd.idCotizacion= c.idCotizacion\n"
                     + "                    INNER JOIN requisiciones r ON r.idRequisicion = c.idRequisicion\n"
