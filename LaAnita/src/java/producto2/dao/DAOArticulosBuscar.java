@@ -21,7 +21,7 @@ import producto2.dominio.Presentacion;
 import producto2.dominio.SubGrupo;
 import producto2.dominio.Tipo;
 import unidadesMedida.UnidadMedida;
-import usuarios.UsuarioSesion;
+import usuarios.dominio.UsuarioSesion;
 
 /**
  *

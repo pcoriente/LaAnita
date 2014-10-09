@@ -19,7 +19,7 @@ import producto2.dominio.Presentacion;
 import producto2.dominio.Producto;
 import proveedores.dominio.ProveedorProducto;
 import unidadesMedida.UnidadMedida;
-import usuarios.UsuarioSesion;
+import usuarios.dominio.UsuarioSesion;
 
 /**
  *

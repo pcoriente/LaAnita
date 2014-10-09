@@ -17,7 +17,7 @@ import javax.naming.NamingException;
 import javax.servlet.http.HttpSession;
 import javax.sql.DataSource;
 import requisiciones.dominio.Depto;
-import usuarios.UsuarioSesion;
+import usuarios.dominio.UsuarioSesion;
 
 /**
  *

@@ -13,7 +13,7 @@ import javax.naming.InitialContext;
 import javax.naming.NamingException;
 import javax.servlet.http.HttpSession;
 import javax.sql.DataSource;
-import usuarios.UsuarioSesion;
+import usuarios.dominio.UsuarioSesion;
 
 /**
  *

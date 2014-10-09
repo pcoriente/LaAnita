@@ -16,7 +16,7 @@ import javax.naming.NamingException;
 import javax.servlet.http.HttpSession;
 import javax.sql.DataSource;
 import producto2.dominio.Producto;
-import usuarios.UsuarioSesion;
+import usuarios.dominio.UsuarioSesion;
 
 public class DAOCotizaciones {
 

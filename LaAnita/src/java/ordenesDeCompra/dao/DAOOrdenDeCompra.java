@@ -23,7 +23,7 @@ import ordenesDeCompra.dominio.OrdenCompraEncabezado;
 import producto2.dominio.Producto;
 import proveedores.dao.DAOProveedores;
 import proveedores.dominio.Proveedor;
-import usuarios.UsuarioSesion;
+import usuarios.dominio.UsuarioSesion;
 
 public class DAOOrdenDeCompra {
 

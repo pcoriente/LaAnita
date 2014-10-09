@@ -17,7 +17,7 @@ import javax.servlet.http.HttpSession;
 import javax.sql.DataSource;
 import proveedores.dominio.ProveedorProductoOferta;
 import proveedores.dominio.ProveedorProductoPrecio;
-import usuarios.UsuarioSesion;
+import usuarios.dominio.UsuarioSesion;
 
 /**
  *

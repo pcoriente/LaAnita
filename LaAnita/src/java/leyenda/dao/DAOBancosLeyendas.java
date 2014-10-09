@@ -15,7 +15,7 @@ import javax.servlet.http.HttpSession;
 import javax.sql.DataSource;
 import leyenda.dominio.ClientesBancos;
 import leyenda.dominio.LeyendaBanco;
-import usuarios.UsuarioSesion;
+import usuarios.dominio.UsuarioSesion;
 
 public class DAOBancosLeyendas {
 
