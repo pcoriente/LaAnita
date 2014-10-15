@@ -55,11 +55,13 @@ public class MbCedis implements Serializable {
         String representante=Utilerias.Acentos(this.cedis.getRepresentante());
         int idDireccion=this.cedis.getDireccion().getIdDireccion();
         
-        if(strCedis.isEmpty()) return destino;
-        else if(correo.isEmpty()) return destino;
-        else if(representante.isEmpty()) return destino;
-        else if(idDireccion == 0) return destino;
-        else {
+//        if(strCedis.isEmpty()) return destino;
+//        else if(correo.isEmpty()) return destino;
+//        else if(representante.isEmpty()) return destino;
+//        else if(idDireccion == 0) return destino;
+        if(idDireccion==0) {
+            fMsg.setDetail("Se requiere una direccion");
+        } else {
             try {
                 this.dao=new DAOCedis();
                 int idCedis=this.cedis.getIdCedis();

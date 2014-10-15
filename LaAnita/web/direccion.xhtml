@@ -45,16 +45,7 @@
                                 <p:inputText id="codigoPostal" value="#{mbDireccion.direccion.codigoPostal}" maxlength="10" size="11" />
                                 <p:commandButton value="Buscar" action="#{mbDireccion.buscarAsentamientos()}" ajax="false" />
                             </h:panelGroup>
-
-                            <h:outputLabel value="Ciudad/Localidad:" for="localidad" styleClass="colorLetra"/>
-                            <p:inputText id="localidad" value="#{mbDireccion.direccion.localidad}" maxlength="100" size="50" />
-
-                            <h:outputLabel value="Municipio/Delegación:" for="municipio" styleClass="colorLetra"/>
-                            <p:inputText id="municipio" value="#{mbDireccion.direccion.municipio}" maxlength="100" size="50" />
-
-                            <h:outputLabel value="Estado:" for="estado" styleClass="colorLetra"/>
-                            <p:inputText id="estado" value="#{mbDireccion.direccion.estado}" maxlength="100" size="50" />
-
+                            
                             <h:outputLabel value="Colonia:" for="asentamiento" styleClass="colorLetra"/>
                             <h:panelGroup id="asentamientos" >
                                 <h:panelGrid rendered="#{mbDireccion.editarAsentamiento}" frame="box" border="0" columns="2" >
@@ -71,6 +62,16 @@
                                     <f:selectItems value="#{mbDireccion.listaAsentamientos}" />
                                 </h:selectOneMenu>
                             </h:panelGroup>
+
+                            <h:outputLabel value="Ciudad/Localidad:" for="localidad" styleClass="colorLetra"/>
+                            <p:inputText id="localidad" value="#{mbDireccion.direccion.localidad}" maxlength="100" size="50" />
+
+                            <h:outputLabel value="Municipio/Delegación:" for="municipio" styleClass="colorLetra"/>
+                            <p:inputText id="municipio" value="#{mbDireccion.direccion.municipio}" maxlength="100" size="50" />
+
+                            <h:outputLabel value="Estado:" for="estado" styleClass="colorLetra"/>
+                            <p:inputText id="estado" value="#{mbDireccion.direccion.estado}" maxlength="100" size="50" />
+                            
                             <h:outputLabel value="GLN:" for="gln" styleClass="colorLetra"/>
                             <p:inputText id="gln" value="#{mbDireccion.direccion.numeroLocalizacion}" maxlength="14" size="16" />
 

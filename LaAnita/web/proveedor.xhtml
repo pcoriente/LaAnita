@@ -43,7 +43,7 @@
                                                      process="@this" actionListener="#{mbProveedores.mbBuscarContribuyente.inicializar()}" 
                                                      update="buscarProveedores listaContribuyentes" oncomplete="buscarProvDlg.show()" />
                                     <p:commandButton id="btnAgregarContribuyente" icon="ui-icon-document" title="Nuevo Contribuyente" 
-                                                     disabled="#{not mbProveedores.mbAcciones.validarAccion('btnAgregarContribuyente')}"
+                                                     disabled="#{mbProveedores.proveedor.idProveedor!=0 or not mbProveedores.mbAcciones.validarAccion('btnAgregarContribuyente')}"
                                                      process="@this" actionListener="#{mbProveedores.nuevoContribuyente()}"
                                                      update="mttoContribuyentes" oncomplete="mttoContribDialog.show()" />
                                 </p:column>
@@ -84,7 +84,7 @@
                                     </h:panelGroup>
                                 </p:column>
                                 <p:column >
-                                    <p:commandButton id="btnEditarDirFiscal" icon="ui-icon-pencil" title="Editar" immediate="true" 
+                                    <p:commandButton id="btnEditarDirFiscal" icon="ui-icon-plusthick" title="Editar" immediate="true" 
                                                      disabled="#{not mbProveedores.mbAcciones.validarAccion('btnEditarDirFiscal')}"
                                                      action="#{mbProveedores.mbDireccion.mttoDireccion(mbProveedores.proveedor.contribuyente.direccion, 'proveedor')}" />
                                 </p:column>
@@ -263,7 +263,7 @@
                                     </h:panelGroup>
                                 </p:column>
                                 <p:column >
-                                    <p:commandButton icon="ui-icon-pencil" title="Editar" immediate="true" 
+                                    <p:commandButton icon="ui-icon-plusthick" title="Editar" immediate="true" 
                                                      action="#{mbProveedores.mbDireccion.mttoDireccion(mbProveedores.proveedor.direccionEntrega, 'proveedor')}" />
                                 </p:column>
                             </p:row>
@@ -449,9 +449,10 @@
                                 </p:column>
                                 <p:column colspan="2" >
                                     <p:inputText id="txtRfc" value="#{mbProveedores.mbContribuyentes.contribuyente.rfc}"
+                                                 readonly="#{mbProveedores.mbContribuyentes.contribuyente.idRfc!=0}"
                                                  maxlength="13" size="15" >
                                         <p:ajax event="change" process="@this" listener="#{mbProveedores.obtenerRfc()}" 
-                                                update="mttoContribuyentes" />
+                                                update="txtCurp" />
                                     </p:inputText>
                                 </p:column>
                             </p:row>
@@ -486,13 +487,14 @@
                                 </p:column>
                                 <p:column >
                                     <p:inputText id="txtCurp" value="#{mbProveedores.mbContribuyentes.contribuyente.curp}"
+                                                 disabled="#{mbProveedores.mbContribuyentes.contribuyente.rfc.length()==12}"
                                                  maxlength="20" size="25" />
                                 </p:column>
                             </p:row>
                             <f:facet name="footer" >
                                 <p:row >
                                     <p:column colspan="3" >
-                                        <p:commandButton id="btnGrabarContribuyente" value="Aceptar" 
+                                        <p:commandButton id="btnGrabarContribuyente" value="Grabar" 
                                                          process="@this txtRfc txtContribuyente txtCurp" 
                                                          actionListener="#{mbProveedores.actualizarContribuyente()}"
                                                          update="rfc contribuyente direccionFiscal curp" 
