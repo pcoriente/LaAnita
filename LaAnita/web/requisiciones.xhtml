@@ -3,7 +3,8 @@
       xmlns:ui="http://java.sun.com/jsf/facelets"
       xmlns:h="http://java.sun.com/jsf/html"
       xmlns:f="http://java.sun.com/jsf/core"
-      xmlns:p="http://primefaces.org/ui">
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:pe="http://primefaces.org/ui/extensions">
     <h:head>
         <h:outputStylesheet library="css" name="main.css"/>
         <h:outputStylesheet library="css" name="estilos.css"/>
@@ -14,29 +15,35 @@
         <div id="wrapper" >
             <ui:include src="wrapper.xhtml" />
             <div id="content">
-                <h:form id="main" >
+                <h:form id="main" onkeypress="return event.keyCode !== 13;">
 
                     <!--  R E Q U I S I C I O N E S ... -->
                     <p:panel id="panelCapturaRequisicion" header="REQUISICION DE PRODUCTOS"  style="text-align: center;  width: 900px; margin:0 auto;"  >
                         <p:messages id="messages" showDetail="true" autoUpdate="true" closable="true" />
                         <h:panelGrid id="cabecero" columns="6" style="width: 855px; margin:0 auto;" > 
                             <p:row>
+                                <!--  <p:column >
+                                      <h:outputLabel for="empresa" value="Empresa :"  style="font-weight: bold; color: black;" />
+                                  </p:column>-->
                                 <p:column >
-                                    <h:outputLabel for="empresa" value="Empresa :"  style="font-weight: bold; color: red;" />
-                                </p:column>
-                                <p:column >
-                                    <p:selectOneMenu id="empresa" value="#{mbRequisiciones.mbMiniEmpresa.empresa}" style="width: 200px">
+                                    <p:selectOneMenu id="empresa" 
+                                                     value="#{mbRequisiciones.mbMiniEmpresa.empresa}" 
+                                                     style="width: 200px"
+                                                     filter="true">
                                         <f:converter converterId="converters.MiniEmpresa" />
                                         <f:selectItems value="#{mbRequisiciones.listaMini}"  />
                                     </p:selectOneMenu>
                                 </p:column>
                             </p:row>
                             <p:row >
+                                <!--  <p:column >
+                                      <h:outputLabel for="departamento" value="Departamento :"  style="font-weight: bold; color: black; width: 120px;" />
+                                  </p:column>-->
                                 <p:column >
-                                    <h:outputLabel for="departamento" value="Departamento :"  style="font-weight: bold; color: red; width: 120px;" />
-                                </p:column>
-                                <p:column >
-                                    <p:selectOneMenu id="departamento" value="#{mbRequisiciones.mbDepto.deptos}" style="width: 300px"  >
+                                    <p:selectOneMenu id="departamento" 
+                                                     value="#{mbRequisiciones.mbDepto.deptos}" 
+                                                     style="width: 300px"  
+                                                     filter="true">
                                         <f:converter converterId="converters.depto" />
                                         <f:selectItems value="#{mbRequisiciones.mbDepto.listaDeptos}" />
                                         <p:ajax event="change"
@@ -48,11 +55,11 @@
                                 </p:column>
                             </p:row>
                             <p:row >
+                                <!--  <p:column >
+                                      <h:outputLabel for="solicitante" value="Solicitante :"  style="font-weight: bold; color: black; width: 105px;" />
+                                  </p:column>-->
                                 <p:column >
-                                    <h:outputLabel for="solicitante" value="Solicitante :"  style="font-weight: bold; color: red; width: 105px;" />
-                                </p:column>
-                                <p:column >
-                                    <p:selectOneMenu id="solicitante" value="#{mbRequisiciones.mbUsuarios.usuario}" style="width: 300px;"  >
+                                    <p:selectOneMenu id="solicitante" value="#{mbRequisiciones.mbUsuarios.usuario}" style="width: 300px;" filter="true" >
                                         <f:converter converterId="converters.subUsuario" />
                                         <f:selectItems value="#{mbRequisiciones.listaSubUsuarios}" />
                                     </p:selectOneMenu>
@@ -76,7 +83,6 @@
                                 <p:commandButton icon="ui-icon-trash"
                                                  title="Eliminar Producto"
                                                  process="@this"
-
                                                  update=":main:detalleRequisicion" 
                                                  />
                                 <p:commandButton  icon="ui-icon-search" title="Buscar Productos" 
@@ -119,13 +125,13 @@
                                 <h:outputText value="#{det.producto.empaque.empaque}" />
                             </p:column>
                             <p:column headerText="Cantidad" style="width: 50px;" >
-
-                                <p:inplace id="ajaxInplace" editor="true" >  
-                                    <p:inputText value="#{det.cantidad}"
-                                                 required="true"
-                                                 requiredMessage="Capture una cantidad numérica y positiva..."/>  
-                                </p:inplace> 
-
+                                <pe:inputNumber value="#{det.cantidad}"
+                                                id="ajaxInplace"
+                                                required="true"
+                                                requiredMessage="Capture cantidad"
+                                                decimalPlaces="2"
+                                                emptyValue="zero">
+                                </pe:inputNumber>
                             </p:column>
                             <p:column headerText="Eliminar" style="width: 50px;" >
                                 <p:commandButton icon="ui-icon-trash"
@@ -204,7 +210,10 @@
                         </p:panelGrid>
                         <p:dataTable id="multipleSelectProductos" var="e" rowKey="#{e.cod_pro}"
                                      value="#{mbRequisiciones.mbBuscar.productos}" 
-                                     selection="#{mbRequisiciones.mbBuscar.seleccionados}"  >
+                                     selection="#{mbRequisiciones.mbBuscar.seleccionados}"  
+                                     scrollable="true"
+                                     style="width: 650px"
+                                     scrollHeight="250">
 
                             <p:column selectionMode="multiple" style="width: 40px;" />
                             <p:column headerText="SKU" style="width: 70px;" >
@@ -223,11 +232,11 @@
                     </p:dialog>
 
                     <script type="text/javascript">
-                        function handleBuscar(xhr, status, args) {
-                            if (!(args.validationFailed || !args.okBuscar)) {
-                                buscarProductoDlg.hide();
-                            }
+                    function handleBuscar(xhr, status, args) {
+                        if (!(args.validationFailed || !args.okBuscar)) {
+                            buscarProductoDlg.hide();
                         }
+                    }
                     </script>
                 </h:form>
             </div>

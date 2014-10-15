@@ -4,7 +4,8 @@
       xmlns:ui="http://java.sun.com/jsf/facelets"
       xmlns:h="http://java.sun.com/jsf/html"
       xmlns:f="http://java.sun.com/jsf/core"
-      xmlns:p="http://primefaces.org/ui">
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:pe="http://primefaces.org/ui/extensions">
     <h:head>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"></meta>
         <title>Menu de Requisiciones</title>
@@ -15,19 +16,17 @@
         <div id="wrapper" align="center">
             <ui:include src="wrapper.xhtml" />
             <div id="content" align="center"  >
-                <h:form id="form" >
+                <h:form id="form" onkeypress="return event.keyCode !== 13;">
                     <div align="right">
                         <p:commandButton id="Nuevo"
                                          icon="ui-icon-circle-plus"
                                          title="Nueva requisición"
                                          action="#{mbRequisiciones.nuevo()}"
                                          />
-
                         <p:commandButton id="Menu"
                                          icon="ui-icon-document"
                                          title="Ir a menu cotizaciones"
                                          action="menuCotizaciones.xhtml"
-
                                          />
                         <p:commandButton id="salir"
                                          icon="ui-icon-arrowreturnthick-1-w"
@@ -178,7 +177,8 @@
 
                             <h:outputText id="otRequisicion" value="#{mbRequisiciones.requisicionEncabezado.idRequisicion}"  />
 
-                            <h:outputLabel  id="estatus" value="#{mbRequisiciones.requisicionEncabezado.estado}"  style="font-weight: bold; color: red; width: 105px;" />
+                            <h:outputLabel  id="estatus" value="Usuario:"  
+                                            style="font-weight: bold; color: red; width: 105px;" />
 
                             <h:outputText id="otUsuario" value="#{mbRequisiciones.requisicionEncabezado.empleadoAprobo}" />
 
@@ -200,7 +200,7 @@
                                      scrollHeight="300"
                                      style="width: 950px;"
                                      rowKey="#{da.producto.idProducto}"
-                                     editable="true"
+                                    
                                      >
                             <p:ajax event="rowEdit" listener="#{mbRequisiciones.onEdit}" update="detalleAprobar" />  
                             <p:ajax event="rowEditCancel"  update="detalleAprobar" />
@@ -218,15 +218,22 @@
                             <p:column headerText="Solicitada" width="50" >
                                 <h:outputText value="#{da.cantidad}"  />  
                             </p:column>
-                            <p:column headerText="Autorizada" width="50"     >
-                                <p:cellEditor>  
+                            <p:column headerText="Autorizada" width="70"     >
+                                <pe:inputNumber value="#{da.cantidadAutorizada}"
+                                                decimalPlaces="2"
+                                                emptyValue="zero"
+                                                disabled="#{da.cantidadAutorizada eq 0 || mbRequisiciones.requisicionEncabezado.status eq 2}"
+                                                style="width: 65px"
+                                                >
+                                </pe:inputNumber>
+                       <!--         <p:cellEditor>  
                                     <f:facet name="output">  
-                                        <h:outputText value="#{da.cantidadAutorizada}"  />  
+                                        <h:outputText   />  
                                     </f:facet>  
                                     <f:facet name="input">  
                                         <p:inputText value="#{da.cantidadAutorizada}" required="true"  requiredMessage="Capture una cantidad númerica y positiva" style="width:100%" label="Autorizada" disabled="#{da.cantidadAutorizada eq 0 || mbRequisiciones.requisicionEncabezado.status eq 2}"/>  
                                     </f:facet>  
-                                </p:cellEditor>
+                                </p:cellEditor>-->
                             </p:column>
                             <p:column headerText="Procesos" style="width: 120px"   >
                                 <p:rowEditor   />

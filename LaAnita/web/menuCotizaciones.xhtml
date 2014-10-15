@@ -15,7 +15,7 @@
         <div id="wrapper" align="center">
             <ui:include src="wrapper.xhtml" />
             <div id="content" align="center"  >
-                <h:form id="form" >
+                <h:form id="form" onkeypress="return event.keyCode !== 13;">
                     <div align="right">
                         <p:commandButton id="Nuevo"
                                          icon="ui-icon-note"
